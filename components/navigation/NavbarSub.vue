@@ -15,44 +15,7 @@
 </template>
 
 <script setup>
-const route = useRoute()
-
-// Sub-navigation links by page type
-const feed = [
-	{ name: 'Hot', href: '/feed' },
-	{ name: 'Latest', href: '/learderboard' },
-	{ name: 'Top All', href: '/members' },
-	{ name: 'Top Month', href: '/rules' },
-	{ name: 'Top Week', href: '/rules' },
-	{ name: 'Top Day', href: '/wiki' },
-	{ name: 'Most Comments', href: '/wiki' },
-	{ name: 'Latest Comments', href: '/wiki' }
-];
-
-const profile = [
-	{ name: 'Overview', href: '/user' },
-	{ name: 'Posts', href: '/user/:id/posts' },
-	{ name: 'Comments', href: '/user/:username/comments' }
-];
-
-const post = [
-	{ name: 'Comments', href: '/comments' },
-];
-
-// Select links by page type
-let links = [];
-
-switch(true) {
-  case route.name === 'index':
-    links = feed;
-    break;
-  case route.name === 'user-username':
-    links = profile;
-    break;
-  case route.name === 'post-id':
-    links = post;
-    break;
-  default:
-    links = feed;
-} 
+	defineProps({
+		links: Array
+	})
 </script>

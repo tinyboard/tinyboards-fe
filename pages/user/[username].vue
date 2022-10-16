@@ -2,7 +2,7 @@
 	<main class="flex pt-12 sm:pt-14">
 	    <!-- Sub Navigation -->
 	    <section>
-	          <NavigationNavbarSub />
+	          <NavigationNavbarSub :links="links"/>
 	    </section>
 	    <!-- Main Content -->
 	    <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 px-4 sm:px-6">
@@ -202,6 +202,13 @@
 	const username = computed(() => route.params.username)
 
 	const user = await fetchUser(username)
+
+	// Sub-navigation bar links
+	const links = [
+		{ name: 'Overview', href: '/user' },
+		{ name: 'Posts', href: '/user/:id/posts' },
+		{ name: 'Comments', href: '/user/:username/comments' }
+	];
 
 	// local state
 	const items = [

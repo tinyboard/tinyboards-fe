@@ -2,7 +2,7 @@
       <main class="flex pt-12 sm:pt-14">
             <!-- Sub Navigation -->
             <section>
-                  <NavigationNavbarSub />
+                  <NavigationNavbarSub :links="links"/>
             </section>
             <!-- Main Content -->
             <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 px-4 sm:px-6">
@@ -15,3 +15,16 @@
             </section>
       </main>
 </template>
+
+<script setup>
+      const links = [
+            { name: 'Hot', href: '/feed' },
+            { name: 'Latest', href: '/learderboard' },
+            { name: 'Top All', href: '/members' },
+            { name: 'Top Month', href: '/rules' },
+            { name: 'Top Week', href: '/rules' },
+            { name: 'Top Day', href: '/wiki' },
+            { name: 'Most Comments', href: '/wiki' },
+            { name: 'Latest Comments', href: '/wiki' }
+      ];
+</script>

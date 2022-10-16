@@ -2,7 +2,7 @@
 	<main class="flex pt-12 sm:pt-14">
             <!-- Sub Navigation -->
             <section>
-                  <NavigationNavbarSub />
+                  <NavigationNavbarSub :links="links"/>
             </section>
             <!-- Main Content -->
             <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 px-4 sm:px-6">
@@ -15,3 +15,9 @@
             </section>
       </main>
 </template>
+
+<script setup>
+const links = [
+      { name: 'Comments', href: '/comments' },
+];
+</script>
