@@ -1,0 +1,254 @@
+<template>
+	<nav class="fixed w-full bg-primary sm:border-b border-black/10 dark:bg-secondary dark:border-white/10 z-50">
+		<div class="mx-auto max-w-7xl">
+			<div class="flex items-center justify-between h-12 sm:h-14 px-4 py-5 sm:px-6 lg:px-8 xl:px-0">
+				<div class="flex flex-grow items-center">
+					<div class="flex-shrink-0">
+						<!-- Logo & Name -->
+						<NuxtLink to="/" class="font-medium text-lg text-white">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block mr-2">
+							  <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
+							</svg>
+							<span>{{ site.name }}</span>
+						</NuxtLink>
+					</div>
+					<!-- Core Navigation Links -->
+					<div class="hidden md:block w-1/3 ml-8">
+						<ul class="flex space-x-2">
+							<li class="flex items-center text-sm leading-5" v-for="link in coreNavigation" :key="link.name">
+		                      <NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
+		                      	<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-medium rounded']">
+		                      		{{ link.name }}
+		                      	</a>
+		                      </NuxtLink>
+	                		</li>
+						</ul>
+					</div>
+				</div>
+				<div class="hidden md:flex items-center">
+					<!-- Search Box -->
+					<div class="mr-4 flex items-baseline space-x-4">
+						<div class="relative">
+							<PopoversSearch/>
+						</div>
+					</div>
+					<!-- User Links -->
+					<div class="ml-4 flex items-center space-x-2 md:ml-6">
+						<NuxtLink to="/admin" tag="button" class="flex items-center justify-center px-2 w-8 h-8 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-sm">
+							<span class="sr-only">View admin tools</span>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+							  <path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+							</svg>
+						</NuxtLink>
+						<!-- Notifications dropdown -->
+						<!-- <keep-alive>
+							<Notifications/>
+						</keep-alive> -->
+						<!-- Create dropdown -->
+						<button class="flex items-center justify-center px-2 w-8 h-8 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-sm" @click="createPost">
+							<span class="sr-only">Create new post</span>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+							  <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
+							</svg>
+						</button>
+						<!-- Profile dropdown -->
+						<!-- <Profile/> -->
+					</div>
+				</div>
+				<div class="-mr-1 flex space-x-1 md:hidden">
+					<!-- Search button -->
+					<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="searchDrawer">
+						<span class="sr-only">Search</span>
+						<!-- Menu Icon -->
+						<i class="far fa-search fa-fw fa-lg"></i>
+					</button>
+					<!-- Create post button -->
+					<NuxtLink tag="button" class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" to="/create/post">
+						<span class="sr-only">Create post</span>
+						<!-- Menu Icon -->
+						<i class="far fa-feather fa-fw fa-lg"></i>
+					</NuxtLink>
+					<!-- Mobile menu button -->
+					<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="drawer">
+						<span class="sr-only">Open main menu</span>
+						<!-- Menu Icon -->
+						<i class="far fa-bars fa-fw fa-lg"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Mobile Menu -->
+		<transition enter-class="opacity-0" enter-active-class="ease-out transition-all duration-100" enter-to-class="opacity-200" leave-class="opacity-100" leave-active-class="ease-out transition-all duration-200" leave-to-class="opacity-0">
+			<div @keydown.esc="isOpen = false" v-show="isOpen" class="z-10 fixed inset-0 transition-opacity">
+				<div @click="isOpen = false" class="absolute inset-0 bg-gray-900 opacity-80" tabindex="0">
+				</div>
+			</div>
+		</transition>
+		<aside class="transform top-0 right-0 w-5/6 bg-white dark:bg-gray-800 fixed h-full py-3 overflow-y-auto ease-in-out transition-all duration-200 z-75" :class="isOpen ? 'translate-x-0' : 'translate-x-full'">
+			<div class="absolute top-4 left-3">
+				<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="drawer">
+					<span class="sr-only">Close menu</span>
+					<!-- Menu Icon -->
+					<i class="far fa-long-arrow-left fa-fw fa-lg"></i>
+				</button>
+			</div>
+			<div class="flex flex-col items-center text-center px-6 py-2">
+				<NuxtLink @click="isOpen = false" :to="`/${v.username}`">
+					<img class="w-16 h-16 object-cover rounded-sm" :src="v.avatarUrl" alt="user avatar"/>
+				</NuxtLink>
+				<div class="truncate mt-2">
+					<NuxtLink @click="isOpen = false" :to="`/${v.username}`" class="text-xl font-bold leading-5 text-gray-900 dark:text-gray-200">
+						{{ v.username }}
+					</NuxtLink>
+					<ul class="flex items-center space-x-2 mt-1 mb-0 text-xs text-gray-500 dark:text-gray-400">
+						<li>
+							503 followers
+						</li>
+						<li>
+							<span class="font-hairline">
+								|
+							</span>
+						</li>
+						<li>
+							{{ v.postReputation + v.commentReputation }} Reputation
+						</li>
+					</ul>
+				</div>
+			</div>
+			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
+			<NuxtLink to="/inbox" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+				<i class="far fa-envelope text-center fa-fw mr-3"></i><span>Inbox</span>
+			</NuxtLink>
+			<NuxtLink to="/following" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+				<i class="far fa-user text-center fa-fw mr-3"></i><span>Following</span>
+			</NuxtLink>
+			<NuxtLink to="/guilds" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+				<i class="far fa-users-crown text-center fa-fw mr-3"></i><span>Guilds</span>
+			</NuxtLink>
+			<NuxtLink to="/saved" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+				<i class="far fa-bookmark text-center fa-fw mr-3"></i><span>Saved</span>
+			</NuxtLink>
+			<NuxtLink to="/settings" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+				<i class="far fa-cog text-center fa-fw mr-3"></i><span>My Account</span>
+			</NuxtLink>
+			<NuxtLink to="/mod" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+				<i class="far fa-crown text-center fa-fw mr-3"></i><span>Moderation</span>
+			</NuxtLink>
+			<!-- <div class="hidden items-center px-4 py-2 text-lg text-gray-700 dark:text-gray-200">
+				<i class="far fa-signal-stream text-center fa-fw mr-3" :class="{'text-green-500':online}"></i><span>Appear Online</span>
+				<t-toggle v-model="online" variant="success" class="ml-auto"/>
+			</div> -->
+			<!-- <button class="flex items-center px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="dark = !dark">
+				<i class="far text-center fa-fw mr-3" :class="dark ? 'fa-sunglasses' : 'fa-moon'"></i>
+				<span>{{ dark ? 'Light Theme' : 'Dark Theme'}}</span>
+			</button> -->
+			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
+			<NuxtLink to="#" class="block px-4 py-2 text-lg text-red-500" role="menuitem" @click="isOpen = false">
+				<i class="far fa-sign-out fa-rotate-180 text-center fa-fw mr-3"></i><span>Sign Out</span>
+			</NuxtLink>
+		</aside>
+	</nav>
+</template>
+
+<script setup>
+	import { useSiteStore } from '@/stores/StoreSite.js';
+
+	const site = useSiteStore();
+
+	let isOpen = false;
+
+	const v = {
+		username: 'kermit',
+		avatarUrl: 'https://i.imgur.com/oVElMrk.gif',
+		postReputation: 563,
+		commentReputation: 200
+	}
+
+	// Define sub-navigation menu links
+	const coreNavigation = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Global', href: '/learderboard' }
+	]
+</script>
+
+<!-- <script>
+	// import Notifications from "@/components/dropdowns/navbar/Notifications.vue";
+	// import Profile from "@/components/dropdowns/navbar/Profile.vue";
+	// import Search from "@/components/popovers/PopoverSearch.vue";
+
+	export default {
+		name: "NavbarAuthenticated",
+		data() {
+			return {
+				online: false,
+				searchTerm: this.$route.query.q,
+				notifications: [1,2,3],
+				isOpen: false,
+				isSearch: false
+			}
+		},
+		computed: {
+			...mapState("persist", ["v", "darkMode"]),
+			site() {
+				return this.$store.getters['site/getSite'];
+			},
+			loginOrRegister() {
+				return this.$route.name == 'LoginView' || this.$route.name == 'RegisterView'
+			},
+			dark: {
+				get () {
+					return this.darkMode
+				},
+				set (value) {
+					this.$store.dispatch('persist/toggle_dark', value)
+				}
+			}
+		},
+		watch: {
+			isOpen: {
+				immediate: true,
+				handler(isOpen) {
+					if (isOpen) document.body.style.setProperty("overflow", "hidden");
+					else document.body.style.removeProperty("overflow");
+				}
+			},
+			isSearch: {
+				immediate: true,
+				handler(isSearch) {
+					if (isSearch) document.body.style.setProperty("overflow", "hidden");
+					else document.body.style.removeProperty("overflow");
+				}
+			}
+		},
+		methods: {
+			...mapActions("persist", ["logout"]),
+			createPost() {
+				if (this.$route.path.startsWith === '/+') {
+					this.$store.commit('create/TOGGLE_POST_CREATION_MODAL', {show: true})
+				} else {
+					this.$router.push('/create/post')
+				}
+			},
+			search() {
+				this.$router.push("/search?q="+this.searchTerm);
+			},
+			drawer() {
+				this.isOpen = !this.isOpen;
+			},
+			searchDrawer() {
+				this.isSearch = !this.isSearch;
+			}
+		},
+		mounted() {
+			document.addEventListener("keydown", e => {
+				if (e.keyCode == 27 && this.isOpen) this.isOpen = false;
+				if (e.keyCode == 27 && this.isSearch) this.isSearch = false;
+			});
+			window.addEventListener('popstate', () => {
+				if (this.isOpen) this.isOpen = false, this.$router.go(1);
+				if (this.isSearch) this.isSearch = false, this.$router.go(1);
+			})
+		}
+	}
+</script> -->
