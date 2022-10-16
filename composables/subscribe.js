@@ -1,5 +1,3 @@
-// subscribe.js
-
 import { ref } from "vue";
 
 export function useSubscribe(hasSubscribed) {

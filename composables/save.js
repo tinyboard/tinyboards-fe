@@ -1,5 +1,3 @@
-// save.js
-
 import { ref } from "vue";
 
 export function useSave(hasSaved) {

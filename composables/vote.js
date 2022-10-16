@@ -1,5 +1,3 @@
-// vote.js
-
 import { ref } from "vue";
 
 export function useVote(type = 0) {
