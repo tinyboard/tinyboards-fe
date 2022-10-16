@@ -1,7 +1,7 @@
 <template>
 	<nav class="fixed w-full bg-primary sm:border-b border-black/10 dark:bg-secondary dark:border-white/10 z-50">
-		<div class="mx-auto max-w-7xl">
-			<div class="flex items-center justify-between h-12 sm:h-14 px-4 py-5 sm:px-6 lg:px-8 xl:px-0">
+		<div class="mx-auto max-w-8xl px-4 sm:px-6 md:px-8">
+			<div class="flex items-center justify-between h-12 sm:h-14">
 				<div class="flex flex-grow items-center">
 					<div class="flex-shrink-0">
 						<router-link to="/" class="font-medium text-lg text-white">

@@ -60,6 +60,9 @@ module.exports = {
         'xs': '11px',
         'sm': '12px',
         'base': '14px'
+      },
+      maxWidth: {
+        '8xl': '90rem'
       }
     },
   },
