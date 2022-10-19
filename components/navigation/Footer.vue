@@ -4,7 +4,7 @@
 			<ul>
 				<li class="flex items-center space-x-1 -mx-2 text-xs leading-normal">
 					<NuxtLink v-for="link in navigation" :key="link.name" :to="link.href" custom v-slot="{ isActive }">
-						<span class="font-medium text-gray-500 hover:text-primary p-2">
+						<span class="font-bold text-gray-500 hover:text-primary p-2">
 							{{ link.name }}
 						</span>
 					</NuxtLink>

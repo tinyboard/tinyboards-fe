@@ -5,7 +5,7 @@
 			<NavigationNavbarSub :links="links"/>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 px-4 sm:px-6">
+		<section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
 			<div class="col-span-full flex gap-6 py-8 my-2.5 sm:my-0">
 				<!-- Main Content -->
 				<NuxtLayout name="feed"/>
@@ -19,12 +19,12 @@
 <script setup>
 	const links = [
 		{ name: 'Hot', href: '/feed' },
-		{ name: 'Latest', href: '/learderboard' },
-		{ name: 'Top All', href: '/members' },
-		{ name: 'Top Month', href: '/rules' },
-		{ name: 'Top Week', href: '/rules' },
-		{ name: 'Top Day', href: '/wiki' },
-		{ name: 'Most Comments', href: '/wiki' },
-		{ name: 'Latest Comments', href: '/wiki' }
+		{ name: 'Latest', href: '/feed?sort=new' },
+		{ name: 'Top All', href: '/feed?sort=top&time=all' },
+		{ name: 'Top Month', href: '/feed?sort=top&time=month' },
+		{ name: 'Top Week', href: '/feed?sort=top&time=week' },
+		{ name: 'Top Day', href: '/feed?sort=top&time=day' },
+		{ name: 'Most Comments', href: '/feed?sort=top&time=all&type=comments' },
+		{ name: 'Latest Comments', href: '/feed?sort=new&type=comments' }
 	];
 </script>

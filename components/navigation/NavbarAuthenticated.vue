@@ -5,7 +5,7 @@
 				<div class="flex flex-grow items-center">
 					<div class="flex-shrink-0">
 						<!-- Logo & Name -->
-						<NuxtLink to="/" class="font-medium text-lg text-white">
+						<NuxtLink to="/" class="font-bold text-lg text-white">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block mr-2">
 							  <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
 							</svg>
@@ -17,7 +17,7 @@
 						<ul class="flex space-x-2">
 							<li class="flex items-center text-sm leading-5" v-for="link in coreNavigation" :key="link.name">
 		                      <NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
-		                      	<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-medium rounded']">
+		                      	<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 		                      		{{ link.name }}
 		                      	</a>
 		                      </NuxtLink>
@@ -34,10 +34,11 @@
 					</div>
 					<!-- User Links -->
 					<div class="ml-4 flex items-center space-x-2 md:ml-6">
-						<NuxtLink to="/admin" tag="button" class="flex items-center justify-center px-2 w-8 h-8 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-sm">
+						<NuxtLink to="/admin" tag="button" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
 							<span class="sr-only">View admin tools</span>
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-							  <path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
 							</svg>
 						</NuxtLink>
 						<!-- Notifications dropdown -->
@@ -45,12 +46,14 @@
 							<Notifications/>
 						</keep-alive> -->
 						<!-- Create dropdown -->
-						<button class="flex items-center justify-center px-2 w-8 h-8 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-sm" @click="createPost">
+						<NuxtLink to="/submit" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md" @click="createPost">
 							<span class="sr-only">Create new post</span>
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-							  <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+							   <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
 							</svg>
-						</button>
+						</NuxtLink>
 						<!-- Profile dropdown -->
 						<!-- <Profile/> -->
 					</div>
@@ -169,7 +172,7 @@
 	const coreNavigation = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Members', href: '/members' },
-		{ name: 'Leaderboard', href: '/members' },
+		{ name: 'Leaderboard', href: '/leaderboard' },
 		{ name: 'FAQ', href: '/faq' }
 	]
 </script>

@@ -1,17 +1,40 @@
 <template>
-    <div class="w-96 hidden xl:flex flex-col space-y-6 text-base">
+    <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
       <div class="p-4 border rounded-md">
-        <NuxtLink :to="'/'+author.username" class="inline-block sm:p-1 sm:border sm:bg-white mr-2">
-          <img
-          loading="lazy"
-          :src="author.avatarUrl"
-          alt="avatar"
-          class="w-8 h-8 object-cover rounded-sm sm:rounded-none"
-          />
-        </NuxtLink>
+            <NuxtLink :to="'/'+author.username" class="group flex items-center space-x-2  mb-4">
+                  <!-- Avatar -->
+                  <img
+                  loading="lazy"
+                  :src="author.avatarUrl"
+                  alt="avatar"
+                  class="flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-1 border bg-white group-hover:bg-gray-200 group-hover:border-transparent"
+                  />
+                  <!-- Username -->
+                  <strong>
+                        {{ author.username }}
+                  </strong>
+            </NuxtLink>
+            <div class="flex flex-wrap -m-2">
+                  <div class="w-2/4 p-2">
+                        <p class="text-lg leading-4">120</p>
+                        <small class="text-gray-500">Posts</small>
+                  </div>
+                  <div class="w-2/4 p-2">
+                        <p class="text-lg leading-4">45</p>
+                        <small class="text-gray-500">Comments</small>
+                  </div>
+                  <div class="w-2/4 p-2">
+                        <p class="text-lg leading-4">120</p>
+                        <small class="text-gray-500">Reputation</small>
+                  </div>
+                  <div class="w-2/4 p-2">
+                        <p class="text-lg leading-4">12K</p>
+                        <small class="text-gray-500">Hours lurking</small>
+                  </div>
+            </div>
       </div>
       <div>
-            <h2 class="font-medium leading-5 text-base mb-3 pb-2 border-b-2">
+            <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   Details
             </h2>
             <p>
@@ -19,7 +42,7 @@
             </p>
       </div>
       <div>
-            <h2 class="font-medium leading-5 text-base mb-3 pb-2 border-b-2">
+            <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   Share
             </h2>
             <ul class="flex flex-col space-y-2 divide-y">
@@ -32,7 +55,7 @@
             </ul>
       </div>
       <div>
-            <h2 class="font-medium leading-5 text-base mb-3 pb-2 border-b-2">
+            <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   More by author
             </h2>
       </div>

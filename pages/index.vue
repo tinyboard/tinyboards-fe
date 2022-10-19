@@ -5,7 +5,7 @@
                   <NavigationNavbarSub :links="links"/>
             </section>
             <!-- Main Content -->
-            <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 px-4 sm:px-6">
+            <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
                   <div class="col-span-full flex gap-6 py-8 my-2.5 sm:my-0">
                         <!-- Main Content -->
                          <NuxtLayout name="feed"/>
