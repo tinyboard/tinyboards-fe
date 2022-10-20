@@ -20,7 +20,7 @@
 						loading="lazy"
 						:src="post.author.avatarUrl"
 						alt="avatar"
-						class="flex-shrink-0 w-9 h-9 sm:w-14 sm:h-14 object-cover rounded-sm sm:rounded-none sm:p-1 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+						class="flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-1 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
 						/>
 					</NuxtLink>
 					<div class="flex flex-col leading-4">

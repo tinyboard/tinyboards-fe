@@ -20,12 +20,12 @@
 			<tbody>
 				<tr v-for="item in items" :key="item.id" class="bg-white odd:bg-gray-50 border-b last:border-0 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700">
 					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
-						<!-- Avatar - Desktopy Only -->
+						<!-- Avatar - Desktop Only -->
 						<img
 						loading="lazy"
 						:src="item.author.avatarUrl"
 						alt="avatar"
-						class="hidden sm:inline flex-shrink-0 w-14 h-14 object-cover rounded-sm rounded-none p-1 border bg-white"
+						class="hidden sm:inline flex-shrink-0 w-12 h-12 object-cover rounded-sm rounded-none p-1 border bg-white"
 						/>
 						<!-- Post Details -->
 						<div class="flex flex-col sm:pl-3 sm:truncate">

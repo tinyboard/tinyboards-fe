@@ -16,19 +16,19 @@
             </NuxtLink>
             <div class="flex flex-wrap -m-2">
                   <div class="w-2/4 p-2">
-                        <p class="text-lg leading-4">120</p>
+                        <p class="font-bold leading-4">120</p>
                         <small class="text-gray-500">Posts</small>
                   </div>
                   <div class="w-2/4 p-2">
-                        <p class="text-lg leading-4">45</p>
+                        <p class="font-bold leading-4">45</p>
                         <small class="text-gray-500">Comments</small>
                   </div>
                   <div class="w-2/4 p-2">
-                        <p class="text-lg leading-4">120</p>
+                        <p class="font-bold leading-4">120</p>
                         <small class="text-gray-500">Reputation</small>
                   </div>
                   <div class="w-2/4 p-2">
-                        <p class="text-lg leading-4">12K</p>
+                        <p class="font-bold leading-4">12K</p>
                         <small class="text-gray-500">Hours lurking</small>
                   </div>
             </div>
