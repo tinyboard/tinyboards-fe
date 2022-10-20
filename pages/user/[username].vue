@@ -1,13 +1,12 @@
 <template>
 	<main class="flex pt-12 sm:pt-14">
-	    <!-- Sub Navigation -->
-	    <section>
-	          <NavigationNavbarSub :links="links"/>
-	    </section>
-	    <!-- Main Content -->
-	    <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
-	    	<!-- User Details -->
-			<div class="col-span-full flex gap-6 py-8 my-2.5 sm:my-0">
+		<!-- Sub Navigation -->
+		<section>
+			<NavigationNavbarSub :links="links"/>
+		</section>
+		<!-- Main Content -->
+		<section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
+			<div class="col-span-full flex flex-col gap-6 py-8 my-2.5 sm:my-0">
 				<!-- Stats -->
 				<div class="w-full bg-gray-200/50 sm:rounded-md sm:border sm:shadow-inner-white">
 					<div class="flex items-center space-x-4 px-4 sm:px-6 py-4 text-sm text-gray-500 leading-normal">
@@ -64,9 +63,9 @@
 						</ul>
 					</div>
 					<!-- Details -->
-			    	<div id="details" class="relative flex flex-wrap md:flex-nowrap items-center w-full p-4 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(https://i.imgur.com/HRYqKAf.jpg)` }">
-			    		<!-- Avatar -->
-				    	<img
+					<div id="details" class="relative flex flex-wrap md:flex-nowrap items-center w-full p-4 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(https://i.imgur.com/HRYqKAf.jpg)` }">
+						<!-- Avatar -->
+						<img
 						loading="lazy"
 						src="http://placekitten.com/200/300"
 						alt="avatar"
@@ -117,10 +116,8 @@
 						</div>
 					</div>
 				</div>
-			</div>
-	    	<!-- User Content -->
-			<div class="col-span-full flex gap-6 py-8 sm:px-6 lg:px-8 xl:px-0 my-2.5 sm:my-0">
-             	<div class="relative w-full sm:rounded-md sm:border overflow-x-auto">
+				<!-- User Content -->
+				<div class="relative w-full sm:rounded-md sm:border overflow-x-auto">
 					<table class="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400">
 						<thead class="text-base text-gray-700 leading-5 w-full px-4 py-3 lg:p-6 bg-gray-200/50 border-b shadow-inner-white">
 							<tr>
@@ -186,7 +183,7 @@
 								<td class="hidden lg:table-cell py-4 px-4">
 									<div class="flex items-center">
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="opacity-40 w-4 h-4">
-										  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-4.75a.75.75 0 001.5 0V8.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0L6.2 9.74a.75.75 0 101.1 1.02l1.95-2.1v4.59z" clip-rule="evenodd" />
+											<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-4.75a.75.75 0 001.5 0V8.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0L6.2 9.74a.75.75 0 101.1 1.02l1.95-2.1v4.59z" clip-rule="evenodd" />
 										</svg>
 										<span class="pl-1">
 											{{ item.points }}
@@ -196,7 +193,7 @@
 								<td class="hidden lg:table-cell py-4 px-4">
 									<div class="flex items-center">
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="opacity-40 w-4 h-4">
-										  <path fill-rule="evenodd" d="M3.43 2.524A41.29 41.29 0 0110 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.202 41.202 0 01-5.183.501.78.78 0 00-.528.224l-3.579 3.58A.75.75 0 016 17.25v-3.443a41.033 41.033 0 01-2.57-.33C1.993 13.244 1 11.986 1 10.573V5.426c0-1.413.993-2.67 2.43-2.902z" clip-rule="evenodd" />
+											<path fill-rule="evenodd" d="M3.43 2.524A41.29 41.29 0 0110 2c2.236 0 4.43.18 6.57.524 1.437.231 2.43 1.49 2.43 2.902v5.148c0 1.413-.993 2.67-2.43 2.902a41.202 41.202 0 01-5.183.501.78.78 0 00-.528.224l-3.579 3.58A.75.75 0 016 17.25v-3.443a41.033 41.033 0 01-2.57-.33C1.993 13.244 1 11.986 1 10.573V5.426c0-1.413.993-2.67 2.43-2.902z" clip-rule="evenodd" />
 										</svg>
 										<span class="pl-1">
 											{{ item.replies }}
@@ -206,7 +203,7 @@
 								<td class="hidden xl:table-cell py-4 px-4">
 									<div class="flex items-center">
 										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="opacity-40 w-4 h-4">
-										  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+											<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
 										</svg>
 										<span class="pl-1">
 											{{ item.last_active }}
@@ -217,8 +214,8 @@
 						</tbody>
 					</table>
 				</div>
-	        </div>
-	    </section>
+			</div>
+		</section>
 	</main>
 </template>
 
@@ -233,9 +230,9 @@
 
 	// Sub-navigation bar links
 	const links = [
-		{ name: 'Overview', href: '/user' },
-		{ name: 'Posts', href: '/user/:id/posts' },
-		{ name: 'Comments', href: '/user/:username/comments' }
+	{ name: 'Overview', href: '/user' },
+	{ name: 'Posts', href: '/user/:id/posts' },
+	{ name: 'Comments', href: '/user/:username/comments' }
 	];
 
 	// local state
