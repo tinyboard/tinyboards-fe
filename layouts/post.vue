@@ -199,13 +199,13 @@
 		</div>
 		<!-- Comments -->
 		<div>
-			<h1 class="text-base leading-normal font-bold dark:text-gray-100 mb-2">
+			<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
 				{{ comments.length === 1 ? '1 Comment' : `${comment.lenght} Comments` }}
 			</h1>
 			<div v-if="comments">
 				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
 			</div>
-			<p v-else class="text-base text-gray-500 dark:text-gray-100">
+			<p v-else class="px-2.5 md:px-0 text-base text-gray-500 dark:text-gray-100">
 				psst... start the discussion!
 			</p>
 		</div>
