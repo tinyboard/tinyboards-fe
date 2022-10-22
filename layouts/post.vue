@@ -184,7 +184,7 @@
 		    </h1>
 		</div>
 		<!-- Comments -->
-		<ContentCommentList :comments="comments" :offset="offset" class="md:px-4 border border-transparent"/>
+		<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
 	</div>
 </template>
 
