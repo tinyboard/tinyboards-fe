@@ -65,6 +65,9 @@ module.exports = {
         '8xl': '90rem'
       }
     },
+    variants: {
+      margin: ['responsive', 'first']
+    }
   },
   plugins: [
     require('@tailwindcss/forms')

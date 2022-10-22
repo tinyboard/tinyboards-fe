@@ -1,5 +1,5 @@
 <template>
-	<div :id="`comment-${comment.id}`" class="group flex relative mt-6 first:mt-0" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
+	<li :id="`comment-${comment.id}`" class="group flex relative mt-6 first:mt-0" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
 		<div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer" @click="isCollapsed = !isCollapsed"></div>
 		<div class="relative flex flex-col flex-shrink-0 items-center mr-2">
 			<!-- User Avatar -->
@@ -101,7 +101,7 @@
 				<i class="far fa-long-arrow-alt-right pl-1"></i>
 			</NuxtLink>
 		</div>
-	</div>
+	</li>
 </template>
 
 <script setup>

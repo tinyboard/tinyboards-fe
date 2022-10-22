@@ -1,10 +1,8 @@
 <template>
-	<div class="mt-5 first:mt-0">
-		<!-- List of Comments -->
-		<div v-if="comments.length">
-			<ContentComment v-for="comment in comments" :key="comment.id" :comment="comment"></ContentComment>
-		</div>
-	</div>
+	<!-- List of Comments -->
+	<ul v-if="comments.length" class="mt-5 first:mt-0">
+		<ContentComment v-for="comment in comments" :key="comment.id" :comment="comment"></ContentComment>
+	</ul>
 </template>
 
 <script setup>

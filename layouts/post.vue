@@ -5,7 +5,7 @@
 			<div v-if="post.isStickied" class="flex items-center mb-4 bg-white border-t border-b sm:border sm:rounded-md overflow-hidden">
 				<div class="flex items-center justify-center w-10 h-10 bg-white border-r">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="text-primary w-4 h-4">
-					  <path fill-rule="evenodd" d="M10 2c-1.716 0-3.408.106-5.07.31C3.806 2.45 3 3.414 3 4.517V17.25a.75.75 0 001.075.676L10 15.082l5.925 2.844A.75.75 0 0017 17.25V4.517c0-1.103-.806-2.068-1.93-2.207A41.403 41.403 0 0010 2z" clip-rule="evenodd" />
+						<path fill-rule="evenodd" d="M10 2c-1.716 0-3.408.106-5.07.31C3.806 2.45 3 3.414 3 4.517V17.25a.75.75 0 001.075.676L10 15.082l5.925 2.844A.75.75 0 0017 17.25V4.517c0-1.103-.806-2.068-1.93-2.207A41.403 41.403 0 0010 2z" clip-rule="evenodd" />
 					</svg>
 				</div>
 				<div class="text-base text-primary pl-3">This post has been pinned by the moderators.</div>
@@ -95,12 +95,12 @@
 			<!-- Footer -->
 			<div class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
 				<!-- Desktop actions -->
-				<div class="hidden md:flex flex-grow items-center space-x-6">
-					<div class="group flex items-center space-x-2 leading-none">
+				<ul class="hidden md:flex flex-grow items-center space-x-6">
+					<li class="group flex items-cneter space-x-2 leading-none">
 						<button @click="vote(1)" :class="voteType === 1 ? 'text-primary' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5">
-							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							   <path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
 							</svg>
 						</button>
 						<span class="font-bold" :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
@@ -108,83 +108,107 @@
 						</span>
 						<button @click="vote(-1)" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5">
-							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							   <path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z"></path>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z"></path>
 							</svg>
 						</button>
-					</div>
-					<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
-						</svg>
-						<span class="text-sm font-bold">9 Comments</span>
-					</button>
-					<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-						   <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-						</svg>
-						<span class="text-sm font-bold">Copy Link</span>
-					</button>
-					<button @click="save(post.isSaved)" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-						<!-- Bookmark Icon -->
-						<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
-						</svg>
-						<!-- Bookmark Slash Icon -->
-						<svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <line x1="3" y1="3" x2="21" y2="21"></line>
-						   <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
-						</svg>
-						<span class="text-sm font-bold">{{ isSaved ? 'Unsave' : 'Save' }}</span>
-					</button>
-					<button @click="subscribe(post.isSubscribed)" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-						<!-- Bell Icon -->
-						<svg v-show="!isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path>
-						   <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
-						</svg>
-						<!-- Bell Slash Icon -->
-						<svg v-show="isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <line x1="3" y1="3" x2="21" y2="21"></line>
-						   <path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
-						   <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
-						</svg>
-						<span class="text-sm font-bold">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
-					</button>
-					<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
-						</svg>
-						<span class="text-sm font-bold">Report</span>
-					</button>
-					<button v-if="author" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
-						<i class="far fa-trash-alt fa-fw mr-1"></i>
-						<span class="text-sm font-bold">Delete</span>
-					</button>
-					<button v-if="author" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
-						<i class="far fa-pen fa-fw mr-1"></i>
-						<span class="text-sm font-bold">Edit</span>
-					</button>
-				</div>
+					</li>
+					<li>
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
+							</svg>
+							<span class="text-sm font-bold">9 Comments</span>
+						</button>
+					</li>
+					<li>
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
+								<rect x="9" y="3" width="6" height="4" rx="2"></rect>
+							</svg>
+							<span class="text-sm font-bold">Copy Link</span>
+						</button>
+					</li>
+					<li>
+						<button @click="save(post.isSaved)" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+							<!-- Bookmark Icon -->
+							<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
+							</svg>
+							<!-- Bookmark Slash Icon -->
+							<svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<line x1="3" y1="3" x2="21" y2="21"></line>
+								<path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
+							</svg>
+							<span class="text-sm font-bold">{{ isSaved ? 'Unsave' : 'Save' }}</span>
+						</button>
+					</li>
+					<li>
+						<button @click="subscribe(post.isSubscribed)" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+							<!-- Bell Icon -->
+							<svg v-show="!isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path>
+								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
+							</svg>
+							<!-- Bell Slash Icon -->
+							<svg v-show="isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<line x1="3" y1="3" x2="21" y2="21"></line>
+								<path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
+								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
+							</svg>
+							<span class="text-sm font-bold">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
+						</button>
+					</li>
+					<li>
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
+							</svg>
+							<span class="text-sm font-bold">Report</span>
+						</button>
+					</li>
+					<li>
+						<button v-if="author" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+							<i class="far fa-trash-alt fa-fw mr-1"></i>
+							<span class="text-sm font-bold">Delete</span>
+						</button>
+					</li>
+					<li>
+						<button v-if="author" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+							<i class="far fa-pen fa-fw mr-1"></i>
+							<span class="text-sm font-bold">Edit</span>
+						</button>
+					</li>
+				</ul>
 			</div>
 		</div>
 		<!-- Banner -->
 		<div id="comments" class="w-full border rounded-md p-4 shadow-inner-white">
-		    <h1 class="text-base text-gray-500 dark:text-gray-100 text-center">
-		          <strong>Want to join the discussion? </strong>
-		          <NuxtLink to="/sign-up">Sign up to comment</NuxtLink>
-		    </h1>
+			<p class="text-base text-gray-500 dark:text-gray-100 text-center">
+				<strong>Want to join the discussion? </strong>
+				<NuxtLink to="/sign-up">Sign up to comment</NuxtLink>
+			</p>
 		</div>
 		<!-- Comments -->
-		<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
+		<div>
+			<h1 class="text-base leading-normal font-bold dark:text-gray-100 mb-2">
+				{{ comments.length === 1 ? '1 Comment' : `${comment.lenght} Comments` }}
+			</h1>
+			<div v-if="comments">
+				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
+			</div>
+			<p v-else class="text-base text-gray-500 dark:text-gray-100">
+				psst... start the discussion!
+			</p>
+		</div>
 	</div>
 </template>
 
