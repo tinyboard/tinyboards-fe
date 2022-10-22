@@ -15,5 +15,5 @@ export default <RouterConfig>{
       };
     }
     return { top: 0 };
-  },
+  }
 };

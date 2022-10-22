@@ -24,18 +24,26 @@
 						/>
 					</NuxtLink>
 					<div class="flex flex-col leading-4">
-						<NuxtLink :to="'/'+post.author.username" class="flex items-center font-bold text-base">
+						<NuxtLink :to="'/'+post.author.username" class="flex items-center font-bold text-sm">
 							<span>{{ post.author.username }}</span>
-							<span v-if="post.author.title" class="ml-2 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
+							<span v-if="post.author.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
 								{{ post.author.title }}
 							</span>
 						</NuxtLink>
 						<p class="flex items-center space-x-2 text-sm mt-1 text-gray-400">
-							<span>{{ getFormat(post.createdUtc) }}</span>
+							<!-- Timestamp -->
+							<span>{{ formatDate(post.createdUtc) }}</span>
 							<span v-if="post.editedUtc != 0">
 								<span class="font-black text-gray-400 dark:text-gray-500">·</span>
-								<span class="italic pl-1">
-									Edited {{ getFormat(post.editedUtc) }}
+								<span class="pl-1 italic">
+									Edited {{ formatDate(post.editedUtc) }}
+								</span>
+							</span>
+							<!-- Ratio -->
+							<span>
+								<span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
+								<span class="pl-1">
+									{{ percentUpvoted }}% upvoted
 								</span>
 							</span>
 						</p>
@@ -96,7 +104,7 @@
 							</svg>
 						</button>
 						<span class="font-bold" :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
-							{{ 1 + voteType }}
+							{{ post.score + voteType }}
 						</span>
 						<button @click="vote(-1)" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5">
@@ -165,7 +173,6 @@
 						<i class="far fa-pen fa-fw mr-1"></i>
 						<span class="text-sm font-bold">Edit</span>
 					</button>
-					<Options/>
 				</div>
 			</div>
 		</div>
@@ -177,12 +184,15 @@
 		    </h1>
 		</div>
 		<!-- Comments -->
+		<ContentCommentList :comments="comments" :offset="offset" class="md:px-4 border border-transparent"/>
 	</div>
 </template>
 
 <script setup>
-	// Import date-fns
-	import { isValid, formatDistanceToNowStrict } from '@/node_modules/date-fns';
+	import { reactive, computed } from 'vue'
+
+	import { formatDate } from '@/utils/formatDate';
+	import { toPercent } from '@/utils/percent'
 
 	import { useVote } from '@/composables/vote';
 	import { useSave } from '@/composables/save';
@@ -191,6 +201,63 @@
 	const { voteType, vote } = useVote();
 	let { isSaved, save } = useSave();
 	let { isSubscribed, subscribe } = useSubscribe();
+
+	const percentUpvoted = computed(() => {
+		const num = 1 - post.downvotes / post.upvotes;
+		return toPercent(num);
+	})
+
+	const offset = computed(() => {
+		if (comments && comments.length) {
+			return comments[0].level - 1
+		} else {
+			return 0
+		}
+	});
+
+	const comments = [
+	{
+		id: 1,
+		author: {
+			username: 'elon',
+			avatar_url: 'https://i.imgur.com/svGJfRg.jpg',
+			title: 'developer',
+			titleColor: '#1E1E1E',
+		},
+		parent_comment_id: null,
+		created_utc: 1666434191,
+		edited_utc: 1666434291,
+		score: 42,
+		upvotes: 48,
+		downvotes: 4,
+		replies: [
+		{
+			id: 1,
+			author: {
+				username: 'tim_apple',
+				title: 'developer',
+				titleColor: '#1E1E1E',
+				avatar_url: 'https://i.imgur.com/nzY5zAg.jpg',
+			},
+			parent_comment_id: 1,
+			parent_permalink: '/post/1#comment-1',
+			created_utc: 1666434191,
+			edited_utc: 1666434291,
+			score: 23,
+			upvotes: 24,
+			downvotes: 1,
+			replies: [],
+			level: 0,
+			body_html: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea <strong>commodo consequat</strong>. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>',
+			parent_author: {
+				username: 'elon'
+			}
+		}
+		],
+		level: 0,
+		body_html: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea <strong>commodo consequat</strong>. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>',
+	}
+	];
 
 	const post = {
 		id: 1,
@@ -201,6 +268,9 @@
 			titleColor: '#1E1E1E',
 			avatarUrl: 'https://i.imgur.com/nzY5zAg.jpg',
 		},
+		score: 20,
+		upvotes: 28,
+		downvotes: 8,
 		type: 'link',
 		url: '',
 		permalink: '1',
@@ -213,13 +283,6 @@
 		isSubscribed: true,
 		createdUtc: 1664856789,
 		editedUtc: 1665295944
-	}
-
-	const getFormat = (date) => {
-		const timestamp = date * 1000
-		if (isValid(timestamp)) {
-			return formatDistanceToNowStrict(new Date(timestamp), { addSuffix: true })
-		}
 	}
 
 	if (post.isSaved) {
