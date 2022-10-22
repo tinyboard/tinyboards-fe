@@ -199,8 +199,8 @@
 	import { useSubscribe } from '@/composables/subscribe';
 
 	const { voteType, vote } = useVote();
-	let { isSaved, save } = useSave();
-	let { isSubscribed, subscribe } = useSubscribe();
+	const { isSaved, save } = useSave();
+	const { isSubscribed, subscribe } = useSubscribe();
 
 	const percentUpvoted = computed(() => {
 		const num = 1 - post.downvotes / post.upvotes;
