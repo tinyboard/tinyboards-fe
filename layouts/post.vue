@@ -96,7 +96,7 @@
 			<div class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
 				<!-- Desktop actions -->
 				<ul class="hidden md:flex flex-grow items-center space-x-6">
-					<li class="group flex items-cneter space-x-2 leading-none">
+					<li class="group flex items-center space-x-2 leading-none">
 						<button @click="vote(1)" :class="voteType === 1 ? 'text-primary' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
