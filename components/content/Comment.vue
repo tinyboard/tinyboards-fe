@@ -81,12 +81,12 @@
 			<!-- Comment ctions -->
 			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed">
 				<li>
-					<button class="text-xs font-medium leading-6 hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
+					<button class="text-xs font-bold hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
 						Upvote ({{ voteType === 1 ? props.comment.upvotes + 1 : props.comment.upvotes }})
 					</button>
 				</li>
 				<li>
-					<button class="text-xs font-medium leading-6 hover:underline" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(-1)">
+					<button class="text-xs font-bold hover:underline" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(-1)">
 						Downvote ({{ voteType === -1 ? props.comment.downvotes - 1 : props.comment.downvotes }})
 					</button>
 				</li>
