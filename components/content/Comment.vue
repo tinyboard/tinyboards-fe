@@ -167,7 +167,7 @@
 		left: calc(50% - 1px);
 		width: 14px;
 		height: calc(100% - 32px);
-		@apply absolute bottom-0 border-l-2;
+		@apply absolute bottom-0 border-l border-gray-300;
 	}
 	.comment-collapse-bar.reply::before {
 		height: calc(100% - 24px);
