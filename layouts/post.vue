@@ -200,7 +200,7 @@
 		<!-- Comments -->
 		<div>
 			<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
-				{{ comments.length === 1 ? '1 Comment' : `${comment.lenght} Comments` }}
+				{{ post.comment_count === 1 ? '1 comment' : `${post.comment_count} comments` }}
 			</h1>
 			<div v-if="comments">
 				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
@@ -295,6 +295,7 @@
 		score: 20,
 		upvotes: 28,
 		downvotes: 8,
+		comment_count: 2,
 		type: 'link',
 		url: '',
 		permalink: '1',
