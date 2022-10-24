@@ -5,7 +5,6 @@ FROM node:18.6.0-alpine
 RUN mkdir -p /usr/src/app/.nuxt
 WORKDIR /usr/src/app
 COPY package.json /usr/src/app/
-COPY package-lock.json /usr/src/app/
 #FROM BASE AS BUILD
 # update and install dependency
 RUN apk update && apk upgrade
