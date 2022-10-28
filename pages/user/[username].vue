@@ -1,11 +1,18 @@
 <template>
 	<main class="flex pt-12 sm:pt-14">
 		<!-- Sub Navigation -->
-		<section>
+		<section v-if="!error">
 			<NavigationNavbarSub :links="links"/>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
+		<section v-if="error" class="container mx-auto my-[5rem] flex justify-center">
+			<div class="text-center">
+				<h1 class="text-5xl font-bold text-red-500 text-opacity-5">404</h1>
+				<h2 class="text-lg">The user you are looking for is an unperson</h2>
+				<p class="text-sm text-gray-600">You are likely seeing this because you typed the username manually and made a typo. Please do better next time.</p>
+			</div>
+		</section>
+		<section v-else class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
 			<div class="col-span-full flex flex-col gap-6 py-8 my-2.5 sm:my-0">
 				<!-- Stats -->
 				<div class="w-full bg-gray-200/50 sm:rounded-md sm:border sm:shadow-inner-white">
@@ -235,12 +242,12 @@
 
 <script setup>
 	import { computed } from 'vue'
-	import { fetchUser } from '@/composables/user'
+	import { useFetchUser } from '@/composables/user'
 
 	const route = useRoute()
 	const username = computed(() => route.params.username)
 
-	const user = await fetchUser(username)
+	const { data: user, error, pending, refresh } = await useFetchUser(username.value);
 
 	// Sub-navigation bar links
 	const links = [
