@@ -4,7 +4,7 @@
 			<ul class="flex items-center">
 				<li class="text-sm leading-6" v-for="link in links" :key="link.name">
 					<NuxtLink :to="link.href" custom v-slot="{ isExactActive, href, navigate }">
-						<a :href="link.href" @click="navigate" :class="[isExactActive && !disableActiveClass ? 'text-primary shadow-[0_1px_0_rgba(var(--color-primary))]' : 'text-gray-500 hover:text-primary', 'px-4 py-2 block']">
+						<a :href="href" @click="navigate" :class="[isExactActive && !disableActiveClass ? 'text-primary shadow-[0_1px_0_rgba(var(--color-primary))]' : 'text-gray-500 hover:text-primary', 'px-4 py-2 block']">
 							{{ link.name }}
 						</a>
 					</NuxtLink>

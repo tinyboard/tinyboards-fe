@@ -1,6 +1,6 @@
 <template>
-	<div class="relative w-full flex flex-col space-y-6">
-		<div v-if="post" class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
+	<div v-if="post" class="relative w-full flex flex-col space-y-6">
+		<div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
 			<!-- Pinned Banner -->
 			<div v-if="post.isStickied" class="flex items-center mb-4 bg-white border-t border-b sm:border sm:rounded-md overflow-hidden">
 				<div class="flex items-center justify-center w-10 h-10 bg-white border-r">
@@ -14,7 +14,7 @@
 			<!-- Post Meta Information & Content -->
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
-					<NuxtLink :to="'/user/'+item.creator.username" class="mr-2">
+					<NuxtLink :to="'/user/'+item.creator.name" class="mr-2">
 						<!-- Avatar -->
 						<img
 						loading="lazy"
@@ -210,6 +210,11 @@
 			</p>
 		</div>
 	</div>
+	<div v-else class="relative w-full">
+		<div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
+			This post may have been removed or has never existed at all.
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -229,8 +234,14 @@
 
 	let route = useRoute();
 	let { item, pending, error, refresh } = await usePost(route.params.id);
-	item = item.value.post_view;
-	const post = item.post;
+	console.error(`Error: ${error.value}`);
+	let post = null;
+	
+	if (!error.value) {
+		console.log("error is null");
+		item = item.value.post_view;
+		post = item.post;
+	}
 
 	const percentUpvoted = computed(() => {
 		const num = 1 - item.counts.downvotes / item.counts.upvotes;
