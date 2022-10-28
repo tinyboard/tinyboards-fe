@@ -14,29 +14,29 @@
 			<!-- Post Meta Information & Content -->
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
-					<NuxtLink :to="'/'+post.author.username" class="mr-2">
+					<NuxtLink :to="'/user/'+item.creator.username" class="mr-2">
 						<!-- Avatar -->
 						<img
 						loading="lazy"
-						:src="post.author.avatarUrl"
+						:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 						alt="avatar"
 						class="flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-1 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
 						/>
 					</NuxtLink>
 					<div class="flex flex-col leading-4">
-						<NuxtLink :to="'/'+post.author.username" class="flex items-center font-bold text-sm">
-							<span>{{ post.author.username }}</span>
-							<span v-if="post.author.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
-								{{ post.author.title }}
+						<NuxtLink :to="'/user/'+item.creator.name" class="flex items-center font-bold text-sm">
+							<span>{{ item.creator.name }}</span>
+							<span v-if="item.creator.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
+								{{ item.creator.title }}
 							</span>
 						</NuxtLink>
 						<p class="flex items-center space-x-2 text-sm mt-1 text-gray-400">
 							<!-- Timestamp -->
-							<span>{{ formatDate(post.createdUtc) }}</span>
-							<span v-if="post.editedUtc != 0">
+							<span>{{ formatDate(new Date(post.published)) }}</span>
+							<span v-if="post.updated">
 								<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 								<span class="pl-1 italic">
-									Edited {{ formatDate(post.editedUtc) }}
+									Edited {{ formatDate(new Date(post.updated)) }}
 								</span>
 							</span>
 							<!-- Ratio -->
@@ -73,11 +73,11 @@
 			<!-- Post Embed -->
 			<div class="px-2.5 sm:px-0 mt-3 sm:mt-4" v-if="post.url && post.type !== 'image'">
 				<LinkPreview
-				:domain="post.domain"
-				:title="post.metaTitle"
-				:thumbnail="post.thumbUrl"
+				:domain="'post.domain placeholder'"
+				:title="'post.metaTitle placeholder'"
+				:thumbnail="'post.thumbUrl placeholder'"
 				:url="post.url"
-				:preview="post.metaDescription"
+				:preview="'post.metaDescription placeholder'"
 				/>
 			</div>
 			<!-- Post Image -->
@@ -89,8 +89,8 @@
 				/>
 			</div>
 			<!-- Post Text Body -->
-			<div v-if="post.htmlBody" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
-				<div class="dark:text-gray-200 break-words" v-html="post.htmlBody"></div>
+			<div v-if="post.body_html" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
+				<div class="dark:text-gray-200 break-words" v-html="post.body_html"></div>
 			</div>
 			<!-- Footer -->
 			<div class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
@@ -119,7 +119,7 @@
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 							</svg>
-							<span class="text-sm font-bold">9 Comments</span>
+							<span class="text-sm font-bold">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
 						</button>
 					</li>
 					<li>
@@ -133,7 +133,7 @@
 						</button>
 					</li>
 					<li>
-						<button @click="save(post.isSaved)" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
 							<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -149,7 +149,7 @@
 						</button>
 					</li>
 					<li>
-						<button @click="subscribe(post.isSubscribed)" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bell Icon -->
 							<svg v-show="!isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -200,7 +200,7 @@
 		<!-- Comments -->
 		<div>
 			<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
-				{{ post.comment_count === 1 ? '1 comment' : `${post.comment_count} comments` }}
+				{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 			</h1>
 			<div v-if="comments">
 				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
@@ -213,7 +213,8 @@
 </template>
 
 <script setup>
-	import { reactive, computed } from 'vue'
+	import { reactive, computed } from 'vue';
+	import { usePost } from '@/composables/post';
 
 	import { formatDate } from '@/utils/formatDate';
 	import { toPercent } from '@/utils/percent'
@@ -226,8 +227,13 @@
 	const { isSaved, save } = useSave();
 	const { isSubscribed, subscribe } = useSubscribe();
 
+	let route = useRoute();
+	let { item, pending, error, refresh } = await usePost(route.params.id);
+	item = item.value.post_view;
+	const post = item.post;
+
 	const percentUpvoted = computed(() => {
-		const num = 1 - post.downvotes / post.upvotes;
+		const num = 1 - item.counts.downvotes / item.counts.upvotes;
 		return toPercent(num);
 	})
 
@@ -283,37 +289,10 @@
 	}
 	];
 
-	const post = {
-		id: 1,
-		author: {
-			username: 'tim_apple',
-			usernameColor: '#FF0000',
-			title: 'developer',
-			titleColor: '#1E1E1E',
-			avatarUrl: 'https://i.imgur.com/nzY5zAg.jpg',
-		},
-		score: 20,
-		upvotes: 28,
-		downvotes: 8,
-		comment_count: 2,
-		type: 'link',
-		url: '',
-		permalink: '1',
-		domain: 'reddit.com',
-		title: "iOS 16 lets you customize your Lock Screen in fun new ways. Layer a photo to make it pop. Track your Activity rings. And see live updates from your favorite apps.",
-		thumbUrl: 'https://i.imgur.com/IrvvcY2.jpeg',
-		htmlBody: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea <strong>commodo consequat</strong>. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>',
-		isStickied: false,
-		isSaved: true,
-		isSubscribed: true,
-		createdUtc: 1664856789,
-		editedUtc: 1665295944
-	}
-
-	if (post.isSaved) {
+	/*if (post.saved) {
 		isSaved.value = post.isSaved;
-	};
-	if (post.isSubscribed) {
+	};*/
+	/*if (post.subscribed) {
 		isSubscribed.value = post.isSubscribed;
-	};
+	};*/
 </script>
