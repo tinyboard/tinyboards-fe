@@ -3,10 +3,10 @@
 		<div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer" @click="isCollapsed = !isCollapsed"></div>
 		<div class="relative flex flex-col flex-shrink-0 items-center mr-2">
 			<!-- User Avatar -->
-			<NuxtLink v-if="comment.author.avatar_url" :to="`/${comment.author.username}`" class="z-10">
+			<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="z-10">
 				<img
 				loading="lazy"
-				:src="comment.author.avatar_url"
+				:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 				alt="avatar"
 				class="flex-shrink-0 object-cover rounded-sm"
 				:class="level > 1 || isCollapsed ? 'w-6 h-6' : 'w-9 h-9 sm:w-12 sm:h-12 sm:rounded-none sm:p-1 sm:border bg-white hover:bg-gray-200 hover:border-transparent'"
@@ -31,32 +31,32 @@
 			<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
 				<div :class="{'mb-1':!isCollapsed}">
 					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
-						<NuxtLink v-if="comment.author.username" :to="`/${comment.author.username}`" class="flex items-center font-bold text-sm">
-							{{ comment.author.username }}
-							<span v-if="comment.author.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
-								{{ comment.author.title }}
+						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center font-bold text-sm">
+							{{ item.creator.name }}
+							<span v-if="item.creator.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
+								{{ item.creator.title }}
 							</span>
 						</NuxtLink>
-						<span v-else class="text-gray-400 dark:text-gray-400 font-bold line-through">
-							Deleted
+						<span v-else class="text-gray-400 dark:text-gray-400 font-bold">
+							Deleted User
 						</span>
 						<!-- Parent Context Link -->
-						<NuxtLink v-if="comment.parent_comment_id" :to="comment.parent_permalink" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
+						<!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1"></path>
 							</svg>
-							<span>{{ comment.parent_author.username }}</span>
-						</NuxtLink>
+							<span>"parent author"</span>
+						</NuxtLink>-->
 						<span v-show="!isCollapsed" class="space-x-2">
 							<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 							<!-- Timestamp -->
-							<span>{{ formatDate(comment.created_utc) }}</span>
+							<span>{{ formatDate(new Date(comment.published)) }}</span>
 							<!-- Edited Timestamp -->
-							<span v-if="comment.edited_utc != 0">
+							<span v-if="comment.updated">
 								<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 								<span class="pl-1 italic">
-									Edited {{ formatDate(comment.edited_utc) }}
+									Edited {{ formatDate(new Date(comment.updated)) }}
 								</span>
 							</span>
 						</span>
@@ -64,14 +64,14 @@
 						<span class="hidden md:flex items-center space-x-2">
 							<span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
 							<span>
-								{{ comment.score + voteType }} {{ comment.score + voteType === 1 ? 'pt' : 'pts' }}
+								{{ item.counts.score + voteType }} {{ item.counts.score + voteType === 1 ? 'pt' : 'pts' }}
 							</span>
 						</span>
 						<!-- Reply Count -->
-						<span v-show="isCollapsed && comment.replies.length" class="flex items-center space-x-2">
+						<span v-show="isCollapsed && item.replies.length" class="flex items-center space-x-2">
 							<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 							<span>
-								{{ comment.replies.length }} {{ comment.replies.length === 1 ? 'reply' : 'replies' }}
+								{{ item.replies.length }} {{ item.replies.length === 1 ? 'reply' : 'replies' }}
 							</span>
 						</span>
 					</div>
@@ -82,21 +82,21 @@
 			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed">
 				<li>
 					<button class="text-xs font-bold hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
-						Upvote ({{ voteType === 1 ? props.comment.upvotes + 1 : props.comment.upvotes }})
+						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
 					</button>
 				</li>
 				<li>
 					<button class="text-xs font-bold hover:underline" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(-1)">
-						Downvote ({{ voteType === -1 ? props.comment.downvotes - 1 : props.comment.downvotes }})
+						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 					</button>
 				</li>
 			</ul>
 			<!-- Rich Text Editor -->
 			<!-- <WriteComment v-if="replying" v-show="!isCollapsed" :visible="replying" is_reply @change="toggleReplying" class="mt-3"/> -->
 			<!-- Replies -->
-			<ContentCommentList v-if="comment.replies.length && level <= limit" v-show="!isCollapsed" :comments="comment.replies" :offset="offset"></ContentCommentList>
+			<ContentCommentList v-if="item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"></ContentCommentList>
 			<!-- Continue Thread Link -->
-			<NuxtLink v-if="comment.replies.length && level > limit" :to="comment.permalink" class="mt-2 block text-xs hover:underline">
+			<NuxtLink v-if="item.replies.length && level > limit" :to="`/post/${item.post.id}/${comment.id}`" class="mt-2 block text-xs hover:underline">
 				Continue this thread
 				<i class="far fa-long-arrow-alt-right pl-1"></i>
 			</NuxtLink>
@@ -116,7 +116,7 @@
 	const { isSaved, save } = useSave();
 
 	const props = defineProps({
-		comment: Object,
+		item: Object,
 		offset: {
 			type: Number,
 			default: 0
@@ -127,13 +127,16 @@
 		}
 	});
 
+	let item = props.item;
+	let comment = item.comment;
+
 	// local state 
 	let replying = false;
 	let isCollapsed = ref(false);
 
 	// take comment level and subtract offset (depth) to get relative level
 	const level = computed(() => {
-		return props.comment.level - props.offset
+		return comment.level - props.offset
 	});
 
 	//...mapActions('toasts', ['addNotification']),

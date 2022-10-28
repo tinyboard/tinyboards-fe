@@ -1,7 +1,7 @@
 <template>
 	<!-- List of Comments -->
 	<ul v-if="comments.length" class="mt-5 first:mt-0">
-		<ContentComment v-for="comment in comments" :key="comment.id" :comment="comment"></ContentComment>
+		<ContentComment v-for="item in comments" :key="item.comment.id" :item="item"></ContentComment>
 	</ul>
 </template>
 
@@ -13,6 +13,16 @@
 			default: 0
 		}
 	});
+
+	/*console.log('ok');
+	let error = props.commentData.error;
+
+	let comments = ref([]);
+	//if (!error.value) {
+	console.log('getting items');
+	comments.value = props.commentData.listing.value.comments;
+	console.log('done');*/
+	//}
 
 	// ======================================================================
 	// TO-DO:

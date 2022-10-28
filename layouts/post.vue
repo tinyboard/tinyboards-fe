@@ -205,6 +205,11 @@
 			<div v-if="comments">
 				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
 			</div>
+			<div v-else-if="commentsError" class="relative w-full">
+				<div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
+					Failed to load comments
+				</div>
+			</div>
 			<p v-else class="px-2.5 md:px-0 text-base text-gray-500 dark:text-gray-100">
 				psst... start the discussion!
 			</p>
@@ -220,6 +225,7 @@
 <script setup>
 	import { reactive, computed } from 'vue';
 	import { usePost } from '@/composables/post';
+	import { usePostComments } from '@/composables/comments';
 
 	import { formatDate } from '@/utils/formatDate';
 	import { toPercent } from '@/utils/percent'
@@ -256,49 +262,7 @@
 		}
 	});
 
-	const comments = [
-	{
-		id: 1,
-		author: {
-			username: 'elon',
-			avatar_url: 'https://i.imgur.com/svGJfRg.jpg',
-			title: 'developer',
-			titleColor: '#1E1E1E',
-		},
-		parent_comment_id: null,
-		created_utc: 1666434191,
-		edited_utc: 1666434291,
-		score: 42,
-		upvotes: 48,
-		downvotes: 4,
-		replies: [
-		{
-			id: 1,
-			author: {
-				username: 'tim_apple',
-				title: 'developer',
-				titleColor: '#1E1E1E',
-				avatar_url: 'https://i.imgur.com/nzY5zAg.jpg',
-			},
-			parent_comment_id: 1,
-			parent_permalink: '/post/1#comment-1',
-			created_utc: 1666434191,
-			edited_utc: 1666434291,
-			score: 23,
-			upvotes: 24,
-			downvotes: 1,
-			replies: [],
-			level: 0,
-			body_html: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea <strong>commodo consequat</strong>. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>',
-			parent_author: {
-				username: 'elon'
-			}
-		}
-		],
-		level: 0,
-		body_html: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea <strong>commodo consequat</strong>. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>',
-	}
-	];
+	const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
 
 	/*if (post.saved) {
 		isSaved.value = post.isSaved;
