@@ -25,7 +25,7 @@
 			There was an error loading posts.
 		</div>
 		<!-- Empty State -->
-		<div class="p-4 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-lg" v-else>
+		<div v-else class="p-4 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-lg">
 			There are no posts.
 		</div>
 	</div>
