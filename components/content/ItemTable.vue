@@ -104,16 +104,16 @@
 </template>
 
 <script setup>
-	import { usePosts } from '@/composables/posts';
+	import { getListing } from '@/composables/posts';
 	import { formatDate } from '@/utils/formatDate';
 	const props = defineProps({
 	  title: String
 	})
 
 	// local state
-	let { posts, paginate, pending, error, refresh } = await usePosts({
+	let { posts, paginate, pending, error, refresh } = await getListing({
 		sort: "new",
 		limit: 25
-	});
+	}, "posts");
 	
 </script>

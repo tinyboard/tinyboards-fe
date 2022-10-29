@@ -1,15 +1,19 @@
 import { baseURL } from "@/server/constants";
 import { ref } from "vue";
 
-export async function usePosts(query) {
+export async function getListing(query, type_) {
   let page = 1;
   let posts = ref([]);
-
+  let endpoints = {
+    posts: "/post/list",
+    comments: "/comment/list"
+  }
   async function request(query) {
-    const { data, pending, error, refresh } = await useFetch("/post/list", {
+
+    const { data, pending, error, refresh } = await useFetch(endpoints[type_], {
       query: { ...query, page },
       baseURL,
-      key: "get_posts_key",
+      key: "get_" + type_ + "_key",
     });
 
     console.info("console log");
