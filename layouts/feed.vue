@@ -14,7 +14,28 @@
 		        <span>New post</span>
 		    </NuxtLink>
 		</div>
+		<!-- Loading State -->
+		<div v-if="pending">
+			Loading...
+		</div>
 		<!-- Feed -->
-		<ContentItemTable title="Hot posts"/>
+		<ContentItemTable v-else-if="posts" :posts="posts" title="Hot posts"/>
+		<!-- Error State -->
+		<div v-else-if="error">
+			There was an error loading posts.
+		</div>
+		<!-- Empty State -->
+		<div class="p-4 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-lg" v-else>
+			There are no posts.
+		</div>
 	</div>
 </template>
+
+<script setup>
+	import { getListing } from '@/composables/posts';
+
+	let { posts, paginate, pending, error, refresh } = await getListing({
+		sort: "new",
+		limit: 25
+	}, "posts");
+</script>
