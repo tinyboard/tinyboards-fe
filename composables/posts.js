@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export async function getListing(query, type_) {
   let page = 1;
-  let posts = ref([]);
+  let items = ref([]);
   let endpoints = {
     posts: "/post/list",
     comments: "/comment/list"
@@ -19,7 +19,7 @@ export async function getListing(query, type_) {
     console.info("console log");
 
     console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
-    posts.value = [...posts.value, ...data.value.posts];
+    items.value = [...items.value, ...data.value[type_]];
 
     return {
       pending,
@@ -36,7 +36,7 @@ export async function getListing(query, type_) {
   let { pending, error, refresh } = request(query);
 
   return {
-    posts,
+    items,
     paginate,
     pending,
     error,
