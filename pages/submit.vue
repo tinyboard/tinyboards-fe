@@ -6,7 +6,7 @@
 				<!-- Banner -->
 				<MediaBanner
 				title="Create new post"
-				sub-title="Your post will be visible to 456 members of foruhm.land"
+				:sub-title="`Your post will be visible to 456 members of ${site.name}.`"
 				image-url="https://i.imgur.com/4MvaMAI.jpg"
 				/>
 				<!-- Form -->
@@ -60,6 +60,12 @@
 		</section>
 	</main>
 </template>
+
+<script setup>
+	import { useSiteStore } from '@/stores/StoreSite.js'
+
+	const site = useSiteStore()
+</script>
 
 <style scoped>
 	#post-body {
