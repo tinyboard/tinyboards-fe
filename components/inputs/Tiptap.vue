@@ -34,19 +34,15 @@
            <path d="M16 6.5a4 2 0 0 0 -4 -1.5h-1a3.5 3.5 0 0 0 0 7h2a3.5 3.5 0 0 1 0 7h-1.5a4 2 0 0 1 -4 -1.5"></path>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('Blockquote') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-           <path d="M6 15h15"></path>
-           <path d="M21 19h-15"></path>
-           <path d="M15 11h6"></path>
-           <path d="M21 7h-6"></path>
-           <path d="M9 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
-           <path d="M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
-        </svg>
-      </button>
       <!-- Divider -->
       <span class="border-r border-gray-300"></span>
+      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="setLink()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
+           <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
+        </svg>
+      </button>
       <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="addImage()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -56,6 +52,8 @@
            <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path>
         </svg>
       </button>
+      <!-- Divider -->
+      <span class="border-r border-gray-300"></span>
       <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -114,16 +112,48 @@
     }
   });
 
-  import { useEditor, EditorContent } from '@tiptap/vue-3'
-  import StarterKit from '@tiptap/starter-kit'
+  import Link from '@tiptap/extension-link';
+  import { useEditor, EditorContent } from '@tiptap/vue-3';
+  import StarterKit from '@tiptap/starter-kit';
 
   const editor = useEditor({
     // enablePasteRules: false, // disable Markdown when pasting
     // enableInputRules: false, // disable Markdown when typing
     extensions: [
-      StarterKit,
+      Link,
+      StarterKit
     ]
-  })
+  });
+
+  const setLink = () => {
+      const previousUrl = editor.getAttributes('link').href
+      const url = window.prompt('URL', previousUrl)
+
+      // cancelled
+      if (url === null) {
+        return
+      }
+
+      // empty
+      if (url === '') {
+        editor
+          .chain()
+          .focus()
+          .extendMarkRange('link')
+          .unsetLink()
+          .run()
+
+        return
+      }
+
+      // update link
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: url })
+        .run()
+    }
 </script>
 
 <style scoped>

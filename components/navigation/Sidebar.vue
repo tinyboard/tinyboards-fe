@@ -20,7 +20,7 @@
       </h2>
       <ul class="flex flex-col space-y-2 divide-y divide-gray-200/50">
         <li v-for="user in spotlight" :key="user.id" class="flex space-x-2 pt-2 first:pt-0">
-          <img class="p-[3px] w-9 h-9 object-cover bg-white border" :src="user.avatarUrl"/>
+          <img class="p-0.5 w-9 h-9 object-cover bg-white border" :src="user.avatarUrl"/>
           <div class="flex flex-col justify-center">
             <strong class="text-primary leading-none">{{ user.username }}</strong>
             <small class="text-gray-500 block mt-0.5">

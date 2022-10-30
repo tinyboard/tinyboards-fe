@@ -7,7 +7,7 @@
 						<!-- Logo & Name -->
 						<NuxtLink to="/" class="font-bold text-lg text-white">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block mr-2">
-							  <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
+								<path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
 							</svg>
 							<span>{{ site.name }}</span>
 						</NuxtLink>
@@ -16,12 +16,12 @@
 					<div class="hidden md:block w-1/3 ml-8">
 						<ul class="flex space-x-2">
 							<li class="flex items-center text-sm leading-5" v-for="link in coreNavigation" :key="link.name">
-		                      <NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
-		                      	<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
-		                      		{{ link.name }}
-		                      	</a>
-		                      </NuxtLink>
-	                		</li>
+								<NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
+									<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
+										{{ link.name }}
+									</a>
+								</NuxtLink>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -37,25 +37,34 @@
 						<NuxtLink to="/admin" tag="button" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
 							<span class="sr-only">View admin tools</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							   <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
 							</svg>
 						</NuxtLink>
 						<!-- Notifications dropdown -->
 						<!-- <keep-alive>
 							<Notifications/>
 						</keep-alive> -->
-						<!-- Create dropdown -->
-						<NuxtLink to="/submit" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md" @click="createPost">
+						<!-- Create Link -->
+						<NuxtLink to="/submit" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
 							<span class="sr-only">Create new post</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							   <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
-							   <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+								<line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
 							</svg>
 						</NuxtLink>
-						<!-- Profile dropdown -->
-						<!-- <Profile/> -->
+						<!-- Inbox Link -->
+						<NuxtLink to="/inbox" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
+							<span class="sr-only">View inbox</span>
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<rect x="3" y="5" width="18" height="14" rx="2"></rect>
+								<polyline points="3 7 12 13 21 7"></polyline>
+							</svg>
+						</NuxtLink>
+						<!-- Profile Dropdown -->
+						<DropdownsProfile :v="v"/>
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-1 md:hidden">
@@ -162,18 +171,18 @@
 	let isOpen = false;
 
 	const v = {
-		username: 'kermit',
-		avatarUrl: 'https://i.imgur.com/oVElMrk.gif',
-		postReputation: 563,
-		commentReputation: 200
+		username: 'elon',
+		avatar_url: 'https://i.imgur.com/nzY5zAg.jpg',
+		post_reputation: 100,
+		comment_reputation: 100
 	}
 
 	// Define sub-navigation menu links
 	const coreNavigation = [
-		{ name: 'Home', href: '/' },
-		{ name: 'Members', href: '/members' },
-		{ name: 'Leaderboard', href: '/leaderboard' },
-		{ name: 'FAQ', href: '/faq' }
+	{ name: 'Home', href: '/' },
+	{ name: 'Members', href: '/members' },
+	{ name: 'Leaderboard', href: '/leaderboard' },
+	{ name: 'FAQ', href: '/faq' }
 	]
 </script>
 

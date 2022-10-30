@@ -4,7 +4,7 @@ export const useSiteStore = defineStore('site', {
   // State
   state: () => {
     return { 
-      name: 'foruhm',
+      name: 'tinyboards',
       description: ''
     }
   },
