@@ -1,8 +1,10 @@
 <template>
-	<!-- Navigation Bar -->
-	<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
-	<slot/>
-	<NavigationFooter />
+	<div>
+		<!-- Navigation Bar -->
+		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
+		<slot/>
+		<NavigationFooter />
+	</div>
 </template>
 
 <script setup>
