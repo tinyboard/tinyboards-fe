@@ -1,6 +1,6 @@
 <template>
-	<div id="banner" class="flex items-center justify-between p-4 sm:px-12 sm:py-8 bg-gray-200/50 sm:rounded-md shadow-inner-white bg-cover bg-center" :style="{ backgroundImage: `url(${imageUrl})` }">
-		<div>
+	<div id="banner" class="flex items-center justify-between p-4 sm:px-12 sm:py-8 bg-gray-200/50 sm:rounded-md sm:shadow-inner-white bg-cover bg-center" :style="{ backgroundImage: `url(${imageUrl})` }">
+		<div class="relative">
 			<h1 class="text-2xl text-gray-100 leading-9 font-bold">
 				{{ title }}
 			</h1>
@@ -46,7 +46,6 @@
 		right: 0;
 		top: 0;
 		bottom: 0;
-		z-index: 0;
 		@apply sm:rounded-b-lg;
 	}
 </style>

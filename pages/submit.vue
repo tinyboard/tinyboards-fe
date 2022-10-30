@@ -4,13 +4,11 @@
 		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 md:px-6">
 			<div class="col-span-full flex flex-col gap-6 py-8 my-2.5 sm:my-0">
 				<!-- Banner -->
-				<div class="relative sm:rounded-md overflow-x-auto">
-					<MediaBanner
-					title="Create new post"
-					sub-title="Your post will be visible to 456 members of foruhm.land"
-					image-url="https://i.imgur.com/4MvaMAI.jpg"
-					/>
-				</div>
+				<MediaBanner
+				title="Create new post"
+				sub-title="Your post will be visible to 456 members of foruhm.land"
+				image-url="https://i.imgur.com/4MvaMAI.jpg"
+				/>
 				<!-- Form -->
 				<form action="#" method="POST" class="block w-full">
 					<div class="overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
