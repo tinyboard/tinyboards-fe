@@ -1,6 +1,6 @@
 <template>
 	<form action="/login" class="w-full max-w-sm bg-white border shadow-lg rounded-md overflow-hidden">
-		<div class="px-4 md:px-8 py-8">
+		<div class="px-4 md:px-6 py-6">
 			<h1 class="text-xl text-gray-900 font-bold mb-6">
 				Sign up
 			</h1>

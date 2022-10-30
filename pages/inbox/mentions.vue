@@ -4,7 +4,7 @@
 		<div v-if="messages.length">
 		</div>
 		<!-- Empty State -->
-		<div v-else class="p-4 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
+		<div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
 			There are no mentions. You must not be popular.
 		</div>
 	</div>

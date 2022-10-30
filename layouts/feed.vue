@@ -1,11 +1,10 @@
 <template>
 	<div class="w-full">
 		<!-- Banner -->
-		<MediaBanner class="mb-6"/>
+		<MediaBanner class="hidden sm:block mb-6"/>
 		<!-- Filters -->
-		<div class="flex justify-between mb-4">
-			<div></div>
-			<NuxtLink to="/submit" class="button primary flex items-center">
+		<div class="flex justify-between mb-4 px-4 sm:px-0">
+			<NuxtLink to="/submit" class="ml-auto button primary flex items-center">
 		        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 				   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 				   <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
@@ -25,8 +24,8 @@
 			There was an error loading posts.
 		</div>
 		<!-- Empty State -->
-		<div v-else class="p-4 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
-			There are no posts.
+		<div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
+			There are no posts. This place must be boring.
 		</div>
 	</div>
 </template>
