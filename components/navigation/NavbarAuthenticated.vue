@@ -14,7 +14,7 @@
 					</div>
 					<!-- Core Navigation Links -->
 					<div class="hidden md:block w-1/3 ml-8">
-						<ul class="flex space-x-2">
+						<ul class="flex">
 							<li class="flex items-center text-sm leading-5" v-for="link in coreNavigation" :key="link.name">
 								<NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
 									<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
