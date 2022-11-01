@@ -79,7 +79,7 @@
 				<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 					<!-- Label -->
 					<div class="md:col-span-1">
-						<label class="text-base font-bold leading-6 text-gray-900">Biopgraphy</label>
+						<label class="text-base font-bold leading-6 text-gray-900">Biography</label>
 					</div>
 					<!-- Inputs -->
 					<div class="mt-5 md:col-span-2 md:mt-0">
