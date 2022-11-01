@@ -9,7 +9,7 @@
 						</svg>
 					</button>
 				</div>
-				<input required type="text" class="w-full form-input search pl-10" v-model="searchTerm" placeholder="Search this foruhm" @keyup.enter="search()"/>
+				<input required type="text" class="w-full form-input search pl-10" v-model="searchTerm" placeholder="Search this TinyBoard" @keyup.enter="search()"/>
 				<div v-show="searchTerm" class="absolute right-3 top-[6px]">
 					<button class="text-gray-400 hover:text-gray-500" @click="searchTerm = ''">
 						<i class="far fa-times-circle fa-fw fa-sm"></i>
