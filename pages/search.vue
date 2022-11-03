@@ -5,7 +5,7 @@
 		class="relative sm:hidden"
 		title="Search"
 		:sub-title="`Showing 25 of 500 results for ${route.query.q}`"
-		image-url="https://i.imgur.com/7PgqWij.png"
+		image-url="https://i.imgur.com/kGhynxn.png"
 		/>
 		<!-- Sub Navigation -->
 		<section>
@@ -21,7 +21,7 @@
 					class="hidden sm:block mb-6"
 					title="Search"
 					:sub-title="`Showing 25 of 500 results for ${route.query.q}`"
-					image-url="https://i.imgur.com/7PgqWij.png"
+					image-url="https://i.imgur.com/kGhynxn.png"
 					/>
 					<!-- Filters -->
 					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-4 px-4 py-5 sm:p-6 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
