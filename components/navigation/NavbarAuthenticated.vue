@@ -15,7 +15,7 @@
 					<!-- Core Navigation Links -->
 					<div class="hidden md:block w-1/3 ml-8">
 						<ul class="flex">
-							<li class="flex items-center text-sm leading-5" v-for="link in coreNavigation" :key="link.name">
+							<li class="flex items-center text-sm leading-5" v-for="link in links" :key="link.name">
 								<NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
 									<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 										{{ link.name }}
@@ -204,7 +204,7 @@
 	}
 
 	// Define sub-navigation menu links
-	const coreNavigation = [
+	const links = [
 	{ name: 'Home', href: '/feed' },
 	{ name: 'Members', href: '/members' },
 	{ name: 'Leaderboard', href: '/leaderboard' },
