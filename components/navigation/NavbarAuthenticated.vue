@@ -17,7 +17,7 @@
 						<ul class="flex">
 							<li class="flex items-center text-sm leading-5" v-for="link in coreNavigation" :key="link.name">
 								<NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
-									<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-white/30' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
+									<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 										{{ link.name }}
 									</a>
 								</NuxtLink>
@@ -28,9 +28,25 @@
 				<div class="hidden md:flex items-center">
 					<!-- Search Box -->
 					<div class="mr-4 flex items-baseline space-x-4">
-						<div class="relative">
-							<PopoversSearch/>
-						</div>
+						<form class="group relative" @submit.prevent="onSubmit" @submit="search()">
+							<div class="absolute left-3 top-2">
+								<button class="text-white/20 hover:text-white" type="submit">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+									  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+									</svg>
+								</button>
+							</div>
+							<input required type="text" class="w-full form-input search px-10" v-model="searchTerm" placeholder="Search this TinyBoard" @keyup.enter="search()"/>
+							<div v-show="searchTerm" class="absolute right-3 top-2">
+								<button class="text-white/20 hover:text-white" @click="searchTerm = ''">
+									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+									   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+									   <circle cx="12" cy="12" r="9"></circle>
+									   <path d="M10 10l4 4m0 -4l-4 4"></path>
+									</svg>
+								</button>
+							</div>
+						</form>
 					</div>
 					<!-- User Links -->
 					<div class="ml-4 flex items-center space-x-2 md:ml-6">
@@ -64,7 +80,7 @@
 							</svg>
 						</NuxtLink>
 						<!-- Profile Dropdown -->
-						<DropdownsProfile :v="v"/>
+						<DropdownsProfile :user="v"/>
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-1 md:hidden">
@@ -164,11 +180,21 @@
 </template>
 
 <script setup>
+	import { useRoute } from 'vue-router';
 	import { useSiteStore } from '@/stores/StoreSite.js';
+
+	const route = useRoute();
+	const router = useRouter();
 
 	const site = useSiteStore();
 
 	let isOpen = false;
+
+	const searchTerm = ref(route.query.q)
+
+	const search = () => {
+		if (searchTerm.value) router.push(`/search?q=${searchTerm.value}&sort=new`);
+	}
 
 	const v = {
 		username: 'elon',
@@ -179,7 +205,7 @@
 
 	// Define sub-navigation menu links
 	const coreNavigation = [
-	{ name: 'Home', href: '/' },
+	{ name: 'Home', href: '/feed' },
 	{ name: 'Members', href: '/members' },
 	{ name: 'Leaderboard', href: '/leaderboard' },
 	{ name: 'FAQ', href: '/faq' }
@@ -266,3 +292,9 @@
 		}
 	}
 </script> -->
+
+<style scoped>
+	.search {
+		@apply text-white dark:text-gray-200 placeholder-white/30 dark:placeholder-gray-500 bg-black/10 dark:bg-gray-900 border-0 shadow-inner dark:border-gray-700 dark:border-opacity-70 focus:bg-black/20 dark:focus:bg-black/20 focus:border-white focus:ring-white dark:focus:border-primary dark:focus:ring-primary transition duration-150 ease-out
+	}
+</style>

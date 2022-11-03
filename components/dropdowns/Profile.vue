@@ -133,8 +133,10 @@
   import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 
   const props = defineProps({
-    v: Object
+    user: Object
   })
+
+  const v = props.user;
 
   const links = [
   { name: 'About', href: '/about' },

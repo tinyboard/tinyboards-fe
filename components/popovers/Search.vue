@@ -88,7 +88,7 @@
 		methods: {
 			// ...mapActions("persist", ["clearSearchHistory"]),
 			search() {
-				if (this.searchTerm) this.$router.push("/search?q="+this.searchTerm);
+				if (this.searchTerm) this.$router.push(`/search?q=${this.searchTerm}&sort=new`);
 			}
 		}
 	}
