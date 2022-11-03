@@ -1,10 +1,10 @@
 <template>
 	<div id="banner" class="flex items-center justify-between p-4 sm:px-12 sm:py-8 bg-gray-200/50 sm:rounded-md sm:shadow-inner-white bg-cover bg-center" :style="{ backgroundImage: `url(${imageUrl})` }">
-		<div class="relative">
+		<div class="relative overflow-hidden">
 			<h1 class="text-2xl text-gray-100 leading-9 font-bold">
 				{{ title }}
 			</h1>
-			<p class="text-base text-gray-200 leading-7">
+			<p class="text-base text-gray-200 leading-7 truncate text-ellipsis max-w-md sm:max-w-2xl">
 				{{ subTitle }}
 			</p>
 		</div>
