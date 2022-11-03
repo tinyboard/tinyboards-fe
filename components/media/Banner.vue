@@ -19,7 +19,7 @@
 		},
 		subTitle: {
 			type: String,
-			default: "The front-page of foruhm. All your posts are belong to us."
+			default: "The front-page. All your posts are belong to us."
 		},
 		imageUrl: {
 			type: String,
