@@ -14,6 +14,6 @@ export default <RouterConfig>{
         el: to.hash,
       };
     }
-    return { top: 0 };
+    return { left:0, top: 0 };
   }
 };
