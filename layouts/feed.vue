@@ -33,7 +33,7 @@
 <script setup>
 	import { getListing } from '@/composables/posts';
 
-	let { posts, paginate, pending, error, refresh } = await getListing({
+	let { items: posts, paginate, pending, error, refresh } = await getListing({
 		sort: "new",
 		limit: 25
 	}, "posts");

@@ -6,19 +6,18 @@ export async function getListing(query, type_) {
   let items = ref([]);
   let endpoints = {
     posts: "/post",
-    comments: "/comment"
-  }
+    comments: "/comment",
+  };
   async function request(query) {
-
     const { data, pending, error, refresh } = await useFetch(endpoints[type_], {
       query: { ...query, page },
       baseURL,
       key: "get_" + type_ + "_key",
     });
 
-    console.info("console log");
+    //console.info("console log");
 
-    console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
+    //console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
     items.value = [...items.value, ...data.value[type_]];
 
     return {
@@ -33,7 +32,7 @@ export async function getListing(query, type_) {
     return request(query);
   }
 
-  let { pending, error, refresh } = request(query);
+  let { pending, error, refresh } = await request(query);
 
   return {
     items,
