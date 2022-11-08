@@ -7,7 +7,7 @@ export async function usePostComments(id, query = {}) {
     pending,
     error,
     refresh,
-  } = await useFetch("/comment/list", {
+  } = await useFetch("/comments", {
     query: { ...query, post_id: id },
     baseURL,
     key: `post_${id}_comments`,

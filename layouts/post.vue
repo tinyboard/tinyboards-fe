@@ -104,7 +104,7 @@
 							</svg>
 						</button>
 						<span class="font-bold" :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
-							{{ post.score + voteType }}
+							{{ item.counts.score + voteType }}
 						</span>
 						<button @click="vote(-1)" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-5 h-5">
@@ -202,16 +202,18 @@
 			<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
 				{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 			</h1>
-			<div v-if="comments">
-				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
-			</div>
-			<div v-else-if="commentsError" class="relative w-full">
+			<div v-if="commentsError" class="relative w-full">
 				<div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
 					Failed to load comments
 				</div>
 			</div>
-			<p v-else class="px-2.5 md:px-0 text-base text-gray-500 dark:text-gray-100">
-				psst... start the discussion!
+			<div v-else-if="comments.length">
+				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
+			</div>
+			<p v-else class="px-2.5 md:px-0 text-base text-center text-gray-500 dark:text-gray-100">
+				@{{ item.creator.name }}'s post sucks so bad no one's bothered to reply to it so far.
+				<br/><br/>
+				You could be the first one to point that out and laugh at them.
 			</p>
 		</div>
 	</div>
