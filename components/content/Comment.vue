@@ -9,7 +9,7 @@
 				:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 				alt="avatar"
 				class="flex-shrink-0 object-cover rounded-sm"
-				:class="level > 1 || isCollapsed ? 'w-6 h-6' : 'w-9 h-9 sm:w-12 sm:h-12 sm:rounded-none sm:p-1 sm:border bg-white hover:bg-gray-200 hover:border-transparent'"
+				:class="level > 1 || isCollapsed ? 'w-6 h-6' : 'w-9 h-9 sm:w-12 sm:h-12 sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent'"
 				/>
 			</NuxtLink>
 			<!-- Deleted User Comment -->

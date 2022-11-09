@@ -33,9 +33,9 @@
 </template>
 
 <script setup>
-	import { useSiteStore } from '@/stores/StoreSite.js'
+	import { useSiteStore } from '@/stores/StoreSite.js';
 
-	const site = useSiteStore()
+	const site = useSiteStore();
 
 	const navigation = [
 	{ name: 'About', href: '/about' },
@@ -45,7 +45,7 @@
 	{ name: 'Terms', href: '/terms' },
 	{ name: 'Privacy', href: '/privacy' },
 	{ name: 'Source Code', href: '/source-code' }
-	]
+	];
 </script>
 
 <style scoped>

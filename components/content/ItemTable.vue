@@ -25,7 +25,7 @@
 						loading="lazy"
 						:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 						alt="avatar"
-						class="hidden sm:inline flex-shrink-0 w-12 h-12 object-cover rounded-sm rounded-none p-1 border bg-white"
+						class="hidden sm:inline flex-shrink-0 w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white"
 						/>
 						<!-- Post Details -->
 						<div class="flex flex-col sm:pl-3 sm:truncate">
