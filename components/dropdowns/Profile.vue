@@ -5,7 +5,7 @@
         <!-- Username -->
         <div class="flex items-center space-x-1 mr-2">
           <p class="text-base text-white">
-            <strong>{{ v.username }}</strong>
+            <strong>{{ v.name }}</strong>
           </p>
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="white" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -27,19 +27,19 @@
    >
    <MenuItems class="absolute right-0 w-64 mt-4 origin-top-right bg-white divide-y divide-gray-100 rounded shadow-lg border focus:outline-none">
     <!-- User Details -->
-    <NuxtLink :to="`/${v.username}`" class="flex items-center p-4">
+    <NuxtLink :to="`/${v.name}`" class="flex items-center p-4">
       <!-- User Avatar -->
       <img class="w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white" :src="v.avatar_url" alt="user avatar"/>
       <div class="pl-3 truncate">
         <!-- Username -->
         <div class="text-gray-900 font-semibold leading-4">
-          {{ v.username }}
+          {{ v.name }}
         </div>
         <!-- User Reputation -->
         <div class="flex items-center space-x-1 text-xs mt-1">
           <span class="text-yellow-500">&#9733;</span>
           <span class="text-gray-600">
-            {{ v.post_reputation + v.comment_reputation || 0 }} reputation
+            2.4M reputation
           </span>
         </div>
       </div>
