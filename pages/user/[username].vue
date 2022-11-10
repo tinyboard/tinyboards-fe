@@ -85,7 +85,7 @@
 						<!-- Avatar -->
 						<img
 						loading="lazy"
-						src="http://placekitten.com/200/300"
+						:src="user.avatar_url"
 						alt="avatar"
 						class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-1 border bg-white"
 						/>
