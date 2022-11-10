@@ -3,7 +3,6 @@ import cookie from "cookie";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  console.log("hello from middleware!!");
   const nuxtApp = useNuxtApp();
 
   if (process.server) {
