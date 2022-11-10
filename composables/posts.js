@@ -5,7 +5,7 @@ export async function getListing(query, type_) {
   let page = 1;
   let items = ref([]);
   let endpoints = {
-    posts: "/post",
+    posts: "/posts",
     comments: "/comment",
   };
   async function request(query) {
