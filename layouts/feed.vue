@@ -18,10 +18,12 @@
 			Loading...
 		</div>
 		<!-- Feed -->
-		<ContentItemTable v-else-if="posts" :posts="posts" title="Hot posts"/>
+		<ContentItemTable v-else-if="posts.length" :posts="posts" title="Hot posts"/>
 		<!-- Error State -->
-		<div v-else-if="error">
-			There was an error loading posts.
+		<div v-else-if="error" class="w-full">
+			<div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
+				Failed to load posts.
+			</div>
 		</div>
 		<!-- Empty State -->
 		<div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">

@@ -18,7 +18,9 @@ export async function getListing(query, type_) {
     //console.info("console log");
 
     //console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
-    items.value = [...items.value, ...data.value[type_]];
+    if (data.value) {
+      items.value = [...items.value, ...data.value[type_]];
+    }
 
     return {
       pending,
