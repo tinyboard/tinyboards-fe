@@ -13,7 +13,7 @@
          </svg>
        </div>
        <!-- User Avatar -->
-       <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border border-black/10 bg-black/10" :src="v.avatar_url" alt="user avatar"/>
+       <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border border-black/10 bg-black/10" :src="v.avatar" alt="user avatar"/>
      </MenuButton>
    </div>
 
@@ -29,7 +29,7 @@
     <!-- User Details -->
     <NuxtLink :to="`/${v.name}`" class="flex items-center p-4">
       <!-- User Avatar -->
-      <img class="w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white" :src="v.avatar_url" alt="user avatar"/>
+      <img class="w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white" :src="v.avatar" alt="user avatar"/>
       <div class="pl-3 truncate">
         <!-- Username -->
         <div class="text-gray-900 font-semibold leading-4">
