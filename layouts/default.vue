@@ -8,7 +8,11 @@
 </template>
 
 <script setup>
-	const isAuthed = true;
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+
+	let userStore = useLoggedInUser();
+
+	const isAuthed = userStore.isAuthed;
 
 	const Navbar = resolveComponent('NavigationNavbar')
 	const NavbarAuthenticated = resolveComponent('NavigationNavbarAuthenticated')

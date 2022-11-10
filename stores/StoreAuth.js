@@ -2,10 +2,12 @@ import { defineStore } from "pinia";
 import { baseURL } from "@/server/constants";
 
 export const useLoggedInUser = defineStore("auth", {
-  state: {
-    user: null,
-    token: null,
-    isAuthed: false,
+  state: () => {
+    return {
+      user: null,
+      token: null,
+      isAuthed: false,
+    };
   },
   actions: {
     login({ nameOrEmail, password }) {
@@ -15,22 +17,37 @@ export const useLoggedInUser = defineStore("auth", {
           key: `login_${nameOrEmail}`,
           method: "post",
           body: {
-            name_or_email: nameOrEmail,
+            username_or_email: nameOrEmail,
             password,
           },
         })
           .then(({ data }) => {
-            this.user = data.user;
-            this.token = data.token;
+            this.user = data.value.user.user;
+            this.token = data.value.jwt;
             this.isAuthed = true;
 
-            resolve(data);
+            resolve(data.value);
           })
           .catch(({ error }) => {
             this.isAuthed = false;
-            reject(error);
+            reject(error).value;
           });
       });
+    },
+    fetchUser(authToken) {
+      useFetch("/user/me", {
+        baseURL,
+        key: `get_user_${authToken}`,
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+        .then(({ data }) => {
+          this.user = data;
+          this.token = authToken;
+          this.isAuthed = true;
+        })
+        .catch(({ error }) => console.error(error));
     },
     logout() {
       this.user = null;
