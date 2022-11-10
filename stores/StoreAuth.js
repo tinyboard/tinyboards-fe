@@ -30,18 +30,55 @@ export const useLoggedInUser = defineStore("auth", {
           })
           .catch(({ error }) => {
             this.isAuthed = false;
-            reject(error).value;
+            reject(error.value);
           });
       });
     },
-    fetchUser(authToken) {
-      useFetch("/me", {
+    signup({ username, password }) {
+      return new Promise((resolve, reject) => {
+        useFetch("/auth/signup", {
+          baseURL,
+          key: `signup_${username}`,
+          method: "post",
+          body: {
+            username,
+            password,
+          },
+        })
+          .then(({ data }) => {
+            if (data.value.jwt) {
+              const token = data.value.jwt;
+              this.fetchUserPromise(token)
+                .then(({ data }) => {
+                  this.user = data.value;
+                  this.token = token;
+                  this.isAuthed = true;
+
+                  resolve(token);
+                })
+                .catch(({ error }) => {
+                  reject(error.value);
+                });
+            } else {
+              reject(
+                "Account creation request submitted, wait for admin approval"
+              );
+            }
+          })
+          .catch((error) => reject(error.value));
+      });
+    },
+    fetchUserPromise(authToken) {
+      return useFetch("/me", {
         baseURL,
         key: `get_user_${authToken}`,
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
-      })
+      });
+    },
+    fetchUser(authToken) {
+      this.fetchUserPromise(authToken)
         .then(({ data }) => {
           this.user = data.value;
           this.token = authToken;

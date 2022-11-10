@@ -1,12 +1,12 @@
 <template>
-	<form action="/login" class="w-full max-w-sm bg-white border shadow-lg rounded-md overflow-hidden">
+	<form action="/login" @submit.prevent="signup" class="w-full max-w-sm bg-white border shadow-lg rounded-md overflow-hidden">
 		<div class="px-4 md:px-6 py-6">
 			<h1 class="text-xl text-gray-900 font-bold mb-6">
 				Sign up
 			</h1>
 			<div class="mb-4">
 				<label for="username" class="block text-sm font-bold">Username</label>
-				<input type="text" id="username" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" value=""/>
+				<input type="text" id="username" v-model="name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" />
 			</div>
 			<div class="mb-4">
 				<label for="email" class="flex text-sm font-bold">
@@ -19,11 +19,11 @@
 			</div>
 			<div class="mb-6">
 				<label for="password" class="block text-sm font-bold">Password</label>
-				<input type="password" id="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" value=""/>
+				<input type="password" id="password" v-model="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" />
 			</div>
-			<button type="submit" class="button primary w-full">
+			<button type="submit" class="button primary w-full" :disabled="loading">
 				<span>
-					Sign up for
+					{{ loading ? 'Signing up' : 'Sign up' }} for
 					<span class="capitalize">{{ site.name }}</span>
 				</span>
 			</button>
@@ -39,9 +39,34 @@
 </template>
 
 <script setup>
+	import { ref } from 'vue';
+
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+	import { useSiteStore } from '@/stores/StoreSite';;
+	import Cookies from 'js-cookie';
+
 	definePageMeta({ layout: "registration" });
 
-	import { useSiteStore } from '@/stores/StoreSite.js'
+	const site = useSiteStore();
 
-	const site = useSiteStore()
+	let name = ref("");
+	let password = ref("");
+	let loading = ref(false);
+
+	let userStore = useLoggedInUser();
+	let router = useRouter();
+
+	function signup() {
+		userStore.signup({
+			username: name.value,
+			password: password.value
+		})
+			.then(token => {
+				Cookies.set('token', token);
+				router.push("/");
+			})
+			.catch(error => {
+				console.error(`ERROR: ${error}`);
+			});
+}
 </script>

@@ -131,12 +131,24 @@
 
 <script setup>
   import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+  import { useLoggedInUser } from '@/stores/StoreAuth';
+  import Cookies from 'js-cookie';
+
+  const userStore = useLoggedInUser();
+  const router = useRouter();
 
   const props = defineProps({
     user: Object
   })
 
   const v = props.user;
+
+  function logout() {
+    Cookies.remove('token');
+    userStore.logout();
+
+    router.push("/");
+  }
 
   const links = [
   { name: 'About', href: '/about' },
