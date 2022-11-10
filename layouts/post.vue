@@ -230,9 +230,16 @@
 			</p>
 		</div>
 	</div>
-	<div v-else class="relative w-full">
+	<div v-else-if="error" class="relative w-full">
 		<div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
 			This post may have been removed or has never existed at all.
+		</div>
+	</div>
+	<div v-else class="relative w-full">
+		<div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
+			<div role="status" class="max-w-sm animate-pulse">
+				<h1>loading skeleton placeholder here! please wait while the post is loading....</h1>
+			</div>
 		</div>
 	</div>
 </template>
