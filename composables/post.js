@@ -6,7 +6,7 @@ export async function usePost(id) {
     pending,
     error,
     refresh,
-  } = await useFetch(`/post/${id}`, {
+  } = await useFetch(`/posts/${id}`, {
     baseURL,
     key: `post_${id}`,
   });

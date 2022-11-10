@@ -35,7 +35,7 @@ export const useLoggedInUser = defineStore("auth", {
       });
     },
     fetchUser(authToken) {
-      useFetch("/user/me", {
+      useFetch("/me", {
         baseURL,
         key: `get_user_${authToken}`,
         headers: {
@@ -43,7 +43,7 @@ export const useLoggedInUser = defineStore("auth", {
         },
       })
         .then(({ data }) => {
-          this.user = data;
+          this.user = data.value;
           this.token = authToken;
           this.isAuthed = true;
         })
