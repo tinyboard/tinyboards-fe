@@ -14,22 +14,35 @@
 			<!-- Post Meta Information & Content -->
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
-					<NuxtLink :to="'/user/'+item.creator.name" class="mr-2">
-						<!-- Avatar -->
+					<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="mr-2">
 						<img
 						loading="lazy"
 						:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 						alt="avatar"
 						class="flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-1 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+						:class="level > 1 || isCollapsed ? 'w-6 h-6' : 'w-9 h-9 sm:w-12 sm:h-12 sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent'"
 						/>
 					</NuxtLink>
+					<!-- Deleted User -->
+					<div v-else class="mr-2 flex items-center justify-center text-gray-400 bg-transparent border dark:border-gray-700 border-dashed rounded-sm" :class="level > 1 || isCollapsed ? 'w-6 h-6 text-sm' : 'w-8 h-8 text-lg'">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						<path d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7"></path>
+						<line x1="10" y1="10" x2="10.01" y2="10"></line>
+						<line x1="14" y1="10" x2="14.01" y2="10"></line>
+						<path d="M10 14a3.5 3.5 0 0 0 4 0"></path>
+						</svg>
+					</div>
 					<div class="flex flex-col leading-4">
-						<NuxtLink :to="'/user/'+item.creator.name" class="flex items-center font-bold text-sm">
-							<span>{{ item.creator.name }}</span>
+						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center font-bold text-sm">
+							{{ item.creator.name }}
 							<span v-if="item.creator.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
 								{{ item.creator.title }}
 							</span>
 						</NuxtLink>
+						<span v-else class="text-gray-400 dark:text-gray-400 font-bold">
+							Deleted User
+						</span>
 						<p class="flex items-center space-x-2 text-sm mt-1 text-gray-400">
 							<!-- Timestamp -->
 							<span>{{ formatDate(new Date(post.published)) }}</span>
@@ -211,9 +224,9 @@
 				<ContentCommentList :comments="comments" :offset="offset" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent"/>
 			</div>
 			<p v-else class="px-2.5 md:px-0 text-base text-center text-gray-500 dark:text-gray-100">
-				@{{ item.creator.name }}'s post sucks so bad no one's bothered to reply to it so far.
+				This post sucks so bad no one's bothered to reply to it so far.
 				<br/><br/>
-				You could be the first one to point that out and laugh at them.
+				You could be the first one to point that out and laugh at it.
 			</p>
 		</div>
 	</div>

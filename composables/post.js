@@ -1,4 +1,5 @@
-import { baseURL } from "@/server/constants";
+//import { baseURL } from "@/server/constants";
+import { useAPI } from "./api";
 
 export async function usePost(id) {
   const {
@@ -6,8 +7,7 @@ export async function usePost(id) {
     pending,
     error,
     refresh,
-  } = await useFetch(`/posts/${id}`, {
-    baseURL,
+  } = await useAPI(`/posts/${id}`, {
     key: `post_${id}`,
   });
 
