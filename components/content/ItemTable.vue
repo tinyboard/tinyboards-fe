@@ -43,7 +43,7 @@
 								class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded-sm"
 								/>
 								<!-- Display Name -->
-								<NuxtLink to="/Bret" class="ml-2 sm:ml-0">
+								<NuxtLink :to="`/user/${item.creator.name}`" class="ml-2 sm:ml-0">
 									<strong>{{ item.creator.name }}</strong>
 								</NuxtLink>
 								<!-- Title -->
