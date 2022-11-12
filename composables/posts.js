@@ -1,4 +1,3 @@
-import { baseURL } from "@/server/constants";
 import { ref } from "vue";
 import { useAPI } from "./api";
 
@@ -6,7 +5,7 @@ export async function getListing(query, type_) {
   let page = 1;
   let items = ref([]);
   let endpoints = {
-    posts: "/posts",
+    posts: "/feed",
     comments: "/comment",
   };
   async function request(query) {
