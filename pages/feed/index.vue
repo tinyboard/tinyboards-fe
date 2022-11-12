@@ -24,11 +24,11 @@
       const links = [
       { name: 'Hot', href: '/feed' },
       { name: 'Latest', href: '/feed?sort=new' },
-      { name: 'Top All', href: '/feed?sort=top&time=all' },
-      { name: 'Top Month', href: '/feed?sort=top&time=month' },
-      { name: 'Top Week', href: '/feed?sort=top&time=week' },
-      { name: 'Top Day', href: '/feed?sort=top&time=day' },
-      { name: 'Most Comments', href: '/feed?sort=top&time=all&type=comments' },
-      { name: 'Latest Comments', href: '/feed?sort=new&type=comments' }
+      { name: 'Top All', href: '/feed?sort=topall' },
+      { name: 'Top Month', href: '/feed?sort=topmonth' },
+      { name: 'Top Week', href: '/feed?sort=topweek' },
+      { name: 'Top Day', href: '/feed?sort=topday' },
+      { name: 'Most Comments', href: '/feed?sort=mostcomments' },
+      { name: 'Latest Comments', href: '/feed?sort=newcomments' }
       ];
 </script>
