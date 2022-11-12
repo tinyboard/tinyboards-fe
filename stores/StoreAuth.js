@@ -14,23 +14,28 @@ export const useLoggedInUser = defineStore("auth", {
       return new Promise((resolve, reject) => {
         useFetch("/auth/login", {
           baseURL,
-          key: `login_${nameOrEmail}`,
+          key: `login_${nameOrEmail}_${Date.now()}`,
           method: "post",
           body: {
             username_or_email: nameOrEmail,
             password,
           },
         })
-          .then(({ data }) => {
-            this.user = data.value.user.user;
-            this.token = data.value.jwt;
-            this.isAuthed = true;
+          .then(({ data, error }) => {
+            if (data.value) {
+              this.user = data.value.user.user;
+              this.token = data.value.jwt;
+              this.isAuthed = true;
 
-            resolve(data.value);
+              resolve(data.value);
+            } else {
+              this.isAuthed = false;
+              reject(error.value);
+            }
           })
-          .catch(({ error }) => {
+          .catch((error) => {
             this.isAuthed = false;
-            reject(error.value);
+            reject(error);
           });
       });
     },
@@ -38,7 +43,7 @@ export const useLoggedInUser = defineStore("auth", {
       return new Promise((resolve, reject) => {
         useFetch("/auth/signup", {
           baseURL,
-          key: `signup_${username}`,
+          key: `signup_${username}_${Date.now()}`,
           method: "post",
           body: {
             username,

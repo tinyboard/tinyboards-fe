@@ -1,5 +1,8 @@
 <template>
-	<form action="/login" @submit.prevent="login" class="w-full max-w-sm bg-white border shadow-lg rounded-md overflow-hidden">
+	<form action="/login" @submit.prevent="login" class="w-full max-w-sm bg-white border-0 shadow-lg rounded-md overflow-hidden">
+		<div v-if="error" class="px-4 py-2 bg-red-600">
+			<p class="font-bold text-white text-sm">Login failed!</p>
+		</div>
 		<div class="px-4 md:px-6 py-6">
 			<h1 class="text-xl text-gray-900 font-bold mb-6">
 				Sign in
@@ -40,11 +43,18 @@
 	let nameOrEmail = ref("");
 	let password = ref("");
 	let loading = ref(false);
+	let error = ref(false);
+	let reqError = false;
 
 	let userStore = useLoggedInUser();
 	let router = useRouter();
 
+	// reqError may seem redundant - it is - it's a workaround to fix a really weird bug with changes I make to error.value in catch not persisting?
 	function login() {
+		reqError = false;
+		error.value = reqError;
+		loading.value = true;
+
 		userStore.login({
 			nameOrEmail: nameOrEmail.value,
 			password: password.value
@@ -54,7 +64,11 @@
 				router.push("/");
 			})
 			.catch(error => {
-				console.error(error);
+				reqError = true;
+			})
+			.finally(() => {
+				loading.value = false;
+				error.value = reqError;
 			});
 	}
 </script>
