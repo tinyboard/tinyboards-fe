@@ -1,7 +1,7 @@
 <template>
   <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
     <div>
-      <img class="p-1 w-full h-56 aspect-auto object-cover bg-white border" src="https://i.imgur.com/x0I5K0N.gif"/>
+      <img class="p-1 w-full h-56 aspect-auto object-cover bg-white border" :src="selectedImage"/>
       <small class="text-gray-400 block mt-2">
         Art submission by Elon
       </small>
@@ -35,9 +35,25 @@
 </template>
 
 <script setup>
+import { shuffle } from '@/utils/shuffleArray';
+
 // Define sub-navigation menu links
 const spotlight = [
 { id: 1, username: 'elon', avatarUrl: 'https://i.imgur.com/svGJfRg.jpg', reputation: 980 },
 { id: 2, username: 'wojak', avatarUrl: 'https://i.imgur.com/BbOe1X6.jpg', reputation: 490 },
 ]
+
+// TO-DO
+// Refactor with proper `/assets/images/sidebar-art` folder
+// https://nuxtjs.org/docs/directory-structure/assets/#images
+const images = [
+'https://i.imgur.com/x0I5K0N.gif',
+'https://i.imgur.com/GNCQODS.gif',
+'https://i.imgur.com/amEwe3k.gif',
+'https://i.imgur.com/Oa39PlB.gif',
+'https://i.imgur.com/HARAJ3P.gif'
+];
+
+const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`
+
 </script>
