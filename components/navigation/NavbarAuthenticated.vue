@@ -27,7 +27,7 @@
 				</div>
 				<div class="hidden md:flex items-center">
 					<!-- Search Box -->
-					<div class="mr-4 flex items-baseline space-x-4">
+					<div class="mr-4 flex items-center space-x-4">
 						<form class="group relative" @submit.prevent="onSubmit" @submit="search()">
 							<div class="absolute left-3 top-2">
 								<button class="text-white/20 hover:text-white" type="submit">
