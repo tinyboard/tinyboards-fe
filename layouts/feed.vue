@@ -34,10 +34,9 @@
 
 <script setup>
 	import { getListing } from '@/composables/posts';
-  let sort = useRoute().params.sort
-  if (!sort){
-    sort = "new"
-  }
+
+  let sort = useRoute().params.sort ?? 'new';
+
 	let { items: posts, paginate, pending, error, refresh } = await getListing({
 		sort: sort,
 		limit: 25
