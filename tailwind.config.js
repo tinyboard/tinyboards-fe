@@ -44,7 +44,7 @@ module.exports = {
     },
     fontFamily: {
       'sans': ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
-      'serif': ['Spectral', 'Georgia'],
+      'serif': ['Georgia'],
       'mono': ['ui-monospace', 'SFMono-Regular', 'menlo'],
     },
     extend: {
