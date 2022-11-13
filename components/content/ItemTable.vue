@@ -93,7 +93,7 @@
 								<path d="M12 7v5"></path>
 							</svg>
 							<span class="pl-1">
-								{{ formatDate(new Date(item.counts.newest_comment_time)) }}
+								{{ formatDate(item.counts.newest_comment_time) }}
 							</span>
 						</div>
 					</td>

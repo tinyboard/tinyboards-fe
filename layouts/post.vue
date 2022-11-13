@@ -204,7 +204,7 @@
 			</div>
 		</div>
 		<!-- Banner -->
-		<div id="comments" class="w-full border rounded-md p-4 shadow-inner-white">
+		<div v-if="!isAuthed" id="comments" class="w-full border rounded-md p-4 shadow-inner-white">
 			<p class="text-base text-gray-500 dark:text-gray-100 text-center">
 				<strong>Want to join the discussion? </strong>
 				<NuxtLink to="/sign-up">Sign up to comment</NuxtLink>
@@ -246,6 +246,9 @@
 
 <script setup>
 	import { reactive, computed } from 'vue';
+
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+
 	import { usePost } from '@/composables/post';
 	import { usePostComments } from '@/composables/comments';
 
@@ -256,11 +259,15 @@
 	import { useSave } from '@/composables/save';
 	import { useSubscribe } from '@/composables/subscribe';
 
+	let route = useRoute();
+
+	let userStore = useLoggedInUser();
+	const isAuthed = userStore.isAuthed;
+
 	const { voteType, vote } = useVote();
 	const { isSaved, save } = useSave();
 	const { isSubscribed, subscribe } = useSubscribe();
 
-	let route = useRoute();
 	let { item, pending, error, refresh } = await usePost(route.params.id);
 	console.error(`Error: ${error.value}`);
 	let post = null;
