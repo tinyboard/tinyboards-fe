@@ -85,7 +85,7 @@
 					loading="lazy"
 					:src="user.avatar_url"
 					alt="avatar"
-					class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-1 border bg-white"
+					class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
 					/>
 					<!-- Info -->
 					<div class="flex flex-col md:ml-4 mt-4 md:mt-0">
@@ -163,7 +163,7 @@
 									loading="lazy"
 									:src="item.author.avatarUrl"
 									alt="avatar"
-									class="hidden sm:inline flex-shrink-0 w-12 h-12 object-cover rounded-sm rounded-none p-1 border bg-white"
+									class="hidden sm:inline flex-shrink-0 w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white"
 									/>
 									<!-- Post Details -->
 									<div class="flex flex-col sm:pl-3 sm:truncate">
