@@ -1,10 +1,10 @@
 //import { $fetch } from "ohmyfetch";
 //import { useFetch } from "nuxt";
-import { useAPI } from "./api";
+import { useApi } from "@/composables/api";
 
 export async function useFetchUser(username) {
   //const user = await $fetch(`https://jsonplaceholder.typicode.com/users/?username=${username.value}`)
-  return useAPI(`/user/${username}`, {
+  return useApi(`/user/${username}`, {
     key: `user_${username}`,
   });
 }

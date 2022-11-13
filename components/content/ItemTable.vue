@@ -30,7 +30,7 @@
 						<!-- Post Details -->
 						<div class="flex flex-col sm:pl-3 sm:truncate">
 							<!-- Title -->
-							<NuxtLink class="text-base font-bold text-gray-900 visited:text-gray-400 hover:text-primary sm:overflow-hidden sm:text-ellipsis" :to="`/post/${item.post.id}`">
+							<NuxtLink class="text-base font-bold text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`/post/${item.post.id}`">
 								{{ item.post.title }}
 							</NuxtLink>
 							<!-- Author -->

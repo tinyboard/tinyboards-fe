@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useAPI } from "./api";
+import { useApi } from "@/composables/api";
 
 export async function getListing(query, type_) {
   let page = 1;
@@ -9,7 +9,7 @@ export async function getListing(query, type_) {
     comments: "/comment",
   };
   async function request(query) {
-    const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
+    const { data, pending, error, refresh } = await useApi(endpoints[type_], {
       query: { ...query, page },
       key: "get_" + type_ + "_key",
     });

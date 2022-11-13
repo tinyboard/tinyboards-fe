@@ -194,13 +194,13 @@
                                                             </button>
                                                       </li>
                                                       <li>
-                                                            <button v-if="author" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+                                                            <button v-if="item.creator.name" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
                                                                   <i class="far fa-trash-alt fa-fw mr-1"></i>
                                                                   <span class="text-sm font-bold">Delete</span>
                                                             </button>
                                                       </li>
                                                       <li>
-                                                            <button v-if="author" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+                                                            <button v-if="item.creator.name" class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
                                                                   <i class="far fa-pen fa-fw mr-1"></i>
                                                                   <span class="text-sm font-bold">Edit</span>
                                                             </button>
@@ -271,6 +271,8 @@
       import { useSave } from '@/composables/save';
       import { useSubscribe } from '@/composables/subscribe';
 
+      import { useDeletePost } from '@/composables/post';
+
       let route = useRoute();
 
       let userStore = useLoggedInUser();
@@ -302,6 +304,10 @@
                   return 0
             }
       });
+
+      const isAuthor = computed(() => {
+            return userStore.user.name === item.creator.name;
+      })
 
       const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
 

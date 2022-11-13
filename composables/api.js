@@ -1,6 +1,6 @@
 import { baseURL } from "@/server/constants";
 
-export function useAPI(path, options) {
+export function useApi(path, options) {
   const authCookie = useCookie("token").value;
 
   return useFetch(path, {

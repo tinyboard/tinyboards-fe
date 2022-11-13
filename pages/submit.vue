@@ -17,14 +17,14 @@
 		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
 			<div class="col-span-full flex flex-col gap-6">
 				<!-- Form -->
-				<form action="#" method="POST" class="block w-full">
+				<form action="/submit" @submit.prevent="submit" class="block w-full">
 					<div class="overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
 						<div class="bg-white px-4 py-5 sm:p-6">
 							<div class="grid grid-cols-6 gap-4">
 								<!-- Title -->
 								<div class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Title</label>
-									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"/>
+									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="title"/>
 								</div>
 								<!-- Link -->
 								<div class="col-span-full">
@@ -35,7 +35,7 @@
 												optional
 											</em>
 										</span>
-										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"/>
+										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="url"/>
 										<p class="mt-2 invisible peer-invalid:visible text-red-600 text-sm">
 											Please provide a valid URL.
 										</p>
@@ -52,7 +52,8 @@
 											</em>
 										</span>
 										<div id="post-body" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
-											<InputsTiptap class="bg-white"/>
+											<!-- <InputsTiptap class="bg-white"/> -->
+											<textarea class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" rows="6" v-model="body"/>
 										</div>
 									</label>
 								</div>
@@ -69,9 +70,46 @@
 </template>
 
 <script setup>
+	import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js'
 
 	const site = useSiteStore();
+
+	let router = useRouter();
+
+	let title = ref("");
+	let url = ref("");
+	let body = ref("");
+
+	const authCookie = useCookie("token").value;
+
+	const submit = () => {
+		return new Promise((resolve, reject) => {
+			useFetch('/posts', {
+				baseURL,
+				method: "post",
+				body: {
+					"creatorId": 0,
+					"boardId": 1,
+					"title": title.value,
+					"type_": "text",
+					"url": url.value,
+					"body": body.value,
+					"nsfw": true
+				},
+				headers: {
+					Authorization: authCookie ? `Bearer ${authCookie}` : '',
+				}
+			})
+			.then(data => {
+				console.log(data);
+				router.push("/feed");
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		});
+	};
 
 	const links = [
 	{ name: 'House Rules', href: '/wiki/rules', target: '_blank' },

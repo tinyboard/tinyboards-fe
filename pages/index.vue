@@ -1,18 +1,35 @@
 <template>
       <main class="flex flex-col pt-12 sm:pt-14">
-            <!-- Mobile Banner -->
-            <MediaBanner
-            class="relative sm:hidden"
-            />
-            <!-- Sub Navigation -->
-            <section>
-                  <NavigationNavbarSub :links="links"/>
+            <!-- Sub Navigation & Banner -->
+            <section class="flex flex-col">
+                  <NavigationNavbarSub :links="links" class="sm:order-first"/>
+                  <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
+                        <!-- Banner -->
+                        <MediaBanner class="col-span-full"/>
+                  </div>
             </section>
             <!-- Main Content -->
-            <section class="container mx-auto max-w-8xl grid grid-cols-12 pt-10 sm:px-4 md:px-6">
-                  <div class="col-span-full flex gap-6 py-4 sm:py-8">
+            <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
+                  <div class="col-span-full flex gap-6">
                         <!-- Main Content -->
-                        <NuxtLayout name="feed"/>
+                        <div class="w-full">
+                              <!-- Loading State -->
+                              <div v-if="pending">
+                                    Loading...
+                              </div>
+                              <!-- Feed -->
+                              <ContentItemTable v-else-if="posts.length" :posts="posts" title="Hot posts"/>
+                              <!-- Error State -->
+                              <div v-else-if="error" class="w-full">
+                                    <div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
+                                          Failed to load posts.
+                                    </div>
+                              </div>
+                              <!-- Empty State -->
+                              <div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
+                                    There are no posts. This place must be boring.
+                              </div>
+                        </div>
                         <!-- Sidebar -->
                         <NavigationSidebar />
                   </div>
@@ -21,14 +38,23 @@
 </template>
 
 <script setup>
+      import { getListing } from '@/composables/posts';
+
+      let sort = useRoute().params.sort ?? 'new';
+
+      let { items: posts, paginate, pending, error, refresh } = await getListing({
+            sort: sort,
+            limit: 25
+      }, "posts");
+
       const links = [
       { name: 'Hot', href: '/feed' },
       { name: 'Latest', href: '/feed?sort=new' },
-      { name: 'Top All', href: '/feed?sort=top&time=all' },
-      { name: 'Top Month', href: '/feed?sort=top&time=month' },
-      { name: 'Top Week', href: '/feed?sort=top&time=week' },
-      { name: 'Top Day', href: '/feed?sort=top&time=day' },
-      { name: 'Most Comments', href: '/feed?sort=top&time=all&type=comments' },
-      { name: 'Latest Comments', href: '/feed?sort=new&type=comments' }
+      { name: 'Top All', href: '/feed?sort=topall' },
+      { name: 'Top Month', href: '/feed?sort=topmonth' },
+      { name: 'Top Week', href: '/feed?sort=topweek' },
+      { name: 'Top Day', href: '/feed?sort=topday' },
+      { name: 'Most Comments', href: '/feed?sort=mostcomments' },
+      { name: 'Latest Comments', href: '/feed?sort=newcomments' }
       ];
 </script>
