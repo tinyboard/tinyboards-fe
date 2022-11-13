@@ -1,7 +1,7 @@
 <template>
     <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
       <div class="p-4 border rounded-md">
-            <NuxtLink :to="'/'+author.username" class="group flex items-center space-x-2 mb-4 text-sm">
+            <NuxtLink :to="`/user/${author.username}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->
                   <img
                   loading="lazy"

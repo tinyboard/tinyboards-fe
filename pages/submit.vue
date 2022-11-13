@@ -1,14 +1,17 @@
 <template>
-	<main class="flex pt-0 sm:pt-14">
+	<main class="flex flex-col pt-12 sm:pt-14">
+		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:mt-6 sm:px-4 md:px-6">
+			<!-- Banner -->
+			<MediaBanner
+			title="Create new post"
+			:sub-title="`Your post will be visible to 456 members of ${site.name}.`"
+			image-url="https://i.imgur.com/4MvaMAI.jpg"
+			class="col-span-full"
+			/>
+		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 md:px-6">
-			<div class="col-span-full flex flex-col gap-6 py-8 my-2.5 sm:my-0">
-				<!-- Banner -->
-				<MediaBanner
-				title="Create new post"
-				:sub-title="`Your post will be visible to 456 members of ${site.name}.`"
-				image-url="https://i.imgur.com/4MvaMAI.jpg"
-				/>
+		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
+			<div class="col-span-full flex flex-col gap-6">
 				<!-- Form -->
 				<form action="#" method="POST" class="block w-full">
 					<div class="overflow-hidden shadow-inner-xs sm:border sm:rounded-md">

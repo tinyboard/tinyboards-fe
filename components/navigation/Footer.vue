@@ -1,6 +1,6 @@
 <template>
-	<footer class="mx-auto max-w-8xl w-full bg-transparent border-t dark:bg-secondary dark:border-white/10">
-		<div class="py-5 px-4 sm:px-6 md:px-8">
+	<footer class="w-full bg-transparent border-t dark:bg-secondary dark:border-white/10">
+		<div class="mx-auto max-w-8xl py-5 px-4 sm:px-6 md:px-8">
 			<ul class="flex flex-wrap md:flex-nowrap md:items-center md:space-x-2 -mx-2 gap-2 md:gap-0">
 				<li v-for="link in navigation" :key="link.name" class="flex-shrink-0 text-xs leading-normal">
 					<NuxtLink :to="link.href" custom v-slot="{ isActive }">
