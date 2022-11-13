@@ -1,13 +1,17 @@
 <template>
 	<main class="flex flex-col pt-12 sm:pt-14">
-		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:mt-6 sm:px-4 md:px-6">
-			<!-- Banner -->
-			<MediaBanner
-			title="Create new post"
-			:sub-title="`Your post will be visible to 456 members of ${site.name}.`"
-			image-url="https://i.imgur.com/4MvaMAI.jpg"
-			class="col-span-full"
-			/>
+		<!-- Sub Navigation & Banner -->
+		<section class="flex flex-col">
+			<NavigationNavbarSub :links="links" class="sm:order-first"/>
+			<div class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
+				<!-- Banner -->
+				<MediaBanner
+				title="Create new post"
+				:sub-title="`Your post will be visible to 456 members of ${site.name}.`"
+				image-url="https://i.imgur.com/4MvaMAI.jpg"
+				class="col-span-full"
+				/>
+			</div>
 		</section>
 		<!-- Main Content -->
 		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
@@ -67,7 +71,12 @@
 <script setup>
 	import { useSiteStore } from '@/stores/StoreSite.js'
 
-	const site = useSiteStore()
+	const site = useSiteStore();
+
+	const links = [
+	{ name: 'House Rules', href: '/wiki/rules', target: '_blank' },
+	{ name: 'Formatting Guide', href: '/wiki/formatting', target: '_blank' },
+	];
 </script>
 
 <style scoped>

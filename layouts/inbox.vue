@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-
 	const links = [
 	{ name: 'All', href: '/inbox' },
 	{ name: 'Unread', href: '/inbox/unread' },
