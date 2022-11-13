@@ -1,5 +1,4 @@
-//import { baseURL } from "@/server/constants";
-import { useAPI } from "./api";
+import { useApi } from "@/composables/api";
 
 export async function usePost(id) {
   const {
@@ -7,7 +6,7 @@ export async function usePost(id) {
     pending,
     error,
     refresh,
-  } = await useAPI(`/posts/${id}`, {
+  } = await useApi(`/posts/${id}`, {
     key: `post_${id}`,
   });
 
@@ -17,4 +16,4 @@ export async function usePost(id) {
     error,
     refresh,
   };
-}
+};
