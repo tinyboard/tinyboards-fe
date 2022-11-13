@@ -61,12 +61,12 @@
 			username: name.value,
 			password: password.value
 		})
-			.then(token => {
-				Cookies.set('token', token);
-				router.push("/");
-			})
-			.catch(error => {
-				console.error(`ERROR: ${error}`);
-			});
-}
+		.then(token => {
+			Cookies.set('token', token);
+			router.push("/feed");
+		})
+		.catch(error => {
+			console.error(`ERROR: ${error}`);
+		});
+	}
 </script>

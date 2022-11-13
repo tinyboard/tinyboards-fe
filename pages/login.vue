@@ -59,16 +59,16 @@
 			nameOrEmail: nameOrEmail.value,
 			password: password.value
 		})
-			.then(data => {
-				Cookies.set('token', data.jwt);
-				router.push("/");
-			})
-			.catch(error => {
-				reqError = true;
-			})
-			.finally(() => {
-				loading.value = false;
-				error.value = reqError;
-			});
+		.then(data => {
+			Cookies.set('token', data.jwt);
+			router.push("/feed");
+		})
+		.catch(error => {
+			reqError = true;
+		})
+		.finally(() => {
+			loading.value = false;
+			error.value = reqError;
+		});
 	}
 </script>
