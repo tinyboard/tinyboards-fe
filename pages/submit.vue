@@ -15,7 +15,7 @@
 				<!-- Form -->
 				<form action="#" method="POST" class="block w-full">
 					<div class="overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
-						<div class="bg-white p-4">
+						<div class="bg-white px-4 py-5 sm:p-6">
 							<div class="grid grid-cols-6 gap-4">
 								<!-- Title -->
 								<div class="col-span-full">
@@ -54,7 +54,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="bg-gray-50 shadow-inner-white border-t p-4 text-right">
+						<div class="bg-gray-50 shadow-inner-white border-t p-4 sm:px-6">
 							<button type="submit" class="button primary">Create post</button>
 						</div>
 					</div>

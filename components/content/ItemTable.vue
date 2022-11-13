@@ -51,7 +51,7 @@
 									{{ item.creator.title }}
 								</span>
 								<!-- Timestamps -->
-								<span class="ml-2">
+								<span :title="item.post.published" class="ml-2">
 									<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 									<span class="pl-1">{{ formatDate(new Date(item.post.published)) }}</span>
 								</span>
@@ -63,7 +63,7 @@
 						</div>
 					</th>
 					<td class="hidden lg:table-cell py-4 px-4">
-						<div class="flex items-center">
+						<div :title="`${item.counts.upvotes} ${item.counts.upvotes === 1 ? 'upvote' : 'upvotes'} | ${item.counts.downvotes} ${item.counts.downvotes === 1 ? 'downvote' : 'downvotes'}`" class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
@@ -74,7 +74,7 @@
 						</div>
 					</td>
 					<td class="hidden lg:table-cell py-4 px-4">
-						<div class="flex items-center">
+						<div :title="`${item.counts.comments} ${item.counts.comments === 1 ? 'comment' : 'comments'} on this post`" class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
@@ -85,7 +85,7 @@
 						</div>
 					</td>
 					<td class="hidden xl:table-cell py-4 px-4">
-						<div class="flex items-center">
+						<div :title="`Last reply ${formatDate(item.counts.newest_comment_time)}`" class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<circle cx="12" cy="12" r="9"></circle>
