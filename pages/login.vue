@@ -1,4 +1,5 @@
 <template>
+	<NuxtLayout name="registration">
 	<form action="/login" @submit.prevent="login" class="w-full max-w-sm bg-white border-0 shadow-lg rounded-md overflow-hidden">
 		<div v-if="error" class="px-4 py-2 bg-red-600">
 			<p class="font-bold text-white text-sm">Login failed!</p>
@@ -30,6 +31,7 @@
 			</ul>
 		</div>
 	</form>
+</NuxtLayout>
 </template>
 
 <script setup>
@@ -38,7 +40,7 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import Cookies from 'js-cookie';
 
-	definePageMeta({ layout: "registration" });
+	definePageMeta({ layout: false });
 
 	let nameOrEmail = ref("");
 	let password = ref("");
