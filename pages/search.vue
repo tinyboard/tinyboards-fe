@@ -1,28 +1,22 @@
 <template>
 	<main class="flex flex-col pt-12 sm:pt-14">
-		<!-- Mobile Banner -->
-		<MediaBanner
-		class="relative sm:hidden"
-		title="Search"
-		:sub-title="`Showing 25 of 500 results for ${route.query.q}`"
-		image-url="https://i.imgur.com/kGhynxn.png"
-		/>
-		<!-- Sub Navigation -->
-		<section>
-			<NavigationNavbarSub :links="links"/>
+		<!-- Sub Navigation & Banner -->
+		<section class="flex flex-col">
+			<NavigationNavbarSub :links="links" class="sm:order-first"/>
+			<div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
+				<!-- Banner -->
+				<MediaBanner
+				title="Search"
+				:sub-title="`Showing 25 of 500 results for ${route.query.q}`"
+				image-url="https://i.imgur.com/kGhynxn.png"
+				class="col-span-full"/>
+			</div>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:pt-10 sm:px-4 md:px-6">
-			<div class="col-span-full flex gap-6 sm:py-8">
+		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
+			<div class="col-span-full flex gap-6">
 				<!-- Main Content -->
 				<div class="w-full">
-					<!-- Banner -->
-					<MediaBanner
-					class="hidden sm:block mb-6"
-					title="Search"
-					:sub-title="`Showing 25 of 500 results for ${route.query.q}`"
-					image-url="https://i.imgur.com/kGhynxn.png"
-					/>
 					<!-- Filters -->
 					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-4 px-4 py-5 sm:p-6 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
 						<!-- Search Input -->
