@@ -17,14 +17,14 @@
 		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
 			<div class="col-span-full flex flex-col gap-6">
 				<!-- Form -->
-				<form action="/submit" @submit.prevent="submit" class="block w-full">
+				<form @submit.prevent="onSubmit" @submit="submit()" class="block w-full">
 					<div class="overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
 						<div class="bg-white px-4 py-5 sm:p-6">
 							<div class="grid grid-cols-6 gap-4">
 								<!-- Title -->
 								<div class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Title</label>
-									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="title"/>
+									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="title" required/>
 								</div>
 								<!-- Link -->
 								<div class="col-span-full">
@@ -35,8 +35,8 @@
 												optional
 											</em>
 										</span>
-										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="url"/>
-										<p class="mt-2 invisible peer-invalid:visible text-red-600 text-sm">
+										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="url" :required="!body" @focus="hasFocusedUrl = true;"/>
+										<p v-show="!body && hasFocusedUrl" class="mt-2 invisible peer-invalid:visible text-red-600 text-sm">
 											Please provide a valid URL.
 										</p>
 									</label>
@@ -53,7 +53,7 @@
 										</span>
 										<div id="post-body" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
 											<!-- <InputsTiptap class="bg-white"/> -->
-											<textarea class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" rows="6" v-model="body"/>
+											<textarea class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
 										</div>
 									</label>
 								</div>
@@ -80,6 +80,9 @@
 	let title = ref("");
 	let url = ref("");
 	let body = ref("");
+
+	let hasFocusedUrl = ref(false);
+	let hasFocusedBody = ref(false);
 
 	const authCookie = useCookie("token").value;
 
