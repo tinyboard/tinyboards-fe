@@ -32,7 +32,7 @@
 							<div class="absolute left-3 top-2">
 								<button class="text-white/20 hover:text-white" type="submit">
 									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-									  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+										<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
 									</svg>
 								</button>
 							</div>
@@ -40,9 +40,9 @@
 							<div v-show="searchTerm" class="absolute right-3 top-2">
 								<button class="text-white/20 hover:text-white" @click="searchTerm = ''">
 									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-									   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-									   <circle cx="12" cy="12" r="9"></circle>
-									   <path d="M10 10l4 4m0 -4l-4 4"></path>
+										<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+										<circle cx="12" cy="12" r="9"></circle>
+										<path d="M10 10l4 4m0 -4l-4 4"></path>
 									</svg>
 								</button>
 							</div>
