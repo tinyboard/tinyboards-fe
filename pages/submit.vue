@@ -101,9 +101,9 @@
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',
 				}
 			})
-			.then(data => {
-				console.log(data);
-				router.push("/feed");
+			.then(({ data }) => {
+				const post = JSON.parse(JSON.stringify(data.value.post_view.post));
+				navigateTo(`/post/${post.id}`)
 			})
 			.catch((error) => {
 				console.log(error);
