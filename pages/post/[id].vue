@@ -232,19 +232,18 @@
                                           <h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
                                                 {{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
                                           </h1>
-                                          <div class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
-                                                <p v-if="comments.length === 0" class="text-gray-500 text-center">
+                                          <div v-if="comments.length" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
+                                                <ContentCommentList :comments="comments" :offset="offset"/>
+                                          </div>
+                                          <div v-else-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
+                                                <p>
                                                       This post sucks so bad no one's bothered to reply to it so far.
                                                       <br>
                                                       You could be the first one to point that out and laugh at it.
                                                 </p>
-                                                <ContentCommentList v-else-if="comments.length" :comments="comments" :offset="offset"/>
-                                                <p v-else-if="commentsError">
-                                                      Failed to load comments. You should upgrade your servers lol.
-                                                </p>
-                                                <p v-else>
-                                                      An unknown error occured.
-                                                </p>
+                                          </div>
+                                          <div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
+                                                <p>An unknown error occured.</p>
                                           </div>
                                     </div>
                               </div>
