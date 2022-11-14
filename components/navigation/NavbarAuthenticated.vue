@@ -80,7 +80,7 @@
 							</svg>
 						</NuxtLink>
 						<!-- Profile Dropdown -->
-						<DropdownsProfile :user="v"/>
+						<MenusProfile :user="v"/>
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-1 md:hidden">
