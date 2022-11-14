@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const nuxtApp = useNuxtApp();
 
   if (process.server) {
-    const cookieHeader = nuxtApp.ssrContext.req.headers["cookie"] || "";
+    const cookieHeader = nuxtApp.ssrContext.event.req.headers["cookie"] || "";
     const cookies = cookie.parse(cookieHeader);
 
     if (cookies["token"]) {
