@@ -91,7 +91,7 @@
 						<i class="far fa-search fa-fw fa-lg"></i>
 					</button>
 					<!-- Create post button -->
-					<NuxtLink tag="button" class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" to="/create/post">
+					<NuxtLink tag="button" class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" to="/submit">
 						<span class="sr-only">Create post</span>
 						<!-- Menu Icon -->
 						<i class="far fa-feather fa-fw fa-lg"></i>
