@@ -1,17 +1,17 @@
 <template>
     <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
       <div class="p-4 border rounded-md">
-            <NuxtLink :to="`/user/${author.username}`" class="group flex items-center space-x-2 mb-4 text-sm">
+            <NuxtLink :to="`/user/${author.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->
                   <img
                   loading="lazy"
-                  :src="author.avatarUrl"
+                  :src="author.avatar"
                   alt="avatar"
                   class="flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white group-hover:bg-gray-200 group-hover:border-transparent"
                   />
                   <!-- Username -->
                   <strong>
-                        {{ author.username }}
+                        {{ author.name }}
                   </strong>
             </NuxtLink>
             <div class="flex flex-wrap -m-2">
@@ -64,13 +64,9 @@
 
 <script setup>
 // Define author
-const author = {
-  username: 'tim_apple',
-  usernameColor: '#FF0000',
-  title: 'developer',
-  titleColor: '#1E1E1E',
-  avatarUrl: 'https://i.imgur.com/nzY5zAg.jpg',
-}
+const props = defineProps({
+      author: Object
+})
 
 // Define social links
 const socials = [

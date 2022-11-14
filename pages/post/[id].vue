@@ -262,7 +262,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <NavigationSidebarPost />
+                        <NavigationSidebarPost :author="item.creator" />
                   </div>
             </section>
       </main>
