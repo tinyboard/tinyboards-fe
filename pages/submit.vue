@@ -36,7 +36,7 @@
 											</em>
 										</span>
 										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="url" :required="!body" @focus="hasFocusedUrl = true;"/>
-										<p v-show="!body && hasFocusedUrl" class="mt-2 invisible peer-invalid:visible text-red-600 text-sm">
+										<p class="mt-2 peer-invalid:visible invisible text-red-600 text-sm" :class="!body && hasFocusedUrl ? 'opacity-100': 'opacity-0 pointer-events-none'">
 											Please provide a valid URL.
 										</p>
 									</label>
@@ -53,7 +53,7 @@
 										</span>
 										<div id="post-body" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
 											<!-- <InputsTiptap class="bg-white"/> -->
-											<textarea class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
+											<textarea placeholder="Enter some words worth reading..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
 										</div>
 									</label>
 								</div>

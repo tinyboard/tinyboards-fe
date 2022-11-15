@@ -4,6 +4,7 @@
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
 		<NavigationFooter />
+		<DialogsToastList />
 	</div>
 </template>
 
@@ -14,6 +15,6 @@
 
 	const isAuthed = userStore.isAuthed;
 
-	const Navbar = resolveComponent('NavigationNavbar')
-	const NavbarAuthenticated = resolveComponent('NavigationNavbarAuthenticated')
+	const Navbar = resolveComponent('NavigationNavbar');
+	const NavbarAuthenticated = resolveComponent('NavigationNavbarAuthenticated');
 </script>

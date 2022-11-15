@@ -227,23 +227,38 @@
                                                 <NuxtLink to="/sign-up">Sign up to comment</NuxtLink>
                                           </p>
                                     </div>
-                                    <!-- Comments -->
-                                    <div>
+                                    <!-- Comment Section -->
+                                    <div class="flex flex-col">
+                                          <!-- Count Heading -->
                                           <h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
                                                 {{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
                                           </h1>
-                                          <div v-if="comments.length" class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
-                                                <ContentCommentList :comments="comments" :offset="offset"/>
-                                          </div>
-                                          <div v-else-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
-                                                <p>
-                                                      This post sucks so bad no one's bothered to reply to it so far.
-                                                      <br>
-                                                      You could be the first one to point that out and laugh at it.
-                                                </p>
-                                          </div>
-                                          <div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
-                                                <p>An unknown error occured.</p>
+                                          <!-- Comments & States -->
+                                          <div class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
+                                                <!-- Write Form -->
+                                                <div v-if="isAuthed" class="flex md:space-x-3">
+                                                      <img
+                                                      loading="lazy"
+                                                      :src="userStore.user.avatar"
+                                                      alt="avatar"
+                                                      class="hidden md:inline-block flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+                                                      />
+                                                      <InputsComment/>
+                                                </div>
+                                                <!-- Comments -->
+                                                <ContentCommentList v-if="comments.length" :comments="comments" :offset="offset"/>
+                                                <!-- Empty State -->
+                                                <div v-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
+                                                      <p>
+                                                            This post sucks so bad, no one's bothered to reply to it.
+                                                            <br>
+                                                            You could be the first one to point that out and laugh at it.
+                                                      </p>
+                                                </div>
+                                                <!-- Error State -->
+                                                <div v-else-if="commentsError" class="px-4 py-24 text-center text-gray-400">
+                                                      <p>An unknown error occured.</p>
+                                                </div>
                                           </div>
                                     </div>
                               </div>
