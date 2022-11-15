@@ -44,7 +44,7 @@
 
   timeout = setTimeout(() => {
     toast.removeNotification(props.notification);
-  }, 200000);
+  }, 4000);
 
   onBeforeUnmount(() => {
     clearTimeout(timeout)

@@ -106,12 +106,14 @@
                                                 class="w-full h-full object-cover"
                                                 />
                                           </div>
+                                          <!-- Post Edit Form -->
+                                          <InputsEditPost v-if="isEditing" :body="post.body" @cancel="isEditing = false;"/>
                                           <!-- Post Text Body -->
-                                          <div v-if="post.body_html" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
+                                          <div v-else-if="!isEditing && post.body_html" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
                                                 <div class="dark:text-gray-200 break-words" v-html="post.body_html"></div>
                                           </div>
                                           <!-- Footer -->
-                                          <div class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
+                                          <div v-if="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
                                                 <!-- Desktop actions -->
                                                 <ul class="hidden md:flex flex-grow items-center space-x-6">
                                                       <li class="group flex items-center space-x-2 leading-none">
@@ -207,14 +209,16 @@
                                                             </button>
                                                       </li>
                                                       <li v-if="isAuthor">
-                                                            <button class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+                                                            <button class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="isEditing = !isEditing">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
                                                                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
                                                                      <path d="M16 5l3 3"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">Edit</span>
+                                                                  <span class="text-sm font-bold">
+                                                                        Edit
+                                                                  </span>
                                                             </button>
                                                       </li>
                                                 </ul>
@@ -304,10 +308,12 @@
       let userStore = useLoggedInUser();
       const isAuthed = userStore.isAuthed;
 
+      // Define post actions
       const { voteType, vote } = useVote();
       const { isSaved, save } = useSave();
       const { isSubscribed, subscribe } = useSubscribe();
 
+      // Post
       let { item, pending, error, refresh } = await usePost(route.params.id);
       console.error(`Error: ${error.value}`);
       let post = null;
@@ -318,11 +324,24 @@
             post = item.post;
       }
 
+      // Utils
       const percentUpvoted = computed(() => {
             const num = 1 - item.counts.downvotes / item.counts.upvotes;
             return toPercent(num);
       })
 
+      // Author
+      const isAuthor = computed(() => {
+            return userStore.user.name === item.creator.name;
+      })
+
+      // Edit
+      const isEditing = ref(false);
+
+      // Comments
+      const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
+
+      // Comment Offset
       const offset = computed(() => {
             if (comments && comments.length) {
                   return comments[0].level - 1
@@ -331,12 +350,7 @@
             }
       });
 
-      const isAuthor = computed(() => {
-            return userStore.user.name === item.creator.name;
-      })
-
-      const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
-
+      // Sub Navigation Links
       const links = [
       { name: 'Comments', href: '#comments' },
       ];

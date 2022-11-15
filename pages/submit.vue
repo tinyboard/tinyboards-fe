@@ -72,8 +72,11 @@
 <script setup>
 	import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js'
+	import { useToastStore } from '@/stores/StoreToast';
 
 	const site = useSiteStore();
+
+	const toast = useToastStore();
 
 	let router = useRouter();
 
@@ -106,7 +109,10 @@
 			})
 			.then(({ data }) => {
 				const post = JSON.parse(JSON.stringify(data.value.post_view.post));
-				navigateTo(`/post/${post.id}`)
+				// Show success toast.
+				toast.addNotification({header:'Post created',message:'Your was post was published!',type:'success'});
+				// Navigate to thread page.
+				navigateTo(`/post/${post.id}`);
 			})
 			.catch((error) => {
 				console.log(error);
