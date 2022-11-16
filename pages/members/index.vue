@@ -130,7 +130,7 @@
 	const router = useRouter();
 	const route = useRoute();
 
-	const sort = ref(route.params.sort?? 'new');
+	let sort = route.params.sort ?? 'new';
 
 	// Fetch members by sort.
 	const { data: members, pending, error, refresh } = await useFetch("/members", {
@@ -152,7 +152,6 @@
 
     // Watch for sort change and refetch.
     const stopWatch = watch(() => route, () => {
-    	sort.value = route.params.sort;
     	currentPage.value = route.query.page;
     	refresh();
     });
