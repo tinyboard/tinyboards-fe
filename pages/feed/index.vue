@@ -108,8 +108,6 @@
             page: page
       }, 'posts');
 
-      watch(page, refresh());
-
       // // Watch for sort change and refetch.
       // const stopWatch = watch(() => route, () => {
       //       console.log('refresh')
