@@ -78,7 +78,7 @@
 
 	const toast = useToastStore();
 
-	let router = useRouter();
+	const router = useRouter();
 
 	let title = ref("");
 	let url = ref("");

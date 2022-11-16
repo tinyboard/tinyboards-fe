@@ -1,5 +1,5 @@
 <template>
-	<div id="banner" class="flex items-center justify-between p-4 sm:px-12 sm:py-8 bg-gray-200/50 sm:rounded-md sm:shadow-inner-white bg-cover bg-center lights" :style="{ backgroundImage: `url(${imageUrl})` }">
+	<div id="banner" class="flex items-center justify-between p-4 sm:px-12 sm:py-10 bg-gray-200/50 sm:rounded-md sm:shadow-inner-white bg-cover bg-center lights" :style="{ backgroundImage: `url(${imageUrl})` }">
 		<div class="relative overflow-hidden">
 			<h1 class="text-2xl text-gray-100 leading-9 font-bold">
 				{{ title }}

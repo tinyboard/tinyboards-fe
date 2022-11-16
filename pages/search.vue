@@ -7,7 +7,7 @@
 				<!-- Banner -->
 				<MediaBanner
 				title="Search"
-				:sub-title="`Showing 25 of 500 results for ${route.query.q}`"
+				:sub-title="`Showing 25 of 500 results`"
 				image-url="https://i.imgur.com/kGhynxn.png"
 				class="col-span-full"/>
 			</div>
@@ -74,7 +74,7 @@
 	import { useRoute } from 'vue-router';
 	// import { search } from '@/composables/posts';
 
-	// Define route.
+	// Define route & router.
 	const route = useRoute();
 	const router = useRouter();
 
@@ -90,7 +90,10 @@
 	// }, "posts");
 
 	// Refresh search query when search term changes.
-	// watch(() => route.query, () => refresh())
+	// Watch for sort change and refetch.
+	// watch(() => route.query, () => {
+	// 	refresh();
+	// });
 
 	// Handle search input.
 	const search = () => {
@@ -99,7 +102,7 @@
 		}
 	};
 
-	// Links for sub-navigation bar.
+	// Links for sub navigation bar.
 	const links = [
 	{ name: 'Latest', href: `/search?q=${route.query.q}&sort=new` },
 	{ name: 'Top All', href: `/search?q=${route.query.q}&sort=top&time=all` },

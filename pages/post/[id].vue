@@ -186,7 +186,7 @@
                                                                   <span class="text-sm font-bold">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
                                                             </button>
                                                       </li>
-                                                      <li>
+                                                      <li v-if="!isAuthor">
                                                             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
