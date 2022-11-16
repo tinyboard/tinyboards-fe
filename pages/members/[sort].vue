@@ -71,22 +71,23 @@
 			</div>
 			<div class="col-span-full mt-4">
 				<NavigationPagination
-				:total-pages="totalPages"
-				:total="250"
-				:per-page="25"
-				:current-page="Number.parseInt(currentPage)"
-				v-slot="{
-					startPage,
-					endPage,
-					pages,
-					isFirstPage,
-					isLastPage,
-					onClickPreviousPage,
-					onClickPage,
-					onClickNextPage,
-					isPageActive
-				}"
-				@pagechanged="onPageChange">
+                :total-pages="totalPages"
+                :total="250"
+                :per-page="25"
+                :current-page="Number.parseInt(currentPage)"
+                v-slot="{
+                      startPage,
+                      endPage,
+                      pages,
+                      isFirstPage,
+                      isLastPage,
+                      onClickPreviousPage,
+                      onClickPage,
+                      onClickNextPage,
+                      isPageActive,
+                      pageChanged
+                }"
+                @page-changed="onPageChange">
 					<ul class="flex items-center text-sm text-gray-500 font-bold space-x-3">
 						<li>
 							<button class="button white" @click="onClickPreviousPage" :disabled="isFirstPage">
@@ -94,7 +95,7 @@
 							</button>
 						</li>
 						<li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
-							<button type="button" class="px-1 hover:text-secondary disabled:opacity-50 disabled:cursor-not-allowed" @click="onClickPage(page.name)" :disabled="page.isDisabled" :class="{ active: isPageActive(page.name) }" :aria-label="`Go to page ${page.name}`">
+							<button type="button" class="px-1 hover:text-gray-900 disabled:cursor-not-allowed" @click="onClickPage(page.name)" :disabled="page.isDisabled" :class="{ 'text-gray-700':isPageActive(page.name) }" :aria-label="`Go to page ${page.name}`">
 								{{ page.name }}
 							</button>
 						</li>
@@ -102,7 +103,7 @@
 							<span class="text-gray-400">...</span>
 						</li>
 						<li v-if="totalPages >= 4" v-show="currentPage < totalPages - 1">
-							<button type="button" class="px-1 hover:text-secondary disabled:opacity-50 disabled:cursor-not-allowed" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="{ active: isPageActive(isLastPage) }" :aria-label="`Go to page ${totalPages}`">
+							<button type="button" class="px-1 hover:text-gray-900 disabled:cursor-not-allowed" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="{ 'text-gray-700':isPageActive(isLastPage) }" :aria-label="`Go to page ${totalPages}`">
 								{{ totalPages }}
 							</button>
 						</li>
@@ -143,18 +144,16 @@
 	const totalPages = 4;
 	const currentPage = ref(route.query.page || 1);
 
-	let isPageValid = currentPage === 'number';
-
 	const onPageChange = (page) => {
 		currentPage.value = page;
 		router.push(`${route.path}?page=${page}`)
-	}
+	};
 
-    // Watch for sort change and refetch.
-    const stopWatch = watch(() => route, () => {
-    	currentPage.value = route.query.page;
-    	refresh();
-    });
+  // Watch for sort change and refetch.
+  const stopWatch = watch(() => route, () => {
+  	currentPage.value = route.query.page;
+  	refresh();
+  });
 
 	// Links for sub navigation bar.
 	const links = [
@@ -165,6 +164,6 @@
 	{ name: 'Most Points', href: `/members/mostrep` }
 	];
 
-	// Before component unmounts
+	// Before route changes, stop the watcher.
 	onBeforeRouteLeave(stopWatch);
 </script>
