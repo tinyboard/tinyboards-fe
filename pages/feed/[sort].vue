@@ -35,7 +35,7 @@
                                     :total-pages="totalPages"
                                     :total="250"
                                     :per-page="25"
-                                    :current-page="Number.parseInt(currentPage)"
+                                    :current-page="Number.parseInt(page)"
                                     v-slot="{
                                           startPage,
                                           endPage,
@@ -85,36 +85,37 @@
 </template>
 
 <script setup>
-      import { ref } from 'vue';
+      import { computed } from 'vue';
       import { getListing } from '@/composables/posts';
 
       const router = useRouter();
       const route = useRoute();
 
-      // Fetch posts
-      let sort = route.params.sort ?? 'new';
-      let page = ref(route.query.page || 1);
-
-      const { items: posts, paginate, pending, error, refresh } = await getListing({
-            sort: sort,
-            limit: 25,
-            page: page
-      }, "posts");
-
       // Pagination
       const totalPages = 4;
-      const currentPage = ref(route.query.page || 1);
+      const page = computed(() => route.query.page || 1);
 
       const onPageChange = (page) => {
-            currentPage.value = page;
             router.push(`${route.path}?page=${page}`)
       };
 
-      // Watch for sort change and refetch.
-      const stopWatch = watch(() => route, () => {
-            currentPage.value = route.query.page;
-            refresh();
-      });
+      // Fetch posts
+      let sort = route.params.sort ?? 'new';
+
+      let { items: posts, paginate, pending, error, refresh } = await getListing({
+            sort: sort,
+            limit: 25,
+            page: page
+      }, 'posts');
+
+      watch(page, refresh());
+
+      // // Watch for sort change and refetch.
+      // const stopWatch = watch(() => route, () => {
+      //       console.log('refresh')
+      //       currentPage.value = route.query.page;
+      //       refresh();
+      // });
 
       // Links for sub navigation.
 
@@ -130,5 +131,5 @@
       ];
 
       // Before route changes, stop the watcher.
-      onBeforeRouteLeave(stopWatch);
+      // onBeforeRouteLeave(stopWatch);
 </script>

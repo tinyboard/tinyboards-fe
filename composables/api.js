@@ -8,6 +8,6 @@ export function useApi(path, options) {
     headers: {
       Authorization: authCookie ? `Bearer ${authCookie}` : "",
     },
-    ...options,
+    ...options
   });
 }
