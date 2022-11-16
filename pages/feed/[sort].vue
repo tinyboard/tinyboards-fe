@@ -17,8 +17,8 @@
                               <div v-if="pending">
                                     Loading...
                               </div>
-                              <!-- Feed -->
-                              <ContentItemTable v-else-if="posts.length" :posts="posts" title="Hot posts"/>
+                              <!-- Posts -->
+                              <ContentItemTable v-else-if="posts.length" :posts="posts" :title="sort"/>
                               <!-- Error State -->
                               <div v-else-if="error" class="w-full">
                                     <div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
@@ -40,7 +40,9 @@
 <script setup>
       import { getListing } from '@/composables/posts';
 
-      let sort = useRoute().params.sort ?? 'new';
+      const route = useRoute();
+
+      let sort = route.params.sort ?? 'new';
 
       let { items: posts, paginate, pending, error, refresh } = await getListing({
             sort: sort,

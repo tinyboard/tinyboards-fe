@@ -3,8 +3,8 @@
 		<table class="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400">
 			<thead class="text-base text-gray-700 leading-5 w-full px-4 py-3 lg:p-6 bg-gray-200/50 border-b shadow-inner-white">
 				<tr>
-					<th scope="col" class="w-4/6 px-4 py-3 font-bold">
-						{{ title ?? 'Recent posts' }}
+					<th scope="col" class="w-4/6 px-4 py-3 font-bold capitalize">
+						{{ titles[props.title] ?? 'hot' }} posts
 					</th>
 					<th scope="col" class="hidden lg:table-cell px-4 py-3 font-normal">
 						Points
@@ -104,10 +104,29 @@
 </template>
 
 <script setup>
+	import { computed } from 'vue';
 	import { formatDate } from '@/utils/formatDate';
 	
 	const props = defineProps({
-		posts: Array,
-		title: String
-	})
+		posts: {
+			type: Array,
+			required: true
+		},
+		title: {
+			type: String,
+			required: false,
+			default: 'hot'
+		}
+	});
+
+	const titles = {
+		'hot': 'hot',
+		'new': 'newest',
+		'topall': 'top all time',
+		'topmonth': 'top month',
+		'topweek': 'top week',
+		'topday': 'top day',
+		'mostcomments': 'most comments',
+		'newcomments': 'new comments'
+	};
 </script>
