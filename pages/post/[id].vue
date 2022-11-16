@@ -327,6 +327,7 @@
       // Utils
       const percentUpvoted = computed(() => {
             const num = 1 - item.counts.downvotes / item.counts.upvotes;
+            if (!num) return 0;
             return toPercent(num);
       })
 

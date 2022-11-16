@@ -1,5 +1,5 @@
 import { formatDistanceToNowStrict, isValid } from "@/node_modules/date-fns";
-import locale from 'date-fns/locale/en-US';
+import locale from '@/node_modules/date-fns/locale/en-US';
 
 const formatDistanceLocale = {
   lessThanXSeconds: '{{count}}s',

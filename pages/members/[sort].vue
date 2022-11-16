@@ -130,7 +130,7 @@
 	const router = useRouter();
 	const route = useRoute();
 
-	const sort = ref(route.query.sort ?? 'new');
+	const sort = ref(route.params.sort?? 'new');
 
 	// Fetch members by sort.
 	const { data: members, pending, error, refresh } = await useFetch("/members", {
@@ -143,14 +143,16 @@
 	const totalPages = 4;
 	const currentPage = ref(route.query.page || 1);
 
+	let isPageValid = currentPage === 'number';
+
 	const onPageChange = (page) => {
 		currentPage.value = page;
-		router.push(`/members?page=${page}`)
+		router.push(`${route.path}?page=${page}`)
 	}
 
     // Watch for sort change and refetch.
-    watch(() => route.query, () => {
-    	sort.value = route.query.sort;
+    const stopWatch = watch(() => route, () => {
+    	sort.value = route.params.sort;
     	currentPage.value = route.query.page;
     	refresh();
     });
@@ -158,9 +160,12 @@
 	// Links for sub navigation bar.
 	const links = [
 	{ name: 'Newest', href: `/members` },
-	{ name: 'Oldest', href: `/members?sort=old` },
-	{ name: 'Most Posts', href: `/members?sort=mostposts` },
-	{ name: 'Most Comments', href: `/members?sort=mostcomments` },
-	{ name: 'Most Points', href: `/members?sort=mostrep` }
+	{ name: 'Oldest', href: `/members/old` },
+	{ name: 'Most Posts', href: `/members/mostposts` },
+	{ name: 'Most Comments', href: `/members/mostcomments` },
+	{ name: 'Most Points', href: `/members/mostrep` }
 	];
+
+	// Before component unmounts
+	onBeforeRouteLeave(stopWatch);
 </script>
