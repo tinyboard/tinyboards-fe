@@ -18,7 +18,7 @@
 	import { computed } from 'vue';
 
 	// Define emit
-	const emit = defineEmits(['inFocus', 'submit'])
+	const emit = defineEmits(['pageChanged'])
 
 	// Props
 	const props = defineProps({
@@ -41,7 +41,8 @@
 		},
 		currentPage: {
 			type: Number,
-			required: true
+			required: true,
+			default: 1
 		},
 	});
 
@@ -83,23 +84,23 @@
 
 	// Methods
 	const onClickFirstPage = () => {
-		emit('pagechanged', 1);
+		emit('pageChanged', 1);
 	}
 
 	const onClickPreviousPage = () => {
-		emit('pagechanged', props.currentPage - 1);
+		emit('pageChanged', props.currentPage - 1);
 	}
 
 	const onClickPage = (page) => {
-		emit('pagechanged', page);
+		emit('pageChanged', page);
 	}
 
 	const onClickNextPage = () => {
-		emit('pagechanged', props.currentPage + 1);
+		emit('pageChanged', props.currentPage + 1);
 	}
 
 	const onClickLastPage = () => {
-		emit('pagechanged', props.totalPages);
+		emit('pageChanged', props.totalPages);
 	}
 
 	const isPageActive = (page) => {

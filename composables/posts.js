@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useApi } from "@/composables/api";
 
 export async function getListing(query, type_) {
-  let page = 1;
+  // let page = 1;
   let items = ref([]);
   let endpoints = {
     posts: "/feed",
@@ -10,7 +10,7 @@ export async function getListing(query, type_) {
   };
   async function request(query) {
     const { data, pending, error, refresh } = await useApi(endpoints[type_], {
-      query: { ...query, page },
+      query: { ...query },
       key: "get_" + type_ + "_key",
     });
 

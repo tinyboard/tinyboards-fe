@@ -17,8 +17,8 @@
                               <div v-if="pending">
                                     Loading...
                               </div>
-                              <!-- Feed -->
-                              <ContentItemTable v-else-if="posts.length" :posts="posts" title="Hot posts"/>
+                              <!-- Posts -->
+                              <ContentItemTable v-else-if="posts.length" :posts="posts" :title="sort"/>
                               <!-- Error State -->
                               <div v-else-if="error" class="w-full">
                                     <div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
@@ -29,6 +29,53 @@
                               <div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
                                     There are no posts. This place must be boring.
                               </div>
+                              <!-- Pagination -->
+                              <div class="w-full mt-4">
+                                    <NavigationPagination
+                                    :total-pages="totalPages"
+                                    :total="250"
+                                    :per-page="25"
+                                    :current-page="Number.parseInt(currentPage)"
+                                    v-slot="{
+                                          startPage,
+                                          endPage,
+                                          pages,
+                                          isFirstPage,
+                                          isLastPage,
+                                          onClickPreviousPage,
+                                          onClickPage,
+                                          onClickNextPage,
+                                          isPageActive,
+                                          pageChanged
+                                    }"
+                                    @page-changed="onPageChange">
+                                          <ul class="flex items-center text-sm text-gray-500 font-bold space-x-3">
+                                                <li>
+                                                      <button class="button white" @click="onClickPreviousPage" :disabled="isFirstPage">
+                                                            Prev
+                                                      </button>
+                                                </li>
+                                                <li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
+                                                      <button type="button" class="px-1 hover:text-secondary disabled:opacity-50 disabled:cursor-not-allowed" @click="onClickPage(page.name)" :disabled="page.isDisabled" :class="{ active: isPageActive(page.name) }" :aria-label="`Go to page ${page.name}`">
+                                                            {{ page.name }}
+                                                      </button>
+                                                </li>
+                                                <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+                                                      <span class="text-gray-400">...</span>
+                                                </li>
+                                                <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+                                                      <button type="button" class="px-1 hover:text-secondary disabled:opacity-50 disabled:cursor-not-allowed" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="{ active: isPageActive(isLastPage) }" :aria-label="`Go to page ${totalPages}`">
+                                                            {{ totalPages }}
+                                                      </button>
+                                                </li>
+                                                <li>
+                                                      <button class="button white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
+                                                            Next
+                                                      </button>
+                                                </li>
+                                          </ul>
+                                    </NavigationPagination>
+                              </div>
                         </div>
                         <!-- Sidebar -->
                         <NavigationSidebar />
@@ -38,23 +85,50 @@
 </template>
 
 <script setup>
+      import { ref } from 'vue';
       import { getListing } from '@/composables/posts';
 
-      let sort = useRoute().params.sort ?? 'new';
+      const router = useRouter();
+      const route = useRoute();
 
-      let { items: posts, paginate, pending, error, refresh } = await getListing({
+      // Fetch posts
+      let sort = route.params.sort ?? 'new';
+      let page = ref(route.query.page || 1);
+
+      const { items: posts, paginate, pending, error, refresh } = await getListing({
             sort: sort,
-            limit: 25
+            limit: 25,
+            page: page
       }, "posts");
 
+      // Pagination
+      const totalPages = 4;
+      const currentPage = ref(route.query.page || 1);
+
+      const onPageChange = (page) => {
+            currentPage.value = page;
+            router.push(`${route.path}?page=${page}`)
+      };
+
+      // Watch for sort change and refetch.
+      const stopWatch = watch(() => route, () => {
+            currentPage.value = route.query.page;
+            refresh();
+      });
+
+      // Links for sub navigation.
+
       const links = [
-      { name: 'Hot', href: '/feed' },
-      { name: 'Latest', href: '/feed/new' },
-      { name: 'Top All', href: '/feed/topall' },
-      { name: 'Top Month', href: '/feed/topmonth' },
-      { name: 'Top Week', href: '/feed/topweek' },
-      { name: 'Top Day', href: '/feed/topday' },
-      { name: 'Most Comments', href: '/feed/mostcomments' },
-      { name: 'Latest Comments', href: '/feed/newcomments' }
+            { name: 'Hot', href: '/feed' },
+            { name: 'Latest', href: '/feed/new' },
+            { name: 'Top All', href: '/feed/topall' },
+            { name: 'Top Month', href: '/feed/topmonth' },
+            { name: 'Top Week', href: '/feed/topweek' },
+            { name: 'Top Day', href: '/feed/topday' },
+            { name: 'Most Comments', href: '/feed/mostcomments' },
+            { name: 'Latest Comments', href: '/feed/newcomments' }
       ];
+
+      // Before route changes, stop the watcher.
+      onBeforeRouteLeave(stopWatch);
 </script>
