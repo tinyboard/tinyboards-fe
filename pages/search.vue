@@ -21,7 +21,7 @@
 					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-4 px-4 py-5 sm:p-6 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
 						<!-- Search Input -->
 						<div class="md:col-span-full">
-							<form class="group relative w-full" @submit.prevent="onSubmit">
+							<form class="group relative w-full" @submit.prevent="onSubmit" @submit="submitSearch(text)">
 								<div class="absolute left-3 top-3">
 									<button class="text-gray-300 hover:text-gray-400" type="submit">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -29,7 +29,7 @@
 										</svg>
 									</button>
 								</div>
-								<input required type="text" class="pl-10 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" :value="route.query.q" placeholder="Search and hit enter" @keyup.enter="submitSearch($event.target.value)"/>
+								<input required type="text" class="pl-10 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="text" placeholder="Search and hit enter"/>
 								<!-- <div v-show="text" class="absolute right-3 top-[6px]">
 									<button class="text-gray-400 hover:text-gray-500" @click="text = ''">
 										<i class="far fa-times-circle fa-fw fa-sm"></i>
@@ -85,6 +85,8 @@
 	definePageMeta({
 		key: (route) => route.fullPath
 	});
+
+	const text = ref(route.query.q);
 
 	// Search API.
 	// This endpoint accepts a sort string, limit integer, and query string.
