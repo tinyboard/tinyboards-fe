@@ -13,22 +13,8 @@
                   <div class="col-span-full flex gap-6">
                         <!-- Main Content -->
                         <div class="w-full">
-                              <!-- Loading State -->
-                              <div v-if="pending">
-                                    Loading...
-                              </div>
                               <!-- Posts -->
-                              <ContentItemTable v-else-if="posts.length" :posts="posts" :title="sort"/>
-                              <!-- Error State -->
-                              <div v-else-if="error" class="w-full">
-                                    <div class="bg-red-500 text-white font-bold sm:rounded px-4 py-2">
-                                          Failed to load posts.
-                                    </div>
-                              </div>
-                              <!-- Empty State -->
-                              <div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
-                                    There are no posts. This place must be boring.
-                              </div>
+                              <ContentItemTable :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/>
                               <!-- Pagination -->
                               <div class="w-full mt-4">
                                     <NavigationPagination
@@ -104,7 +90,7 @@
       };
 
       // Fetch posts
-      let sort = route.params.sort ?? 'new';
+      let sort = route.params.sort ?? 'hot';
 
       let { items: posts, paginate, pending, error, refresh } = await getListing({
             sort: sort,
