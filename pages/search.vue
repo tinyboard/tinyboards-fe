@@ -48,20 +48,8 @@
 							</div>
 						</div>
 					</div>
-					<!-- Loading State -->
-					<div v-if="pending">
-						Loading...
-					</div>
 					<!-- Feed -->
-					<ContentItemTable v-else-if="posts" :posts="posts.posts" title="Hot posts"/>
-					<!-- Error State -->
-					<div v-else-if="error">
-						There was an error loading search results.
-					</div>
-					<!-- Empty State -->
-					<div v-else class="px-4 py-24 text-center text-gray-400 md:border md:border-dashed md:border-gray-300 md:rounded-md">
-						There are no results. This place must be boring.
-					</div>
+					<ContentItemTable :posts="posts.posts" title="Results" :isLoading="pending" :hasError="error"/>
 				</div>
 				<!-- Sidebar -->
 				<NavigationSidebar />

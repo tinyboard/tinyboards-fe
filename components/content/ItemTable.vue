@@ -1,10 +1,10 @@
 <template>
 	<div class="relative w-full sm:rounded-md sm:border overflow-x-auto">
-		<table class="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400">
+		<table class="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-white">
 			<thead class="text-base text-gray-700 leading-5 w-full px-4 py-3 lg:p-6 bg-gray-200/50 border-b shadow-inner-white">
 				<tr>
 					<th scope="col" class="w-4/6 px-4 py-3 font-bold capitalize">
-						{{ titles[props.title] ?? 'hot' }} posts
+						{{ titles[props.title] ? `${titles[props.title]} posts` : props.title }}
 					</th>
 					<th scope="col" class="hidden lg:table-cell px-4 py-3 font-normal">
 						Points
@@ -17,7 +17,20 @@
 					</th>
 				</tr>
 			</thead>
-			<tbody>
+			<!-- Loading State -->
+			<tbody v-if="isLoading">
+				<tr v-for="i in 7" :key="i" class="bg-white odd:bg-gray-50 border-b last:border-0 dark:bg-gray-800 dark:border-gray-700">
+					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
+						<div class="flex-shrink-0 w-12 h-12 bg-gray-100"></div>
+						<div class="ml-3 bg-gray-100 h-3" :class="i % 2 === 0 ? 'w-1/3' : 'w-1/2'"></div>
+					</th>
+					<td v-for="j in 3" :key="j" class="hidden xl:table-cell py-4 px-4">
+						<div class="bg-gray-100 h-3" :class="i % 2 === 0 ? 'w-1/3' : 'w-1/2'"></div>
+					</td>
+				</tr>
+			</tbody>
+			<!-- Success State -->
+			<tbody v-else-if="posts.length">
 				<tr v-for="item in posts" :key="item.post.id" class="bg-white odd:bg-gray-50 border-b last:border-0 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700">
 					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
 						<!-- Avatar - Desktop Only -->
@@ -99,6 +112,13 @@
 					</td>
 				</tr>
 			</tbody>
+			<!-- Error State -->
+			<tbody v-else class="empty_state">
+				<tr v-for="i in 7" :key="i" class="bg-white dark:bg-gray-800">
+					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white"></th>
+					<td v-for="i in 3" :key="i" class="hidden xl:table-cell py-4 px-4"></td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </template>
@@ -116,6 +136,16 @@
 			type: String,
 			required: false,
 			default: 'hot'
+		},
+		isLoading: {
+			type: Boolean,
+			required: false,
+			default: false
+		},
+		hasError: {
+			type: Boolean,
+			required: false,
+			default: false
 		}
 	});
 
@@ -130,3 +160,20 @@
 		'newcomments': 'new comments'
 	};
 </script>
+
+<style scoped>
+	.empty_state {
+		position: relative;
+	}
+	.empty_state::after {
+		content: 'There are no results. This place must be boring.';
+		position: absolute;
+		top: 50%;
+		left: 0;
+		display: grid;
+		place-items: center;
+		width: 100%;
+		margin-top: -0.5rem;
+		font-size: 14px;
+	}
+</style>
