@@ -204,7 +204,7 @@
 	const links = [
 	{ name: 'Home', href: '/feed' },
 	{ name: 'Members', href: '/members' },
-	{ name: 'FAQ', href: '/wiki/faq' }
+	{ name: 'FAQ', href: '/help/faq' }
 	]
 </script>
 

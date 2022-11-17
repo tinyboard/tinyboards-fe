@@ -21,7 +21,7 @@
 					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-4 px-4 py-5 sm:p-6 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
 						<!-- Search Input -->
 						<div class="md:col-span-full">
-							<form class="group relative w-full" @submit.prevent="onSubmit" @submit="search()">
+							<form class="group relative w-full" @submit.prevent="onSubmit">
 								<div class="absolute left-3 top-3">
 									<button class="text-gray-300 hover:text-gray-400" type="submit">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -29,12 +29,12 @@
 										</svg>
 									</button>
 								</div>
-								<input required type="text" class="pl-10 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="searchTerm" placeholder="Search and hit enter" @keyup.enter="search()"/>
-								<div v-show="searchTerm" class="absolute right-3 top-[6px]">
-									<button class="text-gray-400 hover:text-gray-500" @click="searchTerm = ''">
+								<input required type="text" class="pl-10 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" :value="route.query.q" placeholder="Search and hit enter" @keyup.enter="submitSearch($event.target.value)"/>
+								<!-- <div v-show="text" class="absolute right-3 top-[6px]">
+									<button class="text-gray-400 hover:text-gray-500" @click="text = ''">
 										<i class="far fa-times-circle fa-fw fa-sm"></i>
 									</button>
-								</div>
+								</div> -->
 							</form>
 						</div>
 						<!-- NSFW Checkbox -->
@@ -53,7 +53,7 @@
 						Loading...
 					</div>
 					<!-- Feed -->
-					<ContentItemTable v-else-if="posts" :posts="posts" title="Hot posts"/>
+					<ContentItemTable v-else-if="posts" :posts="posts.posts" title="Hot posts"/>
 					<!-- Error State -->
 					<div v-else-if="error">
 						There was an error loading search results.
@@ -71,15 +71,20 @@
 </template>
 
 <script setup>
+	import { ref } from 'vue';
+
 	import { useRoute } from 'vue-router';
+
+	import { baseURL } from "@/server/constants";
 	// import { search } from '@/composables/posts';
 
 	// Define route & router.
 	const route = useRoute();
 	const router = useRouter();
 
-	// Define search term.
-	const searchTerm = ref(route.query.q);
+	definePageMeta({
+		key: (route) => route.fullPath
+	});
 
 	// Search API.
 	// This endpoint accepts a sort string, limit integer, and query string.
@@ -95,12 +100,17 @@
 	// 	refresh();
 	// });
 
+	// Fetch members by sort.
+	const { data: posts, pending, error, refresh } = await useFetch("/feed", {
+		query: { search: route.query.q, limit: 25 },
+		baseURL
+	});
+
 	// Handle search input.
-	const search = () => {
-		if (route.query.q !== searchTerm.value) {
-			router.push("/search?q="+searchTerm.value);
-		}
-	};
+	const submitSearch = (text) => router.push({ 
+		path: '/search', 
+		query: { q: text }
+	});
 
 	// Links for sub navigation bar.
 	const links = [

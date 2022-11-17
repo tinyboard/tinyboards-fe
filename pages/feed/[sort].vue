@@ -91,6 +91,10 @@
       const router = useRouter();
       const route = useRoute();
 
+      definePageMeta({
+        key: (route) => route.fullPath,
+      });
+
       // Pagination
       const totalPages = 4;
       const page = computed(() => route.query.page || 1);
