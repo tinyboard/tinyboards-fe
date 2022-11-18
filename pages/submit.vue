@@ -138,8 +138,8 @@
 	};
 
 	const links = [
-	{ name: 'House Rules', href: '/wiki/rules', target: '_blank' },
-	{ name: 'Formatting Guide', href: '/wiki/formatting', target: '_blank' },
+	{ name: 'House Rules', href: '/help/rules', target: '_blank' },
+	{ name: 'Formatting Guide', href: '/help/formatting', target: '_blank' },
 	];
 </script>
 
