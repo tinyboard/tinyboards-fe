@@ -68,6 +68,11 @@
                                                                               {{ percentUpvoted }}% upvoted
                                                                         </span>
                                                                   </span>
+                                                                  <!-- Tags -->
+                                                                  <span v-if="item.post.nsfw" title="This post is marked 18+">
+                                                                        <span class="font-black text-gray-400 dark:text-gray-500">·</span>
+                                                                        <span class="badge badge-red">18+</span>
+                                                                  </span>
                                                             </p>
                                                       </div>
                                                 </div>
