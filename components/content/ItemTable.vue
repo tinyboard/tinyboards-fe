@@ -72,6 +72,11 @@
 									<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 									<span class="italic pl-1"> Edited {{ formatDate(new Date(item.post.updated)) }}</span>
 								</span>
+								<!-- Tags -->
+								<span class="ml-2" v-if="item.post.nsfw" title="This post is marked 18+">
+									<span class="font-black text-gray-400 dark:text-gray-500">·</span>
+									<span class="badge badge-red">18+</span>
+								</span>
 							</p>
 						</div>
 					</th>

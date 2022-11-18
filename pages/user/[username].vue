@@ -95,7 +95,7 @@
 								{{ user.username }}
 							</h1>
 							<!-- Title -->
-							<span class="ml-2 px-2 inline-flex text-sm leading-5 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
+							<span class="badge badge-large badge-blue">
 								developer
 							</span>
 						</div>

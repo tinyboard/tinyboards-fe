@@ -40,10 +40,10 @@
 						<!-- NSFW Checkbox -->
 						<div class="md:col-span-4 flex">
 							<div class="flex h-5 items-center">
-								<input id="comments" name="comments" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+								<input id="nsfw" name="nsfw" type="checkbox" v-model="hasNsfw" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
 							</div>
 							<div class="ml-3 text-sm">
-								<label for="comments" class="font-bold text-gray-700 select-none">Include NSFW results</label>
+								<label for="nsfw" class="font-bold text-gray-700 select-none">Include NSFW results</label>
 								<p class="text-gray-500">Show results marked "not safe for work".</p>
 							</div>
 						</div>
@@ -75,6 +75,7 @@
 	});
 
 	const text = ref(route.query.q);
+	const hasNsfw = ref(false);
 
 	// Search API.
 	// This endpoint accepts a sort string, limit integer, and query string.
@@ -92,7 +93,7 @@
 
 	// Fetch members by sort.
 	const { data: posts, pending, error, refresh } = await useFetch("/feed", {
-		query: { search: route.query.q, limit: 25 },
+		query: { search: route.query.q, nsfw: false, limit: 25 },
 		baseURL
 	});
 
