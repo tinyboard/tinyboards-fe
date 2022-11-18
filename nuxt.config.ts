@@ -9,5 +9,10 @@ export default defineNuxtConfig({
 	modules: [
 		"@pinia/nuxt",
     	"@nuxtjs/tailwindcss"
-  	]
-})
+  	],
+	routeRules: {
+    // Static page generated on-demand once
+    '/help/**': { static: true },
+  }
+});
+
