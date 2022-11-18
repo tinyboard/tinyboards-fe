@@ -16,7 +16,7 @@
                               <!-- Posts -->
                               <ContentItemTable :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/>
                               <!-- Pagination -->
-                              <div class="w-full mt-4">
+                              <div v-if="posts.length" class="w-full mt-4">
                                     <NavigationPagination
                                     :total-pages="totalPages"
                                     :total="250"

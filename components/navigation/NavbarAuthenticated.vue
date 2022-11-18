@@ -36,7 +36,7 @@
 									</svg>
 								</button>
 							</div>
-							<input required type="text" class="w-full form-input search px-10" v-model="searchTerm" placeholder="Search this TinyBoard" @keyup.enter="search()"/>
+							<input required type="text" class="w-full form-input search px-10" v-model="searchTerm" placeholder="Search this TinyBoard"/>
 							<div v-show="searchTerm" class="absolute right-3 top-2">
 								<button class="text-white/20 hover:text-white" @click="searchTerm = ''">
 									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
