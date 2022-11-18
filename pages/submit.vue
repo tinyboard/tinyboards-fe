@@ -57,6 +57,21 @@
 										</div>
 									</label>
 								</div>
+								<!-- Options -->
+								<div class="col-span-full">
+									<!-- NSFW Checkbox -->
+									<ul class="flex flex-col space-y-2">
+										<li class="flex">
+											<div class="flex h-5 items-center">
+												<input id="nsfw" name="nsfw" type="checkbox" v-model="isNsfw" class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
+											</div>
+											<div class="ml-3 text-sm">
+												<label for="nsfw" class="font-bold text-red-700 select-none">NFSW</label>
+												<p class="text-gray-500">This post is for 18+ audiences</p>
+											</div>
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 						<div class="bg-gray-50 shadow-inner-white border-t p-4 sm:px-6">
@@ -70,6 +85,7 @@
 </template>
 
 <script setup>
+	import { ref } from 'vue';
 	import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js'
 	import { useToastStore } from '@/stores/StoreToast';
@@ -80,9 +96,10 @@
 
 	const router = useRouter();
 
-	let title = ref("");
-	let url = ref("");
-	let body = ref("");
+	const title = ref("");
+	const url = ref("");
+	const body = ref("");
+	const isNsfw = ref(false);
 
 	let hasFocusedUrl = ref(false);
 	let hasFocusedBody = ref(false);
@@ -101,7 +118,7 @@
 					"type_": "text",
 					"url": url.value,
 					"body": body.value,
-					"nsfw": true
+					"nsfw": isNsfw.value
 				},
 				headers: {
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',

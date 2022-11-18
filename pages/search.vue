@@ -40,11 +40,11 @@
 						<!-- NSFW Checkbox -->
 						<div class="md:col-span-4 flex">
 							<div class="flex h-5 items-center">
-								<input id="nsfw" name="nsfw" type="checkbox" v-model="hasNsfw" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+								<input id="nsfw" name="nsfw" type="checkbox" v-model="hasNsfw" class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
 							</div>
 							<div class="ml-3 text-sm">
 								<label for="nsfw" class="font-bold text-gray-700 select-none">Include NSFW results</label>
-								<p class="text-gray-500">Show results marked "not safe for work".</p>
+								<p class="text-gray-500">Show results marked "not safe for work"</p>
 							</div>
 						</div>
 					</div>
