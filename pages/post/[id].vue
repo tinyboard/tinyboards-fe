@@ -45,9 +45,11 @@
                                                       <div class="flex flex-col leading-4">
                                                             <NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center font-bold text-sm">
                                                                   {{ item.creator.name }}
+                                                                  <!-- Title -->
                                                                   <span v-if="item.creator.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
                                                                         {{ item.creator.title }}
                                                                   </span>
+                                                                  <!-- Role -->
                                                             </NuxtLink>
                                                             <span v-else class="text-gray-400 dark:text-gray-400 font-bold">
                                                                   Deleted User
@@ -368,3 +370,10 @@
       isSubscribed.value = post.isSubscribed;
 };*/
 </script>
+
+<style scoped>
+      .icon-crown {
+            display: inline-block;
+            background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4z'%3E%3C/path%3E%3C/svg%3E");
+      }
+</style>
