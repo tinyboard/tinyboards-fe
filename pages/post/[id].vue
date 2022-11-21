@@ -130,9 +130,9 @@
                                                                         <path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
                                                                   </svg>
                                                             </button>
-                                                            <strong class="text-sm" :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
+                                                            <span class="text-sm font-medium" :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
                                                                   {{ item.counts.score + voteType }}
-                                                            </strong>
+                                                            </span>
                                                             <button @click="vote(-1)" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500'">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -146,7 +146,7 @@
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                         <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
+                                                                  <span class="text-sm font-medium">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
                                                             </button>
                                                       </li>
                                                       <li>
@@ -156,7 +156,7 @@
                                                                         <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
                                                                         <rect x="9" y="3" width="6" height="4" rx="2"></rect>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">Copy Link</span>
+                                                                  <span class="text-sm font-medium">Copy link</span>
                                                             </button>
                                                       </li>
                                                       <li>
@@ -172,7 +172,7 @@
                                                                         <line x1="3" y1="3" x2="21" y2="21"></line>
                                                                         <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">{{ isSaved ? 'Unsave' : 'Save' }}</span>
+                                                                  <span class="text-sm font-medium">{{ isSaved ? 'Unsave' : 'Save' }}</span>
                                                             </button>
                                                       </li>
                                                       <li>
@@ -190,7 +190,7 @@
                                                                         <path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
                                                                         <path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
+                                                                  <span class="text-sm font-medium">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
                                                             </button>
                                                       </li>
                                                       <li v-if="!isAuthor">
@@ -199,7 +199,7 @@
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                         <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">Report</span>
+                                                                  <span class="text-sm font-medium">Report</span>
                                                             </button>
                                                       </li>
                                                       <li v-if="isAuthor">
@@ -212,7 +212,7 @@
                                                                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                                                                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">Delete</span>
+                                                                  <span class="text-sm font-medium">Delete</span>
                                                             </button>
                                                       </li>
                                                       <li v-if="isAuthor">
@@ -223,7 +223,7 @@
                                                                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
                                                                      <path d="M16 5l3 3"></path>
                                                                   </svg>
-                                                                  <span class="text-sm font-bold">
+                                                                  <span class="text-sm font-medium">
                                                                         Edit
                                                                   </span>
                                                             </button>

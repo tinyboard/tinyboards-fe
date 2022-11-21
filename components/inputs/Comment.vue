@@ -42,6 +42,7 @@
 				}
 			})
 			.then(({ data }) => {
+				body.value = null;
 				// Show success toast.
 				toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
 				// Navigate to thread page.
