@@ -254,7 +254,7 @@
                                                       alt="avatar"
                                                       class="hidden md:inline-block flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
                                                       />
-                                                      <InputsComment/>
+                                                      <InputsComment :post-id="item.post.id"/>
                                                 </div>
                                                 <!-- Comments -->
                                                 <ContentCommentList v-if="comments.length" :comments="comments" :offset="offset"/>

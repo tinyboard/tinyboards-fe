@@ -88,27 +88,27 @@
                       pageChanged
                 }"
                 @page-changed="onPageChange">
-					<ul class="flex items-center text-sm text-gray-500 font-bold space-x-3">
+					<ul class="flex items-center text-sm text-gray-500 font-bold space-x-1">
 						<li>
-							<button class="button white" @click="onClickPreviousPage" :disabled="isFirstPage">
+							<button class="button button-sm white" @click="onClickPreviousPage" :disabled="isFirstPage">
 								Prev
 							</button>
 						</li>
 						<li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
-							<button type="button" class="px-1 hover:text-gray-900 disabled:cursor-not-allowed" @click="onClickPage(page.name)" :disabled="page.isDisabled" :class="{ 'text-gray-700':isPageActive(page.name) }" :aria-label="`Go to page ${page.name}`">
+							<button type="button" class="button button-sm" @click="onClickPage(page.name)" :class="isPageActive(page.name) ? 'primary opacity-100' : 'white'" :aria-label="`Go to page ${page.name}`">
 								{{ page.name }}
 							</button>
 						</li>
 						<li v-if="totalPages >= 4" v-show="currentPage < totalPages - 1">
-							<span class="text-gray-400">...</span>
+							<span class="text-gray-400 px-2">...</span>
 						</li>
 						<li v-if="totalPages >= 4" v-show="currentPage < totalPages - 1">
-							<button type="button" class="px-1 hover:text-gray-900 disabled:cursor-not-allowed" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="{ 'text-gray-700':isPageActive(isLastPage) }" :aria-label="`Go to page ${totalPages}`">
+							<button type="button" class="button button-sm" @click="onClickPage(totalPages)" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
 								{{ totalPages }}
 							</button>
 						</li>
 						<li>
-							<button class="button white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
+							<button class="button button-sm white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
 								Next
 							</button>
 						</li>
