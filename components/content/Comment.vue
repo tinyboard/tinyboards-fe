@@ -139,23 +139,9 @@
 		return comment.level - props.offset
 	});
 
-	//...mapActions('toasts', ['addNotification']),
 	const toggleReplying = (val) => {
 		replying = val
 	};
-
-	// created() {
-	//   axios
-	//   .get(`/api/vue/comment/${this.comment.id}`)
-	//   .then(response => {
-	//     this.comments = response.data.replies
-	//   })
-	//   .catch(error => {
-	//     console.log(error)
-	//     this.errored = true
-	//   })
-	//   .finally(() => this.loadingReplies = false)
-	// } 
 </script>
 
 <style scoped>

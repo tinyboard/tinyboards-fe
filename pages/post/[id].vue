@@ -254,7 +254,7 @@
                                                       alt="avatar"
                                                       class="hidden md:inline-block flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
                                                       />
-                                                      <InputsComment :post-id="item.post.id"/>
+                                                      <InputsComment :post-id="item.post.id" @comment-published="onCommentPublished"/>
                                                 </div>
                                                 <!-- Comments -->
                                                 <ContentCommentList v-if="comments.length" :comments="comments" :offset="offset"/>
@@ -348,6 +348,10 @@
 
       // Comments
       const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
+
+      const onCommentPublished = (comment) => {
+            comments.value.unshift(comment)
+      };
 
       // Comment Offset
       const offset = computed(() => {

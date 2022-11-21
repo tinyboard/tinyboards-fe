@@ -10,6 +10,9 @@
 	import { baseURL } from "@/server/constants";
 	import { useToastStore } from '@/stores/StoreToast';
 
+	// Define emit
+	const emit = defineEmits(['commentPublished']);
+
 	const props = defineProps({
 		parentId: {
 			type: Number,
@@ -42,14 +45,17 @@
 				}
 			})
 			.then(({ data }) => {
+				data = JSON.parse(JSON.stringify(data.value));
+				emit('commentPublished', data);
+				// Empty the input.
 				body.value = null;
 				// Show success toast.
 				toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
-				// Navigate to thread page.
-				// navigateTo(`/post/${post.id}`);
 			})
 			.catch((error) => {
 				console.log(error);
+				// Show error toast.
+				toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
 			});
 		});
 	};
