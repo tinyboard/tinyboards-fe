@@ -8,12 +8,12 @@
 				loading="lazy"
 				:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 				alt="avatar"
-				class="flex-shrink-0 object-cover rounded-sm"
-				:class="level > 1 || isCollapsed ? 'w-6 h-6' : 'w-9 h-9 sm:w-12 sm:h-12 sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent'"
+				class="flex-shrink-0 object-cover sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+				:class="isCollapsed ? 'w-6 h-6' : 'w-6 h-6 md:w-12 md:h-12'"
 				/>
 			</NuxtLink>
 			<!-- Deleted User Comment -->
-			<div v-else class="flex items-center justify-center text-gray-400 bg-transparent border dark:border-gray-700 border-dashed rounded-sm" :class="level > 1 || isCollapsed ? 'w-6 h-6 text-sm' : 'w-8 h-8 text-lg'">
+			<div v-else class="flex items-center justify-center text-gray-400 bg-transparent border dark:border-gray-700 border-dashed rounded-sm" :class="isCollapsed ? 'w-6 h-6 text-sm' : 'w-6 h-6 md:w-12 md:h-12 text-lg'">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 				   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 				   <path d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7"></path>
@@ -23,8 +23,7 @@
 				</svg>
 			</div>
 			<!-- Comment Collapse Bar -->
-			<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" :class="{'reply':level > 1}" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed">
-			</div>
+			<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"/>
 		</div>
 		<!-- User Details -->
 		<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
@@ -90,15 +89,28 @@
 						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 					</button>
 				</li>
+				<li v-if="isAuthed">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="isReplying = true;">
+						Reply
+					</button>
+				</li>
 			</ul>
 			<!-- Rich Text Editor -->
-			<!-- <WriteComment v-if="replying" v-show="!isCollapsed" :visible="replying" is_reply @change="toggleReplying" class="mt-3"/> -->
+			<!-- Write Form -->
+            <div v-if="isAuthed && isReplying" class="flex md:space-x-3 mt-3">
+                  <img
+                  loading="lazy"
+                  :src="userStore.user.avatar"
+                  alt="avatar"
+                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+                  />
+                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
+            </div>
 			<!-- Replies -->
-			<ContentCommentList v-if="item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"></ContentCommentList>
+			<ContentCommentList v-if="item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
 			<!-- Continue Thread Link -->
-			<NuxtLink v-if="item.replies.length && level > limit" :to="`/post/${item.post.id}/${comment.id}`" class="mt-2 block text-xs hover:underline">
-				Continue this thread
-				<i class="far fa-long-arrow-alt-right pl-1"></i>
+			<NuxtLink v-if="item.replies.length && level > limit" :to="`/post/${item.post.id}/${comment.id}`" class="inline-block mt-2 text-primary text-sm hover:underline">
+				Continue this thread &#8594;
 			</NuxtLink>
 		</div>
 	</li>
@@ -109,8 +121,13 @@
 
 	import { formatDate } from '@/utils/formatDate';
 
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+
 	import { useVote } from '@/composables/vote';
 	import { useSave } from '@/composables/save';
+
+	const userStore = useLoggedInUser();
+    const isAuthed = userStore.isAuthed;
 
 	const { voteType, vote } = useVote();
 	const { isSaved, save } = useSave();
@@ -130,8 +147,7 @@
 	let item = props.item;
 	let comment = item.comment;
 
-	// local state 
-	let replying = false;
+	let isReplying = ref(false);
 	let isCollapsed = ref(false);
 
 	// take comment level and subtract offset (depth) to get relative level
@@ -139,8 +155,20 @@
 		return comment.level - props.offset
 	});
 
-	const toggleReplying = (val) => {
-		replying = val
+	const onClosed = () => {
+		isReplying.value = false;
+	}
+
+	const onCommentPublished = (comment) => {
+		// Close the reply form.
+		toggleReplying();
+		// Append reply to list of replies.
+        item.replies.unshift(comment);
+    };
+
+	// utils
+	const toggleReplying = () => {
+		isReplying.value = !isReplying.value;
 	};
 </script>
 
@@ -155,10 +183,10 @@
 		content: "";
 		left: calc(50% - 1px);
 		width: 14px;
-		height: calc(100% - 32px);
+		height: calc(100% - 24px);
 		@apply absolute bottom-0 border-l border-gray-300;
 	}
-	.comment-collapse-bar.reply::before {
+	/*.comment-collapse-bar.reply::before {
 		height: calc(100% - 24px);
-	}
+	}*/
 </style>
