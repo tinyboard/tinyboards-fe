@@ -29,7 +29,7 @@
                                                             loading="lazy"
                                                             :src="item.creator.avatar || 'http://placekitten.com/200/300'"
                                                             alt="avatar"
-                                                            class="flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+                                                            class="flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
                                                             />
                                                       </NuxtLink>
                                                       <!-- Deleted User -->
@@ -247,12 +247,12 @@
                                           <!-- Comments & States -->
                                           <div class="sm:bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
                                                 <!-- Write Form -->
-                                                <div v-if="isAuthed" class="flex md:space-x-3">
+                                                <div v-if="isAuthed" class="flex md:space-x-2">
                                                       <img
                                                       loading="lazy"
                                                       :src="userStore.user.avatar"
                                                       alt="avatar"
-                                                      class="hidden md:inline-block flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+                                                      class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
                                                       />
                                                       <InputsComment :post-id="item.post.id" :parent-id="null" @comment-published="onCommentPublished"/>
                                                 </div>

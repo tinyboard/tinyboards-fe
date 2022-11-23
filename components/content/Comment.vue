@@ -9,11 +9,11 @@
 				:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 				alt="avatar"
 				class="flex-shrink-0 object-cover sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
-				:class="isCollapsed ? 'w-6 h-6' : 'w-6 h-6 md:w-12 md:h-12'"
+				:class="isCollapsed ? 'w-6 h-6' : 'w-6 h-6 md:w-9 md:h-9'"
 				/>
 			</NuxtLink>
 			<!-- Deleted User Comment -->
-			<div v-else class="flex items-center justify-center text-gray-400 bg-transparent border dark:border-gray-700 border-dashed rounded-sm" :class="isCollapsed ? 'w-6 h-6 text-sm' : 'w-6 h-6 md:w-12 md:h-12 text-lg'">
+			<div v-else class="flex items-center justify-center text-gray-400 bg-transparent border dark:border-gray-700 border-dashed rounded-sm" :class="isCollapsed ? 'w-6 h-6 text-sm' : 'w-6 h-6 md:w-9 md:h-9 text-lg'">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 				   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 				   <path d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7"></path>
@@ -103,7 +103,7 @@
                   loading="lazy"
                   :src="userStore.user.avatar"
                   alt="avatar"
-                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 sm:w-12 sm:h-12 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
                   />
                   <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
             </div>
