@@ -1,6 +1,6 @@
 <template>
 	<!-- List of Comments -->
-	<ul v-if="comments.length" class="mt-5 first:mt-0">
+	<ul v-if="comments.length" class="mt-5 first:mt-0 first-of-type:mt-0">
 		<ContentComment v-for="comment in comments" :key="comment.comment.id" :item="comment"></ContentComment>
 	</ul>
 </template>
