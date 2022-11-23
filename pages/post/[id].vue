@@ -416,19 +416,15 @@
 </script>
 
 <style scoped>
-      .icon-crown {
-            display: inline-block;
-            background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4z'%3E%3C/path%3E%3C/svg%3E");
-      }
       .upvoted > svg {
             fill: rgba(var(--color-primary));
       }
       .upvote:active > svg, .downvote:active > svg {
-            @apply transform -translate-y-1 transition-all duration-300;
-            transition-timing-function: cubic-bezier(.1,.7,.7,1.2);
+            transform: translateY(-8px);
+            transition: transform 300ms cubic-bezier(.1,.5,.6,1);
       }
       .downvote:active > svg {
-            @apply translate-y-2;
+            transform: translateY(8px);
       }
       .downvoted > svg {
             fill: rgba(234, 88, 12, 1);
