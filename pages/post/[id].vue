@@ -421,7 +421,7 @@
       }
       .upvote:active > svg, .downvote:active > svg {
             transform: translateY(-8px);
-            transition: transform 300ms cubic-bezier(.1,.5,.6,1);
+            transition: transform 200ms cubic-bezier(.1,-.5,.6,1.2);
       }
       .downvote:active > svg {
             transform: translateY(8px);
