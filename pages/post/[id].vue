@@ -326,14 +326,15 @@
 
       // Post
       let { item, pending, error, refresh } = await usePost(route.params.id);
-      console.error(`Error: ${error.value}`);
+      
       let post = null;
 
       if (!error.value) {
-            console.log("error is null");
             item = item.value.post_view;
             post = item.post;
-      }
+      } else {
+            console.error(`Error: ${error.value}`);
+      };
 
       // Voting
       let voteType = ref(item.my_vote);
