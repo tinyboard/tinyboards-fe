@@ -220,8 +220,13 @@
 		@apply dark:text-gray-200 break-words;
 	}
 	.comment-body :deep(img) {
-		max-width: 240px;
+		max-width: 100px;
 		aspect-ratio: auto;
+	}
+	@media (min-width: 768px) {
+		.comment-body :deep(img) {
+			max-width: 240px;
+		}
 	}
 	/* Collapse Bar */
 	.comment-collapse-bar {
