@@ -215,6 +215,7 @@
 </script>
 
 <style scoped>
+	/* Comment Body */
 	.comment-body {
 		@apply dark:text-gray-200 break-words;
 	}
@@ -222,7 +223,7 @@
 		max-width: 240px;
 		aspect-ratio: auto;
 	}
-
+	/* Collapse Bar */
 	.comment-collapse-bar {
 		@apply cursor-pointer
 	}
@@ -236,7 +237,4 @@
 		height: calc(100% - 24px);
 		@apply absolute bottom-0 border-l border-gray-300;
 	}
-	/*.comment-collapse-bar.reply::before {
-		height: calc(100% - 24px);
-	}*/
 </style>
