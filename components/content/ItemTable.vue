@@ -38,16 +38,16 @@
 						loading="lazy"
 						:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 						alt="avatar"
-						class="hidden sm:inline flex-shrink-0 w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white"
+						class="hidden sm:inline flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white"
 						/>
 						<!-- Post Details -->
-						<div class="flex flex-col sm:pl-3 sm:truncate">
+						<div class="flex flex-col sm:pl-2 sm:truncate">
 							<!-- Title -->
-							<NuxtLink class="text-base font-bold text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`/post/${item.post.id}`">
+							<NuxtLink class="text-base font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`/post/${item.post.id}`">
 								{{ item.post.title }}
 							</NuxtLink>
 							<!-- Author -->
-							<p class="mt-2 sm:mt-1 flex items-center font-normal text-sm text-gray-400">
+							<p class="mt-2 sm:mt-0 flex items-center font-normal text-sm text-gray-400">
 								<!-- Avatar - Mobile Only -->
 								<img
 								loading="lazy"
