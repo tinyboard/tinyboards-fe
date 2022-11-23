@@ -75,9 +75,10 @@
 						</span>
 					</div>
 				</div>
-				<div class="dark:text-gray-200 break-words" v-show="!isCollapsed" v-html="comment.body_html" />
+				<!-- Comment Body -->
+				<div class="comment-body" v-show="!isCollapsed" v-html="comment.body_html" />
 			</div>
-			<!-- Comment ctions -->
+			<!-- Comment Actions -->
 			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed">
 				<li>
 					<button class="text-xs font-medium hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
@@ -119,36 +120,41 @@
 <script setup>
 	import { computed, ref } from 'vue';
 
+	import { baseURL } from "@/server/constants";
+
 	import { formatDate } from '@/utils/formatDate';
 
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 
-	import { useVote } from '@/composables/vote';
 	import { useSave } from '@/composables/save';
 
-	const userStore = useLoggedInUser();
-    const isAuthed = userStore.isAuthed;
+	import { useToastStore } from '@/stores/StoreToast';
+      const toast = useToastStore();
 
-	const { voteType, vote } = useVote();
+	const userStore = useLoggedInUser();
+	const isAuthed = userStore.isAuthed;
+
+	const authCookie = useCookie("token").value;
+
 	const { isSaved, save } = useSave();
 
 	const props = defineProps({
 		item: Object,
 		offset: {
 			type: Number,
-			default: 0
+		default: 0
 		},
 		limit: {
 			type: Number,
-			default: 3
+		default: 3
 		}
 	});
 
-	let item = props.item;
-	let comment = item.comment;
+	const item = props.item;
+	const comment = item.comment;
 
-	let isReplying = ref(false);
-	let isCollapsed = ref(false);
+	const isReplying = ref(false);
+	const isCollapsed = ref(false);
 
 	// take comment level and subtract offset (depth) to get relative level
 	const level = computed(() => {
@@ -163,8 +169,44 @@
 		// Close the reply form.
 		toggleReplying();
 		// Append reply to list of replies.
-        item.replies.unshift(comment);
-    };
+		item.replies.unshift(comment);
+	};
+
+	// Voting
+      const voteType = ref(item.my_vote);
+
+      const vote = async (type = 0) => {
+            voteType.value = voteType.value === type ? 0 : type;
+
+            await useFetch(`/comment/${item.comment.id}/vote`, {
+                  baseURL,
+                  method: "post",
+                  body: {
+                        "score": voteType
+                  },
+                  headers: {
+                        Authorization: authCookie ? `Bearer ${authCookie}` : '',
+                  }
+            })
+            .then(({ data }) => {
+                  if (data.value) {
+                        data = JSON.parse(JSON.stringify(data.value));
+                        console.log(data);
+                  } else {
+                        // Revert failed vote & show error toast.
+                        setTimeout(() => {
+                              voteType.value = 0;
+                              toast.addNotification({
+                                    header:'Vote failed',
+                                    message:'Your vote failed to cast. Please try again.',
+                                    type:'error'
+                              });
+                        }, 400);
+                        // Log the error.
+                        console.log(error);
+                  };
+            });
+      };
 
 	// utils
 	const toggleReplying = () => {
@@ -173,6 +215,14 @@
 </script>
 
 <style scoped>
+	.comment-body {
+		@apply dark:text-gray-200 break-words;
+	}
+	.comment-body :deep(img) {
+		max-width: 240px;
+		aspect-ratio: auto;
+	}
+
 	.comment-collapse-bar {
 		@apply cursor-pointer
 	}

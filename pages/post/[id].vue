@@ -1,11 +1,11 @@
 <template>
       <main class="flex flex-col pt-12 sm:pt-14">
             <!-- Sub Navigation -->
-            <section>
+            <section class="hidden md:block">
                   <NavigationNavbarSub :links="links" disableActiveClass/>
             </section>
             <!-- Main Content -->
-            <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:mt-10 sm:px-4 md:px-6">
+            <section class="container mx-auto max-w-8xl grid grid-cols-12 md:mt-10 sm:px-4 md:px-6">
                  <div class="col-span-full flex gap-6 sm:py-6">
                         <!-- Main Content -->
                         <div class="relative w-full">
@@ -65,8 +65,8 @@
                                                                   </span>
                                                                   <!-- Ratio -->
                                                                   <span>
-                                                                        <span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
-                                                                        <span class="pl-1">
+                                                                        <span class="font-black text-gray-400 dark:text-gray-500">·</span>
+                                                                        <span class="pl-2">
                                                                               {{ percentUpvoted }}% upvoted
                                                                         </span>
                                                                   </span>
@@ -123,17 +123,17 @@
                                           <div v-if="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
                                                 <!-- Desktop actions -->
                                                 <ul class="hidden md:flex flex-grow items-center space-x-6">
-                                                      <li class="group flex items-center space-x-2 leading-none">
-                                                            <button @click="vote(1)" :class="voteType === 1 ? 'text-primary' : 'text-gray-500'">
+                                                      <li class="group flex items-center space-x-2 leading-none text-sm font-medium">
+                                                            <button @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                         <path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
                                                                   </svg>
                                                             </button>
-                                                            <span class="text-sm font-medium" :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
+                                                            <span :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
                                                                   {{ item.counts.score + voteType }}
                                                             </span>
-                                                            <button @click="vote(-1)" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500'">
+                                                            <button @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-orange-600' : 'text-gray-500'">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                         <path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z"></path>
@@ -241,11 +241,11 @@
                                     <!-- Comment Section -->
                                     <div class="flex flex-col">
                                           <!-- Count Heading -->
-                                          <h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 mb-2">
+                                          <h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 sm:mb-2">
                                                 {{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
                                           </h1>
                                           <!-- Comments & States -->
-                                          <div class="bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
+                                          <div class="sm:bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
                                                 <!-- Write Form -->
                                                 <div v-if="isAuthed" class="flex md:space-x-3">
                                                       <img
@@ -296,6 +296,8 @@
 <script setup>
       import { reactive, computed } from 'vue';
 
+      import { baseURL } from "@/server/constants";
+
       import { useLoggedInUser } from '@/stores/StoreAuth';
 
       import { usePost } from '@/composables/post';
@@ -304,19 +306,21 @@
       import { formatDate } from '@/utils/formatDate';
       import { toPercent } from '@/utils/percent'
 
-      import { useVote } from '@/composables/vote';
       import { useSave } from '@/composables/save';
       import { useSubscribe } from '@/composables/subscribe';
 
-      // import { useDeletePost } from '@/composables/post';
+      import { useToastStore } from '@/stores/StoreToast';
+      const toast = useToastStore();
 
       let route = useRoute();
 
       let userStore = useLoggedInUser();
       const isAuthed = userStore.isAuthed;
 
+      const authCookie = useCookie("token").value;
+
       // Define post actions
-      const { voteType, vote } = useVote();
+      // const { voteType, vote } = useVote();
       const { isSaved, save } = useSave();
       const { isSubscribed, subscribe } = useSubscribe();
 
@@ -330,6 +334,42 @@
             item = item.value.post_view;
             post = item.post;
       }
+
+      // Voting
+      let voteType = ref(item.my_vote);
+
+      const vote = async (type = 0) => {
+            voteType.value = voteType.value === type ? 0 : type;
+
+            await useFetch(`/posts/${item.post.id}/vote`, {
+                  baseURL,
+                  method: "post",
+                  body: {
+                        "score": voteType
+                  },
+                  headers: {
+                        Authorization: authCookie ? `Bearer ${authCookie}` : '',
+                  }
+            })
+            .then(({ data }) => {
+                  if (data.value) {
+                        data = JSON.parse(JSON.stringify(data.value));
+                        console.log(data);
+                  } else {
+                        // Revert failed vote & show error toast.
+                        setTimeout(() => {
+                              voteType.value = 0;
+                              toast.addNotification({
+                                    header:'Vote failed',
+                                    message:'Your vote failed to cast. Please try again.',
+                                    type:'error'
+                              });
+                        }, 400);
+                        // Log the error.
+                        console.log(error);
+                  };
+            });
+      };
 
       // Utils
       const percentUpvoted = computed(() => {
@@ -379,5 +419,18 @@
       .icon-crown {
             display: inline-block;
             background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'%3E%3C/path%3E%3Cpath d='M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4z'%3E%3C/path%3E%3C/svg%3E");
+      }
+      .upvoted > svg {
+            fill: rgba(var(--color-primary));
+      }
+      .upvote:active > svg, .downvote:active > svg {
+            @apply transform -translate-y-1 transition-all duration-300;
+            transition-timing-function: cubic-bezier(.1,.7,.7,1.2);
+      }
+      .downvote:active > svg {
+            @apply translate-y-2;
+      }
+      .downvoted > svg {
+            fill: rgba(234, 88, 12, 1);
       }
 </style>

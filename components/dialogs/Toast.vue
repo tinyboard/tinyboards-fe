@@ -25,7 +25,7 @@
       </div>
     </div>
     <!-- Close Button -->
-    <button class="absolute top-1 right-1 w-8 h-8 flex items-center justify-center rounded bg-transparent" :class="notification.type === 'success' ? 'text-green-700 hover:text-green-900 hover:bg-green-300' : 'text-red-700 hover:text-red-900 hover:bg-red-300'" aria-label="Close toast" @click="toast.removeNotification(notification)">
+    <button class="absolute top-1 right-1 w-8 h-8 flex items-center justify-center rounded bg-transparent" :class="notification.type === 'success' ? 'text-green-700 hover:text-green-900 hover:bg-green-400' : 'text-red-700 hover:text-red-900 hover:bg-red-300'" aria-label="Close toast" @click="toast.removeNotification(notification)">
       <span>&#x2715</span>
     </button>
   </div>

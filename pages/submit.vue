@@ -139,7 +139,7 @@
 
 	const links = [
 	{ name: 'House Rules', href: '/help/rules', target: '_blank' },
-	{ name: 'Formatting Guide', href: '/help/formatting', target: '_blank' },
+	{ name: 'Formatting Guide', href: 'https://www.markdownguide.org/cheat-sheet/', target: '_blank' },
 	];
 </script>
 
