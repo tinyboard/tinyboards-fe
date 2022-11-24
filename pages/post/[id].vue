@@ -391,13 +391,6 @@
       const isEditing = ref(false);
 
       // Delete
-      const isDeleteModalOpen = ref(false);
-      const onDeleteModalClosed = () => {
-            isDeleteModalOpen.value = false;
-      };
-      const onDeleteSuccess = () => {
-            navigateTo('/feed');
-      }
       const confirmDelete = () => {
             modalStore.setModal({
                   modal: 'ModalDelete',
@@ -408,10 +401,6 @@
       };
 
       // Report
-      const isReportModalOpen = ref(false);
-      const onReportModalClosed = () => {
-            isReportModalOpen.value = false;
-      };
       const confirmReport = () => {
             modalStore.setModal({
                   modal: 'ModalReport',

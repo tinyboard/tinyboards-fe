@@ -220,13 +220,6 @@
       const isEditing = ref(false);
 
       // Delete
-      const isDeleteModalOpen = ref(false);
-      const onDeleteModalClosed = () => {
-            isDeleteModalOpen.value = false;
-      };
-      const onDeleteSuccess = () => {
-            navigateTo('/feed');
-      }
       const confirmDelete = () => {
             modalStore.setModal({
             	modal: 'ModalDelete',
@@ -237,13 +230,13 @@
       };
 
       // Report
-      const isReportModalOpen = ref(false);
-      const onReportModalClosed = () => {
-            isReportModalOpen.value = false;
-      };
       const confirmReport = () => {
-            modal.setModal({header:'Post created',message:'Your post was published!',type:'success'});
-            // isReportModalOpen.value = true;
+            modalStore.setModal({
+            	modal: 'ModalReport',
+            	id: comment.id,
+            	contentType: 'comment',
+            	isOpen: true
+            });
       };
 
 	// utils
