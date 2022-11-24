@@ -3,7 +3,7 @@
 		<textarea required placeholder="Write a comment..." rows="4" class="block w-full min-h-[48px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="body"/>
 		<div class="flex space-x-2 mt-2">
 			<button v-if="parentId" type="button" class="button white w-24" @click="close">Cancel</button>
-			<button class="button primary min-w-[96px]">
+			<button class="button primary min-w-[96px]" :class="{ 'loading':isLoading }" :disabled="isLoading">
 				{{ parentId ? 'Reply' : 'Comment' }}
 			</button>
 		</div>
@@ -14,9 +14,6 @@
 	import { ref } from 'vue';
 	import { baseURL } from "@/server/constants";
 	import { useToastStore } from '@/stores/StoreToast';
-
-	// Define emit
-	const emit = defineEmits(['closed','commentPublished']);
 
 	const props = defineProps({
 		parentId: {
@@ -29,19 +26,22 @@
 		},
 	});
 
+	// Define emit
+	const emit = defineEmits(['closed','commentPublished']);
 	const toast = useToastStore();
-
 	const authCookie = useCookie("token").value;
 
-	const body = ref("");
+	const body = ref(null);
+	const isLoading = ref(false);
 
 	const close = () => {
 		emit('closed');
 	};
 
 	const submitComment = () => {
+		isLoading.value = true;
 		return new Promise((resolve, reject) => {
-			useFetch('/comment', {
+			useFetch('/comments', {
 				baseURL,
 				method: "post",
 				body: {
@@ -65,6 +65,9 @@
 				console.log(error);
 				// Show error toast.
 				toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
+			})
+			.finally(() => {
+				isLoading.value = false;
 			});
 		});
 	};

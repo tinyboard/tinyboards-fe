@@ -1,5 +1,6 @@
-import { baseURL } from "@/server/constants";
 import { ref } from "vue";
+
+import { useApi } from "@/composables/api";
 
 export async function usePostComments(id, query = {}) {
   const {
@@ -7,9 +8,8 @@ export async function usePostComments(id, query = {}) {
     pending,
     error,
     refresh,
-  } = await useFetch("/comments", {
+  } = await useApi("/comments", {
     query: { ...query, post_id: id },
-    baseURL,
     key: `post_${id}_comments`,
   });
 

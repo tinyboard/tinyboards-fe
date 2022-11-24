@@ -116,7 +116,7 @@
       </MenuItem>
     </div>
     <div class="py-2">
-      <ul class="flex flex-wrap mb-0 px-3 leading-4">
+      <ul class="flex flex-wrap justify-around mb-0 px-3 leading-4">
         <li v-for="link in links" class="px-1 py-0.5">
           <NuxtLink :to="link.href" class="text-xs text-gray-500 hover:underline">
             {{ link.name }}
@@ -141,22 +141,18 @@
     user: Object
   })
 
-  const v = props.user;
+  const v = ref(props.user);
 
   function logout() {
     Cookies.remove('token');
     userStore.logout();
-
-    router.push("/");
+    router.push("/feed");
   }
 
   const links = [
-  { name: 'About', href: '/about' },
-  { name: 'FAQ', href: '/learderboard' },
-  { name: 'Blog', href: '/members' },
-  { name: 'House Rules', href: '/rules' },
-  { name: 'Terms', href: '/terms' },
-  { name: 'Privacy', href: '/privacy' },
-  { name: 'Source Code', href: '/source-code' }
+  { name: 'About', href: '/help/about' },
+  { name: 'House Rules', href: '/help/rules' },
+  { name: 'Terms', href: '/help/terms' },
+  { name: 'Privacy', href: '/help/privacy' },
   ]
 </script>

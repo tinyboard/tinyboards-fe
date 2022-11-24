@@ -3,7 +3,7 @@
 		<div class="space-y-3">
 			<transition-group name="toasts"
 			enter-active-class="origin-bottom-right transition-all duration-300 ease-[cubic-bezier(0.3,0,0,1.3)]"
-			enter-from-class="opacity-0 scale-50 translate-y-10"
+			enter-from-class="opacity-0 scale-90 translate-y-10"
 			enter-to-class="opacity-100 scale-100"
 			leave-active-class="transition-all duration-200 ease-out"
 			leave-from-class="opacity-100"

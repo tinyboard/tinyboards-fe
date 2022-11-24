@@ -5,6 +5,7 @@
 		<slot/>
 		<NavigationFooter />
 		<DialogsToastList />
+		<DialogsModalList />
 	</div>
 </template>
 

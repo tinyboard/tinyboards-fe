@@ -114,7 +114,7 @@
                                                 />
                                           </div>
                                           <!-- Post Edit Form -->
-                                          <InputsEditPost v-if="isEditing" :body="post.body" @cancel="isEditing = false;"/>
+                                          <InputsEditPost v-if="isEditing" :post-id="item.post.id" :body="post.body" @closed="isEditing = false;"/>
                                           <!-- Post Text Body -->
                                           <div v-else-if="!isEditing && post.body_html" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
                                                 <div class="dark:text-gray-200 break-words" v-html="post.body_html"></div>
@@ -194,7 +194,7 @@
                                                             </button>
                                                       </li>
                                                       <li v-if="!isAuthor">
-                                                            <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+                                                            <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport()">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
                                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                         <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
@@ -203,7 +203,7 @@
                                                             </button>
                                                       </li>
                                                       <li v-if="isAuthor">
-                                                            <button class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+                                                            <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete()">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                      <line x1="4" y1="7" x2="20" y2="7"></line>
@@ -216,7 +216,7 @@
                                                             </button>
                                                       </li>
                                                       <li v-if="isAuthor">
-                                                            <button class="flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="isEditing = !isEditing">
+                                                            <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="isEditing = !isEditing">
                                                                   <svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
@@ -309,6 +309,9 @@
       import { useSave } from '@/composables/save';
       import { useSubscribe } from '@/composables/subscribe';
 
+      import { useModalStore } from '@/stores/StoreModal';
+      const modalStore = useModalStore();
+
       import { useToastStore } from '@/stores/StoreToast';
       const toast = useToastStore();
 
@@ -387,6 +390,37 @@
       // Edit
       const isEditing = ref(false);
 
+      // Delete
+      const isDeleteModalOpen = ref(false);
+      const onDeleteModalClosed = () => {
+            isDeleteModalOpen.value = false;
+      };
+      const onDeleteSuccess = () => {
+            navigateTo('/feed');
+      }
+      const confirmDelete = () => {
+            modalStore.setModal({
+                  modal: 'ModalDelete',
+                  id: item.post.id,
+                  contentType: 'post',
+                  isOpen: true
+            });
+      };
+
+      // Report
+      const isReportModalOpen = ref(false);
+      const onReportModalClosed = () => {
+            isReportModalOpen.value = false;
+      };
+      const confirmReport = () => {
+            modalStore.setModal({
+                  modal: 'ModalReport',
+                  id: item.post.id,
+                  contentType: 'post',
+                  isOpen: true
+            });
+      };
+
       // Comments
       const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
 
@@ -407,13 +441,6 @@
       const links = [
       { name: 'Comments', href: '#comments' },
       ];
-
-/*if (post.saved) {
-      isSaved.value = post.isSaved;
-};*/
-/*if (post.subscribed) {
-      isSubscribed.value = post.isSubscribed;
-};*/
 </script>
 
 <style scoped>

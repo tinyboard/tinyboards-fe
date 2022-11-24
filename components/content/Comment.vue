@@ -95,6 +95,11 @@
 						Reply
 					</button>
 				</li>
+				<li v-if="isAuthed && isAuthor">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="confirmDelete">
+						Delete
+					</button>
+				</li>
 			</ul>
 			<!-- Rich Text Editor -->
 			<!-- Write Form -->
@@ -119,16 +124,14 @@
 
 <script setup>
 	import { computed, ref } from 'vue';
-
 	import { baseURL } from "@/server/constants";
-
 	import { formatDate } from '@/utils/formatDate';
-
 	import { useLoggedInUser } from '@/stores/StoreAuth';
-
 	import { useSave } from '@/composables/save';
-
+	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
+
+      const modalStore = useModalStore();
       const toast = useToastStore();
 
 	const userStore = useLoggedInUser();
@@ -178,7 +181,7 @@
       const vote = async (type = 0) => {
             voteType.value = voteType.value === type ? 0 : type;
 
-            await useFetch(`/comment/${item.comment.id}/vote`, {
+            await useFetch(`/comments/${item.comment.id}/vote`, {
                   baseURL,
                   method: "post",
                   body: {
@@ -206,6 +209,41 @@
                         console.log(error);
                   };
             });
+      };
+
+      // Author
+      const isAuthor = computed(() => {
+            return userStore.user.name === item.creator.name;
+      });
+
+      // Edit
+      const isEditing = ref(false);
+
+      // Delete
+      const isDeleteModalOpen = ref(false);
+      const onDeleteModalClosed = () => {
+            isDeleteModalOpen.value = false;
+      };
+      const onDeleteSuccess = () => {
+            navigateTo('/feed');
+      }
+      const confirmDelete = () => {
+            modalStore.setModal({
+            	modal: 'ModalDelete',
+            	id: comment.id,
+            	contentType: 'comment',
+            	isOpen: true
+            });
+      };
+
+      // Report
+      const isReportModalOpen = ref(false);
+      const onReportModalClosed = () => {
+            isReportModalOpen.value = false;
+      };
+      const confirmReport = () => {
+            modal.setModal({header:'Post created',message:'Your post was published!',type:'success'});
+            // isReportModalOpen.value = true;
       };
 
 	// utils
