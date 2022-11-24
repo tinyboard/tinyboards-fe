@@ -90,7 +90,7 @@
 						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 					</button>
 				</li>
-				<li v-if="isAuthed">
+				<li v-if="isAuthed && !isAuthor">
 					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="isReplying = true;">
 						Reply
 					</button>

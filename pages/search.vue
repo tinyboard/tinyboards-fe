@@ -48,6 +48,10 @@
 							</div>
 						</div>
 					</div>
+					<!-- Sorts -->
+					<div class="flex flex-wrap gap-2 mb-1 px-4">
+						<MenusSort/>
+					</div>
 					<!-- Feed -->
 					<ContentItemTable :posts="posts.posts" title="Results" :isLoading="pending" :hasError="error"/>
 				</div>
@@ -75,6 +79,8 @@
 	});
 
 	const text = ref(route.query.q);
+	const sort = ref(route.query.sort);
+	const type = ref(route.query.type);
 	const hasNsfw = ref(false);
 
 	// Search API.
@@ -93,24 +99,38 @@
 
 	// Fetch members by sort.
 	const { data: posts, pending, error, refresh } = await useFetch("/feed", {
-		query: { search: route.query.q, nsfw: false, limit: 25 },
+		query: {
+			search: route.query.q,
+			sort: route.query.sort,
+			nsfw: false,
+			limit: 25
+		},
 		baseURL
 	});
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 
-		path: '/search', 
-		query: { q: text }
+		path: '/search',
+		query: {
+			q: text,
+			sort: sort.value,
+			type: type.value,
+		}
 	});
 
 	// Links for sub navigation bar.
 	const links = [
-	{ name: 'Latest', href: `/search?q=${route.query.q}&sort=new` },
-	{ name: 'Top All', href: `/search?q=${route.query.q}&sort=top&time=all` },
-	{ name: 'Top Month', href: `/search?q=${route.query.q}&sort=top&time=month` },
-	{ name: 'Top Week', href: `/search?q=${route.query.q}&sort=top&time=week` },
-	{ name: 'Top Day', href: `/search?q=${route.query.q}&sort=top&time=day` },
-	{ name: 'Most Comments', href: `/search?q=${route.query.q}&sort=top&time=all&type=comments` },
-	{ name: 'Latest Comments', href: `/search?q=${route.query.q}&sort=new&type=comments` }
+		{ name: 'Posts', href: `/search?q=${route.query.q}&type=post` },
+		{ name: 'Comments', href: `/search?q=${route.query.q}&type=comment` },
+	];
+
+	const sorts = [
+		{ name: 'Latest', href: `/search?q=${route.query.q}&sort=new` },
+		{ name: 'Top All', href: `/search?q=${route.query.q}&sort=top&time=all` },
+		{ name: 'Top Month', href: `/search?q=${route.query.q}&sort=top&time=month` },
+		{ name: 'Top Week', href: `/search?q=${route.query.q}&sort=top&time=week` },
+		{ name: 'Top Day', href: `/search?q=${route.query.q}&sort=top&time=day` },
+		{ name: 'Most Comments', href: `/search?q=${route.query.q}&sort=top&time=all&type=comments` },
+		{ name: 'Latest Comments', href: `/search?q=${route.query.q}&sort=new&type=comments` }
 	];
 </script>

@@ -13,7 +13,7 @@
 					<div class="md:grid md:grid-cols-3 md:gap-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<label class="text-base font-bold leading-6 text-gray-900">Photo</label>
+							<label class="text-base font-bold leading-6 text-gray-900">Avatar</label>
 						</div>
 						<!-- Inputs -->
 						<div class="mt-5 md:col-span-2 md:mt-0">
