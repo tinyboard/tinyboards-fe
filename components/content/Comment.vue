@@ -90,12 +90,12 @@
 			</ul>
 			<!-- Rich Text Editor -->
 			<!-- Write Form -->
-	            <div v-if="isAuthed && isReplying" class="flex md:space-x-3 mt-3">
+	            <div v-if="isAuthed && isReplying" class="flex md:space-x-2 mt-4">
 	                  <img
 	                  loading="lazy"
 	                  :src="userStore.user.avatar"
 	                  alt="avatar"
-	                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+	                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
 	                  />
 	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
 	            </div>
