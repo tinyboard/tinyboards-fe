@@ -1,6 +1,6 @@
 <template>
     <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
-      <div class="p-4 border rounded-md">
+      <div v-if="author" class="p-4 border rounded-md">
             <NuxtLink :to="`/user/${author.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->
                   <img
@@ -54,7 +54,7 @@
                   </li>
             </ul>
       </div>
-      <div>
+      <div v-if="author">
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   More by author
             </h2>
@@ -66,11 +66,11 @@
 // Define author
 const props = defineProps({
       author: Object
-})
+});
 
 // Define social links
 const socials = [
   { name: 'twitter', icon: 'https://i.imgur.com/svGJfRg.jpg', link: 'https://reddit.com' },
   { name: 'reddit', icon: 'https://i.imgur.com/svGJfRg.jpg', link: 'https://reddit.com' }
-]
+];
 </script>

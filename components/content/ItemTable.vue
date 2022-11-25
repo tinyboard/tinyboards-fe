@@ -20,11 +20,11 @@
 			<!-- Loading State -->
 			<tbody v-if="isLoading">
 				<tr v-for="i in 7" :key="i" class="bg-white odd:bg-gray-50 border-b last:border-0 dark:bg-gray-800 dark:border-gray-700">
-					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
+					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white animate-pulse">
 						<div class="flex-shrink-0 w-12 h-12 bg-gray-100"></div>
 						<div class="ml-3 bg-gray-100 h-3" :class="i % 2 === 0 ? 'w-1/3' : 'w-1/2'"></div>
 					</th>
-					<td v-for="j in 3" :key="j" class="hidden xl:table-cell py-4 px-4">
+					<td v-for="j in 3" :key="j" class="hidden xl:table-cell py-4 px-4 animate-pulse">
 						<div class="bg-gray-100 h-3" :class="i % 2 === 0 ? 'w-1/3' : 'w-1/2'"></div>
 					</td>
 				</tr>
@@ -32,7 +32,7 @@
 			<!-- Success State -->
 			<tbody v-else-if="posts.length">
 				<tr v-for="item in posts" :key="item.post.id" class="bg-white odd:bg-gray-50 border-b last:border-0 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700">
-					<th scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
+					<th v-if="item.creator" scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
 						<!-- Avatar - Desktop Only -->
 						<img
 						loading="lazy"
@@ -91,7 +91,7 @@
 							</span>
 						</div>
 					</td>
-					<td class="hidden lg:table-cell py-4 px-4">
+					<td v-if="item.counts" class="hidden lg:table-cell py-4 px-4">
 						<div :title="`${item.counts.comments} ${item.counts.comments === 1 ? 'comment' : 'comments'} on this post`" class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -102,7 +102,7 @@
 							</span>
 						</div>
 					</td>
-					<td class="hidden xl:table-cell py-4 px-4">
+					<td v-if="item.counts" class="hidden xl:table-cell py-4 px-4">
 						<div :title="`Last reply ${formatDate(item.counts.newest_comment_time)}`" class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

@@ -1,5 +1,5 @@
 <template>
-	<li :id="`comment-${comment.id}`" class="group flex relative mt-6 first:mt-0" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
+	<div :id="`comment-${comment.id}`" class="group flex relative" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
 		<div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer" @click="isCollapsed = !isCollapsed"></div>
 		<div class="relative flex flex-col flex-shrink-0 items-center mr-2">
 			<!-- User Avatar -->
@@ -12,23 +12,13 @@
 				:class="isCollapsed ? 'w-6 h-6' : 'w-6 h-6 md:w-9 md:h-9'"
 				/>
 			</NuxtLink>
-			<!-- Deleted User Comment -->
-			<div v-else class="flex items-center justify-center text-gray-400 bg-transparent border dark:border-gray-700 border-dashed rounded-sm" :class="isCollapsed ? 'w-6 h-6 text-sm' : 'w-6 h-6 md:w-9 md:h-9 text-lg'">
-				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-				   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-				   <path d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7"></path>
-				   <line x1="10" y1="10" x2="10.01" y2="10"></line>
-				   <line x1="14" y1="10" x2="14.01" y2="10"></line>
-				   <path d="M10 14a3.5 3.5 0 0 0 4 0"></path>
-				</svg>
-			</div>
 			<!-- Comment Collapse Bar -->
-			<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"/>
+			<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"></div>
 		</div>
 		<!-- User Details -->
 		<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
 			<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
-				<div :class="{'mb-1':!isCollapsed}">
+				<div class="flex items-center" :class="{'mt-1 mb-1':!isCollapsed}">
 					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
 						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center font-bold text-sm">
 							{{ item.creator.name }}
@@ -36,9 +26,6 @@
 								{{ item.creator.title }}
 							</span>
 						</NuxtLink>
-						<span v-else class="text-gray-400 dark:text-gray-400 font-bold">
-							Deleted User
-						</span>
 						<!-- Parent Context Link -->
 						<!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -76,7 +63,7 @@
 					</div>
 				</div>
 				<!-- Comment Body -->
-				<div class="comment-body" v-show="!isCollapsed" v-html="comment.body_html" />
+				<div class="comment-body" v-show="!isCollapsed" v-html="comment.body_html"></div>
 			</div>
 			<!-- Comment Actions -->
 			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed">
@@ -103,23 +90,23 @@
 			</ul>
 			<!-- Rich Text Editor -->
 			<!-- Write Form -->
-            <div v-if="isAuthed && isReplying" class="flex md:space-x-3 mt-3">
-                  <img
-                  loading="lazy"
-                  :src="userStore.user.avatar"
-                  alt="avatar"
-                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
-                  />
-                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
-            </div>
+	            <div v-if="isAuthed && isReplying" class="flex md:space-x-3 mt-3">
+	                  <img
+	                  loading="lazy"
+	                  :src="userStore.user.avatar"
+	                  alt="avatar"
+	                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+	                  />
+	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
+	            </div>
 			<!-- Replies -->
 			<ContentCommentList v-if="item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
 			<!-- Continue Thread Link -->
-			<NuxtLink v-if="item.replies.length && level > limit" :to="`/post/${item.post.id}/${comment.id}`" class="inline-block mt-2 text-primary text-sm hover:underline">
+			<NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed" :to="`/post/${item.post.id}/${comment.id}`" class="inline-block text-primary text-sm hover:underline mt-2">
 				Continue this thread &#8594;
 			</NuxtLink>
 		</div>
-	</li>
+	</div>
 </template>
 
 <script setup>
@@ -213,7 +200,11 @@
 
       // Author
       const isAuthor = computed(() => {
-            return userStore.user.name === item.creator.name;
+      	if (item.creator) {
+      		return userStore.user.name === item.creator.name
+      	} else {
+      		return false
+      	}
       });
 
       // Edit

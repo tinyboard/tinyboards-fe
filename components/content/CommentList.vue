@@ -1,11 +1,15 @@
 <template>
 	<!-- List of Comments -->
-	<ul v-if="comments.length" class="mt-5 first:mt-0 first-of-type:mt-0">
-		<ContentComment v-for="comment in comments" :key="comment.comment.id" :item="comment"></ContentComment>
+	<ul v-if="comments.length" class="mt-4 first:mt-0 first-of-type:mt-0">
+		<li v-for="item in comments" :key="item.comment.id" class="mt-4 first:mt-0">
+			<component v-if="item" :item="item" :is="item.comment.deleted ? commentRemoved : comment"/>
+		</li>
 	</ul>
 </template>
 
 <script setup>
+	import { defineAsyncComponent } from 'vue';
+
 	const props = defineProps({
 		comments: Array,
 		offset: {
@@ -13,6 +17,10 @@
 			default: 0
 		}
 	});
+
+	// Import comment components.
+	const comment = defineAsyncComponent(() => import('@/components/content/Comment'));
+	const commentRemoved = defineAsyncComponent(() => import('@/components/content/CommentRemoved'));
 
 	/*console.log('ok');
 	let error = props.commentData.error;
@@ -30,7 +38,7 @@
 	// Client-side required to calculate window width.
 	// Use a Nuxt feature to ignore this code during server-side rendering.
 	// ======================================================================
- 
+
 	// let windowWidth = window.innerWidth;
 	// const txt = '';
 

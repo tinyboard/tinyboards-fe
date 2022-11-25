@@ -195,7 +195,7 @@
 	const searchTerm = ref(route.query.q)
 
 	const search = () => {
-		if (searchTerm.value) router.push(`/search?q=${searchTerm.value}&sort=new`);
+		if (searchTerm.value) router.push(`/search?query=${searchTerm.value}&sort=hot&type=post`);
 	}
 
 	const v = userStore.user;

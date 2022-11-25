@@ -29,7 +29,7 @@
         <div class="py-2">
           <!-- Menu Item -->
           <MenuItem v-slot="{ active }" v-for="(sort, index) in sorts" :key="index">
-            <NuxtLink :to="{ query: { ...$route.query, sort: sort.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']">
+            <NuxtLink :to="{ query: { ...route.query, sort: sort.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']">
                   {{ sort.name }}
             </NuxtLink>
           </MenuItem>

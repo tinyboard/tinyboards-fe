@@ -77,6 +77,9 @@
 
     await useFetch(`/${type}s/${id}`, {
       baseURL,
+      body: {
+          "deleted": true
+      },
       method: "delete",
       headers: {
         Authorization: authCookie ? `Bearer ${authCookie}` : '',
@@ -92,7 +95,7 @@
           toast.addNotification({
             header:`${type} deleted!`,
             message:`Your ${type} was removed forever.`,
-            type:'error'
+            type:'success'
           });
         }, 400);
       } else {
