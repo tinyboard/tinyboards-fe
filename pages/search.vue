@@ -53,7 +53,7 @@
 						<MenusSort/>
 					</div>
 					<!-- Feed -->
-					<ContentItemTable :posts="posts.posts" title="Results" :isLoading="pending" :hasError="error"/>
+					<ContentItemTable :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
 				</div>
 				<!-- Sidebar -->
 				<NavigationSidebar />
@@ -78,29 +78,16 @@
 		key: (route) => route.fullPath
 	});
 
-	const text = ref(route.query.q);
+	const text = ref(route.query.query);
 	const sort = ref(route.query.sort);
 	const type = ref(route.query.type);
 	const hasNsfw = ref(false);
 
-	// Search API.
-	// This endpoint accepts a sort string, limit integer, and query string.
-	// let { posts, paginate, pending, error, refresh } = await search({
-	// 	sort: "new",
-	// 	limit: 25,
-	// 	query: route.query.q
-	// }, "posts");
-
-	// Refresh search query when search term changes.
-	// Watch for sort change and refetch.
-	// watch(() => route.query, () => {
-	// 	refresh();
-	// });
-
 	// Fetch members by sort.
-	const { data: posts, pending, error, refresh } = await useFetch("/feed", {
+	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
-			search: route.query.q,
+			type: type ?? 'post',
+			query: route.query.query,
 			sort: route.query.sort,
 			nsfw: false,
 			limit: 25
@@ -112,7 +99,8 @@
 	const submitSearch = (text) => router.push({ 
 		path: '/search',
 		query: {
-			q: text,
+			type: type ?? 'post',
+			query: text,
 			sort: sort.value,
 			type: type.value,
 		}
@@ -120,17 +108,7 @@
 
 	// Links for sub navigation bar.
 	const links = [
-		{ name: 'Posts', href: `/search?q=${route.query.q}&type=post` },
-		{ name: 'Comments', href: `/search?q=${route.query.q}&type=comment` },
-	];
-
-	const sorts = [
-		{ name: 'Latest', href: `/search?q=${route.query.q}&sort=new` },
-		{ name: 'Top All', href: `/search?q=${route.query.q}&sort=top&time=all` },
-		{ name: 'Top Month', href: `/search?q=${route.query.q}&sort=top&time=month` },
-		{ name: 'Top Week', href: `/search?q=${route.query.q}&sort=top&time=week` },
-		{ name: 'Top Day', href: `/search?q=${route.query.q}&sort=top&time=day` },
-		{ name: 'Most Comments', href: `/search?q=${route.query.q}&sort=top&time=all&type=comments` },
-		{ name: 'Latest Comments', href: `/search?q=${route.query.q}&sort=new&type=comments` }
+		{ name: 'Posts', href: { query: { ...route.query, type: 'posts' } } },
+		{ name: 'Comments', href: { query: { ...route.query, type: 'comments' } } },
 	];
 </script>

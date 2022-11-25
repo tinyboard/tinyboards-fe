@@ -22,7 +22,7 @@
 	const comment = defineAsyncComponent(() => import('@/components/content/Comment'));
 	const commentRemoved = defineAsyncComponent(() => import('@/components/content/CommentRemoved'));
 
-	/*console.log('ok');
+	/*
 	let error = props.commentData.error;
 
 	let comments = ref([]);

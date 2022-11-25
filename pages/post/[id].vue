@@ -7,9 +7,9 @@
             <!-- Main Content -->
             <section class="container mx-auto max-w-8xl grid grid-cols-12 md:mt-10 sm:px-4 md:px-6">
              <div class="col-span-full flex gap-6 sm:py-6">
-                  <!-- Main Content -->
+                  <!-- Thread -->
                   <div class="relative w-full">
-                        <component v-if="item" :item="item" :comments="comments" :is="item.deleted ? threadRemoved : thread"/>
+                        <component v-if="item" :item="item" :comments="comments" :is="item.post.deleted ? threadRemoved : thread"/>
                         <!-- Banned -->
                         <!-- <ContentThreadBanned v-else-if="item && item.post.banned" :item="item" :comments="comments"/> -->
                         <!-- Error -->
