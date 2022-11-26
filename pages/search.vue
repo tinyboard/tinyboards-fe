@@ -18,7 +18,7 @@
 				<!-- Main Content -->
 				<div class="w-full">
 					<!-- Filters -->
-					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-4 px-4 py-5 sm:p-6 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
+					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-6 p-4 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
 						<!-- Search Input -->
 						<div class="md:col-span-full">
 							<form class="group relative w-full" @submit.prevent="onSubmit" @submit="submitSearch(text)">
@@ -49,7 +49,7 @@
 						</div>
 					</div>
 					<!-- Sorts -->
-					<div class="mb-2 px-4 sm:px-6">
+					<div class="mb-2 px-4">
 						<MenusSort/>
 					</div>
 					<!-- Feed -->
