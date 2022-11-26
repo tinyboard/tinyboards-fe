@@ -29,10 +29,14 @@
 </template>
 
 <script setup>
-      import { computed, defineAsyncComponent } from 'vue';
+      import { computed, defineAsyncComponent, ref } from 'vue';
       import { baseURL } from "@/server/constants";
       import { usePost } from '@/composables/post';
       import { usePostComments } from '@/composables/comments';
+
+      definePageMeta({
+            key: (route) => route.fullPath
+      });
 
       let route = useRoute();
 
@@ -53,7 +57,10 @@
       };
 
       // Comments
-      const {comments, commentsPending, commentsError, commentsRefresh} = await usePostComments(post.id, { sort: "new" });
+      const sort = ref(route.query.sort);
+      const { comments, commentsPending, commentsError, commentsRefresh } = await usePostComments(post.id, { sort: sort.value });
+
+      watch(() => route.query, () => commentsRefresh());
 
       // Sub Navigation Links
       const links = [{ name: 'Comments', href: '#comments' }];

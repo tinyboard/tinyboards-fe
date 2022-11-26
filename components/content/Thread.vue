@@ -31,7 +31,7 @@
 					alt="avatar"
 					class="mr-2 flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
 					/>
-					<div class="flex flex-col leading-4">
+					<div class="flex flex-col leading-normal">
 						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm font-bold">
 							{{ item.creator.name }}
 							<!-- Title -->
@@ -43,7 +43,7 @@
 						<span v-else class="text-sm text-gray-400 dark:text-gray-400 font-bold">
 							deleted user
 						</span>
-						<p class="flex items-center space-x-2 text-sm mt-1 text-gray-400">
+						<p class="flex items-center space-x-2 text-sm text-gray-400">
 							<!-- Timestamp -->
 							<span>{{ formatDate(new Date(item.post.published)) }}</span>
 							<span v-if="item.post.updated">
@@ -296,10 +296,6 @@
 
 	const route = useRoute();
 	const userStore = useLoggedInUser();
-
-	definePageMeta({
-		key: (route) => route.fullPath
-	});
 
 	const isAuthed = userStore.isAuthed;
 	const authCookie = useCookie("token").value;
