@@ -7,7 +7,7 @@
 				<!-- Banner -->
 				<MediaBanner
 				title="Create new post"
-				:sub-title="`Your post will be visible to 456 members of ${site.name}.`"
+				sub-title="Share a link, image or text with the community."
 				image-url="https://i.imgur.com/4MvaMAI.jpg"
 				class="col-span-full"
 				/>
@@ -139,7 +139,7 @@
 
 	const links = [
 	{ name: 'House Rules', href: '/help/rules', target: '_blank' },
-	{ name: 'Formatting Guide', href: 'https://www.markdownguide.org/cheat-sheet/', target: '_blank' },
+	{ name: 'Formatting Guide', href: 'https://www.markdownguide.org/cheat-sheet/', target: '_blank', isExternal: true },
 	];
 </script>
 

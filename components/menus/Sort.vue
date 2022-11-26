@@ -1,7 +1,7 @@
 <template>
   <Menu as="div" class="relative z-10">
     <div>
-      <MenuButton class="group relative flex items-center p-2 text-sm text-gray-600 hover:text-gray-900">
+      <MenuButton class="group relative flex items-center px-2 text-sm text-gray-600 hover:text-gray-900">
         <span class="pointer-events-none flex items-center mr-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

@@ -49,7 +49,7 @@
 						</div>
 					</div>
 					<!-- Sorts -->
-					<div class="flex flex-wrap gap-2 mb-1 px-4">
+					<div class="mb-2 px-4">
 						<MenusSort/>
 					</div>
 					<!-- Feed -->

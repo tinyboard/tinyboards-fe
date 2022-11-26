@@ -230,10 +230,10 @@
 		<!-- Comment Section -->
 		<div class="flex flex-col">
 			<!-- Count Heading & Sort -->
-			<div class="flex items-end gap-2">
-				<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 sm:mb-2">
+			<div class="flex justify-between sm:mb-2">
+				<strong class="px-2.5 md:px-0 text-base leading-none font-bold dark:text-gray-100">
 					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
-				</h1>
+				</strong>
 				<MenusSort :sorts="sorts"/>
 			</div>
 			<!-- Comments & States -->
