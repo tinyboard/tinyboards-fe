@@ -79,7 +79,7 @@
 
   // const sortInit = user.default_sort_type ?? 'hot';
 
-  const sort = ref(route.query.sort ?? 'hot');
+  const sort = ref(route.query.sort ?? sorts[0]);
 
   const selectedSort = computed(() => {
     return sorts.findIndex(x => x.key === sort.value);
