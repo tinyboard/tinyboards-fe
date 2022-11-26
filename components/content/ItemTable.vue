@@ -31,7 +31,7 @@
 			</tbody>
 			<!-- Success State -->
 			<tbody v-else-if="posts.length">
-				<tr v-for="item in posts" :key="item.post.id" class="bg-white odd:bg-gray-50 border-b last:border-0 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700">
+				<tr v-for="item in posts" :key="item.post.id" class="border-b last:border-0" :class="isAdmin && item.post.removed ? 'bg-red-100 border-red-200 hover:bg-red-50' : 'bg-white odd:bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700'">
 					<th v-if="item.creator" scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
 						<!-- Avatar - Desktop Only -->
 						<img
@@ -129,6 +129,7 @@
 
 <script setup>
 	import { computed } from 'vue';
+	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { formatDate } from '@/utils/formatDate';
 	
 	const props = defineProps({
@@ -152,6 +153,9 @@
 			default: false
 		}
 	});
+
+	const userStore = useLoggedInUser();
+	const isAdmin = userStore.user.admin;
 
 	const titles = {
 		'hot': 'hot',

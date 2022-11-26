@@ -64,11 +64,8 @@
 
 <script setup>
 	import { ref } from 'vue';
-
 	import { useRoute } from 'vue-router';
-
 	import { baseURL } from "@/server/constants";
-	// import { search } from '@/composables/posts';
 
 	// Define route & router.
 	const route = useRoute();
