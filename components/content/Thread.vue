@@ -103,13 +103,13 @@
 				/>
 			</div>
 			<!-- Post Edit Form -->
-			<InputsEditPost v-if="isEditing" :post-id="item.post.id" :body="item.post.body" @closed="isEditing = false;"/>
+			<InputsEdit v-if="isEditing" :id="item.post.id" :body="item.post.body" @closed="isEditing = false;"/>
 			<!-- Post Text Body -->
-			<div v-else-if="!isEditing && item.post.body_html" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
+			<div v-if="item.post.body_html" v-show="!isEditing" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
 				<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
 			</div>
 			<!-- Footer -->
-			<div v-if="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
+			<div v-show="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
 				<!-- Desktop actions -->
 				<ul class="hidden md:flex flex-grow items-center space-x-6">
 					<li class="group flex items-center space-x-2 leading-none text-sm font-medium">
@@ -348,9 +348,9 @@
 		const num = 1 - props.item.counts.downvotes / props.item.counts.upvotes;
 		if (!isFinite(num)) return 0;
 		return toPercent(num);
-	})
+	});
 
-      // Author
+    // Author
 	const isAuthor = computed(() => {
 		if (props.item.creator) {
 			return userStore.user.name === props.item.creator.name
@@ -359,10 +359,10 @@
 		}
 	});
 
-      // Edit
+    // Edit
 	const isEditing = ref(false);
 
-      // Delete
+    // Delete
 	const confirmDelete = () => {
 		modalStore.setModal({
 			modal: 'ModalDelete',

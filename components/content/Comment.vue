@@ -62,11 +62,13 @@
 						</span>
 					</div>
 				</div>
-				<!-- Comment Body -->
-				<div class="comment-body" v-show="!isCollapsed" v-html="comment.body_html"></div>
+				<!-- Comment Edit Form -->
+				<InputsEdit v-if="isEditing" :id="comment.id" :body="comment.body" type="comment" @hasEdited="onHasEdited" @closed="isEditing = false;"/>
+				<!-- Comment Text Body -->
+				<div class="comment-body" v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
 			</div>
 			<!-- Comment Actions -->
-			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed">
+			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
 				<li>
 					<button class="text-xs font-medium hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
 						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
@@ -87,7 +89,12 @@
 						{{ isSaved ? 'Unsave' : 'Save' }}
 					</button>
 				</li>
-				<li v-if="isAuthed && isAuthor">
+				<li v-if="isAuthor">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="isEditing = !isEditing">
+						Edit
+					</button>
+				</li>
+				<li v-if="isAuthor">
 					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="confirmDelete">
 						Delete
 					</button>
@@ -145,15 +152,15 @@
 		}
 	});
 
-	const item = props.item;
-	const comment = item.comment;
+	const item = ref(props.item);
+	const comment = ref(props.item.comment);
 
 	const isReplying = ref(false);
 	const isCollapsed = ref(false);
 
 	// take comment level and subtract offset (depth) to get relative level
 	const level = computed(() => {
-		return comment.level - props.offset
+		return comment.value.level - props.offset
 	});
 
 	const onClosed = () => {
@@ -164,16 +171,16 @@
 		// Close the reply form.
 		toggleReplying();
 		// Append reply to list of replies.
-		item.replies.unshift(comment);
+		item.value.replies.unshift(comment);
 	};
 
 	// Voting
-      const voteType = ref(item.my_vote);
+      const voteType = ref(item.value.my_vote);
 
       const vote = async (type = 0) => {
             voteType.value = voteType.value === type ? 0 : type;
 
-            await useFetch(`/comments/${item.comment.id}/vote`, {
+            await useFetch(`/comments/${item.value.comment.id}/vote`, {
                   baseURL,
                   method: "post",
                   body: {
@@ -205,8 +212,8 @@
 
       // Author
       const isAuthor = computed(() => {
-      	if (item.creator) {
-      		return userStore.user.name === item.creator.name
+      	if (item.value.creator) {
+      		return userStore.user.name === item.value.creator.name
       	} else {
       		return false
       	}
@@ -214,12 +221,16 @@
 
       // Edit
       const isEditing = ref(false);
+      const onHasEdited = (payload) => {
+      	// Update comment with saved edits.
+      	comment.value = payload.comment_view.comment;
+      }
 
       // Delete
       const confirmDelete = () => {
             modalStore.setModal({
             	modal: 'ModalDelete',
-            	id: comment.id,
+            	id: comment.value.id,
             	contentType: 'comment',
             	isOpen: true
             });
@@ -229,7 +240,7 @@
       const confirmReport = () => {
             modalStore.setModal({
             	modal: 'ModalReport',
-            	id: comment.id,
+            	id: comment.value.id,
             	contentType: 'comment',
             	isOpen: true
             });
