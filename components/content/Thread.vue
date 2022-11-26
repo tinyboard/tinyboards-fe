@@ -229,10 +229,13 @@
 		</div>
 		<!-- Comment Section -->
 		<div class="flex flex-col">
-			<!-- Count Heading -->
-			<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 sm:mb-2">
-				{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
-			</h1>
+			<!-- Count Heading & Sort -->
+			<div class="flex items-end gap-2">
+				<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 sm:mb-2">
+					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
+				</h1>
+				<MenusSort :sorts="sorts"/>
+			</div>
 			<!-- Comments & States -->
 			<div class="sm:bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
 				<!-- Write Form -->
@@ -294,11 +297,14 @@
 	const route = useRoute();
 	const userStore = useLoggedInUser();
 
+	definePageMeta({
+		key: (route) => route.fullPath
+	});
+
 	const isAuthed = userStore.isAuthed;
 	const authCookie = useCookie("token").value;
 
     // Define post actions
-    // const { voteType, vote } = useVote();
 	const { isSaved, save } = useSave();
 	const { isSubscribed, subscribe } = useSubscribe();
 
@@ -381,6 +387,18 @@
 			isOpen: true
 		});
 	};
+
+	// Comment sort options.
+	const sorts = [
+	{
+		name: 'Hot',
+		key: 'hot'
+	},
+	{
+		name: 'Latest',
+		key: 'new'
+	}
+	]
 </script>
 
 <style scoped>

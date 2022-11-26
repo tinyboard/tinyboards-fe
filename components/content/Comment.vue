@@ -35,13 +35,12 @@
 							<span>"parent author"</span>
 						</NuxtLink>-->
 						<span v-show="!isCollapsed" class="space-x-2">
-							<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 							<!-- Timestamp -->
-							<span>{{ formatDate(new Date(comment.published)) }}</span>
+							<span :title="comment.published">{{ formatDate(new Date(comment.published)) }}</span>
 							<!-- Edited Timestamp -->
 							<span v-if="comment.updated">
 								<span class="font-black text-gray-400 dark:text-gray-500">·</span>
-								<span class="pl-1 italic">
+								<span :title="comment.updated" class="pl-1 italic">
 									Edited {{ formatDate(new Date(comment.updated)) }}
 								</span>
 							</span>
@@ -68,7 +67,7 @@
 				<div class="comment-body" v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
 			</div>
 			<!-- Comment Actions -->
-			<ul class="hidden md:flex flex-grow items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
+			<ul class="flex flex-grow flex-wrap items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
 				<li>
 					<button class="text-xs font-medium hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
 						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})

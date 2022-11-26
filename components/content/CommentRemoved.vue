@@ -24,9 +24,8 @@
 							Comment deleted
 						</span>
 						<span v-show="!isCollapsed" class="space-x-2">
-							<span class="font-black text-gray-400 dark:text-gray-500">·</span>
 							<!-- Timestamp -->
-							<span>{{ formatDate(new Date(comment.published)) }}</span>
+							<span :title="comment.published">{{ formatDate(new Date(comment.published)) }}</span>
 						</span>
 						<!-- Reply Count -->
 						<span v-show="isCollapsed && item.replies.length" class="flex items-center space-x-2">

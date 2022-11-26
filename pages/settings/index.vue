@@ -156,7 +156,7 @@
 				Authorization: authCookie ? `Bearer ${authCookie}` : '',
 			}
 		})
-		.then(({ data }) => {
+		.then(({ data, error }) => {
 			if (data.value) {
 				// Show success toast.
 				toast.addNotification({header:'Settings saved',message:'Your profile settings were updated!',type:'success'});
@@ -164,7 +164,7 @@
 				// Show error toast.
 				toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
 				// Log the error.
-				console.error(`Error: ${data.error}`)
+				console.error(error.value);
 			}
 		})
 		.finally(() => {

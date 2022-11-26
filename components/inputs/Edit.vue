@@ -64,7 +64,7 @@
 				// Close the input.
 				emit('closed');
 				// Show success toast.
-				toast.addNotification({header:'Edits saved!',message:`Your ${props.type} was updated.`,type:'success'});
+				toast.addNotification({header:'Edits saved',message:`Your ${props.type} was updated.`,type:'success'});
 			} else {
 				// Log the error.
 				console.error(error.value);
