@@ -27,7 +27,7 @@
 							</svg>
 							<span>
 								Member since
-								<strong class="text-gray-600">Nov 5, 2022</strong>
+								<span class="font-medium text-gray-600">Nov 5, 2022</span>
 							</span>
 						</li>
 						<li class="ml-4 flex items-center">
@@ -39,7 +39,7 @@
 							</svg>
 							<span>
 								Last seen
-								<strong class="text-gray-600">this week</strong>
+								<span class="font-medium text-gray-600">this week</span>
 							</span>
 						</li>
 					</ul>
@@ -53,7 +53,7 @@
 								<path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
 							</svg>
 							<span>Followers
-								<strong class="text-gray-600">91</strong>
+								<span class="font-medium text-gray-600">91</span>
 							</span>
 						</li>
 						<li class="ml-4 flex items-center">
@@ -62,7 +62,7 @@
 								<path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
 							</svg>
 							<span>
-								Reputation <strong class="text-gray-600">400</strong>
+								Reputation <span class="font-medium text-gray-600">400</span>
 							</span>
 						</li>
 						<li class="ml-4 flex items-center">
@@ -73,7 +73,7 @@
 								<path d="M16 5l3 3"></path>
 							</svg>
 							<span>Total posts
-								<strong class="text-gray-600">240</strong>
+								<span class="font-medium text-gray-600">240</span>
 							</span>
 						</li>
 					</ul>

@@ -65,8 +65,7 @@
 								</span>
 								<!-- Timestamps -->
 								<span :title="item.post.published" class="ml-2">
-									<span class="font-black text-gray-400 dark:text-gray-500">·</span>
-									<span class="pl-1">{{ formatDate(new Date(item.post.published)) }}</span>
+									<span>{{ formatDate(new Date(item.post.published)) }}</span>
 								</span>
 								<span class="ml-2" v-if="item.post.updated">
 									<span class="font-black text-gray-400 dark:text-gray-500">·</span>
