@@ -49,7 +49,7 @@
 						</div>
 					</div>
 					<!-- Sorts -->
-					<div class="mb-2 px-4">
+					<div class="mb-2 px-4 sm:px-6">
 						<MenusSort/>
 					</div>
 					<!-- Feed -->

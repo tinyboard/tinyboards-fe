@@ -69,32 +69,32 @@
 			<!-- Comment Actions -->
 			<ul class="flex flex-grow flex-wrap items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
 				<li>
-					<button class="text-xs font-medium hover:underline" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(1)">
+					<button class="text-xs font-medium" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'" @click="vote(1)">
 						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
 					</button>
 				</li>
 				<li>
-					<button class="text-xs font-medium hover:underline" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-600 dark:text-gray-400'" @click="vote(-1)">
+					<button class="text-xs font-medium" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'" @click="vote(-1)">
 						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 					</button>
 				</li>
 				<li v-if="isAuthed && !isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="isReplying = true;">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="isReplying = true;">
 						Reply
 					</button>
 				</li>
 				<li v-if="isAuthed">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="save(comment.id,'comment')">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save(comment.id,'comment')">
 						{{ isSaved ? 'Unsave' : 'Save' }}
 					</button>
 				</li>
 				<li v-if="isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="isEditing = !isEditing">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="isEditing = !isEditing">
 						Edit
 					</button>
 				</li>
 				<li v-if="isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-600 dark:text-gray-400 hover:underline" @click="confirmDelete">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
 						Delete
 					</button>
 				</li>
