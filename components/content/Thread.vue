@@ -318,7 +318,7 @@
 				Authorization: authCookie ? `Bearer ${authCookie}` : '',
 			}
 		})
-		.then(({ data }) => {
+		.then(({ data, error }) => {
 			if (data.value) {
 				data = JSON.parse(JSON.stringify(data.value));
 				console.log(data);
@@ -333,7 +333,7 @@
 					});
 				}, 400);
                 // Log the error.
-				console.log(error);
+				console.log(error.value);
 			};
 		});
 	};

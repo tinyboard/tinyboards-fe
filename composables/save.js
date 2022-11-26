@@ -13,7 +13,7 @@ export function useSave(hasSaved) {
 		useApi(`/${type}s/${id}/save`, {
 			method: "post",
 		})
-		.then(({ data }) => {
+		.then(({ data, error }) => {
 			if (data.value) {
 				// Show success toast.
 				toast.addNotification({header:`${type} saved`,message:`The ${type} was saved!`,type:'success'});
@@ -23,7 +23,7 @@ export function useSave(hasSaved) {
 				// Show error toast.
 				toast.addNotification({header:'Saving failed',message:`Failed to save the ${type}.`,type:'error'});
 				// Log the error.
-				console.error(`Error: ${data.error}`)
+				console.error(error.value)
 			}
 		});
 	};

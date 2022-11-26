@@ -56,7 +56,7 @@
 				Authorization: authCookie ? `Bearer ${authCookie}` : '',
 			}
 		})
-		.then(({ data }) => {
+		.then(({ data, error }) => {
 			if (data.value) {
 				data = JSON.parse(JSON.stringify(data.value));
 				// Emit response.
@@ -66,6 +66,8 @@
 				// Show success toast.
 				toast.addNotification({header:'Edits saved!',message:`Your ${props.type} was updated.`,type:'success'});
 			} else {
+				// Log the error.
+				console.error(error.value);
 				// Show error toast.
 				toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
 			}
