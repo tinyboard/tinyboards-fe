@@ -77,6 +77,8 @@
     }
   ];
 
+  // const sortInit = user.default_sort_type ?? 'hot';
+
   const sort = ref(route.query.sort ?? 'hot');
 
   const selectedSort = computed(() => {

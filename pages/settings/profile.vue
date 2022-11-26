@@ -7,7 +7,7 @@
 				<p class="mt-1 text-sm text-gray-600">This information will be displayed on the World Wide Web just so you know.</p>
 			</div>
 			<!-- Form -->
-			<form action="#" method="POST">
+			<form @submit.prevent="onSubmit" @submit="submitSettings()">
 				<div class="flex flex-col space-y-6 divide-y bg-white px-4 py-5 sm:p-6">
 					<!-- Photo -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
@@ -18,7 +18,8 @@
 						<!-- Inputs -->
 						<div class="mt-5 md:col-span-2 md:mt-0">
 							<div class="mt-1 flex items-center">
-								<img :src="url" class="w-20 h-20 object-cover rounded-sm rounded-none p-0.5 border bg-white"/>
+								<img v-if="settings.avatar" :src="settings.avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
+								<div v-else class="w-20 h-20 rounded-sm border border-gray-300 border-dashed"></div>
 								<div class="ml-5">
 									<label for="avatar-upload" class="inline-block button white cursor-pointer">
 										Change
@@ -85,7 +86,7 @@
 						<!-- Inputs -->
 						<div class="mt-5 md:col-span-2 md:mt-0">
 							<div class="mt-1">
-								<textarea id="biography" name="biography" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="A stranger surfing this World Wide Web." />
+								<textarea id="biography" name="biography" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="A stranger surfing this World Wide Web." v-model="settings.bio"/>
 							</div>
 							<p class="mt-2 text-sm text-gray-500">Brief description about yourself. Markdown supported.</p>
 						</div>
@@ -93,7 +94,9 @@
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4 sm:px-6">
-					<button type="submit" class="button primary">Save</button>
+					<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="isLoading">
+						Save
+					</button>
 				</div>
 			</form>
 		</div>
@@ -102,12 +105,70 @@
 
 <script setup>
 	import { ref } from 'vue';
+	import { baseURL } from "@/server/constants";
+	import { useToastStore } from '@/stores/StoreToast';
 
+	const toast = useToastStore();
+	const authCookie = useCookie("token").value;
+
+	// File inputs.
 	const url = ref('https://i.imgur.com/nzY5zAg.jpg');
 
 	const onFileChange = (e) => {
 		const file = e.target.files[0];
-		url.value = URL.createObjectURL(file);
-		URL.revokeObjectURL(file);
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			settings.value.avatar = reader.result;
+		};
+		reader.readAsDataURL(file);
+	};
+
+	// Fetch user settings.
+	const { data, pending, error, refresh } = await useFetch("/settings", {
+		baseURL,
+		method: "get",
+		headers: {
+			Authorization: authCookie ? `Bearer ${authCookie}` : '',
+		}
+	});
+
+	// Settings.
+	let settings = ref({});
+
+	if (data.value) {
+		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
 	}
+
+	const isLoading = ref(false);
+
+	// Submit settings.
+	const submitSettings = () => {
+		isLoading.value = true;
+		useFetch('/settings', {
+			baseURL,
+			method: "put",
+			body: {
+				// "avatar": "settings.avatar",
+				// "banner": "settings.banner",
+				"bio": settings.value.bio
+			},
+			headers: {
+				Authorization: authCookie ? `Bearer ${authCookie}` : '',
+			}
+		})
+		.then(({ data }) => {
+			if (data.value) {
+				// Show success toast.
+				toast.addNotification({header:'Settings saved',message:'Your profile settings were updated!',type:'success'});
+			} else {
+				// Show error toast.
+				toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
+				// Log the error.
+				console.error(`Error: ${data.error}`)
+			}
+		})
+		.finally(() => {
+			isLoading.value = false;
+		});
+	};
 </script>

@@ -26,6 +26,7 @@
 <script setup>
 	const links = [
 	{ name: 'Profile', href: '/settings/profile' },
-	{ name: 'Security', href: '/settings/security' },
+	{ name: 'Account', href: '/settings/account' },
+	{ name: 'Content', href: '/settings/content' },
 	];
 </script>

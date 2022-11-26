@@ -16,9 +16,9 @@
       </div>
       <!-- Text -->
       <div class="border-l px-4 py-3" :class="notification.type === 'success' ? 'text-green-900 border-green-400' : 'text-red-900 border-red-300'">
-        <strong v-if="notification.header" class="text-base">
+        <p v-if="notification.header" class="first-letter:uppercase font-medium">
           {{ notification.header }}
-        </strong>
+        </p>
         <p class="text-sm">
           {{ notification.message }}
         </p>
