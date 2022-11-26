@@ -148,8 +148,9 @@
 			baseURL,
 			method: "put",
 			body: {
-				// "avatar": "settings.avatar",
-				// "banner": "settings.banner",
+				// "avatar": "https://i.imgur.com/U6CBf1D.gif",
+				// "avatar": settings.value.avatar,
+				// "banner": settings.value.banner,
 				"bio": settings.value.bio
 			},
 			headers: {
