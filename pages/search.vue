@@ -55,7 +55,18 @@
 					<!-- Posts -->
 					<ContentItemTable v-if="route.query.type === 'posts'" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<ContentCommentList v-else :comments="results.comments"/>
+					<ContentCommentList v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<!-- Comments Empty State -->
+					<!-- Comments list component cannot have its own empty state, so use this instead. -->
+					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
+						<p>
+							<span class="font-medium">
+								We could not find any comments matching "{{ route.query.query }}"
+							</span>
+							<br/>
+							Try searching something else
+						</p>
+					</div>
 				</div>
 				<!-- Sidebar -->
 				<NavigationSidebar />
@@ -86,7 +97,7 @@
 	// Fetch members by sort.
 	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
-			type: type ?? 'post',
+			type: type ?? 'posts',
 			query: route.query.query,
 			sort: route.query.sort,
 			nsfw: false,
@@ -99,7 +110,7 @@
 	const submitSearch = (text) => router.push({ 
 		path: '/search',
 		query: {
-			type: type ?? 'post',
+			type: type ?? 'posts',
 			query: text,
 			sort: sort.value,
 			type: type.value,
@@ -153,6 +164,14 @@
 	{
 		name: 'Latest',
 		key: 'new'
+	},
+	{
+		name: 'Oldest',
+		key: 'old'
+	},
+	{
+		name: 'Top All',
+		key: 'top'
 	}
 	]
 </script>

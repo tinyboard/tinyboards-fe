@@ -195,11 +195,14 @@
 	const text = ref(route.query.q)
 
 	const search = () => {
-		// if (text.value) router.push(`/search?query=${text.value}&sort=hot&type=posts`);
-		if (text.value) router.push({
-			path: '/search',
-			query: { ...route.query, query: text.value }
-		})
+		if (text.value) {
+			const type = route.query.type ? route.query.type : 'posts';
+			// Navigate to search page.
+			router.push({
+				path: '/search',
+				query: { ...route.query, type: type, query: text.value }
+			})
+		}
 	}
 
 	const v = userStore.user;
