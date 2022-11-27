@@ -2,13 +2,13 @@
 	<NuxtLayout name="settings">
 		<div class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
 			<!-- Page Heading & Description -->
-			<div class="px-4 py-5 sm:p-6 border-b">
+			<div class="p-4 border-b">
 				<h2 class="text-lg font-medium leading-6 text-gray-900">Profile</h2>
 				<p class="mt-1 text-sm text-gray-600">This information will be displayed on the World Wide Web just so you know.</p>
 			</div>
 			<!-- Form -->
 			<form @submit.prevent="onSubmit" @submit="submitSettings()">
-				<div class="flex flex-col space-y-6 divide-y bg-white px-4 py-5 sm:p-6">
+				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Photo -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
 						<!-- Label -->
@@ -79,7 +79,7 @@
 					</div>
 				</div>
 				<!-- Footer -->
-				<div class="bg-gray-50 shadow-inner-white border-t p-4 sm:px-6">
+				<div class="bg-gray-50 shadow-inner-white border-t p-4">
 					<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="isLoading">
 						Save
 					</button>
