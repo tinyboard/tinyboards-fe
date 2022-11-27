@@ -103,8 +103,6 @@
 	const authCookie = useCookie("token").value;
 
 	// File inputs.
-	const url = ref('https://i.imgur.com/nzY5zAg.jpg');
-
 	const onFileChange = (e,type) => {
 		console.log(type)
 		const file = e.target.files[0];
@@ -130,14 +128,14 @@
 
 	// Settings.
 	let settings = ref({});
-
+	
 	if (data.value) {
 		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
 	}
 
+	// Submit settings.
 	const isLoading = ref(false);
 
-	// Submit settings.
 	const submitSettings = () => {
 		isLoading.value = true;
 		useFetch('/settings', {
