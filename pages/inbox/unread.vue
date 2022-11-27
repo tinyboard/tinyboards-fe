@@ -15,8 +15,10 @@
 		</div>
 	</NuxtLayout>
 </template>
+
 <script setup>
 	definePageMeta({
+		'hasAuthRequired': true,
 		'hasRepliesDisabled': true
 	});
 

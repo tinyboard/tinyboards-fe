@@ -109,6 +109,7 @@
 	import { useToastStore } from '@/stores/StoreToast';
 
 	definePageMeta({
+		'hasAuthRequired': true,
 		'alias': '/settings/profile'
 	});
 

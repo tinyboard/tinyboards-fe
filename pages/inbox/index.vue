@@ -18,6 +18,7 @@
 
 <script setup>
 	definePageMeta({
+		'hasAuthRequired': true,
 		'hasRepliesDisabled': true,
 		'alias': '/inbox/all'
 	});
