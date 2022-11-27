@@ -88,6 +88,7 @@
 
   const selectedSort = computed(() => {
     const i = props.sorts.findIndex(x => x.key === sort.value);
+    // If sort is invalid, index is -1 and return index 0 instead.
     return i === -1 ? 0 : i;
   });
 </script>
