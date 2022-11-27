@@ -53,9 +53,9 @@
 						<MenusSort :sorts="route.query.type === 'posts' ? postSorts : commentSorts"/>
 					</div>
 					<!-- Posts -->
-					<ContentItemTable v-if="route.query.type === 'posts' && results.posts" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
+					<ContentItemTable v-if="route.query.type === 'posts'" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<ContentCommentList v-if="route.query.type === 'comments' && results.comments" :comments="results.comments"/>
+					<ContentCommentList v-else :comments="results.comments"/>
 				</div>
 				<!-- Sidebar -->
 				<NavigationSidebar />

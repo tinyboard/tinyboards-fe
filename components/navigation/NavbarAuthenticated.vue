@@ -36,9 +36,9 @@
 									</svg>
 								</button>
 							</div>
-							<input required type="text" class="w-full form-input search px-10" v-model="searchTerm" placeholder="Search this TinyBoard"/>
-							<div v-show="searchTerm" class="absolute right-3 top-2">
-								<button class="text-white/20 hover:text-white" @click="searchTerm = ''">
+							<input required type="text" class="w-full form-input search px-10" v-model="text" placeholder="Search this TinyBoard"/>
+							<div v-show="text" class="absolute right-3 top-2">
+								<button class="text-white/20 hover:text-white" @click="text = null">
 									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 										<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 										<circle cx="12" cy="12" r="9"></circle>
@@ -192,10 +192,14 @@
 
 	let isOpen = false;
 
-	const searchTerm = ref(route.query.q)
+	const text = ref(route.query.q)
 
 	const search = () => {
-		if (searchTerm.value) router.push(`/search?query=${searchTerm.value}&sort=hot&type=post`);
+		// if (text.value) router.push(`/search?query=${text.value}&sort=hot&type=posts`);
+		if (text.value) router.push({
+			path: '/search',
+			query: { ...route.query, query: text.value }
+		})
 	}
 
 	const v = userStore.user;
