@@ -19,4 +19,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (!userStore.isAuthed && to.meta.hasAuthRequired) {
     return navigateTo('/login');
   };
+
+  // Redirect to 403 page if page requires admin permissions.
+  // if (!userStore.isAuthed && to.meta.hasAdminRequired) {
+  //   return navigateTo('/403');
+  // };
 });
