@@ -44,10 +44,10 @@
 					</div>
 					<!-- Sorts -->
 					<div class="mb-2 px-4">
-						<MenusSort :sorts="route.query.type === 'posts' ? postSorts : commentSorts"/>
+						<MenusSort :sorts="route.query.type === 'post' ? postSorts : commentSorts"/>
 					</div>
 					<!-- Posts -->
-					<ContentItemTable v-if="route.query.type === 'posts'" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
+					<ContentItemTable v-if="route.query.type !== 'comment'" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
 					<ContentCommentList v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Comments Empty State -->
