@@ -393,6 +393,14 @@
 	{
 		name: 'Latest',
 		key: 'new'
+	},
+	{
+		name: 'Oldest',
+		key: 'old'
+	},
+	{
+		name: 'Top All',
+		key: 'top'
 	}
 	]
 </script>
