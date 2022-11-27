@@ -178,10 +178,10 @@
 	}
 
 	const onCommentPublished = (comment) => {
-		// Close the reply form.
-		toggleReplying();
 		// Append reply to list of replies.
 		item.value.replies.unshift(comment);
+		// Close the reply form.
+		toggleReplying();
 	};
 
 	// Voting
