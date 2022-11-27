@@ -9,7 +9,9 @@
       <span>New post</span>
     </NuxtLink>
     <div>
-      <img class="p-1 w-full h-56 aspect-auto object-cover bg-white border" :src="selectedImage"/>
+      <div class="shadow-polaroid">
+        <img class="p-1 w-full h-56 aspect-auto object-cover bg-white border" :src="selectedImage"/>
+      </div>
       <small class="text-gray-400 block mt-2">
         Art submission by Elon
       </small>
@@ -77,5 +79,19 @@
     ];
 
   const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`
-
 </script>
+
+<style scoped>
+  .shadow-polaroid, .shadow-polaroid > * {
+    position: relative;
+  }
+  .shadow-polaroid::before {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background: url('/assets/images/shadow-lg.png') no-repeat bottom right;
+  }
+</style>

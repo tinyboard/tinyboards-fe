@@ -122,11 +122,11 @@
 				</button>
 			</div>
 			<div class="flex flex-col items-center text-center px-6 py-2">
-				<NuxtLink @click="isOpen = false" :to="`/${v.name}`">
+				<NuxtLink @click="isOpen = false" :to="`/user/${v.name}`">
 					<img class="w-16 h-16 object-cover rounded-sm" :src="v.avatar" alt="user avatar"/>
 				</NuxtLink>
 				<div class="truncate mt-2">
-					<NuxtLink @click="isOpen = false" :to="`/${v.name}`" class="text-xl font-bold leading-5 text-gray-900 dark:text-gray-200">
+					<NuxtLink @click="isOpen = false" :to="`/user/${v.name}`" class="text-xl font-bold leading-5 text-gray-900 dark:text-gray-200">
 						{{ v.name }}
 					</NuxtLink>
 					<ul class="flex items-center space-x-2 mt-1 mb-0 text-xs text-gray-500 dark:text-gray-400">

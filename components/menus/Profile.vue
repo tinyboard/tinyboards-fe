@@ -30,7 +30,7 @@
         <MenuItem v-slot="{ active, close }">
           <NuxtLink :to="`/user/${v.name}`" class="flex items-center p-4" @click="close">
             <!-- User Avatar -->
-            <img class="w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white" :src="v.avatar" alt="user avatar"/>
+            <img class="w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
             <div class="pl-3 truncate">
               <!-- Username -->
               <div class="text-gray-900 font-semibold leading-4">

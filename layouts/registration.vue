@@ -20,7 +20,7 @@
 			<div class="py-4 px-4 sm:px-6 md:px-8">
 				<ul>
 					<li class="flex items-center space-x-1 -mx-2 text-xs leading-normal">
-						<NuxtLink v-for="link in navigation" :key="link.name" :to="link.href" custom v-slot="{ isActive }">
+						<NuxtLink v-for="link in links" :key="link.name" :to="link.href" custom v-slot="{ isActive }">
 							<span class="text-white/50 hover:text-white p-2">
 								{{ link.name }}
 							</span>
@@ -37,14 +37,13 @@
 
 	const site = useSiteStore();
 
-	const navigation = [
-	{ name: 'About', href: '/about' },
-	{ name: 'FAQ', href: '/learderboard' },
-	{ name: 'Blog', href: '/members' },
-	{ name: 'House Rules', href: '/rules' },
-	{ name: 'Terms', href: '/terms' },
-	{ name: 'Privacy', href: '/privacy' },
-	{ name: 'Source Code', href: '/source-code' }
+	const links = [
+	{ name: 'About', href: '/help/about' },
+	{ name: 'FAQ', href: '/help' },
+	{ name: 'House Rules', href: '/help/rules' },
+	// { name: 'Terms', href: '/terms' },
+	// { name: 'Privacy', href: '/privacy' },
+	// { name: 'Source Code', href: '/source-code' }
 	];
 </script>
 

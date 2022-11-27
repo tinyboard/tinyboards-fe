@@ -16,11 +16,15 @@
 		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
 			<div class="col-span-full flex gap-6">
 				<!-- Main Content -->
-				<div class="w-full flex flex-col space-y-4 sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
-					<div>
-						<h2 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100 mb-2">What is this place?</h2>
-						<p>Lorem</p>
-					</div>
+				<div class="w-full">
+					<!-- Content Directory -->
+					<ul>
+						<li class="eading-6 flex-shrink-0" v-for="link in links" :key="link.name">
+							<NuxtLink :to="link.href">
+								{{ link.name }}
+							</NuxtLink>
+						</li>
+					</ul>
 				</div>
 				<!-- Sidebar -->
 				<NavigationSidebar />
@@ -28,13 +32,3 @@
 		</section>
 	</main>
 </template>
-
-<script setup>
-	const links = [
-		{ name: 'Get Started', href: '/help/get-started' },
-		{ name: 'About', href: '/help/about' },
-		{ name: 'FAQ', href: '/help/faq' },
-		{ name: 'House Rules', href: '/help/rules' },
-		{ name: 'Formatting Guide', href: 'https://www.markdownguide.org/cheat-sheet/', target: '_blank', isExternal: true },
-	];
-</script>
