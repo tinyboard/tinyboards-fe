@@ -90,7 +90,10 @@
       };
 
       // Fetch posts
-      let sort = route.params.sort ?? 'hot';
+      const sorts = ['hot','new','topall','topmonth','topweek','topday','mostcomments','newcomments'];
+      const sort = computed(() => {
+            return sorts.includes(route.params.sort) ? route.params.sort : 'hot';
+      });
 
       let { items: posts, paginate, pending, error, refresh } = await getListing({
             sort: sort,

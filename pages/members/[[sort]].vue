@@ -120,7 +120,7 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import { computed, ref } from 'vue';
 
 	import { useRoute } from 'vue-router';
 	import { baseURL } from "@/server/constants";
@@ -131,7 +131,10 @@
 	const router = useRouter();
 	const route = useRoute();
 
-	let sort = route.params.sort ?? 'new';
+	const sorts = ['new','old','mostcomments','mostposts','mostrep'];
+	const sort = computed(() => {
+		return sorts.includes(route.params.sort) ? route.params.sort : 'new';
+	});
 
 	// Fetch members by sort.
 	const { data: members, pending, error, refresh } = await useFetch("/members", {

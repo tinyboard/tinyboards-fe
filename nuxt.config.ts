@@ -13,6 +13,7 @@ export default defineNuxtConfig({
 	routeRules: {
     // Static page generated on-demand once
     '/help/**': { static: true },
+    '/': { redirect: '/feed' },
   }
 });
 

@@ -157,7 +157,7 @@
 	});
 
 	const userStore = useLoggedInUser();
-	const isAdmin = userStore.user.admin;
+	const isAdmin = userStore.user && userStore.user.admin;
 
 	const titles = {
 		'hot': 'hot',
