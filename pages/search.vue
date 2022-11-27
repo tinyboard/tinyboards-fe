@@ -50,10 +50,12 @@
 					</div>
 					<!-- Sorts -->
 					<div class="mb-2 px-4">
-						<MenusSort/>
+						<MenusSort :sorts="route.query.type === 'posts' ? postSorts : commentSorts"/>
 					</div>
-					<!-- Feed -->
-					<ContentItemTable :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
+					<!-- Posts -->
+					<ContentItemTable v-if="route.query.type === 'posts' && results.posts" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
+					<!-- Comments -->
+					<ContentCommentList v-if="route.query.type === 'comments' && results.comments" :comments="results.comments"/>
 				</div>
 				<!-- Sidebar -->
 				<NavigationSidebar />
@@ -72,7 +74,8 @@
 	const router = useRouter();
 
 	definePageMeta({
-		key: (route) => route.fullPath
+		key: (route) => route.fullPath,
+		'hasRepliesDisabled': true
 	});
 
 	const text = ref(route.query.query);
@@ -105,7 +108,51 @@
 
 	// Links for sub navigation bar.
 	const links = [
-		{ name: 'Posts', href: { query: { ...route.query, type: 'posts' } } },
-		{ name: 'Comments', href: { query: { ...route.query, type: 'comments' } } },
+		{ name: 'Posts', href: { query: { query: text.value, type: 'posts' } } },
+		{ name: 'Comments', href: { query: { query: text.value, type: 'comments' } } },
 	];
+
+	// Post sort options.
+	const postSorts = [
+	{
+		name: 'Hot',
+		key: 'hot'
+	},
+	{
+		name: 'Latest',
+		key: 'new'
+	},
+	{
+		name: 'Top All',
+		key: 'topall'
+	},
+	{
+		name: 'Top Month',
+		key: 'topmonth'
+	},
+	{
+		name: 'Top Week',
+		key: 'topweek'
+	},
+	{
+		name: 'Most Comments',
+		key: 'mostcomments'
+	},
+	{
+		name: 'Latest Comments',
+		key: 'newcomments'
+	}
+	]
+
+	// Comment sort options.
+	const commentSorts = [
+	{
+		name: 'Hot',
+		key: 'hot'
+	},
+	{
+		name: 'Latest',
+		key: 'new'
+	}
+	]
 </script>

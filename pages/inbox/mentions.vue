@@ -11,5 +11,9 @@
 </template>
 
 <script setup>
+	definePageMeta({
+		'hasRepliesDisabled': true
+	});
+
 	const messages = [];
 </script>

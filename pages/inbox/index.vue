@@ -11,5 +11,10 @@
 </template>
 
 <script setup>
+	definePageMeta({
+		'hasRepliesDisabled': true,
+		'alias': '/inbox/all'
+	});
+
 	const messages = [];
 </script>

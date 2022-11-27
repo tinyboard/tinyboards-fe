@@ -108,6 +108,10 @@
 	import { baseURL } from "@/server/constants";
 	import { useToastStore } from '@/stores/StoreToast';
 
+	definePageMeta({
+		'alias': '/settings/profile'
+	});
+
 	const toast = useToastStore();
 	const authCookie = useCookie("token").value;
 
