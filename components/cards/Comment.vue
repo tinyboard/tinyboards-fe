@@ -120,7 +120,7 @@
 	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
 	            </div>
 			<!-- Replies -->
-			<ContentCommentList v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
+			<ListsComments v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
 			<!-- Continue Thread Link -->
 			<NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed" :to="`/post/${item.post.id}/${comment.id}`" class="inline-block text-primary text-sm hover:underline mt-2">
 				Continue this thread &#8594;

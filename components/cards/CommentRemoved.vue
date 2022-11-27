@@ -37,7 +37,7 @@
 				</div>
 			</div>
 			<!-- Replies -->
-			<ContentCommentList v-if="item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
+			<ListsComments v-if="item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
 			<!-- Continue Thread Link -->
 			<NuxtLink v-if="item.replies.length && level > limit" :to="`/post/${item.post.id}/${comment.id}`" class="inline-block mt-2 text-primary text-sm hover:underline">
 				Continue this thread &#8594;

@@ -19,8 +19,8 @@
 	});
 
 	// Import comment components.
-	const comment = defineAsyncComponent(() => import('@/components/content/Comment'));
-	const commentRemoved = defineAsyncComponent(() => import('@/components/content/CommentRemoved'));
+	const comment = defineAsyncComponent(() => import('@/components/cards/Comment'));
+	const commentRemoved = defineAsyncComponent(() => import('@/components/cards/CommentRemoved'));
 
 	/*
 	let error = props.commentData.error;

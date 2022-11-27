@@ -5,7 +5,7 @@
 			<NavigationNavbarSub :links="links" class="sm:order-first"/>
 			<div class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
-				<MediaBanner
+				<CardsBanner
 				title="Create new post"
 				sub-title="Share a link, image or text with the community."
 				image-url="https://i.imgur.com/4MvaMAI.jpg"

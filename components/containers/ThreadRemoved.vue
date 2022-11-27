@@ -71,7 +71,7 @@
 			<!-- Comments & States -->
 			<div class="sm:bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
 				<!-- Comments -->
-				<ContentCommentList v-if="comments.length" :comments="comments" :offset="offset"/>
+				<ListsComments v-if="comments.length" :comments="comments" :offset="offset"/>
 				<!-- Empty State -->
 				<div v-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
 					<p>

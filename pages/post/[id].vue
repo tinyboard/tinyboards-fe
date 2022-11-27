@@ -41,8 +41,8 @@
       let route = useRoute();
 
       // Import thread components.
-      const thread = defineAsyncComponent(() => import('@/components/content/Thread'));
-      const threadRemoved = defineAsyncComponent(() => import('@/components/content/ThreadRemoved'));
+      const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
+      const threadRemoved = defineAsyncComponent(() => import('@/components/containers/ThreadRemoved'));
 
       // Post
       let { item, pending, error, refresh } = await usePost(route.params.id);

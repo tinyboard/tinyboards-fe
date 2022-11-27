@@ -5,7 +5,7 @@
 			<NavigationNavbarSub :links="links" class="sm:order-first"/>
 			<div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
-				<MediaBanner
+				<CardsBanner
 				title="Search"
 				:sub-title="`Showing 25 of 500 results`"
 				image-url="https://i.imgur.com/kGhynxn.png"
@@ -47,17 +47,27 @@
 						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
 					</div>
 					<!-- Posts -->
-					<ContentItemTable v-if="type !== 'comment'" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
+					<TablesPosts v-if="type !== 'comment' && results.posts.length" :posts="results.posts" title="Results" :isLoading="pending"/>
 					<!-- Comments -->
-					<ContentCommentList v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
-					<!-- Comments Empty State -->
-					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
+					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<!-- Empty State -->
+					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								We could not find any comments matching "{{ route.query.query }}"
+								We could not find any {{ `${type}s` }} matching "{{ route.query.query }}"
 							</span>
 							<br/>
 							Try searching something else
+						</p>
+					</div>
+					<!-- Error State -->
+					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
+						<p>
+							<span class="font-medium">
+								There was an error fetching results for "{{ route.query.query }}".
+							</span>
+							<br/>
+							Please try again
 						</p>
 					</div>
 				</div>

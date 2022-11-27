@@ -249,7 +249,7 @@
 					<InputsComment :post-id="item.post.id" :parent-id="null" @comment-published="onCommentPublished"/>
 				</div>
 				<!-- Comments -->
-				<ContentCommentList v-if="comments.length" :comments="comments" :offset="offset"/>
+				<ListsComments v-if="comments.length" :comments="comments" :offset="offset"/>
 				<!-- Empty -->
 				<div v-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
 					<p>
