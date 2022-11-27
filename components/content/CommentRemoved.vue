@@ -8,16 +8,15 @@
 				loading="lazy"
 				src="/assets/default_pfp.png"
 				alt="avatar"
-				class="flex-shrink-0 object-cover sm:rounded-none sm:p-0.5 sm:border bg-white"
-				:class="isCollapsed ? 'w-6 h-6' : 'w-6 h-6 md:w-9 md:h-9'"
+				class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:rounded-none sm:p-0.5 sm:border bg-white"
 				/>
 			</div>
 			<!-- Comment Collapse Bar -->
-			<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"></div>
+			<div v-if="item.replies.length" class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"></div>
 		</div>
 		<!-- User Details -->
 		<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
-			<div :id="comment.id" :class="isCollapsed ? 'flex flex-grow items-center leading-none' : 'mb-4'">
+			<div :id="comment.id" :class="[{'flex flex-grow items-center leading-none':isCollapsed},{'mb-4':item.replies.length && !isCollapsed}]">
 				<div class="flex items-center" :class="isCollapsed ? 'h-6' : 'h-6 md:h-9'">
 					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
 						<span>

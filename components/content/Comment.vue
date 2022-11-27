@@ -8,8 +8,7 @@
 				loading="lazy"
 				:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 				alt="avatar"
-				class="flex-shrink-0 object-cover sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
-				:class="isCollapsed ? 'w-6 h-6' : 'w-6 h-6 md:w-9 md:h-9'"
+				class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
 				/>
 			</NuxtLink>
 			<!-- Comment Collapse Bar -->

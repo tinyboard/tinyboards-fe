@@ -15,7 +15,6 @@
 		<!-- Main Content -->
 		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
 			<div class="col-span-full flex gap-6">
-				<!-- Main Content -->
 				<div class="w-full">
 					<!-- Filters -->
 					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-6 p-4 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
@@ -30,11 +29,6 @@
 									</button>
 								</div>
 								<input required type="text" class="pl-10 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="text" placeholder="Search and hit enter"/>
-								<!-- <div v-show="text" class="absolute right-3 top-[6px]">
-									<button class="text-gray-400 hover:text-gray-500" @click="text = ''">
-										<i class="far fa-times-circle fa-fw fa-sm"></i>
-									</button>
-								</div> -->
 							</form>
 						</div>
 						<!-- NSFW Checkbox -->
@@ -57,7 +51,6 @@
 					<!-- Comments -->
 					<ContentCommentList v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Comments Empty State -->
-					<!-- Comments list component cannot have its own empty state, so use this instead. -->
 					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
