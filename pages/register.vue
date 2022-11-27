@@ -1,6 +1,12 @@
 <template>
 	<NuxtLayout name="registration">
 		<form action="/login" @submit.prevent="signup" class="w-full max-w-sm bg-white border shadow-lg rounded-md overflow-hidden">
+			<div v-if="error" class="px-4 py-2 bg-red-500 rounded-t-md shadow-inner-white">
+				<p class="text-center text-white text-sm">
+					<strong>Registration failed!</strong>
+					Double-check your details.
+				</p>
+			</div>
 			<div class="px-4 md:px-6 py-6">
 				<h1 class="text-xl text-gray-900 font-bold mb-6">
 					Sign up
@@ -22,9 +28,9 @@
 					<label for="password" class="block text-sm font-bold">Password</label>
 					<input type="password" id="password" minlength="8" maxlength="60" v-model="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" />
 				</div>
-				<button type="submit" class="button primary w-full" :disabled="loading">
+				<button type="submit" class="button primary w-full" :disabled="isLoading">
 					<span>
-						{{ loading ? 'Signing up' : 'Sign up' }} for
+						{{ isLoading ? 'Signing up' : 'Sign up' }} for
 						<span class="capitalize">{{ site.name }}</span>
 					</span>
 				</button>
@@ -53,7 +59,7 @@
 
 	let name = ref("");
 	let password = ref("");
-	let loading = ref(false);
+	const isLoading = ref(false);
 
 	let userStore = useLoggedInUser();
 	let router = useRouter();
