@@ -354,7 +354,7 @@
 
     // Author
 	const isAuthor = computed(() => {
-		if (props.item.creator) {
+		if (userStore.user && props.item.creator) {
 			return userStore.user.name === props.item.creator.name
 		} else {
 			return false

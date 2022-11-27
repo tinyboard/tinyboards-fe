@@ -175,7 +175,7 @@
 
       // Author
 	const isAuthor = computed(() => {
-		if (item.creator) {
+		if (userStore.user && item.creator) {
 			return userStore.user.name === item.creator.name
 		} else {
 			return false

@@ -20,7 +20,7 @@
 				</div>
 				<div class="mb-6">
 					<label for="password" class="block text-sm font-bold">Password</label>
-					<input type="password" id="password" v-model="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" />
+					<input type="password" id="password" minlength="8" maxlength="60" v-model="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required="" />
 				</div>
 				<button type="submit" class="button primary w-full" :disabled="loading">
 					<span>
