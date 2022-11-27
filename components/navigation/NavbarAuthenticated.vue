@@ -145,7 +145,7 @@
 				</div>
 			</div>
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
-			<NuxtLink to="/inbox" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
+			<!-- <NuxtLink to="/inbox" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
 				<i class="far fa-envelope text-center fa-fw mr-3"></i><span>Inbox</span>
 			</NuxtLink>
 			<NuxtLink to="/following" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
@@ -162,7 +162,7 @@
 			</NuxtLink>
 			<NuxtLink to="/mod" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
 				<i class="far fa-crown text-center fa-fw mr-3"></i><span>Moderation</span>
-			</NuxtLink>
+			</NuxtLink> -->
 			<!-- <div class="hidden items-center px-4 py-2 text-lg text-gray-700 dark:text-gray-200">
 				<i class="far fa-signal-stream text-center fa-fw mr-3" :class="{'text-green-500':online}"></i><span>Appear Online</span>
 				<t-toggle v-model="online" variant="success" class="ml-auto"/>
@@ -180,7 +180,7 @@
 </template>
 
 <script setup>
-	import { useRoute } from 'vue-router';
+	import { ref } from 'vue';
 	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 
@@ -190,20 +190,20 @@
 
 	const site = useSiteStore();
 
-	let isOpen = false;
+	const isOpen = ref(false);
 
 	const text = ref(route.query.q)
 
 	const search = () => {
-		if (text.value) {
-			const type = route.query.type ? route.query.type : 'posts';
-			// Navigate to search page.
-			router.push({
-				path: '/search',
-				query: { ...route.query, type: type, query: text.value }
-			})
-		}
-	}
+		router.push({
+			path: '/search',
+			query: {
+				...route.query,
+				type: route.query.type ?? 'posts',
+				query: text.value ?? '404'
+			}
+		})
+	};
 
 	const v = userStore.user;
 

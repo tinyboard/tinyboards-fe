@@ -87,6 +87,7 @@
   const sort = ref(route.query.sort ?? props.sorts[0].key);
 
   const selectedSort = computed(() => {
-    return props.sorts.findIndex(x => x.key === sort.value);
+    const i = props.sorts.findIndex(x => x.key === sort.value);
+    return i === -1 ? 0 : i;
   });
 </script>

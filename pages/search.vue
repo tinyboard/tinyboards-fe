@@ -55,7 +55,7 @@
 					<!-- Posts -->
 					<ContentItemTable v-if="route.query.type === 'posts'" :posts="results.posts" title="Results" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<ContentCommentList v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<ContentCommentList v-else-if="results" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Comments Empty State -->
 					<!-- Comments list component cannot have its own empty state, so use this instead. -->
 					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
