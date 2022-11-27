@@ -68,14 +68,24 @@
 			<!-- Comment Actions -->
 			<ul class="flex flex-grow flex-wrap items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
 				<li>
-					<button class="text-xs font-medium" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'" @click="vote(1)">
+					<!-- If logged in, allow upvoting -->
+					<button v-if="isAuthed" class="text-xs font-medium" :class="voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'" @click="vote(1)">
 						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
 					</button>
+					<!-- Else, redirect to login -->
+					<NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
+					</NuxtLink>
 				</li>
 				<li>
-					<button class="text-xs font-medium" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'" @click="vote(-1)">
+					<!-- If logged in, allow downvoting -->
+					<button v-if="isAuthed" class="text-xs font-medium" :class="voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'" @click="vote(-1)">
 						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 					</button>
+					<!-- Else, redirect to login -->
+					<NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
+					</NuxtLink>
 				</li>
 				<li v-if="isAuthed && !isAuthor">
 					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="isReplying = true;">
