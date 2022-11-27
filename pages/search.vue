@@ -90,7 +90,7 @@
 	// Fetch members by sort.
 	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
-			type: type ?? 'posts',
+			type: type ?? 'post',
 			query: route.query.query,
 			sort: route.query.sort,
 			nsfw: false,
@@ -103,7 +103,7 @@
 	const submitSearch = (text) => router.push({ 
 		path: '/search',
 		query: {
-			type: type ?? 'posts',
+			type: type ?? 'post',
 			query: text,
 			sort: sort.value,
 			type: type.value,
@@ -112,8 +112,8 @@
 
 	// Links for sub navigation bar.
 	const links = [
-		{ name: 'Posts', href: { query: { query: text.value, type: 'posts' } } },
-		{ name: 'Comments', href: { query: { query: text.value, type: 'comments' } } },
+		{ name: 'Posts', href: { query: { query: text.value, type: 'post' } } },
+		{ name: 'Comments', href: { query: { query: text.value, type: 'comment' } } },
 	];
 
 	// Post sort options.

@@ -199,7 +199,7 @@
 			path: '/search',
 			query: {
 				...route.query,
-				type: route.query.type ?? 'posts',
+				type: route.query.type ?? 'post',
 				query: text.value ?? '404'
 			}
 		})
