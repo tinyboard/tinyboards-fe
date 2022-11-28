@@ -1,20 +1,22 @@
 <template>
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Alert -->
-		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 px-4 py-2 sm:py-3 text-center sm:text-left text-yellow-900 bg-yellow-200 border border-yellow-400 md:rounded-md shadow-inner-white">
+		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 px-4 py-2 sm:py-3 text-center sm:text-left text-red-900 bg-red-200 border border-red-300 md:rounded-md shadow-inner-white">
 			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-			   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
-			   <circle cx="12" cy="16" r="1"></circle>
-			   <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+			   <path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"></path>
+			   <path d="M6 9l4 4"></path>
+			   <path d="M13 10l-4 -4"></path>
+			   <path d="M3 21h7"></path>
+			   <path d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z"></path>
 			</svg>
 			<div>
 				<strong>
-					This post was deleted by the author
+					This post was removed by the admins
 				</strong>
 				<br/>
-				<p class="text-sm text-yellow-800">
-					Discussion and voting has been locked
+				<p class="text-sm text-red-800">
+					All user interactions with this post have been locked
 				</p>
 			</div>
 		</div>
@@ -72,11 +74,11 @@
 			<div class="sm:mt-4 p-2.5 sm:p-0">
 				<!-- Title -->
 				<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100 mb-2">
-					{{ item.post.title }}
+					[ removed ]
 				</h1>
 				<!-- Post Text Body -->
 				<div v-if="item.post.body_html" class="mt-3 sm:mt-4 relative overflow-hidden">
-					<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
+					[ removed ]
 				</div>
 			</div>
 		</div>

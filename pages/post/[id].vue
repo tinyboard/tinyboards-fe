@@ -9,7 +9,7 @@
              <div class="col-span-full flex gap-6 sm:py-6">
                   <!-- Thread -->
                   <div class="relative w-full">
-                        <component v-if="item" :item="item" :comments="comments" :is="item.post.deleted ? threadRemoved : thread"/>
+                        <component v-if="item" :item="item" :comments="comments" :is="item.post.deleted ? threadDeleted : thread"/>
                         <!-- Banned -->
                         <!-- <ContentThreadBanned v-else-if="item && item.post.banned" :item="item" :comments="comments"/> -->
                         <!-- Error -->
@@ -42,7 +42,7 @@
 
       // Import thread components.
       const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
-      const threadRemoved = defineAsyncComponent(() => import('@/components/containers/ThreadRemoved'));
+      const threadDeleted = defineAsyncComponent(() => import('@/components/containers/ThreadDeleted'));
 
       // Post
       let { item, pending, error, refresh } = await usePost(route.params.id);
