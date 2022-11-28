@@ -11,7 +11,6 @@
             <!-- Main Content -->
             <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
                   <div class="col-span-full flex gap-6">
-                        <!-- Main Content -->
                         <div class="w-full">
                               <!-- Posts -->
                               <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/>
@@ -95,7 +94,7 @@
             return sorts.includes(route.params.sort) ? route.params.sort : 'hot';
       });
 
-      let { items: posts, paginate, pending, error, refresh } = await getListing({
+      const { items: posts, paginate, pending, error, refresh } = await getListing({
             sort: sort,
             limit: 25,
             page: page

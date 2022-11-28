@@ -285,7 +285,7 @@
 	import { usePost } from '@/composables/post';
 	import { usePostComments } from '@/composables/comments';
 	import { formatDate } from '@/utils/formatDate';
-	import { toPercent } from '@/utils/percent'
+	import { toPercent } from '@/utils/percent';
 	import { useSave } from '@/composables/save';
 	import { useSubscribe } from '@/composables/subscribe';
 	import { useModalStore } from '@/stores/StoreModal';
