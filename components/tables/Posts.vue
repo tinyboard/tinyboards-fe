@@ -104,7 +104,7 @@
 						</div>
 					</td>
 					<td v-if="item.counts" class="hidden xl:table-cell py-4 px-4">
-						<div :title="`Last reply ${formatDate(item.counts.newest_comment_time)}`" class="flex items-center">
+						<div :title="`Last reply ${item.counts.newest_comment_time}`" class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-50 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<circle cx="12" cy="12" r="9"></circle>
