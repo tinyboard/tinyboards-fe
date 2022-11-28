@@ -6,7 +6,7 @@ export const useLoggedInUser = defineStore("auth", {
     return {
       user: null,
       token: null,
-      isAuthed: false,
+      isAuthed: false
     };
   },
   actions: {
@@ -80,7 +80,13 @@ export const useLoggedInUser = defineStore("auth", {
       });
     },
     fetchUser(authToken) {
-      this.fetchUserPromise(authToken)
+      useFetch("/me", {
+        baseURL,
+        key: `get_user_${authToken}`,
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        }
+      })
       .then(({ data }) => {
         this.user = data.value;
         this.token = authToken;

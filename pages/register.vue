@@ -53,7 +53,11 @@
 	import { useSiteStore } from '@/stores/StoreSite';;
 	import Cookies from 'js-cookie';
 
-	definePageMeta({ layout: false });
+	definePageMeta({
+		'isAuthAllowed': false,
+		layout: false,
+		'alias': '/sign-up'
+	});
 
 	const site = useSiteStore();
 

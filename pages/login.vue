@@ -43,7 +43,11 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import Cookies from 'js-cookie';
 
-	definePageMeta({ layout: false });
+	definePageMeta({
+		'isAuthAllowed': false,
+		layout: false,
+		'alias': '/sign-in'
+	});
 
 	let nameOrEmail = ref("");
 	let password = ref("");

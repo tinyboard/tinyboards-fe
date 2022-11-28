@@ -1,8 +1,8 @@
-//import { useCookie } from "nuxt/dist/app/composables";
 import cookie from "cookie";
+import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp();
   const userStore = useLoggedInUser();
 
@@ -10,13 +10,21 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const cookieHeader = nuxtApp.ssrContext.event.req.headers["cookie"] || "";
     const cookies = cookie.parse(cookieHeader);
 
-    if (cookies["token"]) {
-      userStore.fetchUser(cookies["token"]);
-    }
-  };
+    const jwt = cookies["token"];
 
-  // Redirect to login if page requires authenticated session.
-  if (!userStore.isAuthed && to.meta.hasAuthRequired) {
-    return navigateTo('/login');
+    if (cookies["token"]) {
+      await useFetch("/me", {
+        baseURL,
+        key: `get_user_${jwt}`,
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        }
+      })
+      .then(({ data }) => {
+        userStore.user = data.value;
+        userStore.token = jwt;
+        userStore.isAuthed = true;
+      })
+    }
   };
 });

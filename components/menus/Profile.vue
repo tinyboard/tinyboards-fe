@@ -105,7 +105,7 @@
         <div class="py-2">
           <!-- Sign Out -->
           <MenuItem v-slot="{ active, close }">
-            <button @click="logout; close" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']">
+            <button @click="logout(); close()" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <path d="M13 12v.01"></path>
@@ -141,20 +141,20 @@
 
   const props = defineProps({
     user: Object
-  })
+  });
 
   const v = ref(props.user);
 
-  function logout() {
+  const logout = () => {
     Cookies.remove('token');
     userStore.logout();
     router.push("/feed");
-  }
+  };
 
   const links = [
   { name: 'About', href: '/help/about' },
   { name: 'House Rules', href: '/help/rules' },
   { name: 'Terms', href: '/help/terms' },
   { name: 'Privacy', href: '/help/privacy' },
-  ]
+  ];
 </script>
