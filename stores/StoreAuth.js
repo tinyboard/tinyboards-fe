@@ -64,9 +64,7 @@ export const useLoggedInUser = defineStore("auth", {
               reject(error.value);
             });
           } else {
-            reject(
-              "Account creation request submitted, wait for admin approval"
-              );
+            reject("Account creation request submitted, wait for admin approval");
           }
         })
         .catch((error) => reject(error.value));

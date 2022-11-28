@@ -6,7 +6,7 @@
 			<div class="z-10">
 				<img
 				loading="lazy"
-				src="/assets/default_pfp.png"
+				src=""
 				alt="avatar"
 				class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:rounded-none sm:p-0.5 sm:border bg-white"
 				/>

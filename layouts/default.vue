@@ -12,8 +12,7 @@
 <script setup>
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 
-	let userStore = useLoggedInUser();
-
+	const userStore = useLoggedInUser();
 	const isAuthed = userStore.isAuthed;
 
 	const Navbar = resolveComponent('NavigationNavbar');
