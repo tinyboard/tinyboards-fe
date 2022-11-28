@@ -34,12 +34,12 @@
 				<tr v-for="item in posts" :key="item.post.id" class="border-b last:border-0" :class="isAdmin && item.post.removed ? 'bg-red-100 border-red-200 hover:bg-red-50' : 'bg-white odd:bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700'">
 					<th v-if="item.creator" scope="row" class="flex items-center px-4 py-3 text-gray-900 dark:text-white">
 						<!-- Avatar - Desktop Only -->
-						<NuxtLink :to="`/user/${item.creator.name}`">
+						<NuxtLink :to="`/user/${item.creator.name}`" class="flex-shrink-0">
 							<img
 							loading="lazy"
 							:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 							alt="avatar"
-							class="hidden sm:inline flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200"
+							class="hidden sm:inline w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200"
 							/>
 						</NuxtLink>
 						<!-- Post Details -->
