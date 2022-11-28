@@ -1,7 +1,25 @@
 <template>
-	<div class="relative w-full flex flex-col space-y-6">
-		<div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
-			<!-- Post Body -->
+	<div class="relative w-full flex flex-col sm:space-y-6">
+		<!-- Alert -->
+		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 px-4 py-2 sm:py-3 text-center sm:text-left text-yellow-900 bg-yellow-200 border border-yellow-400 md:rounded-md shadow-inner-white">
+			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+			   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+			   <circle cx="12" cy="16" r="1"></circle>
+			   <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+			</svg>
+			<div>
+				<strong>
+					This post was deleted by the author
+				</strong>
+				<br/>
+				<p class="text-sm text-yellow-800">
+					Discussion and voting has been locked
+				</p>
+			</div>
+		</div>
+		<!-- Post Body -->
+		<div class="sm:order-2 w-full mb-2.5 sm:mb-0 sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
 			<!-- Post Meta Information & Content -->
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
@@ -51,25 +69,25 @@
 				</button>
 			</div>
 			<!-- Post Content -->
-			<div class="px-2.5 sm:px-0 mt-3 sm:mt-4">
+			<div class="sm:mt-4 p-2.5 sm:p-0">
 				<!-- Title -->
 				<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100 mb-2">
 					{{ item.post.title }}
 				</h1>
-			</div>
-			<!-- Post Text Body -->
-			<div v-if="item.post.body_html" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
-				<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
+				<!-- Post Text Body -->
+				<div v-if="item.post.body_html" class="mt-3 sm:mt-4 relative overflow-hidden">
+					<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
+				</div>
 			</div>
 		</div>
 		<!-- Comment Section -->
-		<div class="flex flex-col">
+		<div class="order-3 flex flex-col p-2.5 sm:p-0 bg-white sm:bg-transparent">
 			<!-- Count Heading -->
-			<h1 class="px-2.5 md:px-0 text-base leading-normal font-bold dark:text-gray-100 sm:mb-2">
+			<h1 class="text-base leading-normal font-bold dark:text-gray-100 mb-2">
 				{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 			</h1>
 			<!-- Comments & States -->
-			<div class="sm:bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
+			<div class="sm:bg-gradient-to-b from-gray-200/50 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
 				<!-- Comments -->
 				<ListsComments v-if="comments.length" :comments="comments" :offset="offset"/>
 				<!-- Empty State -->
