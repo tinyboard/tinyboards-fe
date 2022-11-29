@@ -223,7 +223,7 @@
 		<!-- Banner -->
 		<div v-if="!isAuthed" id="comments" class="w-full border-y md:border-x md:rounded-md p-4 shadow-inner-white">
 			<p class="text-base text-gray-500 dark:text-gray-100 text-center">
-				<span class="font-weight-medium">Want to join the discussion?</span>
+				<span class="font-medium">Want to join the discussion? </span>
 				<NuxtLink to="/register">Sign up to comment</NuxtLink>
 			</p>
 		</div>
