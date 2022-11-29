@@ -129,6 +129,7 @@
 			</NuxtLink>
 		</div>
 		<!-- Stretched Link -->
+		<!-- TODO: Replace with <NuxtLink> once hash behavior (page jump) is better supported -->
 		<a v-if="route.name === 'search'" class="absolute w-full h-full inset" :href="`/post/${item.post.id}#${comment.id}`"/>
 	</div>
 </template>
