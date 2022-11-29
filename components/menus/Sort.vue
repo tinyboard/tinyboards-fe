@@ -1,5 +1,5 @@
 <template>
-  <Menu as="div" class="relative z-50">
+  <Menu as="div" class="relative z-20">
     <div>
       <MenuButton class="group relative flex items-center text-sm text-gray-500 hover:text-gray-700">
         <span class="pointer-events-none flex items-center mr-1">

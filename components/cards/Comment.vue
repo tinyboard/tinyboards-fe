@@ -1,6 +1,8 @@
 <template>
-	<div :id="`comment-${comment.id}`" class="group flex relative" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
+	<div :id="`comment-${comment.id}`" class="comment group flex relative" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
+		<!-- Stretched Click Area -->
 		<div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer" @click="isCollapsed = !isCollapsed"></div>
+		<!-- Comment -->
 		<div class="relative flex flex-col flex-shrink-0 items-center mr-2">
 			<!-- User Avatar -->
 			<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="z-10">
@@ -126,6 +128,8 @@
 				Continue this thread &#8594;
 			</NuxtLink>
 		</div>
+		<!-- Stretched Link -->
+		<a v-if="route.name === 'search'" class="absolute w-full h-full inset" :href="`/post/${item.post.id}#${comment.id}`"/>
 	</div>
 </template>
 
@@ -263,6 +267,22 @@
 </script>
 
 <style scoped>
+	:target::before {
+		content: '';
+		display: block;
+		height: 3.5rem;
+		margin: -3.5rem 0 0;
+	}
+	:target::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: 0;
+		z-index: -1;
+		@apply w-full h-full bg-gradient-to-br from-yellow-200
+	}
 	/* Comment Body */
 	.comment-body {
 		@apply dark:text-gray-200 break-words;
@@ -274,6 +294,12 @@
 	@media (min-width: 768px) {
 		.comment-body :deep(img) {
 			max-width: 240px;
+		}
+		:target:before {
+		    content: "";
+		    display: block;
+		    height: 104px;
+		    margin: -104px 0 0;
 		}
 	}
 	/* Collapse Bar */
