@@ -1,7 +1,7 @@
 <template>
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Alert -->
-		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 px-4 py-2 sm:py-3 text-center sm:text-left text-yellow-900 bg-yellow-200 border border-yellow-400 md:rounded-md shadow-inner-white">
+		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 px-4 py-2 sm:py-3 text-center sm:text-left text-yellow-900 bg-yellow-100 border border-yellow-300 md:rounded-md shadow-inner-white">
 			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <rect x="5" y="11" width="14" height="10" rx="2"></rect>

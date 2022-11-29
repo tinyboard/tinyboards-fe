@@ -281,7 +281,7 @@
 		bottom: 0;
 		top: 0;
 		z-index: -1;
-		@apply w-full h-full bg-gradient-to-br from-yellow-200
+		@apply w-full h-full bg-yellow-100 border border-yellow-300
 	}
 	/* Comment Body */
 	.comment-body {
