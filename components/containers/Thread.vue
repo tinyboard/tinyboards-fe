@@ -221,10 +221,10 @@
 			</div>
 		</div>
 		<!-- Banner -->
-		<div v-if="!isAuthed" id="comments" class="w-full border rounded-md p-4 shadow-inner-white">
+		<div v-if="!isAuthed" id="comments" class="w-full border-y md:border-x md:rounded-md p-4 shadow-inner-white">
 			<p class="text-base text-gray-500 dark:text-gray-100 text-center">
-				<strong>Want to join the discussion? </strong>
-				<NuxtLink to="/sign-up">Sign up to comment</NuxtLink>
+				<span class="font-weight-medium">Want to join the discussion?</span>
+				<NuxtLink to="/register">Sign up to comment</NuxtLink>
 			</p>
 		</div>
 		<!-- Comment Section -->
@@ -237,7 +237,7 @@
 				<MenusSort :sorts="sorts"/>
 			</div>
 			<!-- Comments & States -->
-			<div class="sm:bg-gradient-to-b from-gray-200/50 p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
+			<div class="sm:bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border">
 				<!-- Write Form -->
 				<div v-if="isAuthed" class="flex md:space-x-2">
 					<img

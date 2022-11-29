@@ -68,7 +68,7 @@
 				<div class="comment-body" v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
 			</div>
 			<!-- Comment Actions -->
-			<ul class="flex flex-grow flex-wrap items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
+			<ul class="relative flex flex-grow flex-wrap items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
 				<li>
 					<!-- If logged in, allow upvoting -->
 					<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(1)" :disabled="item.post.deleted">
@@ -112,7 +112,7 @@
 			</ul>
 			<!-- Rich Text Editor -->
 			<!-- Write Form -->
-	            <div v-if="isAuthed && isReplying" class="flex md:space-x-2 mt-4">
+	            <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
 	                  <img
 	                  loading="lazy"
 	                  :src="userStore.user.avatar"
@@ -122,9 +122,9 @@
 	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
 	            </div>
 			<!-- Replies -->
-			<ListsComments v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset"/>
+			<ListsComments v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset" class="relative"/>
 			<!-- Continue Thread Link -->
-			<NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed" :to="`/post/${item.post.id}/${comment.id}`" class="inline-block text-primary text-sm hover:underline mt-2">
+			<NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed" :to="`/post/${item.post.id}/${comment.id}`" class="relative inline-block text-primary text-sm hover:underline mt-2">
 				Continue this thread &#8594;
 			</NuxtLink>
 		</div>
@@ -280,8 +280,13 @@
 		right: 0;
 		bottom: 0;
 		top: 0;
-		z-index: -1;
-		@apply w-full h-full bg-yellow-100 border border-yellow-300
+		z-index: 0;
+		animation: blinker 3000ms ease-out forwards;
+		@apply w-full h-full bg-yellow-100
+	}
+	:target * {
+		position: relative;
+		z-index: 1;
 	}
 	/* Comment Body */
 	.comment-body {
@@ -315,5 +320,14 @@
 		width: 14px;
 		height: calc(100% - 24px);
 		@apply absolute bottom-0 border-l border-gray-300;
+	}
+	/* Animation */
+	@keyframes blinker {
+	  from {
+	   	opacity: 100;
+	  }
+	  to {
+	  	opacity: 0;
+	  }
 	}
 </style>
