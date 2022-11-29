@@ -63,7 +63,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <NavigationSidebar />
+                        <ContainersSidebar />
                   </div>
             </section>
       </main>
@@ -100,7 +100,7 @@
             page: page
       }, 'posts');
 
-      // // Watch for sort change and refetch.
+      // Watch for sort change and refetch.
       // const stopWatch = watch(() => route, () => {
       //       console.log('refresh')
       //       currentPage.value = route.query.page;

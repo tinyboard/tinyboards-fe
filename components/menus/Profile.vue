@@ -148,7 +148,7 @@
   const logout = () => {
     Cookies.remove('token');
     userStore.logout();
-    router.push("/feed");
+    router.go();
   };
 
   const links = [

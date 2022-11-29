@@ -72,7 +72,7 @@
 					</div>
 				</div>
 				<!-- Sidebar -->
-				<NavigationSidebar />
+				<ContainersSidebar />
 			</div>
 		</section>
 	</main>
