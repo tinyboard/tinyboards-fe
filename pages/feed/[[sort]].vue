@@ -77,7 +77,7 @@
       const route = useRoute();
 
       definePageMeta({
-        key: (route) => route.fullPath,
+        key: (route) => route.fullPath
       });
 
       // Pagination

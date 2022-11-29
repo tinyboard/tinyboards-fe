@@ -27,5 +27,5 @@
 	const props = defineProps({
 		links: Array,
 		disableActiveClass: Boolean
-	})
+	});
 </script>

@@ -33,6 +33,10 @@
 	import { useFetchUser } from '@/composables/user';
 	import { getListing } from '@/composables/posts';
 
+	definePageMeta({
+		'alias': '/user/:username/overview'
+	});
+
 	const route = useRoute();
 
 	// Import profile components.
