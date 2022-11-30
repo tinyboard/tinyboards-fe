@@ -50,9 +50,7 @@
 
 <script setup>
   import { baseURL } from "@/server/constants";
-
-  import { format, parseISO } from "@/node_modules/date-fns";
-
+  import { format, parseISO } from "date-fns";
   import { shuffle } from '@/utils/shuffleArray';
 
 // Define spotlight users
