@@ -33,9 +33,9 @@
 
 <script setup>
   import { ref } from 'vue';
-
   import { useToastStore } from '@/stores/StoreToast';
 
+  const route = useRoute();
   const toast = useToastStore();
 
   let timeout = ref(null);
@@ -49,6 +49,11 @@
   }, 4000);
 
   onBeforeUnmount(() => {
-    clearTimeout(timeout)
+    clearTimeout(timeout);
   });
+
+  // watch(() => route.name, () => {
+  //   toast.removeNotification(props.notification);
+  //   clearTimeout(timeout);
+  // });
 </script>

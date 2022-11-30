@@ -230,14 +230,14 @@
 		<!-- Comment Section -->
 		<div class="flex flex-col">
 			<!-- Count Heading & Sort -->
-			<div class="flex items-end justify-between sm:mb-2">
-				<strong class="px-2.5 md:px-0 text-base font-bold dark:text-gray-100">
+			<div class="flex items-end justify-between mb-2 px-2.5 md:px-0">
+				<strong class="text-base font-bold dark:text-gray-100">
 					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 				</strong>
 				<MenusSort :sorts="sorts"/>
 			</div>
 			<!-- Comments & States -->
-			<div class="sm:bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border">
+			<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border">
 				<!-- Write Form -->
 				<div v-if="isAuthed" class="flex md:space-x-2">
 					<img

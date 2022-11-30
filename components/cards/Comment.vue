@@ -110,7 +110,6 @@
 					</button>
 				</li>
 			</ul>
-			<!-- Rich Text Editor -->
 			<!-- Write Form -->
 	            <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
 	                  <img
