@@ -9,22 +9,34 @@
 			<!-- Stats Grid -->
 			<div class="flex flex-col bg-white p-4">
 				<!-- Primary Stats -->
-				<div class="grid grid-cols-4 gap-4 md:gap-0 md:divide-x md:text-center sm:-mt-4">
-					<div class="col-span-full md:col-span-1 sm:p-6">
-						<strong class="text-3xl md:text-4xl text-gray-700 leading-8">500</strong>
-						<p class="mt-1 text-gray-400 text-sm font-medium uppercase">Posts</p>
+				<div class="relative grid grid-cols-4 gap-4">
+					<div class="col-span-2 lg:col-span-1 text-center">
+						<div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
+							<strong class="text-3xl md:text-4xl text-gray-700">328</strong>
+							<p class="mt-2 text-gray-500 text-sm font-medium uppercase">Members</p>
+						</div>
 					</div>
-					<div class="col-span-full md:col-span-2 sm:p-6">
-						<strong class="text-3xl md:text-4xl text-gray-700 leading-8">2,400</strong>
-						<p class="mt-1 text-gray-400 text-sm font-medium uppercase">Comments</p>
+					<div class="col-span-2 lg:col-span-1 text-center">
+						<div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
+							<strong class="text-3xl md:text-4xl text-gray-700">957</strong>
+							<p class="mt-2 text-gray-500 text-sm font-medium uppercase">Posts</p>
+						</div>
 					</div>
-					<div class="col-span-full md:col-span-1 sm:p-6">
-						<strong class="text-3xl md:text-4xl text-gray-700 leading-8">400</strong>
-						<p class="mt-1 text-gray-400 text-sm font-medium uppercase">Members</p>
+					<div class="col-span-2 lg:col-span-1 text-center">
+						<div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
+							<strong class="text-3xl md:text-4xl text-gray-700">4,830</strong>
+							<p class="mt-2 text-gray-500 text-sm font-medium uppercase">Comments</p>
+						</div>
+					</div>
+					<div class="col-span-2 lg:col-span-1 text-center">
+						<div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
+							<strong class="text-3xl md:text-4xl text-gray-700">57,023</strong>
+							<p class="mt-2 text-gray-500 text-sm font-medium uppercase">Votes</p>
+						</div>
 					</div>
 				</div>
 				<!-- Divider -->
-				<hr class="mt-4 sm:mt-0 mb-4">
+				<hr class="mt-6 mb-4">
 				<!-- Secondary Stats -->
 				<div class="grid grid-cols-2 gap-4">
 					<!-- Top 5 Members -->
@@ -132,5 +144,4 @@
 		limit: 5,
 		baseURL
 	});
-
 </script>
