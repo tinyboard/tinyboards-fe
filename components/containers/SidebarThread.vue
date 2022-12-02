@@ -1,5 +1,5 @@
 <template>
-    <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
+    <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
       <div v-if="author" class="p-4 border rounded-md">
             <NuxtLink :to="`/user/${author.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->

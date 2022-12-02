@@ -35,7 +35,8 @@
       import { usePostComments } from '@/composables/comments';
 
       definePageMeta({
-            key: (route) => route.fullPath
+            key: (route) => route.fullPath,
+            alias: '/post/:id/:comment'
       });
 
       let route = useRoute();

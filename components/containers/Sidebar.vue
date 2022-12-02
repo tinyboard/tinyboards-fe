@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[280px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
+  <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
     <NuxtLink to="/submit" class="button primary flex items-center">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

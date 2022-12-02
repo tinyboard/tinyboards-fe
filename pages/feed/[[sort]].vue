@@ -1,7 +1,7 @@
 <template>
       <main class="flex flex-col pt-12 sm:pt-14">
             <!-- Sub Navigation & Banner -->
-            <section class="flex flex-col">
+            <section class="hidden md:flex flex-col">
                   <NavigationNavbarSub :links="links" class="sm:order-first"/>
                   <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
                         <!-- Banner -->
@@ -12,8 +12,14 @@
             <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
                   <div class="col-span-full flex gap-6">
                         <div class="w-full">
+                              <!-- Sorts & View Options -->
+                              <div class="flex items-center sm:mb-4 p-2.5 sm:px-4 sm:pt-0 sm:pb-2 sm:border-b">
+                                    <MenusSort isPath/>
+                                    <button class="ml-auto" @click="isCompact = !isCompact">Toggle</button>
+                              </div>
                               <!-- Posts -->
-                              <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/>
+                              <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+                              <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
                               <!-- Pagination -->
                               <div v-if="posts.length" class="w-full mt-4">
                                     <NavigationPagination
@@ -70,7 +76,7 @@
 </template>
 
 <script setup>
-      import { computed } from 'vue';
+      import { computed, ref } from 'vue';
       import { getListing } from '@/composables/posts';
 
       const router = useRouter();
@@ -79,6 +85,8 @@
       definePageMeta({
         key: (route) => route.fullPath
       });
+
+      const isCompact = ref(false);
 
       // Pagination
       const totalPages = 4;
@@ -110,14 +118,8 @@
       // Links for sub navigation.
 
       const links = [
-            { name: 'Hot', href: '/feed' },
-            { name: 'Latest', href: '/feed/new' },
-            { name: 'Top All', href: '/feed/topall' },
-            { name: 'Top Month', href: '/feed/topmonth' },
-            { name: 'Top Week', href: '/feed/topweek' },
-            { name: 'Top Day', href: '/feed/topday' },
-            { name: 'Most Comments', href: '/feed/mostcomments' },
-            { name: 'Latest Comments', href: '/feed/newcomments' }
+            { name: 'New Thread', href: '/submit' },
+            { name: 'House Rules', href: '/help/rules', target: '_blank' }
       ];
 
       // Before route changes, stop the watcher.

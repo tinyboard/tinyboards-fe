@@ -29,7 +29,10 @@
   <div class="py-2">
     <!-- Menu Item -->
     <MenuItem v-slot="{ active, close }" v-for="(item, index) in sorts" :key="index">
-      <NuxtLink :to="{ query: { ...route.query, sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
+      <NuxtLink v-if="isPath" :to="{ params: { sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
+        {{ item.name }}
+      </NuxtLink>
+      <NuxtLink v-else :to="{ query: { ...route.query, sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
         {{ item.name }}
       </NuxtLink>
     </MenuItem>
@@ -47,6 +50,9 @@
   const route = useRoute();
 
   const props = defineProps({
+    isPath: {
+      type: Boolean
+    },
     sorts: {
       type: Array,
       default: [
@@ -84,7 +90,7 @@
 
   // const sortInit = user.default_sort_type ?? 'hot';
 
-  const sort = ref(route.query.sort);
+  const sort = ref(route.query.sort || route.params.sort);
 
   const selectedSort = computed(() => {
     const i = props.sorts.findIndex(x => x.key === sort.value);
