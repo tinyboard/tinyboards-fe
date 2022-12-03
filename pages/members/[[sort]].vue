@@ -14,56 +14,42 @@
 		</section>
 		<!-- Main Content -->
 		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
-			<div class="col-span-full flex gap-6 -mx-2">
-				<ul v-if="members" class="w-full flex flex-wrap overflow-hidden">
-					<li v-for="(member, i) in members.members" :key="i" class="my-2 px-2 w-full overflow-hidden md:w-1/3 lg:w-1/5">
-						<NuxtLink :to="`/user/${member.user.name}`" class="relative flex flex-col p-2 rounded-md hover:bg-white border shadow-inner-white">
-							<span class="absolute top-1 right-3 font-bold text-xl text-gray-300">
-								{{ i + 1 }}
+			<div class="col-span-full px-2.5 sm:px-0">
+				<ul v-if="members" class="w-full grid grid-cols-4 gap-2 sm:gap-4 overflow-hidden">
+					<li v-for="(member, i) in members.members" :key="i" class="w-full col-span-full md:col-span-2 lg:col-span-1">
+						<NuxtLink :to="`/user/${member.user.name}`" class="relative flex flex-col p-2.5 rounded-md bg-white hover:bg-gray-50 border shadow-inner-white">
+							<span class="absolute top-1 right-3 font-bold text-lg text-gray-300">
+								#{{ i + 1 }}
 							</span>
 							<div class="flex items-center space-x-2">
-								<img class="p-0.5 w-9 h-9 object-cover bg-white border" :src="member.user.avatar"/>
+								<img class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200" :src="member.user.avatar"/>
 								<div class="flex flex-col justify-center">
-									<strong class="text-primary leading-none">{{ member.user.name }}</strong>
-									<small class="text-gray-500 block mt-0.5">
-										<strong>{{ member.counts.post_score + member.counts.comment_score }}</strong>
+									<strong class="text-gray-900 text-sm">{{ member.user.name }}</strong>
+									<!-- New or Old -->
+									<small v-if="sort === 'new' || sort === 'old'" class="text-gray-400 block">
+										Since
+										<span class="font-medium">{{ format(parseISO(member.user.published), "MMM dd, yyyy") }}</span>
+									</small>
+									<!-- Post Count -->
+									<small v-else-if="sort === 'mostcomments'" class="text-gray-400 block">
+										<span class="font-medium">
+											{{ member.counts.post_count }}
+										</span>
+										{{ member.counts.post_count === 1 ? 'post' : 'posts' }}
+									</small>
+									<!-- Commnent Count -->
+									<small v-else-if="sort === 'mostcomments'" class="text-gray-400 block">
+										<span class="font-medium">
+											{{ member.counts.comment_count }}
+										</span>
+										{{ member.counts.comment_count === 1 ? 'comment' : 'comments' }}
+									</small>
+									<!-- Reputation -->
+									<small v-else class="text-gray-400 block">
+										<span class="font-medium">{{ member.counts.post_score + member.counts.comment_score }}</span>
 										reputation
 									</small>
 								</div>
-							</div>
-							<div class="mt-2 text-sm text-gray-600">
-								<ul class="flex flex-col space-y-1">
-									<li class="flex items-center" :title="`${member.user.published}`">
-										<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 opacity-70" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-											<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-											<path d="M3 20h18v-8a3 3 0 0 0 -3 -3h-12a3 3 0 0 0 -3 3v8z"></path>
-											<path d="M2.996 14.803c.312 .135 .654 .204 1.004 .197a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1c.35 .007 .692 -.062 1.004 -.197"></path>
-											<path d="M12 4l1.465 1.638a2 2 0 1 1 -3.015 .099l1.55 -1.737z"></path>
-										</svg>
-										<p class="ml-1">
-											{{ format(parseISO(member.user.published), "MMM dd, yyyy") }}
-										</p>
-									</li>
-									<li class="flex items-center">
-										<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 opacity-70" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-											<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-											<path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
-											<line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
-										</svg>
-										<p class="ml-1">
-											{{ member.counts.post_count === 1 ? '1 post' : `${member.counts.post_count} posts` }}
-										</p>
-									</li>
-									<li class="flex items-center">
-										<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 opacity-70" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-											<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-											<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
-										</svg>
-										<p class="ml-1">
-											{{ member.counts.comment_count === 1 ? '1 comment' : `${member.counts.comment_count} comments` }}
-										</p>
-									</li>
-								</ul>
 							</div>
 						</NuxtLink>
 					</li>
