@@ -120,18 +120,22 @@
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue';
+	useHead({
+		title: 'My App',
+		meta: [{ name: 'description', content: 'My amazing site.' }]
+	});
 
+	import { computed, ref } from 'vue';
 	import { useRoute } from 'vue-router';
 	import { baseURL } from "@/server/constants";
-
 	import { format, parseISO } from "date-fns";
 
-	// Define route.
 	const router = useRouter();
 	const route = useRoute();
 
+	// Feed sorts.
 	const sorts = ['new','old','mostcomments','mostposts','mostrep'];
+
 	const sort = computed(() => {
 		return sorts.includes(route.params.sort) ? route.params.sort : 'new';
 	});

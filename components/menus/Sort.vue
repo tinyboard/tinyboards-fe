@@ -25,7 +25,7 @@
  leave-from-class="transform scale-100 opacity-100"
  leave-to-class="transform scale-95 opacity-0"
  >
- <MenuItems class="absolute w-48 max-h-72 mt-1 origin-top bg-white rounded-md shadow-xl border focus:outline-none">
+ <MenuItems class="absolute w-48 max-h-72 mt-1 bg-white rounded-md shadow-xl border focus:outline-none" :class="isLeft ? 'right-0 origin-top-right' : 'left-0 origin-top-left'">
   <div class="py-2">
     <!-- Menu Item -->
     <MenuItem v-slot="{ active, close }" v-for="(item, index) in sorts" :key="index">
@@ -51,6 +51,9 @@
 
   const props = defineProps({
     isParams: {
+      type: Boolean
+    },
+    isLeft: {
       type: Boolean
     },
     sorts: {

@@ -15,21 +15,21 @@
                   </strong>
             </NuxtLink>
             <div class="flex flex-wrap -m-2">
-                  <div class="w-2/4 p-2">
-                        <p class="font-bold leading-4">120</p>
-                        <small class="text-gray-500">Posts</small>
+                  <div class="w-2/4 p-2 leading-normal">
+                        <strong>120</strong>
+                        <p class="text-sm text-gray-500">Posts</p>
                   </div>
                   <div class="w-2/4 p-2">
-                        <p class="font-bold leading-4">45</p>
-                        <small class="text-gray-500">Comments</small>
+                        <strong>45</strong>
+                        <p class="text-sm text-gray-500">Comments</p>
                   </div>
                   <div class="w-2/4 p-2">
-                        <p class="font-bold leading-4">120</p>
-                        <small class="text-gray-500">Reputation</small>
+                        <strong>120</strong>
+                        <p class="text-sm text-gray-500">Reputation</p>
                   </div>
                   <div class="w-2/4 p-2">
-                        <p class="font-bold leading-4">12K</p>
-                        <small class="text-gray-500">Hours lurking</small>
+                        <strong>12K</strong>
+                        <p class="text-sm text-gray-500">Hours lurking</p>
                   </div>
             </div>
       </div>

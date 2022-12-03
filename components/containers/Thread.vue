@@ -234,7 +234,7 @@
 				<strong class="text-base leading-4 font-bold dark:text-gray-100">
 					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 				</strong>
-				<MenusSort :sorts="sorts" class="ml-auto"/>
+				<MenusSort :sorts="sorts" isLeft class="ml-auto"/>
 			</div>
 			<!-- Comments & States -->
 			<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x">

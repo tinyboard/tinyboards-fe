@@ -22,7 +22,7 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
       </p>
     </div>
-    <div v-if="spotlight">
+    <div v-if="users">
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
         Newest Members
       </h2>
@@ -52,11 +52,6 @@
   import { shuffle } from '@/utils/shuffleArray';
 
 // Define spotlight users
-  const spotlight = [
-    { id: 1, name: 'elon', avatar: 'https://i.imgur.com/svGJfRg.jpg', reputation: 980 },
-    { id: 2, name: 'wojak', avatar: 'https://i.imgur.com/BbOe1X6.jpg', reputation: 490 },
-    ]
-
   const { data: users, pending, error, refresh } = await useFetch("/members", {
     query: { sort: 'new' },
     limit: 10,
