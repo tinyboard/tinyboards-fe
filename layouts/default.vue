@@ -16,9 +16,12 @@
 
 	useHead({
 		title: `TinyBoards | ${route.meta.title ?? 'Feed'}`,
-		meta: [{ property: 'og:title',
+		meta: [
+		{
+			property: 'og:title',
 			content: `TinyBoards | ${route.meta.title}`
-		}]
+		}
+		]
 	});
 
 	const userStore = useLoggedInUser();

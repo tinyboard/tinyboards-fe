@@ -106,8 +106,14 @@
 </template>
 
 <script setup>
-	definePageMeta({
-		'title': 'Members'
+	useHead({
+		title: 'TinyBoards | Members',
+		meta: [
+		{
+			property: 'og:title',
+			content: 'TinyBoards | Members'
+		}
+		]
 	});
 
 	import { computed, ref } from 'vue';
@@ -142,19 +148,19 @@
 	};
 
   // Watch for sort change and refetch.
-  const stopWatch = watch(() => route, () => {
-  	currentPage.value = route.query.page;
-  	refresh();
-  });
+	const stopWatch = watch(() => route, () => {
+		currentPage.value = route.query.page;
+		refresh();
+	});
 
 	// Links for sub navigation bar.
 	const links = [
-	{ name: 'Newest', href: `/members` },
-	{ name: 'Oldest', href: `/members/old` },
-	{ name: 'Most Posts', href: `/members/mostposts` },
-	{ name: 'Most Comments', href: `/members/mostcomments` },
-	{ name: 'Most Points', href: `/members/mostrep` }
-	];
+		{ name: 'Newest', href: `/members` },
+		{ name: 'Oldest', href: `/members/old` },
+		{ name: 'Most Posts', href: `/members/mostposts` },
+		{ name: 'Most Comments', href: `/members/mostcomments` },
+		{ name: 'Most Points', href: `/members/mostrep` }
+		];
 
 	// Before route changes, stop the watcher.
 	onBeforeRouteLeave(stopWatch);
