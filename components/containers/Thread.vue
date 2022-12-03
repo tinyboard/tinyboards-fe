@@ -374,7 +374,7 @@
 		});
 	};
 
-      // Report
+    // Report
 	const confirmReport = () => {
 		modalStore.setModal({
 			modal: 'ModalReport',

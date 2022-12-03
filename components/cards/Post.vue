@@ -55,7 +55,7 @@
 					</div>
 				</div>
 				<!-- Post Title & Body -->
-				<div :class="{'mt-2.5 sm:mt-4':!isCompact}">
+				<div :class="{'mt-2.5':!isCompact}">
 					<NuxtLink class="font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :class="{'sm:text-lg':!isCompact}" :to="`/post/${item.post.id}`">
 						{{ item.post.title }}
 					</NuxtLink>
@@ -205,11 +205,6 @@
 </template>
 
 <script setup>
-	import { computed } from 'vue';
-	import { baseURL } from "@/server/constants";
-	import { useLoggedInUser } from '@/stores/StoreAuth';
-	import { toPercent } from '@/utils/percent';
-
 	// Props
 	const props = defineProps({
 		item: {
@@ -220,6 +215,16 @@
 			type: Boolean
 		}
 	});
+
+	import { computed } from 'vue';
+	import { baseURL } from "@/server/constants";
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+	import { toPercent } from '@/utils/percent';
+	import { useModalStore } from '@/stores/StoreModal';
+	import { useToastStore } from '@/stores/StoreToast';
+
+	const modalStore = useModalStore();
+	const toast = useToastStore();
 
 	const userStore = useLoggedInUser();
 
@@ -270,6 +275,26 @@
                 // Log the error.
 				console.log(error.value);
 			};
+		});
+	};
+
+	// Delete
+	const confirmDelete = () => {
+		modalStore.setModal({
+			modal: 'ModalDelete',
+			id: props.item.post.id,
+			contentType: 'post',
+			isOpen: true
+		});
+	};
+
+    // Report
+	const confirmReport = () => {
+		modalStore.setModal({
+			modal: 'ModalReport',
+			id: props.item.post.id,
+			contentType: 'post',
+			isOpen: true
 		});
 	};
 

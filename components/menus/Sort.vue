@@ -9,7 +9,7 @@
            <path d="M21 15l-4 4l-4 -4m4 4v-14"></path>
          </svg>
        </span>
-       <span class="block truncate">
+       <span class="block truncate h-5">
         Sort: <span class="font-medium">{{ sorts[selectedSort].name }}</span>
       </span>
       <span class="pointer-events-none flex items-center ml-1">
@@ -29,7 +29,7 @@
   <div class="py-2">
     <!-- Menu Item -->
     <MenuItem v-slot="{ active, close }" v-for="(item, index) in sorts" :key="index">
-      <NuxtLink v-if="isPath" :to="{ params: { sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
+      <NuxtLink v-if="isParams" :to="{ params: { sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
         {{ item.name }}
       </NuxtLink>
       <NuxtLink v-else :to="{ query: { ...route.query, sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
@@ -50,7 +50,7 @@
   const route = useRoute();
 
   const props = defineProps({
-    isPath: {
+    isParams: {
       type: Boolean
     },
     sorts: {

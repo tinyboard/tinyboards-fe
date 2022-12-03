@@ -29,10 +29,10 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100%;
-		background-color: #F6F6F3;
 		font-size:  14px;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+		@apply bg-gray-100;
 	}
 	a {
 		color: #5E81AC;

@@ -43,8 +43,26 @@
 						</div>
 					</div>
 					<!-- Sorts -->
-					<div class="mb-2 px-4">
+					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
 						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
+						<div v-if="type !== 'comment'" class="ml-auto flex space-x-2">
+                              <button class="ml-auto" @click="isCompact = false">
+                                    <!-- Rows Icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                       <rect x="4" y="4" width="16" height="6" rx="2"></rect>
+                                       <rect x="4" y="14" width="16" height="6" rx="2"></rect>
+                                    </svg>
+                              </button>
+                              <button class="ml-auto" @click="isCompact = true">
+                                    <!-- Cards Icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                       <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                                       <line x1="4" y1="12" x2="20" y2="12"></line>
+                                    </svg>
+                              </button>
+                        </div>
 					</div>
 					<!-- Posts -->
 					<TablesPosts v-if="type !== 'comment' && results.posts.length" :posts="results.posts" title="Results" :isLoading="pending"/>
@@ -91,6 +109,8 @@
 		key: (route) => route.fullPath,
 		'hasRepliesDisabled': true
 	});
+
+	const isCompact = ref(false);
 
 	const text = ref(route.query.query);
 	const sort = ref(route.query.sort);

@@ -13,9 +13,26 @@
                   <div class="col-span-full flex gap-6">
                         <div class="w-full">
                               <!-- Sorts & View Options -->
-                              <div class="flex items-center sm:mb-4 p-2.5 sm:px-4 sm:pt-0 sm:pb-2 sm:border-b">
-                                    <MenusSort isPath/>
-                                    <button class="ml-auto" @click="isCompact = !isCompact">Toggle</button>
+                              <div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
+                                    <MenusSort isParams/>
+                                    <div class="ml-auto flex space-x-2">
+                                          <button class="ml-auto" @click="isCompact = false">
+                                                <!-- Rows Icon -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                   <rect x="4" y="4" width="16" height="6" rx="2"></rect>
+                                                   <rect x="4" y="14" width="16" height="6" rx="2"></rect>
+                                                </svg>
+                                          </button>
+                                          <button class="ml-auto" @click="isCompact = true">
+                                                <!-- Cards Icon -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                                                   <line x1="4" y1="12" x2="20" y2="12"></line>
+                                                </svg>
+                                          </button>
+                                    </div>
                               </div>
                               <!-- Posts -->
                               <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>

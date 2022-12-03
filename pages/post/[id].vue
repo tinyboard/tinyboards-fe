@@ -59,7 +59,11 @@
 
       // Comments
       const sort = ref(route.query.sort);
-      const { comments, commentsPending, commentsError, commentsRefresh } = await usePostComments(post.id, { sort: sort.value });
+      const type = computed(() => {
+            return route.params.comment ? 'comment' : 'post'
+      })
+
+      const { comments, commentsPending, commentsError, commentsRefresh } = await usePostComments(route.params.id, { sort: sort.value });
 
       watch(() => route.query, () => commentsRefresh());
 
