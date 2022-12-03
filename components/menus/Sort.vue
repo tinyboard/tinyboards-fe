@@ -1,7 +1,7 @@
 <template>
   <Menu as="div" class="relative z-20">
     <div>
-      <MenuButton class="group relative flex items-center text-sm text-gray-500 hover:text-gray-700">
+      <MenuButton class="group relative flex items-center h-5 text-sm text-gray-500 hover:text-gray-700">
         <span class="pointer-events-none flex items-center mr-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -9,7 +9,7 @@
            <path d="M21 15l-4 4l-4 -4m4 4v-14"></path>
          </svg>
        </span>
-       <span class="block truncate h-5">
+       <span class="block truncate">
         Sort: <span class="font-medium">{{ sorts[selectedSort].name }}</span>
       </span>
       <span class="pointer-events-none flex items-center ml-1">

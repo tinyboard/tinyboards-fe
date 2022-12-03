@@ -1,7 +1,7 @@
 <template>
 	<div class="flex sm:gap-4" :class="{'first:sm:rounded-t-md last:sm:rounded-b-md':isCompact}">
 		<!-- Avatar - Desktop Only -->
-		<NuxtLink v-show="!isCompact" :to="`/user/${item.creator.name}`" class="sticky top-28 hidden sm:inline flex-shrink-0 h-full">
+		<NuxtLink v-show="!isCompact" :to="`/user/${item.creator.name}`" class="sticky top-28 hidden sm:inline flex-shrink-0 h-full chevron__right">
 			<img
 			loading="lazy"
 			:src="item.creator.avatar || 'http://placekitten.com/200/300'"
@@ -310,20 +310,22 @@
 	.border-inherit {
 		border-radius: inherit;
 	}
-	.chevron__right {
-		position: relative;
-	}
-	.chevron__right::after {
+	.chevron__right::before, .chevron__right::after {
 		content: '';
 		position: absolute;
-		display: inline;
-		top: 50%;
-		left: 2rem;
-		width: 10px;
-		height: 10px;
-		border-top: 10px solid transparent;
-		border-right: 20px solid white;
-		border-bottom: 10px solid transparent;
+		top: 24px;
+		right: -17.5px;
+		display: block;
+		width: 8px;
+		height: 16px;
+		background-color: #FFFFFF;
+		clip-path: polygon(0 50%, 100% 0, 100% 100%);
+		pointer-events: none;
+	}
+	.chevron__right::after {
+		@apply bg-gray-200 dark:bg-gray-700;
+		right: -16px;
+		z-index: -1;
 	}
 	.overlay {
 		-webkit-mask-image: linear-gradient(180deg,#000 65%,transparent);
