@@ -78,14 +78,14 @@
 				</button>
 			</div>
 			<!-- Post Content -->
-			<div class="px-2.5 sm:px-0 mt-3 sm:mt-4">
+			<div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
 				<!-- Title -->
-				<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100 mb-2">
+				<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100">
 					{{ item.post.title }}
 				</h1>
 			</div>
 			<!-- Post Embed -->
-			<div class="px-2.5 sm:px-0 mt-3 sm:mt-4" v-if="item.post.url && item.post.type !== 'image'">
+			<div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4" v-if="item.post.url && item.post.type !== 'image'">
 				<LinkPreview
 				:domain="'post.domain placeholder'"
 				:title="'post.metaTitle placeholder'"
@@ -95,7 +95,7 @@
 				/>
 			</div>
 			<!-- Post Image -->
-			<div v-if="item.post.type === 'image'" class="flex justify-center mt-3 md:mt-4">
+			<div v-if="item.post.type === 'image'" class="flex justify-center mt-2.5 md:mt-4">
 				<img
 				:src="item.post.url"
 				alt="Post image"
@@ -103,7 +103,7 @@
 				/>
 			</div>
 			<!-- Post Edit Form -->
-			<InputsEdit v-if="isEditing" :id="item.post.id" :body="item.post.body" @closed="isEditing = false;"/>
+			<InputsEdit v-if="isEditing" :id="item.post.id" :body="item.post.body" @closed="isEditing = false;" class="mt-4"/>
 			<!-- Post Text Body -->
 			<div v-if="item.post.body_html" v-show="!isEditing" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
 				<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
@@ -119,10 +119,10 @@
 								<path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
 							</svg>
 						</button>
-						<span :class="{ 'text-primary': voteType === 1, 'text-orange-600': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
+						<span :class="{ 'text-primary': voteType === 1, 'text-secondary': voteType === -1, 'text-gray-900 dark:text-gray-300': voteType === 0 }">
 							{{ item.counts.score + voteType }}
 						</span>
-						<button @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-orange-600' : 'text-gray-500'">
+						<button @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z"></path>
@@ -229,15 +229,15 @@
 		</div>
 		<!-- Comment Section -->
 		<div class="flex flex-col">
-			<!-- Count Heading & Sort -->
-			<div class="flex items-end justify-between mb-2 px-2.5 md:px-0">
-				<strong class="text-base font-bold dark:text-gray-100">
+			<!-- Comment Count & Sort Menu -->
+			<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
+				<strong class="text-base leading-4 font-bold dark:text-gray-100">
 					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 				</strong>
-				<MenusSort :sorts="sorts"/>
+				<MenusSort :sorts="sorts" class="ml-auto"/>
 			</div>
 			<!-- Comments & States -->
-			<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border">
+			<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x">
 				<!-- Write Form -->
 				<div v-if="isAuthed" class="flex md:space-x-2">
 					<img
@@ -417,6 +417,6 @@
 		transform: translateY(8px);
 	}
 	.downvoted > svg {
-		fill: rgba(234, 88, 12, 1);
+		fill: rgba(var(--color-secondary));
 	}
 </style>

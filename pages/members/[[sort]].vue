@@ -69,7 +69,7 @@
 					</li>
 				</ul>
 			</div>
-			<div class="col-span-full mt-4">
+			<div class="col-span-full mt-4 px-2.5 sm:px-0">
 				<NavigationPagination
                 :total-pages="totalPages"
                 :total="250"

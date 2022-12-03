@@ -71,23 +71,26 @@
 			<!-- Post Content -->
 			<div class="sm:mt-4 p-2.5 sm:p-0">
 				<!-- Title -->
-				<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100 mb-2">
+				<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100">
 					{{ item.post.title }}
 				</h1>
 				<!-- Post Text Body -->
-				<div v-if="item.post.body_html" class="mt-3 sm:mt-4 relative overflow-hidden">
+				<div v-if="item.post.body_html" class="mt-2.5 sm:mt-4 relative overflow-hidden">
 					<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
 				</div>
 			</div>
 		</div>
 		<!-- Comment Section -->
 		<div class="order-3 flex flex-col p-2.5 sm:p-0 bg-white sm:bg-transparent">
-			<!-- Count Heading -->
-			<h1 class="text-base leading-normal font-bold dark:text-gray-100 mb-2">
-				{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
-			</h1>
+			<!-- Comment Count & Sort Menu -->
+			<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
+				<strong class="text-base leading-4 font-bold dark:text-gray-100">
+					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
+				</strong>
+				<MenusSort :sorts="sorts" class="ml-auto"/>
+			</div>
 			<!-- Comments & States -->
-			<div class="sm:bg-gradient-to-b from-gray-200/50 sm:p-4 sm:shadow-inner-xs sm:rounded-md sm:border sm:border-b-0 sm:border-transparent">
+			<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x">
 				<!-- Comments -->
 				<ListsComments v-if="comments.length" :comments="comments" :offset="offset"/>
 				<!-- Empty State -->
@@ -236,6 +239,6 @@
 		transform: translateY(8px);
 	}
 	.downvoted > svg {
-		fill: rgba(234, 88, 12, 1);
+		fill: rgba(var(--color-secondary));
 	}
 </style>

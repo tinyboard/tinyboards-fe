@@ -110,14 +110,16 @@
 		'hasRepliesDisabled': true
 	});
 
+	// TODO: move this to cookie.
 	const isCompact = ref(false);
 
+	// Search params.
 	const text = ref(route.query.query);
 	const sort = ref(route.query.sort);
 	const type = ref(route.query.type);
 	const hasNsfw = ref(false);
 
-	// Fetch members by sort.
+	// Fetch search results.
 	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
 			type: type ?? 'post',

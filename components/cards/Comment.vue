@@ -81,7 +81,7 @@
 				</li>
 				<li>
 					<!-- If logged in, allow downvoting -->
-					<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === -1 ? 'text-orange-600' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(-1)" :disabled="item.post.deleted">
+					<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === -1 ? 'text-secondary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(-1)" :disabled="item.post.deleted">
 						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 					</button>
 					<!-- Else, redirect to login -->

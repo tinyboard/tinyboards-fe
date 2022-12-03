@@ -38,7 +38,7 @@
                               <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
                               <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
                               <!-- Pagination -->
-                              <div v-if="posts.length" class="w-full mt-4">
+                              <div v-if="posts.length" class="w-full mt-4 px-2.5 sm:px-0">
                                     <NavigationPagination
                                     :total-pages="totalPages"
                                     :total="250"
