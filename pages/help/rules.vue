@@ -32,3 +32,15 @@
 		</section>
 	</main>
 </template>
+
+<script setup>
+	useHead({
+		title: `TinyBoards | Rules`,
+		meta: [
+		{
+			property: 'og:title',
+			content: 'TinyBoards | Rules'
+		}
+		]
+	});
+</script>

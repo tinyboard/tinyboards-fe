@@ -38,6 +38,16 @@
 		'alias': '/help/faq'
 	});
 
+	useHead({
+		title: `TinyBoards | FAQ`,
+		meta: [
+		{
+			property: 'og:title',
+			content: 'TinyBoards | FAQ'
+		}
+		]
+	});
+
 	const links = [
 		{ name: 'Get Started', href: '/help/get-started' },
 		{ name: 'About', href: '/help/about' },
