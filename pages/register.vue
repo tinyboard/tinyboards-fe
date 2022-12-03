@@ -56,7 +56,8 @@
 	definePageMeta({
 		'isAuthAllowed': false,
 		layout: false,
-		'alias': '/sign-up'
+		'alias': '/sign-up',
+		'title': 'Sign Up'
 	});
 
 	const site = useSiteStore();

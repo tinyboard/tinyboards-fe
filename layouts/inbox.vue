@@ -24,6 +24,15 @@
 </template>
 
 <script setup>
+	const route = useRoute();
+
+	useHead({
+		title: `TinyBoards | ${route.meta.title ?? 'Inbox'}`,
+		meta: [{ property: 'og:title',
+			content: `TinyBoards | ${route.meta.title}`
+		}]
+	});
+
 	const links = [
 	{ name: 'All', href: '/inbox' },
 	{ name: 'Unread', href: '/inbox/unread' },

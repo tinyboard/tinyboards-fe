@@ -24,10 +24,22 @@
 </template>
 
 <script setup>
+	const route = useRoute();
+	
+	useHead({
+		title: `TinyBoards | Admin ${route.meta.title ?? 'Overview'}`,
+		meta: [
+		{
+			property: 'og:title',
+			content: `TinyBoards | Admin ${route.meta.title ?? 'Overview'}`
+		}
+		]
+	});
+
 	const links = [
-	{ name: 'Overview', href: '/admin/overview' },
-	{ name: 'Settings', href: '/admin/settings' },
-	{ name: 'Mod Queue', href: '/admin/queue' },
-	{ name: 'Users', href: '/admin/users' }
-	];
-</script>
+		{ name: 'Overview', href: '/admin/overview' },
+		{ name: 'Settings', href: '/admin/settings' },
+		{ name: 'Mod Queue', href: '/admin/queue' },
+		{ name: 'Users', href: '/admin/users' }
+		];
+	</script>

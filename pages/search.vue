@@ -110,6 +110,16 @@
 		'hasRepliesDisabled': true
 	});
 
+	useHead({
+		title: `TinyBoards | ${route.query.query}`,
+		meta: [
+		{
+			property: 'og:title',
+			content: 'TinyBoards | Search'
+		}
+		]
+	});
+
 	// TODO: move this to cookie.
 	const isCompact = ref(false);
 

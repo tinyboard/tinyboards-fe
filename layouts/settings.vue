@@ -24,6 +24,15 @@
 </template>
 
 <script setup>
+	const route = useRoute();
+
+	useHead({
+		title: `TinyBoards | ${route.meta.title ?? 'Profile'}`,
+		meta: [{ property: 'og:title',
+			content: `TinyBoards | ${route.meta.title}`
+		}]
+	});
+
 	const links = [
 	{ name: 'Profile', href: '/settings/profile' },
 	{ name: 'Account', href: '/settings/account' },

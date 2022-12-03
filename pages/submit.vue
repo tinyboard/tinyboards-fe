@@ -85,6 +85,16 @@
 </template>
 
 <script setup>
+	useHead({
+		title: 'TinyBoards | Create a Post',
+		meta: [
+		{
+			property: 'og:title',
+			content: 'TinyBoards | Create a Post'
+		}
+		]
+	});
+
 	import { ref } from 'vue';
 	import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js'

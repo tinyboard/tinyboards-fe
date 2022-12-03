@@ -1,18 +1,5 @@
 <template>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
-
-<!-- <script>
-export default {
-  setup () {
-    useHead({
-      bodyAttrs: {
-        class: 'dark'
-      }
-    })
-  }
-}
-</script>
- -->

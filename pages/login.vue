@@ -46,7 +46,8 @@
 	definePageMeta({
 		'isAuthAllowed': false,
 		layout: false,
-		'alias': '/sign-in'
+		'alias': '/sign-in',
+		'title': 'Sign in'
 	});
 
 	let nameOrEmail = ref("");

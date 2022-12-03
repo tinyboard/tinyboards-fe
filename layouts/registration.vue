@@ -35,6 +35,15 @@
 <script setup>
 	import { useSiteStore } from '@/stores/StoreSite.js';
 
+	const route = useRoute();
+
+	useHead({
+		title: `TinyBoards | ${route.meta.title ?? 'Sign Up'}`,
+		meta: [{ property: 'og:title',
+			content: `TinyBoards | ${route.meta.title}`
+		}]
+	});
+
 	const site = useSiteStore();
 
 	const links = [

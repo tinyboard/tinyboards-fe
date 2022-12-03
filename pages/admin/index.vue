@@ -122,7 +122,8 @@
 	import { format, parseISO } from "date-fns";
 
 	definePageMeta({
-		'alias': '/admin/overview'
+		'alias': '/admin/overview',
+		'title': 'Overview'
 	});
 
 	// Settings.
