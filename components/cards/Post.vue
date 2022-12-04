@@ -314,14 +314,14 @@
 		content: '';
 		position: absolute;
 		top: 26px;
-		right: -23px;
+		right: -24px;
 		display: block;
-		width: 12px;
-		height: 12px;
+		width: 13px;
+		height: 13px;
 		background-color: #FFFFFF;
 		transform: rotate(45deg);
 		clip-path: polygon(0 0, 0% 100%, 100% 100%);
-		@apply border-l border-b
+		@apply border-l border-b box-content
 	}
 	.chevron__right::before, .chevron__right::after {
 		content: '';
