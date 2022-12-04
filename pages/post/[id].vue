@@ -22,7 +22,7 @@
                         </div>
                   </div>
                   <!-- Sidebar -->
-                  <ContainersSidebarThread :author="item.creator" />
+                  <ContainersSidebarThread :item="item" />
             </div>
       </section>
 </main>

@@ -1,17 +1,17 @@
 <template>
     <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
-      <div v-if="author" class="p-4 border rounded-md">
-            <NuxtLink :to="`/user/${author.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
+      <div v-if="!item.post.deleted" class="p-4 border rounded-md">
+            <NuxtLink :to="`/user/${item.creator.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->
                   <img
                   loading="lazy"
-                  :src="author.avatar"
+                  :src="item.creator.avatar"
                   alt="avatar"
                   class="flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white group-hover:bg-gray-200 group-hover:border-transparent"
                   />
                   <!-- Username -->
                   <strong>
-                        {{ author.name }}
+                        {{ item.creator.name }}
                   </strong>
             </NuxtLink>
             <div class="flex flex-wrap -m-2">
@@ -35,11 +35,28 @@
       </div>
       <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
-                  Details
+                  Stats
             </h2>
-            <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <ul class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
+                  <li>
+                        <dl class="flex justify-between">
+                              <dt>Published</dt>
+                              <dd class="font-medium">{{ format(parseISO(item.counts.published), "MMM dd, yyyy") }}</dd>
+                        </dl>
+                  </li>
+                  <li>
+                        <dl class="flex justify-between">
+                              <dt>Upvotes</dt>
+                              <dd class="font-medium">{{ item.counts.upvotes }}</dd>
+                        </dl>
+                  </li>
+                  <li>
+                        <dl class="flex justify-between">
+                              <dt>Downvotes</dt>
+                              <dd class="font-medium">{{ item.counts.downvotes }}</dd>
+                        </dl>
+                  </li>
+            </ul>
       </div>
       <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
@@ -54,18 +71,20 @@
                   </li>
             </ul>
       </div>
-      <div v-if="author">
+      <div v-if="!item.post.deleted">
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
-                  More by author
+                  More by {{ item.creator.name }}
             </h2>
       </div>
     </div>
 </template>
 
 <script setup>
+import { format, parseISO } from "date-fns";
+
 // Define author
 const props = defineProps({
-      author: Object
+      item: Object
 });
 
 // Define social links
