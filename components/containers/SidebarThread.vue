@@ -47,13 +47,13 @@
                   <li>
                         <dl class="flex justify-between">
                               <dt>Upvotes</dt>
-                              <dd class="font-medium">{{ item.counts.upvotes }}</dd>
+                              <dd class="text-green-600 font-medium">+{{ item.counts.upvotes }}</dd>
                         </dl>
                   </li>
                   <li>
                         <dl class="flex justify-between">
                               <dt>Downvotes</dt>
-                              <dd class="font-medium">{{ item.counts.downvotes }}</dd>
+                              <dd class="text-red-600 font-medium">-{{ item.counts.downvotes }}</dd>
                         </dl>
                   </li>
             </ul>
