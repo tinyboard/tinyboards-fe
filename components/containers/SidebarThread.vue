@@ -1,6 +1,6 @@
 <template>
     <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
-      <div v-if="!item.post.deleted" class="p-4 border rounded-md">
+      <div v-if="!item.post.deleted" class="p-4 border rounded-md shadow-inner-white">
             <NuxtLink :to="`/user/${item.creator.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->
                   <img
