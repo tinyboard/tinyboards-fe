@@ -2,7 +2,7 @@
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Pinned Banner -->
 		<div v-if="item.counts.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
-			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-2.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
 			   <line x1="12" y1="16" x2="12" y2="21"></line>
