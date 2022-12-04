@@ -1,6 +1,6 @@
 <template>
 	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="relative flex flex-col items-end w-full">
-		<textarea required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 8" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="localBody"/>
+		<textarea required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="localBody"/>
 		<div class="flex space-x-2 mt-2">
 			<button type="button" class="button white" @click="emit('closed');">
 				Cancel
