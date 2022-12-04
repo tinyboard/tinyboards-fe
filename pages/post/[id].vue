@@ -36,7 +36,7 @@
 
       definePageMeta({
             key: (route) => route.fullPath,
-            alias: '/post/:id/:comment'
+            alias: ['/p/:id/:comment?','/post/:id/:comment?']
       });
 
       let route = useRoute();
