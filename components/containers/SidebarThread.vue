@@ -1,5 +1,6 @@
 <template>
     <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
+      <!-- Author Details -->
       <div v-if="!item.post.deleted" class="p-4 border rounded-md shadow-inner-white">
             <NuxtLink :to="`/user/${item.creator.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
                   <!-- Avatar -->
@@ -33,6 +34,7 @@
                   </div>
             </div>
       </div>
+      <!-- Stats -->
       <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   Stats
@@ -58,24 +60,18 @@
                   </li>
             </ul>
       </div>
+      <!-- Share -->
       <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   Share
             </h2>
-            <ul class="flex flex-col space-y-2 divide-y">
-                  <li v-for="social in socials" :key="social.name" class="flex space-x-2 pt-2 first:pt-0">
-                        <!-- svg icon -->
-                        <NuxtLink class="flex flex-col justify-center">
-                              {{ social.name }}
-                        </NuxtLink>
-                  </li>
-            </ul>
+            <input :value="`https://tinyboards.net/p/${item.post.id}`" class="w-full p-1 text-sm mb-4" @focus="$event.target.select()"/>
       </div>
-      <div v-if="!item.post.deleted">
+      <!-- <div v-if="!item.post.deleted">
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                   More by {{ item.creator.name }}
             </h2>
-      </div>
+      </div> -->
     </div>
 </template>
 
@@ -86,10 +82,4 @@ import { format, parseISO } from "date-fns";
 const props = defineProps({
       item: Object
 });
-
-// Define social links
-const socials = [
-  { name: 'twitter', icon: 'https://i.imgur.com/svGJfRg.jpg', link: 'https://reddit.com' },
-  { name: 'reddit', icon: 'https://i.imgur.com/svGJfRg.jpg', link: 'https://reddit.com' }
-];
 </script>
