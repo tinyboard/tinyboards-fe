@@ -1,7 +1,7 @@
 <template>
 	<div class="flex sm:gap-4" :class="{'first:sm:rounded-t-md last:sm:rounded-b-md':isCompact}">
 		<!-- Avatar - Desktop Only -->
-		<NuxtLink v-show="!isCompact" :to="`/user/${item.creator.name}`" class="sticky top-28 hidden sm:inline flex-shrink-0 h-full chevron__right">
+		<NuxtLink v-show="!isCompact" :to="`/user/${item.creator.name}`" class="sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
 			<img
 			loading="lazy"
 			:src="item.creator.avatar || 'http://placekitten.com/200/300'"
@@ -309,6 +309,19 @@
 <style scoped>
 	.border-inherit {
 		border-radius: inherit;
+	}
+	.arrow__right::before {
+		content: '';
+		position: absolute;
+		top: 26px;
+		right: -23px;
+		display: block;
+		width: 12px;
+		height: 12px;
+		background-color: #FFFFFF;
+		transform: rotate(45deg);
+		clip-path: polygon(0 0, 0% 100%, 100% 100%);
+		@apply border-l border-b
 	}
 	.chevron__right::before, .chevron__right::after {
 		content: '';
