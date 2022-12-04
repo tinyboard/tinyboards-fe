@@ -1,16 +1,25 @@
 <template>
-	<div class="relative w-full flex flex-col space-y-6">
-		<div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
-			<!-- Pinned Banner -->
-			<div v-if="item.counts.stickied" class="flex items-center mb-4 bg-white border-t border-b sm:border sm:rounded-md overflow-hidden">
-				<div class="flex items-center justify-center w-10 h-10 bg-white border-r">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="text-primary w-4 h-4">
-						<path fill-rule="evenodd" d="M10 2c-1.716 0-3.408.106-5.07.31C3.806 2.45 3 3.414 3 4.517V17.25a.75.75 0 001.075.676L10 15.082l5.925 2.844A.75.75 0 0017 17.25V4.517c0-1.103-.806-2.068-1.93-2.207A41.403 41.403 0 0010 2z" clip-rule="evenodd" />
-					</svg>
-				</div>
-				<div class="text-base text-primary pl-3">This post has been pinned by the moderators.</div>
+	<div class="relative w-full flex flex-col sm:space-y-6">
+		<!-- Pinned Banner -->
+		<div v-if="!item.counts.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
+			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-2.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+			   <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
+			   <line x1="12" y1="16" x2="12" y2="21"></line>
+			   <line x1="8" y1="4" x2="16" y2="4"></line>
+			</svg>
+			<div>
+				<strong>
+					Pinned post
+				</strong>
+				<br/>
+				<p class="text-sm text-green-800">
+					This post is pinned by the admins. It is probably important.
+				</p>
 			</div>
-			<!-- Post Body -->
+		</div>
+		<!-- Post Body -->
+		<div class="sm:order-2 w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
 			<!-- Post Meta Information & Content -->
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
@@ -221,16 +230,16 @@
 			</div>
 		</div>
 		<!-- Banner -->
-		<div v-if="!isAuthed" id="comments" class="w-full border-y md:border-x md:rounded-md p-4 shadow-inner-white">
+		<div v-if="!isAuthed" id="comments" class="order-3 w-full border-y md:border-x md:rounded-md p-4 shadow-inner-white">
 			<p class="text-base text-gray-500 dark:text-gray-100 text-center">
 				<span class="font-medium">Want to join the discussion? </span>
 				<NuxtLink to="/register">Sign up to comment</NuxtLink>
 			</p>
 		</div>
 		<!-- Comment Section -->
-		<div class="flex flex-col">
+		<div class="order-last flex flex-col">
 			<!-- Comment Count & Sort Menu -->
-			<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
+			<div class="flex items-center sm:mb-4 p-2.5 sm:p-4 bg-gray-100 sm:border sm:shadow-inner-white sm:rounded-md">
 				<strong class="text-base leading-4 font-bold dark:text-gray-100">
 					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 				</strong>

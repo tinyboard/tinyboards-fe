@@ -1,8 +1,8 @@
 <template>
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Alert -->
-		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 px-4 py-2 sm:py-3 text-center sm:text-left text-red-900 bg-red-200 border-y md:border-x border-red-300 md:rounded-md shadow-inner-white">
-			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+		<div class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 p-2.5 text-center sm:text-left text-red-900 bg-red-200 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white">
+			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-2.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"></path>
 			   <path d="M6 9l4 4"></path>
