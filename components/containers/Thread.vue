@@ -1,7 +1,7 @@
 <template>
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Pinned Banner -->
-		<div v-if="!item.counts.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
+		<div v-if="item.counts.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
 			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 mr-2.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
@@ -18,8 +18,8 @@
 				</p>
 			</div>
 		</div>
-		<!-- Post Body -->
-		<div class="sm:order-2 w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
+		<!-- Post -->
+		<div class="sm:order-2 w-full sm:p-4 bg-white border-b sm:border sm:shadow-inner-xs sm:rounded-md">
 			<!-- Post Meta Information & Content -->
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
@@ -29,7 +29,7 @@
 						loading="lazy"
 						:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 						alt="avatar"
-						class="flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+						class="flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
 						/>
 					</NuxtLink>
 					<!-- Deleted User -->
