@@ -121,6 +121,11 @@
 			<div v-show="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
 				<!-- Desktop actions -->
 				<ul class="flex flex-grow items-center">
+					<li class="sm:hidden">
+						<span class="text-sm font-medium leading-none text-gray-500 dark:text-gray-400 hover:text-gray-700">
+							{{ item.counts.comments === 1 ? '1 reply' : `${item.counts.comments} replies` }}
+						</span>
+					</li>
 					<li class="ml-auto sm:ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
 						<button @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
