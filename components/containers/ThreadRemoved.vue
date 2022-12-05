@@ -127,12 +127,12 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { usePost } from '@/composables/post';
 	import { usePostComments } from '@/composables/comments';
-	import { formatDate } from '@/utils/formatDate';
-	import { toPercent } from '@/utils/percent'
 	import { useSave } from '@/composables/save';
 	import { useSubscribe } from '@/composables/subscribe';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
+	import { formatDate } from '@/utils/formatDate';
+	import { toPercent } from '@/utils/percent';
 
 	const modalStore = useModalStore();
 	const toast = useToastStore();

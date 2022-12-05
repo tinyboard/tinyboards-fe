@@ -165,35 +165,35 @@
 					<li class="ml-6 hidden sm:list-item">
 						<button @click="save(item.post.id,'post')" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
-							<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="!item.saved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
 							</svg>
 							<!-- Bookmark Slash Icon -->
-							<svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="item.saved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="3" y1="3" x2="21" y2="21"></line>
 								<path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
 							</svg>
-							<span class="text-sm font-medium">{{ isSaved ? 'Unsave' : 'Save' }}</span>
+							<span class="text-sm font-medium">{{ item.saved ? 'Unsave' : 'Save' }}</span>
 						</button>
 					</li>
 					<li class="ml-6 hidden sm:list-item">
 						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bell Icon -->
-							<svg v-show="!isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="!item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path>
 								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
 							</svg>
 							<!-- Bell Slash Icon -->
-							<svg v-show="isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="3" y1="3" x2="21" y2="21"></line>
 								<path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
 								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
 							</svg>
-							<span class="text-sm font-medium">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
+							<span class="text-sm font-medium">{{ item.subscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
 						</button>
 					</li>
 					<li v-if="!isAuthor" class="ml-6 hidden sm:list-item">
@@ -298,12 +298,12 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { usePost } from '@/composables/post';
 	import { usePostComments } from '@/composables/comments';
-	import { formatDate } from '@/utils/formatDate';
-	import { toPercent } from '@/utils/percent';
 	import { useSave } from '@/composables/save';
 	import { useSubscribe } from '@/composables/subscribe';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
+	import { formatDate } from '@/utils/formatDate';
+	import { toPercent } from '@/utils/percent';
 
 	const modalStore = useModalStore();
 	const toast = useToastStore();
