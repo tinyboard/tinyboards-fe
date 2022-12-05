@@ -129,7 +129,7 @@
 							<span class="text-sm font-medium">Copy link</span>
 						</button>
 					</li>
-					<li class="ml-6 hidden sm:list-item">
+					<li class="ml-6 hidden md:list-item">
 						<button @click="save(item.post.id,'post')" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
 							<svg v-show="!item.ssaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -145,7 +145,7 @@
 							<span class="text-sm font-medium">{{ item.saved ? 'Unsave' : 'Save' }}</span>
 						</button>
 					</li>
-					<li class="ml-6 hidden sm:list-item">
+					<li class="ml-6 hidden md:list-item">
 						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bell Icon -->
 							<svg v-show="!item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -163,8 +163,8 @@
 							<span class="text-sm font-medium">{{ item.subscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
 						</button>
 					</li>
-					<li v-if="!isAuthor" class="ml-6 hidden sm:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport()">
+					<li v-if="!isAuthor" class="ml-6 hidden md:list-item">
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
@@ -173,7 +173,7 @@
 						</button>
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete()">
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="4" y1="7" x2="20" y2="7"></line>
@@ -183,6 +183,39 @@
 								<path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
 							</svg>
 							<span class="text-sm font-medium">Delete</span>
+						</button>
+					</li>
+					<li v-if="!isAdmin" class="ml-6 hidden lg:list-item">
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="pin">
+							<!-- Pin Icon -->
+							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
+							   <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
+							   <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
+							</svg>
+							<!-- Pin Off Icon -->
+							<svg v-show="item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <line x1="3" y1="3" x2="21" y2="21"></line>
+							   <path d="M15 4.5l-3.249 3.249m-2.57 1.433l-2.181 .818l-1.5 1.5l7 7l1.5 -1.5l.82 -2.186m1.43 -2.563l3.25 -3.251"></path>
+							   <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
+							   <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
+							</svg>
+							<span class="text-sm font-medium">{{ item.post.stickied ? 'Unpin' : 'Pin' }}</span>
+						</button>
+					</li>
+					<li v-if="!isAdmin" class="ml-6 hidden lg:list-item">
+						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmRemove">
+							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"></path>
+							   <path d="M6 9l4 4"></path>
+							   <path d="M13 10l-4 -4"></path>
+							   <path d="M3 21h7"></path>
+							   <path d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z"></path>
+							</svg>
+							<span class="text-sm font-medium">Remove</span>
 						</button>
 					</li>
 				</ul>
@@ -245,11 +278,16 @@
 
     // Author
 	const isAuthor = computed(() => {
-		if (userStore.user && props.item.creator) {
+		if (!!userStore.user && props.item.creator) {
 			return userStore.user.name === props.item.creator.name
 		} else {
 			return false
 		}
+	});
+
+	// Admin
+	const isAdmin = computed(() => {
+		return !!userStore.user && userStore.user.admin
 	});
 
 	// Vote
