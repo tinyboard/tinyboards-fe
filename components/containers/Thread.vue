@@ -120,8 +120,8 @@
 			<!-- Footer -->
 			<div v-show="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">
 				<!-- Desktop actions -->
-				<ul class="hidden md:flex flex-grow items-center space-x-6">
-					<li class="group flex items-center space-x-2 leading-none text-sm font-medium">
+				<ul class="flex flex-grow items-center">
+					<li class="ml-auto sm:ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
 						<button @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -138,7 +138,7 @@
 							</svg>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -147,7 +147,7 @@
 							<span class="text-sm font-medium">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -157,7 +157,7 @@
 							<span class="text-sm font-medium">Copy link</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button @click="save(item.post.id,'post')" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
 							<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -173,7 +173,7 @@
 							<span class="text-sm font-medium">{{ isSaved ? 'Unsave' : 'Save' }}</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bell Icon -->
 							<svg v-show="!isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -191,7 +191,7 @@
 							<span class="text-sm font-medium">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
 						</button>
 					</li>
-					<li v-if="!isAuthor">
+					<li v-if="!isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport()">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -200,7 +200,7 @@
 							<span class="text-sm font-medium">Report</span>
 						</button>
 					</li>
-					<li v-if="isAuthor">
+					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete()">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -213,7 +213,7 @@
 							<span class="text-sm font-medium">Delete</span>
 						</button>
 					</li>
-					<li v-if="isAuthor">
+					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="isEditing = !isEditing">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
