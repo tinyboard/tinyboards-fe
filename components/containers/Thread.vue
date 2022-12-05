@@ -149,7 +149,7 @@
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 							</svg>
-							<span class="text-sm font-medium">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
+							<span class="text-sm font-medium">{{ item.counts.comments }}</span>
 						</button>
 					</li>
 					<li class="ml-6 hidden sm:list-item">
@@ -202,7 +202,7 @@
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
 							</svg>
-							<span class="text-sm font-medium">Report</span>
+							<span class="text-sm font-medium">Flag</span>
 						</button>
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
