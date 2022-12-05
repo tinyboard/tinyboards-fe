@@ -18,7 +18,7 @@
 				class="w-9 h-9 object-cover p-0.5 border bg-white hover:bg-gray-200"
 				/>
 			</NuxtLink>
-			<div :class="{'sm:ml-4 w-3/6':isCompact}">
+			<div class="w-full" :class="{'sm:ml-4 sm:w-3/6':isCompact}">
 				<!-- Author -->
 				<div v-if="item.creator" scope="row" class="flex items-center text-gray-900 dark:text-white">
 					<div class="flex flex-col sm:truncate">
@@ -55,7 +55,7 @@
 					</div>
 				</div>
 				<!-- Post Title & Body -->
-				<div :class="{'mt-2.5':!isCompact}">
+				<div class="mt-2.5" :class="{'sm:mt-0':isCompact}">
 					<NuxtLink class="font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :class="{'sm:text-lg':!isCompact}" :to="`/post/${item.post.id}`">
 						{{ item.post.title }}
 					</NuxtLink>
@@ -64,9 +64,13 @@
 					</div>
 				</div>
 				<!-- Actions -->
-				<!-- Desktop actions -->
-				<ul v-show="!isCompact" class="mt-4 hidden md:flex flex-grow items-center space-x-6">
-					<li class="group flex items-center space-x-2 leading-none text-sm font-medium">
+				<ul class="mt-4 flex flex-grow items-center" :class="{'sm:hidden':isCompact}">
+					<li class="sm:hidden">
+						<span class="text-sm font-medium leading-none text-gray-500 dark:text-gray-400 hover:text-gray-700">
+							{{ item.counts.comments === 1 ? '1 reply' : `${item.counts.comments} replies` }}
+						</span>
+					</li>
+					<li class="ml-auto sm:ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
 						<button @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -83,7 +87,7 @@
 							</svg>
 						</button>
 					</li>
-					<li v-if="item.post.body.length > 800 && item.post.body_html">
+					<li v-if="item.post.body.length > 800 && item.post.body_html" class="ml-6">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="isExpanded = !isExpanded">
 							<!-- Arrows In Icon -->
 							<svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -106,7 +110,7 @@
 							</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -115,7 +119,7 @@
 							<span class="text-sm font-medium">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -125,7 +129,7 @@
 							<span class="text-sm font-medium">Copy link</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button @click="save(item.post.id,'post')" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
 							<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -141,7 +145,7 @@
 							<span class="text-sm font-medium">{{ isSaved ? 'Unsave' : 'Save' }}</span>
 						</button>
 					</li>
-					<li>
+					<li class="ml-6 hidden sm:list-item">
 						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bell Icon -->
 							<svg v-show="!isSubscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -159,7 +163,7 @@
 							<span class="text-sm font-medium">{{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
 						</button>
 					</li>
-					<li v-if="!isAuthor">
+					<li v-if="!isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport()">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -168,7 +172,7 @@
 							<span class="text-sm font-medium">Report</span>
 						</button>
 					</li>
-					<li v-if="isAuthor">
+					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete()">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -184,7 +188,7 @@
 				</ul>
 			</div>
 			<!-- Post Details (compact mode only) -->
-			<div v-show="isCompact" class="ml-auto w-1/6 flex items-center justify-between">
+			<div v-show="isCompact" class="ml-auto w-1/6 hidden sm:flex items-center justify-between">
 				<div class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
 					<dl class="flex justify-between">
 						<dt>Score&nbsp;</dt>
@@ -197,7 +201,7 @@
 				</div>
 			</div>
 			<!-- Last Activity (compact mode only) -->
-			<div v-show="isCompact" class="ml-auto w-1/6 flex items-center justify-end">
+			<div v-show="isCompact" class="ml-auto w-1/6 hidden sm:flex items-center justify-end">
 
 			</div>
 		</div>
