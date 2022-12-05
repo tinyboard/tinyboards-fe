@@ -66,9 +66,9 @@
 				<!-- Actions -->
 				<ul class="mt-4 flex flex-grow items-center" :class="{'sm:hidden':isCompact}">
 					<li class="sm:hidden">
-						<span class="text-sm font-medium leading-none text-gray-500 dark:text-gray-400 hover:text-gray-700">
+						<NuxtLink :to="`/post/${item.post.id}`" class="text-sm font-medium leading-none text-gray-500 dark:text-gray-400 hover:text-gray-700">
 							{{ item.counts.comments === 1 ? '1 reply' : `${item.counts.comments} replies` }}
-						</span>
+						</NuxtLink>
 					</li>
 					<li class="ml-auto sm:ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
 						<button @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
@@ -111,13 +111,13 @@
 						</button>
 					</li>
 					<li class="ml-6 hidden sm:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+						<NuxtLink :to="`/post/${item.post.id}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 							</svg>
 							<span class="text-sm font-medium">{{ item.counts.comments }} {{ item.counts.comments === 1 ? 'Comment' : 'Comments'}}</span>
-						</button>
+						</NuxtLink>
 					</li>
 					<li class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
