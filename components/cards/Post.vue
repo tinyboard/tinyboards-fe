@@ -228,15 +228,19 @@
 	import { useToastStore } from '@/stores/StoreToast';
 	import { toPercent } from '@/utils/percent';
 
+	// Modals & Toasts
 	const modalStore = useModalStore();
 	const toast = useToastStore();
 
+	// Authentication
 	const userStore = useLoggedInUser();
-
 	const isAuthed = userStore.isAuthed;
 	const authCookie = useCookie("token").value;
 
+	// Expand & Collapse
 	const isExpanded = ref(false);
+
+	// Save
 	// const { isSaved, save } = useSave();
 
     // Author
@@ -248,7 +252,7 @@
 		}
 	});
 
-	// Voting
+	// Vote
 	const voteType = ref(props.item.my_vote);
 
 	const vote = async (type = 0) => {
