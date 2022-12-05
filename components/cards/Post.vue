@@ -332,23 +332,6 @@
 		transform: rotate(45deg);
 		@apply border-l border-b
 	}
-	.chevron__right::before, .chevron__right::after {
-		content: '';
-		position: absolute;
-		top: 24px;
-		right: -17.5px;
-		display: block;
-		width: 8px;
-		height: 16px;
-		background-color: #FFFFFF;
-		clip-path: polygon(0 50%, 100% 0, 100% 100%);
-		pointer-events: none;
-	}
-	.chevron__right::after {
-		@apply bg-gray-200 dark:bg-gray-700;
-		right: -16px;
-		z-index: -1;
-	}
 	.overlay {
 		-webkit-mask-image: linear-gradient(180deg,#000 65%,transparent);
 		mask-image: linear-gradient(180deg,#000 65%,transparent);
