@@ -31,7 +31,11 @@
           <NuxtLink :to="`/user/${user.user.name}`" class="flex space-x-2">
             <img class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200" :src="user.user.avatar"/>
             <div class="flex flex-col justify-center leading-normal">
-              <strong class="text-secondary text-sm">{{ user.user.name }}</strong>
+              <div class="flex">
+                <strong class="text-sm">{{ user.user.name }}</strong>
+                <!-- Role -->
+                <span v-if="user.user.admin" class="ml-1 badge badge-blue">Admin</span>
+              </div>
               <small class="text-gray-400 block">
                 Since
                 <span class="font-medium">
