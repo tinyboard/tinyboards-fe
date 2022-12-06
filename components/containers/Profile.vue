@@ -80,7 +80,7 @@
 					<h1 class="text-gray-100 text-2xl leading-5 font-bold">
 						{{ user.username }}
 					</h1>
-					<!-- Title -->
+					<!-- Role -->
 					<span v-if="item.creator.admin" class="ml-1 badge badge-large badge-blue">Admin</span>
 				</div>
 				<p class="mt-2 text-gray-100 lg:w-4/5 xl:w-3/5">

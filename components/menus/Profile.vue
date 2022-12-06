@@ -30,14 +30,15 @@
         <MenuItem v-slot="{ active, close }">
           <NuxtLink :to="`/user/${v.name}`" class="flex items-center p-4" @click="close">
             <!-- User Avatar -->
-            <img class="w-12 h-12 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
-            <div class="pl-3 truncate">
+            <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
+            <div class="pl-2 truncate">
               <!-- Username -->
-              <div class="text-gray-900 font-semibold leading-4">
-                {{ v.name }}
-              </div>
+              <p class="text-sm text-gray-900 leading-normal">
+                <strong>{{ v.name }}</strong>
+                <span v-if="v.admin" class="ml-1 badge badge-blue">Admin</span>
+              </p>
               <!-- User Reputation -->
-              <div class="flex items-center space-x-1 text-xs mt-1">
+              <div class="flex items-center space-x-1 text-xs">
                 <span class="text-yellow-500">&#9733;</span>
                 <span class="text-gray-600">
                   2.4M reputation
