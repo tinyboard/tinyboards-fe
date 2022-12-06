@@ -8,7 +8,7 @@
                   loading="lazy"
                   :src="item.creator.avatar"
                   alt="avatar"
-                  class="flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white group-hover:bg-gray-200 group-hover:border-transparent"
+                  class="flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200 hover:border-transparent"
                   />
                   <!-- Username -->
                   <strong class="ml-2">
