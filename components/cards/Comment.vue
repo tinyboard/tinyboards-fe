@@ -114,7 +114,7 @@
 					</button>
 				</li>
 				<li v-if="isAuthor && isAdmin">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
+					<button class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400" @click="confirmDelete">
 						Remove
 					</button>
 				</li>

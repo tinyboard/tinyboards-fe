@@ -188,7 +188,7 @@
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="pin">
+						<button class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600" @click="pin">
 							<!-- Pin Icon -->
 							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -208,7 +208,7 @@
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmRemove">
+						<button class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600" @click="confirmRemove">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"></path>
