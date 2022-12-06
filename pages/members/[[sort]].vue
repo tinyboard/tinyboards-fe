@@ -24,7 +24,11 @@
 							<div class="flex items-center space-x-2">
 								<img class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200" :src="member.user.avatar"/>
 								<div class="flex flex-col justify-center">
-									<strong class="text-gray-900 text-sm">{{ member.user.name }}</strong>
+									<div class="flex">
+										<strong class="text-gray-900 text-sm">{{ member.user.name }}</strong>
+										<!-- Role -->
+										<span v-if="member.user.admin" class="ml-1 badge badge-blue">Admin</span>
+									</div>
 									<!-- New or Old -->
 									<small v-if="sort === 'new' || sort === 'old'" class="text-gray-400 block">
 										Since

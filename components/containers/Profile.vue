@@ -81,7 +81,7 @@
 						{{ user.username }}
 					</h1>
 					<!-- Role -->
-					<span v-if="item.creator.admin" class="ml-1 badge badge-large badge-blue">Admin</span>
+					<span v-if="user.is_admin" class="ml-2 badge badge-large badge-blue">Admin</span>
 				</div>
 				<p class="mt-2 text-gray-100 lg:w-4/5 xl:w-3/5">
 					True story I saw Andrew Tate at a McDonalds and he no kidding was dressed aa a Femboy cat girl. He recognised that I recognised him, then hurried away so I followed him. I saw him get into a pink bugatti and start crying so I went over but when he saw me he just smiled and meowed.
