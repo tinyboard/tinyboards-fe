@@ -87,11 +87,11 @@
 		@apply text-white bg-primary border border-black/40 hover:bg-opacity-90;
 	}
 	.button.white {
-		text-shadow: 0 1px 0 rgba(255,255,255,.4);
+		text-shadow: 0 1px 0 rgba(255,255,255,1);
 		@apply text-gray-700 bg-white border hover:text-gray-900 hover:bg-opacity-90;
 	}
 	.button.gray {
-		text-shadow: 0 1px 0 rgba(255,255,255,.4);
+		text-shadow: 0 1px 0 rgba(255,255,255,1);
 		@apply text-gray-700 bg-gray-100 border hover:text-gray-900 hover:bg-opacity-90;
 	}
 	.button.outline-white {
