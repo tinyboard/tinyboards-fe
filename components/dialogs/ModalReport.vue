@@ -9,7 +9,7 @@
       <div class="fixed inset-0 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4 text-center">
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
-            <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all">
+            <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
                 Report this {{ type ?? 'post' }}?
               </DialogTitle>
@@ -19,7 +19,7 @@
                 </p>
               </div>
               <div class="mt-4 flex space-x-2 justify-end">
-                <button type="button" class="button white" @click="modalStore.closeModal">
+                <button type="button" class="button gray" @click="modalStore.closeModal">
                   Cancel
                 </button>
                 <button class="button primary" @click="submitReport">
