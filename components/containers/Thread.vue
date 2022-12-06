@@ -24,7 +24,7 @@
 			<div class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
 				<div class="flex items-center w-full overflow-x-auto">
 					<!-- Avatar -->
-					<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="mr-2">
+					<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`">
 						<img
 						loading="lazy"
 						:src="item.creator.avatar || 'http://placekitten.com/200/300'"
@@ -38,16 +38,14 @@
 					loading="lazy"
 					src=""
 					alt="avatar"
-					class="mr-2 flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
+					class="flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
 					/>
-					<div class="flex flex-col leading-normal">
-						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm font-bold">
-							{{ item.creator.name }}
-							<!-- Title -->
-							<span v-if="item.creator.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
-								{{ item.creator.title }}
-							</span>
+					<div class="flex flex-col leading-normal ml-2">
+						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm">
+							<!-- Username -->
+							<strong>{{ item.creator.name }}</strong>
 							<!-- Role -->
+							<span v-if="item.creator.admin" class="ml-1 badge badge-blue">Admin</span>
 						</NuxtLink>
 						<span v-else class="text-sm text-gray-400 dark:text-gray-400 font-bold">
 							deleted user
@@ -143,29 +141,6 @@
 							</svg>
 						</button>
 					</li>
-					<li v-if="item.post.body.length > 800 && item.post.body_html" class="ml-6">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="isExpanded = !isExpanded">
-							<!-- Arrows In Icon -->
-							<svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<path d="M18 10h-4v-4"></path>
-								<path d="M20 4l-6 6"></path>
-								<path d="M6 14h4v4"></path>
-								<path d="M10 14l-6 6"></path>
-							</svg>
-							<!-- Arrows Out Icon -->
-							<svg v-show="!isExpanded" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<polyline points="16 4 20 4 20 8"></polyline>
-								<line x1="14" y1="10" x2="20" y2="4"></line>
-								<polyline points="8 20 4 20 4 16"></polyline>
-								<line x1="4" y1="20" x2="10" y2="14"></line>
-							</svg>
-							<span class="text-sm font-medium w-12">
-								{{ isExpanded ? 'Collapse' : 'Expand' }}
-							</span>
-						</button>
-					</li>
 					<li class="ml-6 hidden sm:list-item">
 						<NuxtLink :to="`/post/${item.post.id}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
@@ -225,7 +200,7 @@
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
 							</svg>
-							<span class="text-sm font-medium">Flag</span>
+							<span class="text-sm font-medium">Report</span>
 						</button>
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
@@ -241,7 +216,7 @@
 							<span class="text-sm font-medium">Delete</span>
 						</button>
 					</li>
-					<li v-if="!isAdmin" class="ml-6 hidden lg:list-item">
+					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="pin">
 							<!-- Pin Icon -->
 							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -261,7 +236,7 @@
 							<span class="text-sm font-medium">{{ item.post.stickied ? 'Unpin' : 'Pin' }}</span>
 						</button>
 					</li>
-					<li v-if="!isAdmin" class="ml-6 hidden lg:list-item">
+					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmRemove">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

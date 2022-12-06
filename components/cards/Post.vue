@@ -22,7 +22,7 @@
 				<!-- Author -->
 				<div v-if="item.creator" scope="row" class="flex items-center text-gray-900 dark:text-white">
 					<div class="flex flex-col sm:truncate">
-						<p class="flex items-center font-normal text-sm text-gray-400">
+						<p class="flex items-center font-normal text-sm text-gray-400 leading-normal">
 							<NuxtLink :to="`/user/${item.creator.name}`" class="flex items-center">
 								<!-- Avatar - Mobile or Compact Only -->
 								<img
@@ -31,8 +31,10 @@
 								alt="avatar"
 								class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded-sm"
 								/>
-								<!-- User Name -->
+								<!-- Username -->
 								<strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
+								<!-- Role -->
+								<span v-if="item.creator.admin" class="ml-1 badge badge-blue">Admin</span>
 							</NuxtLink>
 							<!-- User Title -->
 							<span v-if="item.creator && item.creator.title" class="ml-2 px-1 inline-flex leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
@@ -87,7 +89,7 @@
 							</svg>
 						</button>
 					</li>
-					<li v-if="item.post.body.length > 800 && item.post.body_html" class="ml-6">
+					<li v-if="item.post.body.length > 800 && item.post.body_html" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="isExpanded = !isExpanded">
 							<!-- Arrows In Icon -->
 							<svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -169,7 +171,7 @@
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
 							</svg>
-							<span class="text-sm font-medium">Flag</span>
+							<span class="text-sm font-medium">Report</span>
 						</button>
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
@@ -185,7 +187,7 @@
 							<span class="text-sm font-medium">Delete</span>
 						</button>
 					</li>
-					<li v-if="!isAdmin" class="ml-6 hidden lg:list-item">
+					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="pin">
 							<!-- Pin Icon -->
 							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -205,7 +207,7 @@
 							<span class="text-sm font-medium">{{ item.post.stickied ? 'Unpin' : 'Pin' }}</span>
 						</button>
 					</li>
-					<li v-if="!isAdmin" class="ml-6 hidden lg:list-item">
+					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmRemove">
 							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

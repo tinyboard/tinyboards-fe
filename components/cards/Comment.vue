@@ -21,11 +21,10 @@
 			<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
 				<div class="flex items-center" :class="{'mt-1 mb-1':!isCollapsed}">
 					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
-						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center font-bold text-sm">
-							{{ item.creator.name }}
-							<span v-if="item.creator.title" class="ml-1 px-1 inline-flex text-sm font-normal leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
-								{{ item.creator.title }}
-							</span>
+						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm">
+							<strong>{{ item.creator.name }}</strong>
+							<!-- Role -->
+							<span v-if="item.creator.admin" class="ml-1 badge badge-blue">Admin</span>
 						</NuxtLink>
 						<!-- Parent Context Link -->
 						<!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
@@ -99,14 +98,24 @@
 						{{ isSaved ? 'Unsave' : 'Save' }}
 					</button>
 				</li>
-				<li v-if="isAuthor">
+				<li v-if="isAuthed && isAuthor">
 					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="isEditing = !isEditing">
 						Edit
 					</button>
 				</li>
-				<li v-if="isAuthor">
+				<li v-if="isAuthed && isAuthor">
 					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
 						Delete
+					</button>
+				</li>
+				<li v-if="isAuthed && !isAuthor">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
+						Report
+					</button>
+				</li>
+				<li v-if="isAuthor && isAdmin">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
+						Remove
 					</button>
 				</li>
 			</ul>
@@ -232,6 +241,11 @@
       		return false
       	}
       });
+
+      // Admin
+      const isAdmin = computed(() => {
+		return !!userStore.user && userStore.user.admin
+	});
 
       // Edit
       const isEditing = ref(false);

@@ -115,7 +115,7 @@
 	}
 	/* Badges */
 	.badge {
-		@apply ml-2 px-1 py-0.5 inline-flex text-xs leading-none rounded-sm shadow-inner-white border
+		@apply ml-2 px-1 inline-flex text-xs font-normal rounded-sm shadow-inner-white border
 	}
 	.badge.badge-large {
 		@apply px-2 py-1 text-sm

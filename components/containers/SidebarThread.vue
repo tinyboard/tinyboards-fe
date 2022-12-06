@@ -2,7 +2,7 @@
     <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
       <!-- Author Details -->
       <div v-if="!item.post.deleted" class="p-4 border rounded-md shadow-inner-white">
-            <NuxtLink :to="`/user/${item.creator.name}`" class="group flex items-center space-x-2 mb-4 text-sm">
+            <NuxtLink :to="`/user/${item.creator.name}`" class="group flex items-center mb-4 text-sm">
                   <!-- Avatar -->
                   <img
                   loading="lazy"
@@ -11,9 +11,11 @@
                   class="flex-shrink-0 w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white group-hover:bg-gray-200 group-hover:border-transparent"
                   />
                   <!-- Username -->
-                  <strong>
+                  <strong class="ml-2">
                         {{ item.creator.name }}
                   </strong>
+                  <!-- Role -->
+                  <span v-if="item.creator.admin" class="ml-1 badge badge-blue">Admin</span>
             </NuxtLink>
             <div class="flex flex-wrap -m-2">
                   <div class="w-2/4 p-2 leading-normal">
