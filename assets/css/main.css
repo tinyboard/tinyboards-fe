@@ -118,7 +118,7 @@
 		@apply ml-2 px-1 inline-flex text-xs font-normal rounded-sm shadow-inner-white border
 	}
 	.badge.badge-large {
-		@apply px-2 py-1 text-sm
+		@apply px-2 py-0.5 text-sm
 	}
 	.badge.badge-red {
 		@apply text-red-700 bg-red-100 border-red-200

@@ -75,15 +75,13 @@
 			/>
 			<!-- Info -->
 			<div class="flex flex-col md:ml-4 mt-4 md:mt-0">
-				<div class="flex items-center space-x-2">
+				<div class="flex items-center">
 					<!-- Display Name -->
 					<h1 class="text-gray-100 text-2xl leading-5 font-bold">
 						{{ user.username }}
 					</h1>
 					<!-- Title -->
-					<span class="badge badge-large badge-blue">
-						developer
-					</span>
+					<span v-if="item.creator.admin" class="ml-1 badge badge-large badge-blue">Admin</span>
 				</div>
 				<p class="mt-2 text-gray-100 lg:w-4/5 xl:w-3/5">
 					True story I saw Andrew Tate at a McDonalds and he no kidding was dressed aa a Femboy cat girl. He recognised that I recognised him, then hurried away so I followed him. I saw him get into a pink bugatti and start crying so I went over but when he saw me he just smiled and meowed.
