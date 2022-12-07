@@ -13,7 +13,7 @@
                   <div class="col-span-full flex gap-6">
                         <div class="w-full">
                               <!-- Sorts & View Options -->
-                              <div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
+                              <div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-b sm:border sm:shadow-inner-white sm:rounded-md">
                                     <MenusSort isParams/>
                                     <div class="ml-auto flex space-x-2">
                                           <button class="ml-auto" @click="isCompact = false">
