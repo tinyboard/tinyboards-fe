@@ -50,7 +50,7 @@
 									</p>
 									<NuxtLink :to="`/user/${member.user.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
 										<img class="p-0.5 w-7 h-7 object-cover" :src="member.user.avatar"/>
-										<strong class="ml-2 text-secondary text-sm truncate">{{ member.user.name }}</strong>
+										<strong class="ml-2 text-gray-900 text-sm truncate">{{ member.user.name }}</strong>
 										<!-- Role -->
 										<span v-if="member.user.admin" class="ml-1 badge badge-blue">Admin</span>
 									</NuxtLink>
@@ -74,7 +74,7 @@
 									</p>
 									<NuxtLink :to="`/user/${member.user.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
 										<img class="p-0.5 w-7 h-7 object-cover" :src="member.user.avatar"/>
-										<strong class="ml-2 text-secondary text-sm truncate">{{ member.user.name }}</strong>
+										<strong class="ml-2 text-gray-900 text-sm truncate">{{ member.user.name }}</strong>
 										<!-- Role -->
 										<span v-if="member.user.admin" class="ml-1 badge badge-blue">Admin</span>
 									</NuxtLink>
@@ -103,7 +103,7 @@
 									</p>
 									<NuxtLink :to="`/user/${member.user.name}`" class="ml-3 w-2/4 flex flex-shrink-0 items-center">
 										<img class="p-0.5 w-7 h-7 object-cover" :src="member.user.avatar"/>
-										<strong class="ml-2 text-secondary text-sm truncate">{{ member.user.name }}</strong>
+										<strong class="ml-2 text-gray-900 text-sm truncate">{{ member.user.name }}</strong>
 										<!-- Role -->
 										<span v-if="member.user.admin" class="ml-1 badge badge-blue">Admin</span>
 									</NuxtLink>
