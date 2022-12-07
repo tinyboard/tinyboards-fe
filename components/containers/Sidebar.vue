@@ -23,12 +23,14 @@
       </p>
     </div>
     <div v-if="users">
-      <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
-        Newest Members
-        <NuxtLink to="/members" class="float-right inline-block text-sm font-normal">
+      <div class="flex items-end mb-3 pb-1 border-b">
+        <h2 class="font-bold leading-5 text-base">
+          Newest Members
+        </h2>
+        <NuxtLink to="/members" class="ml-auto text-sm font-normal">
           View all &#8594;
         </NuxtLink>
-      </h2>
+      </div>
       <ul class="flex flex-col space-y-2 divide-y divide-gray-200/50">
         <li v-for="user in users.members" :key="user.id" class="pt-2 first:pt-0">
           <NuxtLink :to="`/user/${user.user.name}`" class="flex space-x-2">
