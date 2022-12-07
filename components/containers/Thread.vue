@@ -93,13 +93,13 @@
 			</div>
 			<!-- Post Embed -->
 			<div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4" v-if="item.post.url && item.post.type !== 'image'">
-				<LinkPreview
+				<!-- <LinkPreview
 				:domain="'post.domain placeholder'"
 				:title="'post.metaTitle placeholder'"
 				:thumbnail="'post.thumbUrl placeholder'"
 				:url="item.post.url"
 				:preview="'post.metaDescription placeholder'"
-				/>
+				/> -->
 			</div>
 			<!-- Post Image -->
 			<div v-if="item.post.type === 'image'" class="flex justify-center mt-2.5 md:mt-4">
@@ -294,7 +294,7 @@
 				<!-- Comments -->
 				<ListsComments v-if="comments.length" :comments="comments" :offset="offset"/>
 				<!-- Empty -->
-				<div v-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
+				<div v-else-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
 					<p>
 						This post sucks so bad, no one's bothered to reply to it.
 						<br>
@@ -302,7 +302,7 @@
 					</p>
 				</div>
 				<!-- Error -->
-				<div v-else-if="commentsError" class="px-4 py-24 text-center text-gray-400">
+				<div v-else class="px-4 py-24 text-center text-gray-400">
 					<p>An unknown error occured.</p>
 				</div>
 			</div>
