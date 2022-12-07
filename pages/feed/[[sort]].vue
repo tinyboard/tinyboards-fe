@@ -14,7 +14,7 @@
                         <div class="w-full">
                               <!-- Sorts & View Options -->
                               <div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-b sm:border sm:shadow-inner-white sm:rounded-md">
-                                    <MenusSort isParams/>
+                                    <MenusSort/>
                                     <div class="ml-auto flex space-x-2">
                                           <button class="ml-auto" @click="isCompact = false">
                                                 <!-- Rows Icon -->

@@ -436,19 +436,23 @@
 	const sorts = [
 	{
 		name: 'Hot',
-		key: 'hot'
+		key: 'hot',
+		href: { query: { ...route.query, sort: 'hot' } }
 	},
 	{
 		name: 'Latest',
-		key: 'new'
+		key: 'new',
+		href: { query: { ...route.query, sort: 'new' } }
 	},
 	{
 		name: 'Oldest',
-		key: 'old'
+		key: 'old',
+		href: { query: { ...route.query, sort: 'old' } }
 	},
 	{
 		name: 'Top All',
-		key: 'top'
+		key: 'top',
+		href: { query: { ...route.query, sort: 'top' } }
 	}
 	]
 </script>

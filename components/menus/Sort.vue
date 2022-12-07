@@ -29,10 +29,7 @@
   <div class="py-2">
     <!-- Menu Item -->
     <MenuItem v-slot="{ active, close }" v-for="(item, index) in sorts" :key="index">
-      <NuxtLink v-if="isParams" :to="{ params: { sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
-        {{ item.name }}
-      </NuxtLink>
-      <NuxtLink v-else :to="{ query: { ...route.query, sort: item.key } }" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
+      <NuxtLink :to="item.href" :class="[index === selectedSort ? 'font-medium text-secondary' : 'font-normal text-gray-700',{ 'bg-gray-100':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
         {{ item.name }}
       </NuxtLink>
     </MenuItem>
@@ -61,31 +58,38 @@
       default: [
         {
           name: 'Hot',
-          key: 'hot'
+          key: 'hot',
+          href: { params: { sort: 'hot' } }
         },
         {
           name: 'Latest',
-          key: 'new'
+          key: 'new',
+          href: { params: { sort: 'new' } }
         },
         {
           name: 'Top All',
-          key: 'topall'
+          key: 'topall',
+          href: { params: { sort: 'topall' } }
         },
         {
           name: 'Top Month',
-          key: 'topmonth'
+          key: 'topmonth',
+          href: { params: { sort: 'topmonth' } }
         },
         {
           name: 'Top Week',
-          key: 'topweek'
+          key: 'topweek',
+          href: { params: { sort: 'topweek' } }
         },
         {
           name: 'Most Comments',
-          key: 'mostcomments'
+          key: 'mostcomments',
+          href: { params: { sort: 'mostcomments' } }
         },
         {
           name: 'Latest Comments',
-          key: 'newcomments'
+          key: 'newcomments',
+          href: { params: { sort: 'newcomments' } }
         }
       ]
     }

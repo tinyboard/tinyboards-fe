@@ -162,31 +162,38 @@
 	const postSorts = [
 	{
 		name: 'Hot',
-		key: 'hot'
+		key: 'hot',
+		href: { query: { ...route.query, sort: 'hot' } }
 	},
 	{
 		name: 'Latest',
-		key: 'new'
+		key: 'new',
+		href: { query: { ...route.query, sort: 'new' } }
 	},
 	{
 		name: 'Top All',
-		key: 'topall'
+		key: 'topall',
+		href: { query: { ...route.query, sort: 'topall' } }
 	},
 	{
 		name: 'Top Month',
-		key: 'topmonth'
+		key: 'topmonth',
+		href: { query: { ...route.query, sort: 'topmonth' } }
 	},
 	{
 		name: 'Top Week',
-		key: 'topweek'
+		key: 'topweek',
+		href: { query: { ...route.query, sort: 'topweek' } }
 	},
 	{
 		name: 'Most Comments',
-		key: 'mostcomments'
+		key: 'mostcomments',
+		href: { query: { ...route.query, sort: 'mostcomments' } }
 	},
 	{
 		name: 'Latest Comments',
-		key: 'newcomments'
+		key: 'newcomments',
+		href: { query: { ...route.query, sort: 'newcomments' } }
 	}
 	]
 
@@ -194,19 +201,23 @@
 	const commentSorts = [
 	{
 		name: 'Hot',
-		key: 'hot'
+		key: 'hot',
+		href: { query: { ...route.query, sort: 'hot' } }
 	},
 	{
 		name: 'Latest',
-		key: 'new'
+		key: 'new',
+		href: { query: { ...route.query, sort: 'new' } }
 	},
 	{
 		name: 'Oldest',
-		key: 'old'
+		key: 'old',
+		href: { query: { ...route.query, sort: 'old' } }
 	},
 	{
 		name: 'Top All',
-		key: 'top'
+		key: 'top',
+		href: { query: { ...route.query, sort: 'top' } }
 	}
 	]
 </script>
