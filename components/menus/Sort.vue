@@ -47,9 +47,6 @@
   const route = useRoute();
 
   const props = defineProps({
-    isParams: {
-      type: Boolean
-    },
     isLeft: {
       type: Boolean
     },

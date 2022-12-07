@@ -17,8 +17,8 @@
 		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 			<!-- Profile Details -->
 			<div class="col-span-full bg-gray-200/50 sm:rounded-md sm:border sm:shadow-inner-white">
-				<div class="flex items-center space-x-4 p-2.5 sm:p-4 text-sm text-gray-500 leading-normal">
-					<ul class="flex flex-grow items-center text-sm text-gray-400">
+				<div class="hidden sm:flex items-center space-x-4 p-2.5 sm:p-4 text-sm text-gray-500 leading-normal">
+					<ul class="hidden sm:flex flex-grow items-center text-sm text-gray-400">
 						<li class="flex items-center">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -103,24 +103,27 @@
 						<p class="mt-2.5 lg:w-4/5 xl:w-3/5" :class="!user.bio ? 'text-gray-400 italic' : 'text-gray-100'">
 							{{ user.bio || 'No bio...' }}
 						</p>
+						<small class="mt-2 text-gray-300">
+							Joined {{ format(parseISO(user.created_at), 'MMM dd, yyyy') }}
+						</small>
 						<!-- Mobile Stats -->
 						<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-2.5 pt-2.5 md:pt-0">
 							<li>
 								<span>
-									Reputation
 									<strong>{{ reputation }}</strong>
+									Reputation
 								</span>
 							</li>
 							<li class="ml-4">
 								<span>
-									Posts
 									<strong>{{ user.posts_count }}</strong>
+									{{ user.posts_count === 1 ? 'Post' : 'Posts' }}
 								</span>
 							</li>
 							<li class="ml-4">
 								<span>
-									Comments
 									<strong>{{ user.comments_count }}</strong>
+									{{ user.comments_count === 1 ? 'Comment' : 'Comments' }}
 								</span>
 							</li>
 						</ul>
@@ -132,9 +135,31 @@
 		<section v-if="!user.is_deleted && !user.is_banned" class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
 			<div class="col-span-full flex gap-6">
 				<div class="w-full">
+					<!-- Sorts & View Options -->
+					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-b sm:border sm:shadow-inner-white sm:rounded-md">
+						<MenusSort/>
+						<div class="ml-auto flex space-x-2">
+							<button class="ml-auto" @click="isCompact = false">
+								<!-- Rows Icon -->
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+									<rect x="4" y="4" width="16" height="6" rx="2"></rect>
+									<rect x="4" y="14" width="16" height="6" rx="2"></rect>
+								</svg>
+							</button>
+							<button class="ml-auto" @click="isCompact = true">
+								<!-- Cards Icon -->
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+									<rect x="4" y="4" width="16" height="16" rx="2"></rect>
+									<line x1="4" y1="12" x2="20" y2="12"></line>
+								</svg>
+							</button>
+						</div>
+					</div>
 					<!-- Posts -->
-					<TablesPosts v-if="posts" :posts="posts" :title="sort" :isLoading="pending"/>
-					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-b sm:border sm:rounded-md sm:shadow-inner-xs">
+					<ListsPosts v-if="posts" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
 								{{ user.username }} has made no {{ posts ? 'posts' : 'comments' }}
@@ -167,6 +192,8 @@
 
 	const route = useRoute();
 
+	const isCompact = ref(false);
+
 	const reputation = computed(() => {
 		const u = props.user;
 		const score = u.posts_score + u.comments_score;
@@ -182,24 +209,24 @@
 		{ name: 'Posts', href: `/user/${route.params.username}/posts` },
 		{ name: 'Comments', href: `/user/${route.params.username}/comments` }
 		]
-	</script>
+</script>
 
-	<style scoped>
-		#details > * {
-			z-index: 10;
-		}
-		#details::before {
-			content: '';
-			background: rgba(0,0,0,0.9);
-			background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.9) 60%);
-			position: absolute;
-			height: 100%;
-			width: 100%;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			z-index: 0;
-			@apply sm:rounded-b-lg;
-		}
-	</style>
+<style scoped>
+	#details > * {
+		z-index: 10;
+	}
+	#details::before {
+		content: '';
+		background: rgba(0,0,0,0.9);
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.9) 60%);
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		z-index: 0;
+		@apply sm:rounded-b-lg;
+	}
+</style>
