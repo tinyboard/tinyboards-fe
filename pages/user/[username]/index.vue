@@ -16,10 +16,6 @@
 
 	const route = useRoute();
 
-	// Import profile components.
-	// const Profile = defineAsyncComponent(() => import('@/components/containers/Profile'));
-    // const ProfileRemoved = defineAsyncComponent(() => import('@/components/containers/ProfileRemoved'));
-
 	// User
 	const username = computed(() => route.params.username);
 
