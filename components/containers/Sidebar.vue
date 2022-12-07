@@ -27,7 +27,7 @@
         <h2 class="font-bold leading-5 text-base">
           Newest Members
         </h2>
-        <NuxtLink to="/members" class="ml-auto text-sm font-normal">
+        <NuxtLink to="/members" class="ml-auto text-sm font-normal hover:underline">
           View all &#8594;
         </NuxtLink>
       </div>
