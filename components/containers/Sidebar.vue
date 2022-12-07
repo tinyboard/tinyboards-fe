@@ -25,6 +25,9 @@
     <div v-if="users">
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
         Newest Members
+        <NuxtLink to="/members" class="float-right inline-block text-sm font-normal">
+          View all &#8594;
+        </NuxtLink>
       </h2>
       <ul class="flex flex-col space-y-2 divide-y divide-gray-200/50">
         <li v-for="user in users.members" :key="user.id" class="pt-2 first:pt-0">
