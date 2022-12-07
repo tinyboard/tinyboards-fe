@@ -103,7 +103,7 @@
 						<p class="mt-2.5 lg:w-4/5 xl:w-3/5" :class="!user.bio ? 'text-gray-400 italic' : 'text-gray-100'">
 							{{ user.bio || 'No bio...' }}
 						</p>
-						<small class="mt-2 text-gray-300">
+						<small class="sm:hidden mt-2 text-gray-300">
 							Joined {{ format(parseISO(user.created_at), 'MMM dd, yyyy') }}
 						</small>
 						<!-- Mobile Stats -->
