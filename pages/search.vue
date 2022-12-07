@@ -79,7 +79,7 @@
 						</p>
 					</div>
 					<!-- Error State -->
-					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
+					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-b sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
 								There was an error fetching results for "{{ route.query.query }}".

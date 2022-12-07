@@ -134,6 +134,15 @@
 				<div class="w-full">
 					<!-- Posts -->
 					<TablesPosts v-if="posts" :posts="posts" :title="sort" :isLoading="pending"/>
+					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-b sm:border sm:rounded-md sm:shadow-inner-xs">
+						<p>
+							<span class="font-medium">
+								{{ user.username }} has made no {{ posts ? 'posts' : 'comments' }}
+							</span>
+							<br/>
+							They must not be that interesting.
+						</p>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -172,25 +181,25 @@
 		{ name: 'Overview', href: `/user/${route.params.username}`},
 		{ name: 'Posts', href: `/user/${route.params.username}/posts` },
 		{ name: 'Comments', href: `/user/${route.params.username}/comments` }
-	]
-</script>
+		]
+	</script>
 
-<style scoped>
-	#details > * {
-		z-index: 10;
-	}
-	#details::before {
-		content: '';
-		background: rgba(0,0,0,0.9);
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.9) 60%);
-		position: absolute;
-		height: 100%;
-		width: 100%;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		z-index: 0;
-		@apply sm:rounded-b-lg;
-	}
-</style>
+	<style scoped>
+		#details > * {
+			z-index: 10;
+		}
+		#details::before {
+			content: '';
+			background: rgba(0,0,0,0.9);
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.9) 60%);
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: 0;
+			@apply sm:rounded-b-lg;
+		}
+	</style>

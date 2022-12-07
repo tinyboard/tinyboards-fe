@@ -4,7 +4,7 @@
 		<div v-if="messages.length">
 		</div>
 		<!-- Empty State -->
-		<div v-else class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
+		<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-b sm:border sm:rounded-md sm:shadow-inner-xs">
 			<p>
 				<span class="font-medium">
 					There are no messages in your inbox...
