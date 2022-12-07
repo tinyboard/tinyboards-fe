@@ -24,12 +24,12 @@
 					<div class="flex flex-col sm:truncate">
 						<p class="flex items-center font-normal text-sm text-gray-400 leading-normal">
 							<NuxtLink :to="`/user/${item.creator.name}`" class="flex items-center">
-								<!-- Avatar - Mobile or Compact Only -->
+								<!-- Avatar (mobile only) -->
 								<img
 								loading="lazy"
 								:src="item.creator.avatar || 'http://placekitten.com/200/300'"
 								alt="avatar"
-								class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded-sm"
+								class="sm:hidden flex-shrink-0 w-6 h-6 object-cover"
 								/>
 								<!-- Username -->
 								<strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
