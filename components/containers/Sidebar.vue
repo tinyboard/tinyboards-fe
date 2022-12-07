@@ -6,20 +6,12 @@
         Art submission by Elon
       </small>
     </div>
-    <!-- <NuxtLink to="/submit" class="button primary flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
-        <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
-      </svg>
-      <span>New post</span>
-    </NuxtLink> -->
     <div>
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
         About
       </h2>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Welcome to tinyboards.net. This is a cozy little corner of the Internet where we discuss the intersection of technology and society.
       </p>
     </div>
     <div v-if="users">
