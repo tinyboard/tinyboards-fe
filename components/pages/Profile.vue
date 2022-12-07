@@ -133,7 +133,7 @@
 			<div class="col-span-full flex gap-6">
 				<div class="w-full">
 					<!-- Posts -->
-					<TablesPosts v-if="type !== 'comment' && posts.length" :posts="posts" :title="sort" :isLoading="pending"/>
+					<TablesPosts v-if="posts" :posts="posts" :title="sort" :isLoading="pending"/>
 				</div>
 			</div>
 		</section>
@@ -150,7 +150,9 @@
 		},
 		posts: {
 			type: Array,
-			required: true
+		},
+		comments: {
+			type: Array,
 		}
 	});
 
