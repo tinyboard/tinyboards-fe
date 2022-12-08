@@ -274,7 +274,7 @@
 		<div class="order-last flex flex-col">
 			<!-- Comment Count & Sort Menu -->
 			<div class="flex items-center sm:mb-4 p-2.5 sm:p-4 bg-gray-100 sm:border sm:shadow-inner-white sm:rounded-md">
-				<strong class="text-base leading-4 font-bold dark:text-gray-100">
+				<strong class="text-base leading-4 dark:text-gray-100">
 					{{ item.counts.comments === 1 ? '1 comment' : `${item.counts.comments} comments` }}
 				</strong>
 				<MenusSort :sorts="sorts" isLeft class="ml-auto"/>
