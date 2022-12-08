@@ -164,7 +164,7 @@
 								{{ user.username }} has made no {{ posts ? 'posts' : 'comments' }}
 							</span>
 							<br/>
-							They must not be that interesting.
+							They must not be that interesting
 						</p>
 					</div>
 				</div>
