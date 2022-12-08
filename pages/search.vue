@@ -65,7 +65,7 @@
                         </div>
 					</div>
 					<!-- Posts -->
-					<TablesPosts v-if="type !== 'comment' && results.posts.length" :posts="results.posts" title="Results" :isLoading="pending"/>
+               <ListsPosts v-if="type !== 'comment' && results.posts.length" :posts="results.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
 					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
