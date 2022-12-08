@@ -17,7 +17,7 @@
 			<div class="col-span-full flex gap-6">
 				<div class="w-full">
 					<!-- Filters -->
-					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-6 p-4 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
+					<div class="flex flex-col md:grid grid-cols-4 gap-3 justify-between mb-4 p-4 border-b sm:border sm:rounded-md bg-white sm:shadow-inner-xs">
 						<!-- Search Input -->
 						<div class="md:col-span-full">
 							<form class="group relative w-full" @submit.prevent="onSubmit" @submit="submitSearch(text)">
@@ -43,7 +43,7 @@
 						</div>
 					</div>
 					<!-- Sorts -->
-					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border-x shadow-inner-white sm:rounded-md">
+					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border shadow-inner-white sm:rounded-md">
 						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
 						<div v-if="type !== 'comment'" class="ml-auto flex space-x-2">
                               <button class="ml-auto" @click="isCompact = false">
@@ -69,7 +69,7 @@
 					<!-- Comments -->
 					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
-					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white md:border md:rounded-md md:shadow-inner-xs">
+					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
 								We could not find any {{ `${type}s` }} matching "{{ route.query.query }}"
@@ -79,7 +79,7 @@
 						</p>
 					</div>
 					<!-- Error State -->
-					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-b sm:border sm:rounded-md sm:shadow-inner-xs">
+					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
 								There was an error fetching results for "{{ route.query.query }}".
