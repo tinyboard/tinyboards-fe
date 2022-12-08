@@ -1,5 +1,5 @@
 <template>
-	<div class="flex sm:gap-4" :class="{'first:sm:rounded-t-md last:sm:rounded-b-md':isCompact}">
+	<div class="flex sm:gap-4" :class="[{'first:sm:rounded-t-md last:sm:rounded-b-md':isCompact},{'removed':item.post.removed}]">
 		<!-- Avatar - Desktop Only -->
 		<NuxtLink v-show="!isCompact" :to="`/user/${item.creator.name}`" class="sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
 			<img
@@ -9,7 +9,7 @@
 			class="w-16 h-16 object-cover p-0.5 border bg-white hover:bg-gray-200"
 			/>
 		</NuxtLink>
-		<div class="flex-grow p-2.5 sm:p-4 bg-white shadow-inner-white" :class="isCompact ? 'flex items-center hover:bg-gray-50 border-inherit' : 'border-y sm:border-x sm:rounded-md'">
+		<div class="flex-grow p-2.5 sm:p-4 shadow-inner-white" :class="[isCompact ? 'flex items-center hover:bg-gray-50 border-inherit' : 'border-y sm:border-x sm:rounded-md',item.post.removed ? 'bg-red-100 border-red-300' : 'bg-white']">
 			<NuxtLink v-show="isCompact" :to="`/user/${item.creator.name}`" class="hidden sm:flex flex-shrink-0">
 				<img
 				loading="lazy"
@@ -371,6 +371,9 @@
 		background-color: #FFFFFF;
 		transform: rotate(45deg);
 		@apply border-l border-b
+	}
+	.removed .arrow__right::before {
+		@apply bg-red-100 border-red-300;
 	}
 	.overlay {
 		-webkit-mask-image: linear-gradient(180deg,#000 65%,transparent);

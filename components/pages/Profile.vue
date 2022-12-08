@@ -71,7 +71,7 @@
 						</ul>
 					</div>
 					<!-- Details -->
-					<div id="details" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(https://i.imgur.com/HRYqKAf.jpg)` }">
+					<div id="details" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${user.banner_url})` }">
 						<!-- Avatar -->
 						<img
 						loading="lazy"
@@ -217,7 +217,7 @@
 	#details::before {
 		content: '';
 		background: rgba(0,0,0,0.9);
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.9) 60%);
+		background: linear-gradient(rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.8) 70%);
 		position: absolute;
 		height: 100%;
 		width: 100%;
