@@ -3,7 +3,7 @@
     <div class="p-2.5 bg-white border shadow-polaroid">
       <img class="w-full h-64 aspect-auto object-cover" :src="selectedImage"/>
       <small class="mt-4 block leading-none text-gray-400">
-        Art submission by Elon
+        Art submission by community members
       </small>
     </div>
     <div>

@@ -126,7 +126,7 @@
 					</li>
 					<li class="ml-auto sm:ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
 						<button @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
 							</svg>
@@ -135,7 +135,7 @@
 							{{ item.counts.score + voteType }}
 						</span>
 						<button @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z"></path>
 							</svg>
@@ -143,7 +143,7 @@
 					</li>
 					<li class="ml-6 hidden sm:list-item">
 						<NuxtLink :to="`/post/${item.post.id}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 							</svg>
@@ -152,7 +152,7 @@
 					</li>
 					<li class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
 								<rect x="9" y="3" width="6" height="4" rx="2"></rect>
@@ -163,12 +163,12 @@
 					<li class="ml-6 hidden md:list-item">
 						<button @click="save(item.post.id,'post')" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
-							<svg v-show="!item.ssaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="!item.ssaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
 							</svg>
 							<!-- Bookmark Slash Icon -->
-							<svg v-show="item.saved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="item.saved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="3" y1="3" x2="21" y2="21"></line>
 								<path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
@@ -179,13 +179,13 @@
 					<li class="ml-6 hidden md:list-item">
 						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bell Icon -->
-							<svg v-show="!item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="!item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path>
 								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
 							</svg>
 							<!-- Bell Slash Icon -->
-							<svg v-show="item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1">
+							<svg v-show="item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="3" y1="3" x2="21" y2="21"></line>
 								<path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
@@ -196,7 +196,7 @@
 					</li>
 					<li v-if="!isAuthor" class="ml-6 hidden md:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport">
-							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
 							</svg>
@@ -205,7 +205,7 @@
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="isEditing = !isEditing">
-							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
 							   <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
@@ -216,7 +216,7 @@
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete">
-							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="4" y1="7" x2="20" y2="7"></line>
 								<line x1="10" y1="11" x2="10" y2="17"></line>
@@ -230,14 +230,14 @@
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600" @click="pin">
 							<!-- Pin Icon -->
-							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
 							   <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
 							   <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
 							</svg>
 							<!-- Pin Off Icon -->
-							<svg v-show="item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<svg v-show="item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <line x1="3" y1="3" x2="21" y2="21"></line>
 							   <path d="M15 4.5l-3.249 3.249m-2.57 1.433l-2.181 .818l-1.5 1.5l7 7l1.5 -1.5l.82 -2.186m1.43 -2.563l3.25 -3.251"></path>
@@ -249,7 +249,7 @@
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600" @click="confirmRemove">
-							<svg xmlns="http://www.w3.org/2000/svg" class="opacity-70 group-hover:opacity-100 w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"></path>
 							   <path d="M6 9l4 4"></path>
