@@ -11,21 +11,21 @@
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
-                Delete this {{ type ?? 'post' }}?
+                Remove this {{ type ?? 'post' }}?
               </DialogTitle>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
-                  Your {{ type ?? 'post' }} will be forever removed from this TinyBoard.
+                  This {{ type ?? 'post' }} will be removed from this TinyBoard.
                   <br/>
-                  You won't be able to recover it.
+                  You can undo this action.
                 </p>
               </div>
               <div class="mt-4 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button primary" @click="deleteItem">
-                  Yes, delete this {{ type ?? 'post' }}
+                <button class="button primary" @click="removeItem">
+                  Yes, remove this {{ type ?? 'post' }}
                 </button>
               </div>
             </DialogPanel>
@@ -71,16 +71,18 @@
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
-  const deleteItem = async () => {
+  const removeItem = async () => {
     const type = props.type;
     const id = props.id;
 
-    await useFetch(`/${type}s/${id}`, {
+    await useFetch(`/mod/remove_${type}`, {
       baseURL,
       body: {
-          "deleted": true
+          [`${type}_id`]: id,
+          "reason": "Violating community rules.",
+          "removed": true
       },
-      method: "delete",
+      method: "post",
       headers: {
         Authorization: authCookie ? `Bearer ${authCookie}` : '',
       }
@@ -93,8 +95,8 @@
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`${type} deleted!`,
-            message:`Your ${type} was removed forever.`,
+            header:`${type} removed.`,
+            message:`The ${type} was removed.`,
             type:'success'
           });
         }, 400);
@@ -102,8 +104,8 @@
         // Show error toast.
         setTimeout(() => {
           toast.addNotification({
-            header:'Deletion failed',
-            message:`Failed to delete ${type}. Please try again.`,
+            header:'Removal failed',
+            message:`Failed to removed ${type}. Please try again.`,
             type:'error'
           });
         }, 400);

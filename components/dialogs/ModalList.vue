@@ -29,10 +29,12 @@
 	// Import modal components.
 	const modalDelete = defineAsyncComponent(() => import('@/components/dialogs/ModalDelete'));
 	const modalReport = defineAsyncComponent(() => import('@/components/dialogs/ModalReport'));
+	const modalRemove = defineAsyncComponent(() => import('@/components/dialogs/ModalRemove'));
 
 	// Object lookup to select modal.
 	const components = { 
 		'ModalDelete': modalDelete,
-		'ModalReport': modalReport
+		'ModalReport': modalReport,
+		'ModalRemove': modalRemove
 	};
 </script>

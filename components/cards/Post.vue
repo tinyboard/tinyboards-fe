@@ -333,7 +333,6 @@
 		modalStore.setModal({
 			modal: 'ModalDelete',
 			id: props.item.post.id,
-			contentType: 'post',
 			isOpen: true
 		});
 	};
@@ -343,7 +342,15 @@
 		modalStore.setModal({
 			modal: 'ModalReport',
 			id: props.item.post.id,
-			contentType: 'post',
+			isOpen: true
+		});
+	};
+
+	// Remove
+	const confirmRemove = () => {
+		modalStore.setModal({
+			modal: 'ModalRemove',
+			id: props.item.post.id,
 			isOpen: true
 		});
 	};

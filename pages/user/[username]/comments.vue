@@ -4,7 +4,6 @@
 
 <script setup>
 	import { useFetchUser } from '@/composables/user';
-	import { getListing } from '@/composables/posts';
 
 	// Import thread components.
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
