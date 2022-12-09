@@ -29,9 +29,6 @@ export const usePostsStore = defineStore('posts', {
           };
         }
       }
-    },
-    emptyPosts() {
-      this.posts = {}
-    },
+    }
   }
 });

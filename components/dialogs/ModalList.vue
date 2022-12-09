@@ -33,6 +33,7 @@
 	// Import modal components.
 	const modalDelete = defineAsyncComponent(() => import('@/components/dialogs/ModalDelete'));
 	const modalReport = defineAsyncComponent(() => import('@/components/dialogs/ModalReport'));
+	const modalSticky = defineAsyncComponent(() => import('@/components/dialogs/ModalSticky'));
 	const modalLock = defineAsyncComponent(() => import('@/components/dialogs/ModalLock'));
 	const modalRemove = defineAsyncComponent(() => import('@/components/dialogs/ModalRemove'));
 
@@ -40,6 +41,7 @@
 	const components = { 
 		'ModalDelete': modalDelete,
 		'ModalReport': modalReport,
+		'ModalSticky': modalSticky,
 		'ModalLock': modalLock,
 		'ModalRemove': modalRemove
 	};

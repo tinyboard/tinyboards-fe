@@ -1,7 +1,7 @@
 <template>
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Pinned Banner -->
-		<div v-if="item.counts.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
+		<div v-if="item.post.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
 			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
@@ -246,7 +246,7 @@
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
-						<button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600" @click="pin">
+						<button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600" @click="confirmSticky">
 							<!-- Pin Icon -->
 							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -466,6 +466,18 @@
 			id: props.item.post.id,
 			contentType: 'post',
 			isOpen: true
+		});
+	};
+
+	// Sticky
+	const confirmSticky = () => {
+		modalStore.setModal({
+			modal: 'ModalSticky',
+			id: props.item.post.id,
+			isOpen: true,
+			options: {
+				'isStickied': props.item.post.stickied,
+			}
 		});
 	};
 

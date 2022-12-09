@@ -11,11 +11,11 @@
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
-                {{ props.options.isLocked ? 'Unlock' : 'Lock' }} this post?
+                {{ props.options.isLocked ? 'Unpin' : 'Pin' }} this post?
               </DialogTitle>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
-                  Once {{ props.options.isLocked ? 'unlocked, the community will' : 'locked, the community will not' }} be able to reply.
+                  Pinned posts are visible at the top of the home feed.
                   <br/>
                   You can undo this action.
                 </p>
@@ -24,8 +24,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button" :class="props.options.isLocked ? 'green' : 'red'" @click="removeItem">
-                  Yes, {{ props.options.isLocked ? 'unlock' : 'lock' }} this post.
+                <button class="button" :class="props.options.isPinned ? 'red' : 'green'" @click="removeItem">
+                  Yes, {{ props.options.isStickied ? 'unpin' : 'pin' }} this post.
                 </button>
               </div>
             </DialogPanel>
@@ -69,17 +69,17 @@
 
   const item = computed(() => postsStore.getPost(props.id));
 
-  // Lock
+  // Sticky
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
   const removeItem = async () => {
     const id = item.value.post.id;
-    await useFetch(`/mod/lock_post`, {
+    await useFetch(`/mod/sticky_post`, {
       baseURL,
       body: {
           "post_id": id,
-          "locked": !props.options.isLocked
+          "stickied": !props.options.isStickied
       },
       method: "post",
       headers: {
@@ -90,15 +90,15 @@
       if (data.value) {
         // Update post state.
         postsStore.updatePost(id, {
-          locked: !props.options.isLocked
+          stickied: !props.options.isStickied
         });
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`Post ${props.options.isLocked ? 'unlocked' : 'locked'}.`,
-            message:`The post ${props.options.isLocked ? 'is unlocked. Replies are allowed' : 'is locked. Replies are not allowed'}.`,
+            header:`Post ${props.options.isStickied ? 'unpinned' : 'pinned'}.`,
+            message:`The post ${props.options.isStickied ? 'is not pinned anymore' : 'is pinned to the top'}.`,
             type:'success'
           });
         }, 400);
@@ -106,8 +106,8 @@
         // Show error toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`${props.options.isLocked ? 'Unlocking' : 'Locking'} failed`,
-            message:`Failed to ${props.options.isLocked ? 'unlock' : 'lock'} the post. Please try again.`,
+            header:`${props.options.isLocked ? 'Unpinning' : 'Pinning'} failed`,
+            message:`Failed to ${props.options.isStickied ? 'unpin' : 'pin'} the post. Please try again.`,
             type:'error'
           });
         }, 400);
