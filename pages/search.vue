@@ -65,7 +65,7 @@
                         </div>
 					</div>
 					<!-- Posts -->
-               <ListsPosts v-if="type !== 'comment' && results.posts.length" :posts="results.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+               <ListsPosts v-if="type !== 'comment' && postsStore.posts.length" :posts="postsStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
 					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
@@ -99,7 +99,8 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useRoute } from 'vue-router';
-	import { baseURL } from "@/server/constants";
+	import { baseURL } from '@/server/constants';
+	import { usePostsStore } from '@/stores/StorePosts';
 
 	// Define route & router.
 	const route = useRoute();
@@ -129,6 +130,9 @@
 	const type = ref(route.query.type);
 	const hasNsfw = ref(false);
 
+	// Posts store.
+	const postsStore = usePostsStore();
+
 	// Fetch search results.
 	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
@@ -140,6 +144,8 @@
 		},
 		baseURL
 	});
+
+	postsStore.posts = results.value.posts;
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 

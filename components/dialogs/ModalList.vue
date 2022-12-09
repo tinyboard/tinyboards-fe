@@ -1,6 +1,6 @@
 <template>
 	<!-- Modals -->
-	<component v-if="modal" :is-open="isOpen" :id="id" :type="type" :is="components[modal]"/>
+	<component v-if="modal" :is-open="isOpen" :id="id" :type="type" :options="options" :is="components[modal]"/>
 </template>
 
 <script setup>
@@ -22,6 +22,10 @@
 		return store.contentType
 	});
 
+	const options = computed(() => {
+		return store.options
+	});
+
 	const isOpen = computed(() => {
 		return store.isOpen
 	});
@@ -29,12 +33,14 @@
 	// Import modal components.
 	const modalDelete = defineAsyncComponent(() => import('@/components/dialogs/ModalDelete'));
 	const modalReport = defineAsyncComponent(() => import('@/components/dialogs/ModalReport'));
+	const modalLock = defineAsyncComponent(() => import('@/components/dialogs/ModalLock'));
 	const modalRemove = defineAsyncComponent(() => import('@/components/dialogs/ModalRemove'));
 
 	// Object lookup to select modal.
 	const components = { 
 		'ModalDelete': modalDelete,
 		'ModalReport': modalReport,
+		'ModalLock': modalLock,
 		'ModalRemove': modalRemove
 	};
 </script>

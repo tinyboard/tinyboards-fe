@@ -35,7 +35,7 @@
                                     </div>
                               </div>
                               <!-- Posts -->
-                              <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+                              <ListsPosts :posts="postsStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
                               <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
                               <!-- Pagination -->
                               <div v-if="posts.length" class="w-full mt-4 px-2.5 sm:px-0">
@@ -94,6 +94,7 @@
 
 <script setup>
       import { computed, ref } from 'vue';
+      import { usePostsStore } from '@/stores/StorePosts';
       import { getListing } from '@/composables/posts';
 
       const router = useRouter();
@@ -113,6 +114,9 @@
             router.push(`${route.path}?page=${page}`)
       };
 
+      // Posts store
+      const postsStore = usePostsStore();
+
       // Fetch posts
       const sorts = ['hot','new','topall','topmonth','topweek','topday','mostcomments','newcomments'];
       const sort = computed(() => {
@@ -124,6 +128,8 @@
             limit: 25,
             page: page
       }, 'posts');
+
+      postsStore.posts = posts;
 
       // Watch for sort change and refetch.
       // const stopWatch = watch(() => route, () => {

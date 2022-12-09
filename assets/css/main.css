@@ -68,6 +68,9 @@
 
 @layer components {
 	/* Buttons */
+	button {
+		@apply disabled:cursor-not-allowed;
+	}
 	.button {
 		box-shadow: inset 0 1px 0 0 rgba(255,255,255,.4);
 		text-shadow: 0 -1px 0 rgba(0,0,0,.25);
@@ -93,6 +96,12 @@
 	.button.gray {
 		text-shadow: 0 1px 0 rgba(255,255,255,1);
 		@apply text-gray-700 bg-gray-100 border hover:text-gray-900 hover:bg-opacity-90;
+	}
+	.button.green {
+		@apply text-white bg-green-600 border border-black/40 hover:bg-opacity-90;
+	}
+	.button.red {
+		@apply text-white bg-red-600 border border-black/40 hover:bg-opacity-90;
 	}
 	.button.outline-white {
 		text-shadow: 0 1px 0 rgba(255,255,255,.25);
@@ -129,5 +138,19 @@
 	}
 	.badge.badge-blue {
 		@apply text-blue-700 bg-blue-100 border-blue-200
+	}
+	/* Voting */
+	.upvoted > svg {
+		fill: rgba(var(--color-primary));
+	}
+	.upvote:active > svg, .downvote:active > svg {
+		transform: translateY(-8px);
+		transition: transform 200ms cubic-bezier(.1,-.5,.6,1.2);
+	}
+	.downvote:active > svg {
+		transform: translateY(8px);
+	}
+	.downvoted > svg {
+		fill: rgba(var(--color-secondary));
 	}
 }

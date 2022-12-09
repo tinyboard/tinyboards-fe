@@ -15,7 +15,7 @@
               </DialogTitle>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
-                  This {{ type ?? 'post' }} will be removed from this TinyBoard.
+                  This {{ type ?? 'post' }} will be removed and invisible to the community.
                   <br/>
                   You can undo this action.
                 </p>
@@ -24,7 +24,7 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button primary" @click="removeItem">
+                <button class="button red" @click="removeItem">
                   Yes, remove this {{ type ?? 'post' }}
                 </button>
               </div>
@@ -67,7 +67,7 @@
 
   const modalStore = useModalStore();
 
-  // Deletion
+  // Removal
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 

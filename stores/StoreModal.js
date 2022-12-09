@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export const useModalStore = defineStore('modal', {
   // State
@@ -7,7 +7,8 @@ export const useModalStore = defineStore('modal', {
       modal: null,
       id: null,
       contentType: 'post',
-      isOpen: false
+      isOpen: false,
+      options: {}
     }
   },
   // Actions
@@ -17,6 +18,7 @@ export const useModalStore = defineStore('modal', {
       this.id = modal.id;
       this.contentType = modal.contentType;
       this.isOpen = modal.isOpen;
+      this.options = modal.options;
     },
     closeModal() {
       this.isOpen = false;

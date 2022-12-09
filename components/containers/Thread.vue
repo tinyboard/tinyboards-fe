@@ -2,7 +2,7 @@
 	<div class="relative w-full flex flex-col sm:space-y-6">
 		<!-- Pinned Banner -->
 		<div v-if="item.counts.stickied" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
-			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
 			   <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
@@ -15,6 +15,24 @@
 				<br/>
 				<p class="text-sm text-green-800">
 					This post is pinned by the admins. It is probably important.
+				</p>
+			</div>
+		</div>
+		<!-- Locked Banner -->
+		<div v-if="item.post.locked" class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
+			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+			   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+			   <circle cx="12" cy="16" r="1"></circle>
+			   <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+			</svg>
+			<div>
+				<strong>
+					Post locked
+				</strong>
+				<br/>
+				<p class="text-sm text-yellow-800">
+					This post was locked by the admins. Replies are disabled.
 				</p>
 			</div>
 		</div>
@@ -248,6 +266,25 @@
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
+						<button class="group flex items-center text-yellow-500 leading-none dark:text-gray-400 hover:text-yellow-600" @click="confirmLock">
+							<!-- Lock Icon -->
+							<svg v-show="!item.post.locked" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+							   <circle cx="12" cy="16" r="1"></circle>
+							   <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+							</svg>
+							<!-- Unlock Icon -->
+							<svg v-show="item.post.locked" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+							   <circle cx="12" cy="16" r="1"></circle>
+							   <path d="M8 11v-5a4 4 0 0 1 8 0"></path>
+							</svg>
+							<span class="text-sm font-medium">{{ item.post.locked ? 'Unlock' : 'Lock' }}</span>
+						</button>
+					</li>
+					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600" @click="confirmRemove">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -428,6 +465,27 @@
 			modal: 'ModalReport',
 			id: props.item.post.id,
 			contentType: 'post',
+			isOpen: true
+		});
+	};
+
+	// Lock
+	const confirmLock = () => {
+		modalStore.setModal({
+			modal: 'ModalLock',
+			id: props.item.post.id,
+			isOpen: true,
+			options: {
+				'isLocked': props.item.post.locked,
+			}
+		});
+	};
+
+	// Remove
+	const confirmRemove = () => {
+		modalStore.setModal({
+			modal: 'ModalRemove',
+			id: props.item.post.id,
 			isOpen: true
 		});
 	};

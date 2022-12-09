@@ -31,6 +31,7 @@
 <script setup>
       import { computed, defineAsyncComponent, ref } from 'vue';
       import { baseURL } from "@/server/constants";
+      import { usePostsStore } from '@/stores/StorePosts';
       import { usePost } from '@/composables/post';
       import { usePostComments } from '@/composables/comments';
 
@@ -39,22 +40,23 @@
             alias: ['/p/:id/:comment?','/post/:id/:comment?']
       });
 
-      let route = useRoute();
+      const route = useRoute();
 
       // Import thread components.
       const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
       const threadDeleted = defineAsyncComponent(() => import('@/components/containers/ThreadDeleted'));
 
+      // Posts store
+      const postsStore = usePostsStore();
+
       // Post
       let { item, pending, error, refresh } = await usePost(route.params.id);
-      
-      let post = null;
 
       if (!error.value) {
-            item = item.value.post_view;
-            post = item.post;
+            postsStore.posts = [item.value.post_view];
+            item = computed(() => postsStore.getPost(route.params.id));
       } else {
-            console.error(`Error: ${error.value}`);
+            console.error(error.value);
       };
 
       // Comments

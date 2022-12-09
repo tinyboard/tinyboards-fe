@@ -11,21 +11,21 @@
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
-                Delete this {{ type ?? 'post' }}?
+                {{ props.options.isLocked ? 'Unlock' : 'Lock' }} this post?
               </DialogTitle>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
-                  Your {{ type ?? 'post' }} will be forever removed from this TinyBoard.
+                  Once {{ props.options.isLocked ? 'unlocked, the community will' : 'locked, the community will not' }} be able to reply.
                   <br/>
-                  You won't be able to recover it.
+                  You can undo this action.
                 </p>
               </div>
               <div class="mt-4 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="deleteItem">
-                  Yes, delete this {{ type ?? 'post' }}
+                <button class="button" :class="props.options.isLocked ? 'green' : 'red'" @click="removeItem">
+                  Yes, {{ props.options.isLocked ? 'unlock' : 'lock' }} this post.
                 </button>
               </div>
             </DialogPanel>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue'
+  import { ref } from 'vue'
   import { baseURL } from "@/server/constants";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
@@ -52,17 +52,15 @@
 
   const props = defineProps({
     isOpen: {
-      type: Boolean,
-      default: false
+      type: Boolean
     },
     id: {
       type: Number,
       default: null,
       required: true
     },
-    type: {
-      type: String,
-      default: 'post'
+    options: {
+      type: Object
     }
   });
 
@@ -71,20 +69,19 @@
 
   const item = computed(() => postsStore.getPost(props.id));
 
-  // Deletion
+  // Lock
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
-  const deleteItem = async () => {
-    // Update post state.
-    const type = props.type;
+  const removeItem = async () => {
     const id = item.value.post.id;
-    await useFetch(`/${type}s/${id}`, {
+    await useFetch(`/mod/lock_post`, {
       baseURL,
       body: {
-          "deleted": true
+          "post_id": id,
+          "locked": !props.options.isLocked
       },
-      method: "delete",
+      method: "post",
       headers: {
         Authorization: authCookie ? `Bearer ${authCookie}` : '',
       }
@@ -93,15 +90,15 @@
       if (data.value) {
         // Update post state.
         postsStore.updatePost(id, {
-          deleted: true
+          locked: !props.options.isLocked
         });
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`${type} deleted!`,
-            message:`Your ${type} was removed forever.`,
+            header:`Post ${props.options.isLocked ? 'unlocked' : 'locked'}.`,
+            message:`The post ${props.options.isLocked ? 'is unlocked. Replies are allowed' : 'is locked. Replies are not allowed'}.`,
             type:'success'
           });
         }, 400);
@@ -109,8 +106,8 @@
         // Show error toast.
         setTimeout(() => {
           toast.addNotification({
-            header:'Deletion failed',
-            message:`Failed to delete ${type}. Please try again.`,
+            header:`${props.options.isLocked ? 'Unlocking' : 'Locking'} failed`,
+            message:`Failed to the ${props.options.isLocked ? 'unlock' : 'lock'} the post. Please try again.`,
             type:'error'
           });
         }, 400);

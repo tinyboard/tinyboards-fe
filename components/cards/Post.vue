@@ -1,5 +1,5 @@
 <template>
-	<div class="flex sm:gap-4" :class="[{'first:sm:rounded-t-md last:sm:rounded-b-md':isCompact},{'removed':item.post.removed}]">
+	<div class="flex sm:gap-4" :class="[{'first:sm:rounded-t-md last:sm:rounded-b-md':isCompact},status]">
 		<!-- Avatar - Desktop Only -->
 		<NuxtLink v-show="!isCompact" :to="`/user/${item.creator.name}`" class="sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
 			<img
@@ -9,7 +9,7 @@
 			class="w-16 h-16 object-cover p-0.5 border bg-white hover:bg-gray-200"
 			/>
 		</NuxtLink>
-		<div class="flex-grow p-2.5 sm:p-4 shadow-inner-white" :class="[isCompact ? 'flex items-center hover:bg-gray-50 border-inherit' : 'border-y sm:border-x sm:rounded-md',item.post.removed ? 'bg-red-100 border-red-300' : 'bg-white']">
+		<div class="flex-grow p-2.5 sm:p-4 shadow-inner-white" :class="[isCompact ? 'flex items-center hover:bg-gray-50 border-inherit' : 'border-y sm:border-x sm:rounded-md',status ? `${status}` : 'bg-white']">
 			<NuxtLink v-show="isCompact" :to="`/user/${item.creator.name}`" class="hidden sm:flex flex-shrink-0">
 				<img
 				loading="lazy"
@@ -184,7 +184,7 @@
 								<path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
 								<path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
 							</svg>
-							<span class="text-sm font-medium">Delete</span>
+							<span class="text-sm font-medium">{{ item.post.deleted ? 'Deleted' : 'Delete' }}</span>
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
@@ -292,6 +292,15 @@
 		return !!userStore.user && userStore.user.admin
 	});
 
+	// Status
+	const status = computed(() => {
+		if (props.item.post.removed) {
+			return 'removed'
+		} else if (props.item.post.deleted) {
+			return 'deleted'
+		}
+	})
+
 	// Vote
 	const voteType = ref(props.item.my_vote);
 
@@ -377,26 +386,16 @@
 		height: 12px;
 		background-color: #FFFFFF;
 		transform: rotate(45deg);
-		@apply border-l border-b
+		@apply border-l border-b;
 	}
-	.removed .arrow__right::before {
+	.removed > div, .removed .arrow__right::before {
 		@apply bg-red-100 border-red-300;
+	}
+	.deleted > div, .deleted .arrow__right::before {
+		@apply bg-yellow-100 border-yellow-300 opacity-70 pointer-events-none;
 	}
 	.overlay {
 		-webkit-mask-image: linear-gradient(180deg,#000 65%,transparent);
 		mask-image: linear-gradient(180deg,#000 65%,transparent);
-	}
-	.upvoted > svg {
-		fill: rgba(var(--color-primary));
-	}
-	.upvote:active > svg, .downvote:active > svg {
-		transform: translateY(-8px);
-		transition: transform 200ms cubic-bezier(.1,-.5,.6,1.2);
-	}
-	.downvote:active > svg {
-		transform: translateY(8px);
-	}
-	.downvoted > svg {
-		fill: rgba(var(--color-secondary));
 	}
 </style>
