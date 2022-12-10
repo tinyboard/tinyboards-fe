@@ -131,7 +131,7 @@
 			<InputsEdit v-if="isEditing" :id="item.post.id" :body="item.post.body" @closed="isEditing = false;" class="mt-4"/>
 			<!-- Post Text Body -->
 			<div v-if="item.post.body_html" v-show="!isEditing" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
-				<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
+				<div class="prose prose-sm text-gray-900 max-w-none" v-html="item.post.body_html"></div>
 			</div>
 			<!-- Footer -->
 			<div v-show="!isEditing" class="flex justify-between items-center px-2.5 py-4 sm:px-0 sm:py-0 mt-3 sm:mt-6">

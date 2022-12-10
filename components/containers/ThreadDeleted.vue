@@ -76,7 +76,7 @@
 				</h1>
 				<!-- Post Text Body -->
 				<div v-if="item.post.body_html" class="mt-2.5 sm:mt-4 relative overflow-hidden">
-					<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
+					<div class="prose prose-sm text-gray-900 max-w-none" v-html="item.post.body_html"></div>
 				</div>
 			</div>
 		</div>

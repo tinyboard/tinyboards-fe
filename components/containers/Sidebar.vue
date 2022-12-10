@@ -10,9 +10,18 @@
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
         About
       </h2>
-      <p>
-        Welcome to tinyboards.net. This is a cozy little corner of the Internet where we discuss the intersection of technology and society.
-      </p>
+      <div class="prose prose-sm text-gray-900">
+        <p>
+          Welcome to tinyboards.net. This is a cozy little corner of the Internet where we discuss the intersection of technology and society.
+        </p>
+        <img src="https://i.imgur.com/6RWfueV.gif" class="m-0 inline" alt="netscape blinkie"/>
+        <img src="https://i.imgur.com/pMHI7hy.gif" class="m-0 ml-2 inline" alt="java blinkie"/>
+        <p>
+          <a href="https://www.youtube.com/watch?v=jfKfPfyJRdk" target="_blank" style="color: #a60d0d; font-style: italic; font-family: 'Georgia'">
+            LoFi Stream
+          </a>
+        </p>
+      </div>
     </div>
     <div v-if="users">
       <div class="flex items-end mb-3 pb-1 border-b">

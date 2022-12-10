@@ -19,7 +19,7 @@
 		<!-- User Details -->
 		<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
 			<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
-				<div class="flex items-center" :class="{'mt-1 mb-1':!isCollapsed}">
+				<div class="flex items-center" :class="{'mt-2':!isCollapsed}">
 					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
 						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm">
 							<strong>{{ item.creator.name }}</strong>
@@ -67,7 +67,7 @@
 				<div class="comment-body" v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
 			</div>
 			<!-- Comment Actions -->
-			<ul class="relative flex flex-grow flex-wrap items-center space-x-4 mb-0 mt-2" v-show="!isCollapsed && !isEditing">
+			<ul class="relative flex flex-grow flex-wrap items-center space-x-4" v-show="!isCollapsed && !isEditing">
 				<li>
 					<!-- If logged in, allow upvoting -->
 					<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(1)" :disabled="item.post.deleted">
@@ -318,7 +318,7 @@
 	}
 	/* Comment Body */
 	.comment-body {
-		@apply dark:text-gray-200 break-words;
+		@apply prose prose-sm text-gray-900 max-w-none;
 	}
 	.comment-body :deep(img) {
 		max-width: 100px;

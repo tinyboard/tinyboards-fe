@@ -72,7 +72,7 @@
 						{{ item.post.title }}
 					</NuxtLink>
 					<div v-if="item.post.body_html" v-show="!isCompact" class="mt-2 relative overflow-hidden" :class="{'max-h-56 overlay':!isExpanded && item.post.body.length > 800}">
-						<div class="dark:text-gray-200 break-words" v-html="item.post.body_html"></div>
+						<div class="prose prose-sm text-gray-900 max-w-none" v-html="item.post.body_html"></div>
 					</div>
 				</div>
 				<!-- Actions -->
