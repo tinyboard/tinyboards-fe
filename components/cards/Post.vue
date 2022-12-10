@@ -301,7 +301,6 @@
 
 	// Vote
 	const voteType = ref(props.item.my_vote);
-
 	const vote = async (type = 0) => {
 		voteType.value = voteType.value === type ? 0 : type;
 		await useFetch(`/posts/${props.item.post.id}/vote`, {
@@ -335,7 +334,6 @@
 
 	// Save
 	const isSaved = ref(props.item.saved);
-
 	const save = async () => {
 		isSaved.value = !isSaved.value;
 		await useFetch(`/posts/${props.item.post.id}/save`, {
