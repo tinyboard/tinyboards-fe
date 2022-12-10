@@ -94,7 +94,7 @@
 					</button>
 				</li>
 				<li v-if="isAuthed">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save(comment.id,'comment')">
+					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
 						{{ isSaved ? 'Unsave' : 'Save' }}
 					</button>
 				</li>
@@ -195,13 +195,12 @@
 		toggleReplying();
 	};
 
-	// Voting
+	// Vote
       const voteType = ref(item.value.my_vote);
-
       const vote = async (type = 0) => {
             voteType.value = voteType.value === type ? 0 : type;
 
-            await useFetch(`/comments/${item.value.comment.id}/vote`, {
+            await useFetch(`/comments/${comment.value.id}/vote`, {
                   baseURL,
                   method: "post",
                   body: {
@@ -253,7 +252,37 @@
       }
 
       // Save
-      const isSaved = ref(comment.saved);
+      const isSaved = ref(comment.value.saved);
+      const save = async () => {
+      	isSaved.value = !isSaved.value;
+      	await useFetch(`/comments/${comment.value.id}/save`, {
+      		baseURL,
+      		method: "post",
+      		body: {
+      			"saved": !isSaved.value
+      		},
+      		headers: {
+      			Authorization: authCookie ? `Bearer ${authCookie}` : '',
+      		}
+      	})
+      	.then(({ data, error }) => {
+      		if (data.value) {
+      			data = JSON.parse(JSON.stringify(data.value));
+      		} else {
+                		// Revert failed save & show error toast.
+      			setTimeout(() => {
+      				isSaved.value = false;
+      				toast.addNotification({
+      					header:'Saving failed',
+      					message:'Failed to save the comment. Please try again.',
+      					type:'error'
+      				});
+      			}, 400);
+                		// Log the error.
+      			console.error(error.value);
+      		};
+      	});
+      };
 
       // Delete
       const confirmDelete = () => {
