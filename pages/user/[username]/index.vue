@@ -1,5 +1,5 @@
 <template>
-	<component v-if="user" :user="user" :posts="postsStore.posts" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="user" :user="user" :posts="posts" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
@@ -44,12 +44,13 @@
 		return sorts.includes(route.query.sort) ? route.query.sort : 'hot';
 	});
 
-	const { items: posts, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({
+	const { items, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({
 		sort: sort.value,
 		limit: 25,
 		page: page.value,
 		creator_id: user.value.id
 	}, 'posts');
 
-	postsStore.posts = posts;
+	postsStore.posts = items;
+	const posts = postsStore.posts;
 </script>

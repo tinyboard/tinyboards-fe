@@ -157,7 +157,7 @@
 						</div>
 					</div>
 					<!-- Posts -->
-					<ListsPosts v-once v-if="type !== 'comment' && posts.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+					<ListsPosts v-if="type !== 'comment' && posts.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
 					<ListsComments v-else-if="comments.length" :comments="comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
@@ -209,7 +209,7 @@
 	});
 
 	// Post sorts options
-	const sorts = [
+	const postSorts = [
 	{
 		name: 'Hot',
 		key: 'hot',

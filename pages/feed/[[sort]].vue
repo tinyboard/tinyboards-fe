@@ -35,7 +35,7 @@
                                     </div>
                               </div>
                               <!-- Posts -->
-                              <ListsPosts v-once :posts="postsStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+                              <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
                               <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
                               <!-- Pagination -->
                               <div v-if="posts.length" class="w-full mt-4 px-2.5 sm:px-0">
@@ -122,16 +122,16 @@
             return sorts.includes(route.params.sort) ? route.params.sort : 'hot';
       });
 
-      const { items: posts, paginate, pending, error, refresh } = await getListing({
+      const { items, paginate, pending, error, refresh } = await getListing({
             sort: sort.value,
             limit: 25,
             page: page
       }, 'posts');
 
-      postsStore.posts = posts;
+      postsStore.posts = items;
+      const posts = postsStore.posts;
 
-      // Links for sub navigation.
-
+      // Links for sub navbar
       const links = [
             { name: 'New Thread', href: '/submit' },
             { name: 'House Rules', href: '/help/rules', target: '_blank' }

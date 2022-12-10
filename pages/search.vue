@@ -65,7 +65,7 @@
                         </div>
 					</div>
 					<!-- Posts -->
-               <ListsPosts v-if="type !== 'comment' && postStore.posts.length" :posts="postStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+               <ListsPosts v-if="type !== 'comment' && posts.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
 					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
@@ -147,6 +147,7 @@
 	});
 
 	postStore.posts = results.value.posts;
+	const posts = postStore.posts;
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 
@@ -158,7 +159,7 @@
 		}
 	});
 
-	// Links for sub navigation bar.
+	// Links for sub navbar.
 	const links = [
 		{ name: 'Posts', href: { query: { query: text.value, type: 'post' } } },
 		{ name: 'Comments', href: { query: { query: text.value, type: 'comment' } } },
