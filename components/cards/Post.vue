@@ -21,7 +21,7 @@
 			<div class="w-full" :class="{'sm:ml-4 sm:w-3/6':isCompact}">
 				<!-- Author & Post Meta -->
 				<div v-if="item.creator" scope="row" class="flex items-center text-gray-900 dark:text-white">
-					<div class="flex flex-col sm:truncate">
+					<div class="flex flex-col flex-shrink-0 sm:truncate">
 						<p class="flex items-center font-normal text-sm text-gray-400 leading-normal">
 							<NuxtLink :to="`/user/${item.creator.name}`" class="flex items-center">
 								<!-- Avatar (mobile only) -->
@@ -55,13 +55,15 @@
 							</span>
 						</p>
 					</div>
-					<div class="ml-auto">
-						<svg v-if="item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						   <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
-						   <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
-						   <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
-						</svg>
+					<div class="flex flex-wrap" :class="isCompact ? 'ml-2' : 'ml-auto'">
+						<span v-if="item.post.stickied" title="Post pinned by the mods">
+							<svg xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
+							   <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
+							   <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
+							</svg>
+						</span>
 					</div>
 				</div>
 				<!-- Post Title & Body -->

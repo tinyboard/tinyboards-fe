@@ -137,7 +137,7 @@
 
 	// Fetch members by sort.
 	const { data: members, pending, error, refresh } = await useFetch("/members", {
-		query: { sort: sort },
+		query: { sort: sort.value },
 		limit: 25,
 		baseURL
 	});
@@ -151,12 +151,6 @@
 		router.push(`${route.path}?page=${page}`)
 	};
 
-  // Watch for sort change and refetch.
-	const stopWatch = watch(() => route, () => {
-		currentPage.value = route.query.page;
-		refresh();
-	});
-
 	// Links for sub navigation bar.
 	const links = [
 		{ name: 'Newest', href: `/members` },
@@ -165,7 +159,4 @@
 		{ name: 'Most Comments', href: `/members/mostcomments` },
 		{ name: 'Most Points', href: `/members/mostrep` }
 		];
-
-	// Before route changes, stop the watcher.
-	onBeforeRouteLeave(stopWatch);
 </script>

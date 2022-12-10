@@ -14,7 +14,7 @@
 				</strong>
 				<br/>
 				<p class="text-sm text-green-800">
-					This post is pinned by the admins. It is probably important.
+					This post was pinned by the mods. It is probably important.
 				</p>
 			</div>
 		</div>
