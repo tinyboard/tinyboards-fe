@@ -20,16 +20,12 @@
 					</div>
 				</div>
 				<div class="hidden md:flex space-x-4">
-					<router-link to="/login" custom v-slot="{ navigate }">
-						<button class="button primary-25" @click="navigate" @keypress.enter="navigate" role="link">
-							Log in
-						</button>
-					</router-link>
-					<router-link to="/register" custom v-slot="{ navigate }">
-						<button class="button white" @click="navigate" @keypress.enter="navigate" role="link">
-							Sign up
-						</button>
-					</router-link>
+					<NuxtLink to="/login" class="button primary-25">
+						Log in
+					</NuxtLink>
+					<NuxtLink to="/register" class="button white">
+						Sign up
+					</NuxtLink>
 				</div>
 				<div class="-mr-1 flex space-x-1 md:hidden">
 					<!-- Search button -->
