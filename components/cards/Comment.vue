@@ -162,8 +162,6 @@
 
 	const authCookie = useCookie("token").value;
 
-	const { isSaved, save } = useSave();
-
 	const props = defineProps({
 		item: Object,
 		offset: {
@@ -253,6 +251,9 @@
       	// Update comment with saved edits.
       	comment.value = payload.comment_view.comment;
       }
+
+      // Save
+      const isSaved = ref(comment.saved);
 
       // Delete
       const confirmDelete = () => {
