@@ -114,17 +114,16 @@
             router.push(`${route.path}?page=${page}`)
       };
 
-      // Posts store
+      // Posts
       const postsStore = usePostsStore();
 
-      // Fetch posts
       const sorts = ['hot','new','topall','topmonth','topweek','topday','mostcomments','newcomments'];
       const sort = computed(() => {
             return sorts.includes(route.params.sort) ? route.params.sort : 'hot';
       });
 
       const { items: posts, paginate, pending, error, refresh } = await getListing({
-            sort: sort,
+            sort: sort.value,
             limit: 25,
             page: page
       }, 'posts');

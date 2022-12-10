@@ -1,9 +1,11 @@
 <template>
-	<component v-if="user" :user="user" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="user" :user="user" :comments="comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
+	import { baseURL } from '@/server/constants';
 	import { useFetchUser } from '@/composables/user';
+	import { useComments } from '@/composables/comments';
 
 	// Import thread components.
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
@@ -21,6 +23,20 @@
 		return u.is_deleted || u.is_banned;
 	});
 
+	// Comments
+	const sort = ref(route.query.sort);
+
+	// Fetch search results.
+	const { data: comments, commentsPending, commentsError, commentsRefresh } = await useFetch("/comments", {
+		query: {
+			sort: sort.value,
+			creator_id: user.value.id
+		},
+		baseURL
+	});
+
+	watch(() => route.query, () => commentsRefresh());
+
 	// Pagination
 	const totalPages = 4;
 	const page = computed(() => route.query.page || 1);
@@ -31,8 +47,7 @@
 
 	// Sub navbar links
 	const links = [
-		{ name: 'Overview', href: `/user/${route.params.username}`},
-		{ name: 'Posts', href: `/user/${route.params.username}/posts` },
+		{ name: 'Posts', href: `/user/${route.params.username}`},
 		{ name: 'Comments', href: `/user/${route.params.username}/comments` }
 		]
 </script>

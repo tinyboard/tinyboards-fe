@@ -67,7 +67,7 @@
 					<!-- Posts -->
                <ListsPosts v-if="type !== 'comment' && postStore.posts.length" :posts="postStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<ListsComments v-else-if="commentStore.comments.length" :comments="commentStore.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
 					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
@@ -133,12 +133,11 @@
 
 	// Posts & comments store.
 	const postStore = usePostsStore();
-	const commentStore = useCommentsStore();
 
 	// Fetch search results.
 	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
-			type: type ?? 'post',
+			type: type.value ?? 'post',
 			query: route.query.query,
 			sort: route.query.sort,
 			nsfw: false,
@@ -148,16 +147,14 @@
 	});
 
 	postStore.posts = results.value.posts;
-	commentStore.comments = results.value.comments;
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 
 		path: '/search',
 		query: {
-			type: type ?? 'post',
+			type: type.value ?? 'post',
 			query: text,
-			sort: sort.value,
-			type: type.value,
+			sort: sort.value
 		}
 	});
 

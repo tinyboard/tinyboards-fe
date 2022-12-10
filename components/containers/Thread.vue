@@ -32,7 +32,7 @@
 				</strong>
 				<br/>
 				<p class="text-sm text-yellow-800">
-					This post was locked by the admins. Replies are disabled.
+					This post was locked by the admins. Voting and replying are disabled.
 				</p>
 			</div>
 		</div>

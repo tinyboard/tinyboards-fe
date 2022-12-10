@@ -136,7 +136,7 @@
 				<div class="w-full">
 					<!-- Sorts & View Options -->
 					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border sm:shadow-inner-white sm:rounded-md">
-						<MenusSort/>
+						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
 						<div class="ml-auto flex space-x-2">
 							<button class="ml-auto" @click="isCompact = false">
 								<!-- Rows Icon -->
@@ -157,7 +157,9 @@
 						</div>
 					</div>
 					<!-- Posts -->
-					<ListsPosts v-if="posts" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+					<ListsPosts v-once v-if="type !== 'comment' && posts.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+					<!-- Comments -->
+					<ListsComments v-else-if="comments.length" :comments="comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
@@ -186,6 +188,10 @@
 		},
 		comments: {
 			type: Array,
+		},
+		type: {
+			type: String,
+			default: 'post'
 		}
 	});
 
@@ -202,10 +208,72 @@
 		return num.toFixed(0);
 	});
 
+	// Post sorts options
+	const sorts = [
+	{
+		name: 'Hot',
+		key: 'hot',
+		href: { query: { ...route.query, sort: 'hot' } }
+	},
+	{
+		name: 'Latest',
+		key: 'new',
+		href: { query: { ...route.query, sort: 'new' } }
+	},
+	{
+		name: 'Top All',
+		key: 'topall',
+		href: { query: { ...route.query, sort: 'topall' } }
+	},
+	{
+		name: 'Top Month',
+		key: 'topmonth',
+		href: { query: { ...route.query, sort: 'topmonth' } }
+	},
+	{
+		name: 'Top Week',
+		key: 'topweek',
+		href: { query: { ...route.query, sort: 'topweek' } }
+	},
+	{
+		name: 'Most Comments',
+		key: 'mostcomments',
+		href: { query: { ...route.query, sort: 'mostcomments' } }
+	},
+	{
+		name: 'Latest Comments',
+		key: 'newcomments',
+		href: { query: { ...route.query, sort: 'newcomments' } }
+	}
+	]
+
+	// Comment sort options.
+	const commentSorts = [
+	{
+		name: 'Hot',
+		key: 'hot',
+		href: { query: { ...route.query, sort: 'hot' } }
+	},
+	{
+		name: 'Latest',
+		key: 'new',
+		href: { query: { ...route.query, sort: 'new' } }
+	},
+	{
+		name: 'Oldest',
+		key: 'old',
+		href: { query: { ...route.query, sort: 'old' } }
+	},
+	{
+		name: 'Top All',
+		key: 'top',
+		href: { query: { ...route.query, sort: 'top' } }
+	}
+	]
+
 	// Sub navbar links
 	const links = [
-		{ name: 'Overview', href: `/user/${route.params.username}`},
-		{ name: 'Posts', href: `/user/${route.params.username}/posts` },
+		{ name: 'Posts', href: `/user/${route.params.username}`},
 		{ name: 'Comments', href: `/user/${route.params.username}/comments` }
 		]
 </script>

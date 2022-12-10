@@ -30,7 +30,6 @@
       import { computed, defineAsyncComponent, ref } from 'vue';
       import { baseURL } from "@/server/constants";
       import { usePostsStore } from '@/stores/StorePosts';
-      import { useCommentsStore } from '@/stores/StoreComments';
       import { usePost } from '@/composables/post';
       import { usePostComments } from '@/composables/comments';
 
@@ -59,8 +58,6 @@
       };
 
       // Comments
-      const commentsStore = useCommentsStore();
-
       const sort = ref(route.query.sort);
       const type = computed(() => {
             return route.params.comment ? 'comment' : 'post'

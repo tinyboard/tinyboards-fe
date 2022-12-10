@@ -1,13 +1,15 @@
 <template>
-	<component v-if="user" :user="user" :posts="posts" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="user" :user="user" :posts="postsStore.posts" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
 	import { useFetchUser } from '@/composables/user';
+	import { usePostsStore } from '@/stores/StorePosts';
 	import { getListing } from '@/composables/posts';
 
 	definePageMeta({
-		'alias': '/user/:username/overview'
+		'alias': ['/user/:username/overview','/user/:username/posts'],
+		key: (route) => route.fullPath
 	});
 
 	// Import thread components.
@@ -35,21 +37,19 @@
 	};
 
 	// Posts
+	const postsStore = usePostsStore();
+
 	const sorts = ['hot','new','topall','topmonth','topweek','topday','mostcomments','newcomments'];
 	const sort = computed(() => {
-		return sorts.includes(route.params.sort) ? route.params.sort : 'hot';
+		return sorts.includes(route.query.sort) ? route.query.sort : 'hot';
 	});
 
 	const { items: posts, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({
-		sort: sort,
+		sort: sort.value,
 		limit: 25,
-		page: page
+		page: page.value,
+		creator_id: user.value.id
 	}, 'posts');
 
-	// Sub navbar links
-	const links = [
-		{ name: 'Overview', href: `/user/${route.params.username}`},
-		{ name: 'Posts', href: `/user/${route.params.username}/posts` },
-		{ name: 'Comments', href: `/user/${route.params.username}/comments` }
-		]
+	postsStore.posts = posts;
 </script>
