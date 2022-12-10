@@ -127,7 +127,7 @@
 	                  alt="avatar"
 	                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
 	                  />
-	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="onClosed" @comment-published="onCommentPublished"/>
+	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="isReplying = false;" @comment-published="onCommentPublished"/>
 	            </div>
 			<!-- Replies -->
 			<ListsComments v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset" class="relative"/>
@@ -189,10 +189,6 @@
 	const level = computed(() => {
 		return comment.value.level - props.offset
 	});
-
-	const onClosed = () => {
-		isReplying.value = false;
-	}
 
 	const onCommentPublished = (comment) => {
 		// Append reply to list of replies.
