@@ -53,18 +53,19 @@
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',
 				}
 			})
-			.then(({ data }) => {
-				data = JSON.parse(JSON.stringify(data.value));
-				emit('commentPublished', data);
-				// Empty the input.
-				body.value = null;
-				// Show success toast.
-				toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
-			})
-			.catch((error) => {
-				console.log(error);
-				// Show error toast.
-				toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
+			.then(({ data, error }) => {
+				if (data.value) {
+					data = JSON.parse(JSON.stringify(data.value));
+					emit('commentPublished', data);
+					// Empty the input.
+					body.value = null;
+					// Show success toast.
+					toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
+				} else {
+					console.log(error.value);
+					// Show error toast.
+					toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
+				}
 			})
 			.finally(() => {
 				isLoading.value = false;
