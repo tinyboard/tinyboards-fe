@@ -11,7 +11,7 @@ export async function getListing(query, type_) {
   async function request(query) {
     const { data, pending, error, refresh } = await useApi(endpoints[type_], {
       query: { ...query },
-      key: "get_" + type_ + "_key",
+      key: "get_" + type_ + "_key"
     });
 
     //console.info("console log");

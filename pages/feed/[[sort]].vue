@@ -35,7 +35,7 @@
                                     </div>
                               </div>
                               <!-- Posts -->
-                              <ListsPosts :posts="postsStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+                              <ListsPosts v-once :posts="postsStore.posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
                               <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
                               <!-- Pagination -->
                               <div v-if="posts.length" class="w-full mt-4 px-2.5 sm:px-0">
@@ -131,20 +131,10 @@
 
       postsStore.posts = posts;
 
-      // Watch for sort change and refetch.
-      // const stopWatch = watch(() => route, () => {
-      //       console.log('refresh')
-      //       currentPage.value = route.query.page;
-      //       refresh();
-      // });
-
       // Links for sub navigation.
 
       const links = [
             { name: 'New Thread', href: '/submit' },
             { name: 'House Rules', href: '/help/rules', target: '_blank' }
       ];
-
-      // Before route changes, stop the watcher.
-      // onBeforeRouteLeave(stopWatch);
 </script>
