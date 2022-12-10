@@ -7,6 +7,10 @@
 	import { useFetchUser } from '@/composables/user';
 	import { useComments } from '@/composables/comments';
 
+	definePageMeta({
+		key: (route) => route.fullPath
+	});
+
 	// Import thread components.
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
     const ProfileRemoved = defineAsyncComponent(() => import('@/components/pages/ProfileRemoved'));
