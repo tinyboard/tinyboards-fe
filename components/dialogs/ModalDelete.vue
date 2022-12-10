@@ -73,7 +73,7 @@
 
   const item = computed(() => {
     if (props.type === 'post') {
-     return postsStore.getPost(props.id)
+      return postsStore.getPost(props.id)
     } else {
       return commentsStore.getComment(props.id)
     }

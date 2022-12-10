@@ -150,6 +150,7 @@
 	import { useSave } from '@/composables/save';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
+	import { useCommentsStore } from '@/stores/StoreComments';
 
 	const route = useRoute();
 
@@ -177,6 +178,9 @@
 
 	const item = ref(props.item);
 	const comment = ref(props.item.comment);
+
+	const commentsStore = useCommentsStore();
+	commentsStore.comments.push(props.item);
 
 	const isReplying = ref(false);
 	const isCollapsed = ref(false);
