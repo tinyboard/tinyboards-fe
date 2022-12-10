@@ -9,9 +9,7 @@
              <div class="col-span-full flex gap-6 sm:py-6">
                   <!-- Thread -->
                   <div class="relative w-full">
-                        <component v-if="item" :item="item" :comments="comments" :is="item.post.deleted ? threadDeleted : thread"/>
-                        <!-- Banned -->
-                        <!-- <ContentThreadBanned v-else-if="item && item.post.banned" :item="item" :comments="comments"/> -->
+                        <component v-if="item" :item="item" :comments="commentsStore.comments" :is="item.post.deleted ? threadDeleted : thread"/>
                         <!-- Error -->
                         <div v-else class="relative w-full">
                               <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
@@ -32,6 +30,7 @@
       import { computed, defineAsyncComponent, ref } from 'vue';
       import { baseURL } from "@/server/constants";
       import { usePostsStore } from '@/stores/StorePosts';
+      import { useCommentsStore } from '@/stores/StoreComments';
       import { usePost } from '@/composables/post';
       import { usePostComments } from '@/composables/comments';
 
@@ -60,12 +59,20 @@
       };
 
       // Comments
+      const commentsStore = useCommentsStore();
+
       const sort = ref(route.query.sort);
       const type = computed(() => {
             return route.params.comment ? 'comment' : 'post'
       })
 
       const { comments, commentsPending, commentsError, commentsRefresh } = await usePostComments(route.params.id, { sort: sort.value });
+
+      if (!commentsError.value) {
+            commentsStore.comments = comments;
+      } else {
+            console.error(commentsError.value);
+      };
 
       watch(() => route.query, () => commentsRefresh());
 

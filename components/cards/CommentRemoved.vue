@@ -20,7 +20,7 @@
 				<div class="flex items-center" :class="isCollapsed ? 'h-6' : 'h-6 md:h-9'">
 					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
 						<span>
-							Comment deleted
+							Comment {{ comment.deleted ? 'deleted by author' : 'removed by moderators' }}
 						</span>
 						<span v-show="!isCollapsed" class="space-x-2">
 							<!-- Timestamp -->

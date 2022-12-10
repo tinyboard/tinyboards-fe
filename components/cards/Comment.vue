@@ -99,22 +99,22 @@
 					</button>
 				</li>
 				<li v-if="isAuthed && isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="isEditing = !isEditing">
+					<button @click="isEditing = !isEditing" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
 						Edit
 					</button>
 				</li>
 				<li v-if="isAuthed && isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
+					<button @click="confirmDelete" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
 						Delete
 					</button>
 				</li>
 				<li v-if="isAuthed && !isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="confirmDelete">
+					<button @click="confirmDelete" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
 						Report
 					</button>
 				</li>
 				<li v-if="isAdmin">
-					<button class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400" @click="confirmDelete">
+					<button @click="confirmRemove" class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
 						Remove
 					</button>
 				</li>
@@ -274,6 +274,16 @@
             });
       };
 
+      // Remove
+	const confirmRemove = () => {
+		modalStore.setModal({
+			modal: 'ModalRemove',
+			id: comment.value.id,
+			contentType: 'comment',
+			isOpen: true
+		});
+	};
+
 	// utils
 	const toggleReplying = () => {
 		isReplying.value = !isReplying.value;
@@ -286,6 +296,8 @@
 		display: block;
 		height: 3.5rem;
 		margin: -3.5rem 0 0;
+		pointer-events: none;
+		z-index: -1;
 	}
 	:target::after {
 		content: '';
@@ -296,6 +308,7 @@
 		top: 0;
 		z-index: 0;
 		animation: blinker 3000ms ease-out forwards;
+		pointer-events: none;
 		@apply w-full h-full bg-yellow-100
 	}
 	:target * {

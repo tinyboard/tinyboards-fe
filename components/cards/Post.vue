@@ -132,30 +132,28 @@
 						</button>
 					</li>
 					<li class="ml-6 hidden md:list-item">
-						<button @click="save(item.post.id,'post')" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+						<button @click="save" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<!-- Bookmark Icon -->
-							<svg v-show="!item.ssaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
+							<svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
 							</svg>
 							<!-- Bookmark Slash Icon -->
-							<svg v-show="item.saved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
+							<svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="3" y1="3" x2="21" y2="21"></line>
 								<path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
 							</svg>
-							<span class="text-sm font-medium">{{ item.saved ? 'Unsave' : 'Save' }}</span>
+							<span class="text-sm font-medium">{{ isSaved ? 'Unsave' : 'Save' }}</span>
 						</button>
 					</li>
-					<li class="ml-6 hidden md:list-item">
+					<!-- <li class="ml-6 hidden md:list-item">
 						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-							<!-- Bell Icon -->
 							<svg v-show="!item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path>
 								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
 							</svg>
-							<!-- Bell Slash Icon -->
 							<svg v-show="item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="3" y1="3" x2="21" y2="21"></line>
@@ -164,9 +162,9 @@
 							</svg>
 							<span class="text-sm font-medium">{{ item.subscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
 						</button>
-					</li>
+					</li> -->
 					<li v-if="!isAuthor" class="ml-6 hidden md:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport">
+						<button @click="confirmReport" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
@@ -175,7 +173,7 @@
 						</button>
 					</li>
 					<li v-if="isAuthor" class="ml-6 hidden sm:list-item">
-						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600" @click="confirmDelete">
+						<button @click="confirmDelete" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<line x1="4" y1="7" x2="20" y2="7"></line>
@@ -188,7 +186,7 @@
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
-						<button class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600" @click="pin">
+						<button @click="confirmSticky" class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
 							<!-- Pin Icon -->
 							<svg v-show="!item.post.stickied" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -208,7 +206,7 @@
 						</button>
 					</li>
 					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
-						<button class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600" @click="confirmRemove">
+						<button @click="confirmRemove" class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							   <path d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"></path>
@@ -306,7 +304,6 @@
 
 	const vote = async (type = 0) => {
 		voteType.value = voteType.value === type ? 0 : type;
-
 		await useFetch(`/posts/${props.item.post.id}/vote`, {
 			baseURL,
 			method: "post",
@@ -320,7 +317,6 @@
 		.then(({ data, error }) => {
 			if (data.value) {
 				data = JSON.parse(JSON.stringify(data.value));
-				console.log(data);
 			} else {
                 // Revert failed vote & show error toast.
 				setTimeout(() => {
@@ -332,7 +328,41 @@
 					});
 				}, 400);
                 // Log the error.
-				console.log(error.value);
+				console.error(error.value);
+			};
+		});
+	};
+
+	// Save
+	const isSaved = ref(props.item.saved);
+
+	const save = async () => {
+		isSaved.value = !isSaved.value;
+		await useFetch(`/posts/${props.item.post.id}/save`, {
+			baseURL,
+			method: "post",
+			body: {
+				"saved": !isSaved.value
+			},
+			headers: {
+				Authorization: authCookie ? `Bearer ${authCookie}` : '',
+			}
+		})
+		.then(({ data, error }) => {
+			if (data.value) {
+				data = JSON.parse(JSON.stringify(data.value));
+			} else {
+                // Revert failed save & show error toast.
+				setTimeout(() => {
+					isSaved.value = false;
+					toast.addNotification({
+						header:'Saving failed',
+						message:'Failed to save the post. Please try again.',
+						type:'error'
+					});
+				}, 400);
+                // Log the error.
+				console.error(error.value);
 			};
 		});
 	};
@@ -343,6 +373,18 @@
 			modal: 'ModalDelete',
 			id: props.item.post.id,
 			isOpen: true
+		});
+	};
+
+	// Sticky
+	const confirmSticky = () => {
+		modalStore.setModal({
+			modal: 'ModalSticky',
+			id: props.item.post.id,
+			isOpen: true,
+			options: {
+				'isStickied': props.item.post.stickied,
+			}
 		});
 	};
 

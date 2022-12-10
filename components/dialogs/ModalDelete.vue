@@ -42,6 +42,7 @@
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
+  import { useCommentsStore } from '@/stores/StoreComments';
   import {
     TransitionRoot,
     TransitionChild,
@@ -68,21 +69,27 @@
 
   const modalStore = useModalStore();
   const postsStore = usePostsStore();
+  const commentsStore = useCommentsStore();
 
-  const item = computed(() => postsStore.getPost(props.id));
+  const item = computed(() => {
+    if (props.type === 'post') {
+     return postsStore.getPost(props.id)
+    } else {
+      return commentsStore.getComment(props.id)
+    }
+  });
 
   // Deletion
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
   const deleteItem = async () => {
-    // Update post state.
     const type = props.type;
-    const id = item.value.post.id;
+    const id = type === 'post' ? item.value.post.id : item.value.comment.id;
     await useFetch(`/${type}s/${id}`, {
       baseURL,
       body: {
-          "deleted": true
+        "deleted": true
       },
       method: "delete",
       headers: {
@@ -91,10 +98,16 @@
     })
     .then(({ data }) => {
       if (data.value) {
-        // Update post state.
-        postsStore.updatePost(id, {
-          deleted: true
-        });
+        // Update state.
+        if (type === 'post') {
+          postsStore.updatePost(id, {
+            deleted: true
+          });
+        } else {
+          commentsStore.updateComment(id, {
+            deleted: true
+          });
+        };
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
         // Show success toast.

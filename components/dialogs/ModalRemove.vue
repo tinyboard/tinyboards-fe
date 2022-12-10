@@ -41,6 +41,8 @@
   import { baseURL } from "@/server/constants";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
+  import { usePostsStore } from '@/stores/StorePosts';
+  import { useCommentsStore } from '@/stores/StoreComments';
   import {
     TransitionRoot,
     TransitionChild,
@@ -66,6 +68,16 @@
   });
 
   const modalStore = useModalStore();
+  const postsStore = usePostsStore();
+  const commentsStore = useCommentsStore();
+
+  const item = computed(() => {
+    if (props.type === 'post') {
+     return postsStore.getPost(props.id)
+    } else {
+      return commentsStore.getComment(props.id)
+    }
+  });
 
   // Removal
   const authCookie = useCookie("token").value;
@@ -73,8 +85,7 @@
 
   const removeItem = async () => {
     const type = props.type;
-    const id = props.id;
-
+    const id = type === 'post' ? item.value.post.id : item.value.comment.id;
     await useFetch(`/mod/remove_${type}`, {
       baseURL,
       body: {
@@ -89,6 +100,16 @@
     })
     .then(({ data }) => {
       if (data.value) {
+        // Update state.
+        if (type === 'post') {
+          postsStore.updatePost(id, {
+            removed: true
+          });
+        } else {
+          commentsStore.updateComment(id, {
+            removed: true
+          });
+        };
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
         console.log(data);
