@@ -197,6 +197,10 @@
 		item.value.replies.unshift(comment);
 		// Close the reply form.
 		toggleReplying();
+		// Navigate to comment if replies are hidden.
+		if (route.meta.hasRepliesDisabled) {
+			navigateTo(`/post/${item.value.post.id}/${comment.comment.parent_id}/#${comment.comment.id}`);
+		};
 	};
 
 	// Vote
