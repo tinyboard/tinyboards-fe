@@ -52,8 +52,10 @@
     clearTimeout(timeout);
   });
 
-  // watch(() => route.name, () => {
-  //   toast.removeNotification(props.notification);
-  //   clearTimeout(timeout);
-  // });
+  watch(() => route.name, () => {
+    if (!props.notification.isVisibleOnRouteChange) {
+      toast.removeNotification(props.notification);
+      clearTimeout(timeout);
+    }
+  });
 </script>

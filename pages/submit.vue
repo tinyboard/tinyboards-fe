@@ -137,7 +137,7 @@
 			.then(({ data }) => {
 				const post = JSON.parse(JSON.stringify(data.value.post_view.post));
 				// Show success toast.
-				toast.addNotification({header:'Post created',message:'Your post was published!',type:'success'});
+				toast.addNotification({header:'Post created',message:'Your post was published!',type:'success',isVisibleOnRouteChange:true});
 				// Navigate to thread page.
 				navigateTo(`/post/${post.id}`);
 			})
