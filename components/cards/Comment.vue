@@ -109,7 +109,7 @@
 					</button>
 				</li>
 				<li v-if="isAuthed && !isAuthor">
-					<button @click="confirmDelete" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+					<button @click="confirmReport" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
 						Report
 					</button>
 				</li>
