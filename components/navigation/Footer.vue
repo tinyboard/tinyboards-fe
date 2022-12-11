@@ -16,13 +16,10 @@
 </template>
 
 <script setup>
-// Define footer links
-const links = [
-{ name: 'About', href: '/help/about' },
-{ name: 'Members', href: '/members' },
-{ name: 'House Rules', href: '/help/rules' },
-// { name: 'Terms', href: '/terms' },
-// { name: 'Privacy', href: '/privacy' },
-// { name: 'Source Code', href: '/source-code' }
-]
+	// Define footer links
+	const links = [
+		{ name: 'About', href: '/help/about' },
+		{ name: 'Members', href: '/members' },
+		{ name: 'House Rules', href: '/help/rules' },
+		]
 </script>
