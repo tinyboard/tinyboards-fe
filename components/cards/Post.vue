@@ -266,7 +266,6 @@
 	import { computed } from 'vue';
 	import { baseURL } from "@/server/constants";
 	import { useLoggedInUser } from '@/stores/StoreAuth';
-	// import { useSave } from '@/composables/save';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
 	import { toPercent } from '@/utils/percent';
@@ -282,9 +281,6 @@
 
 	// Expand & Collapse
 	const isExpanded = ref(false);
-
-	// Save
-	// const { isSaved, save } = useSave();
 
     // Author
 	const isAuthor = computed(() => {
@@ -350,7 +346,7 @@
 			baseURL,
 			method: "post",
 			body: {
-				"saved": !isSaved.value
+				"save": !isSaved.value
 			},
 			headers: {
 				Authorization: authCookie ? `Bearer ${authCookie}` : '',

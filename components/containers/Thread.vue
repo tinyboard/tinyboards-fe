@@ -419,7 +419,7 @@
 			baseURL,
 			method: "post",
 			body: {
-				"saved": !isSaved.value
+				"save": !isSaved.value
 			},
 			headers: {
 				Authorization: authCookie ? `Bearer ${authCookie}` : '',
