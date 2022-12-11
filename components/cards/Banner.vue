@@ -23,7 +23,7 @@
 		},
 		imageUrl: {
 			type: String,
-			default: "https://i.imgur.com/HRYqKAf.jpg"
+			default: "https://i.imgur.com/O4ivfHf.jpg"
 		}
 	});
 </script>
