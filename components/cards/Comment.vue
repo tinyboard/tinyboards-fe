@@ -1,144 +1,149 @@
 <template>
-	<div :id="`comment-${comment.id}`" class="comment group flex relative" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
-		<!-- Stretched Click Area -->
-		<div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer" @click="isCollapsed = !isCollapsed"></div>
-		<!-- Comment -->
-		<div class="relative flex flex-col flex-shrink-0 items-center mr-2">
-			<!-- User Avatar -->
-			<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="z-10">
-				<img
-				loading="lazy"
-				:src="item.creator.avatar || 'http://placekitten.com/200/300'"
-				alt="avatar"
-				class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
-				/>
-			</NuxtLink>
-			<!-- Comment Collapse Bar -->
-			<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"></div>
-		</div>
-		<!-- User Details -->
-		<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
-			<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
-				<div class="flex items-center" :class="{'mt-2':!isCollapsed}">
-					<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
-						<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm">
-							<strong>{{ item.creator.name }}</strong>
-							<!-- Role -->
-							<span v-if="item.creator.admin" class="ml-1 badge badge-blue">Admin</span>
-						</NuxtLink>
-						<!-- Parent Context Link -->
-						<!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
-							<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							   <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1"></path>
-							</svg>
-							<span>"parent author"</span>
-						</NuxtLink>-->
-						<span v-show="!isCollapsed" class="space-x-2">
-							<!-- Timestamp -->
-							<span :title="comment.published">{{ formatDate(new Date(comment.published)) }}</span>
-							<!-- Edited Timestamp -->
-							<span v-if="comment.updated">
-								<span class="font-black text-gray-400 dark:text-gray-500">·</span>
-								<span :title="comment.updated" class="pl-1 italic">
-									Edited {{ formatDate(new Date(comment.updated)) }}
+	<div>
+		<!-- TODO: Replace with <NuxtLink> once hash behavior (page jump) is better supported -->
+		<p v-if="route.meta.hasRepliesDisabled" class="mb-1">
+			<a :href="`/post/${item.post.id}#${comment.id}`">
+				{{ item.post.title }}
+			</a>
+		</p>
+		<div :id="`comment-${comment.id}`" class="comment group flex relative" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
+			<!-- Stretched Click Area -->
+			<div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer" @click="isCollapsed = !isCollapsed"></div>
+			<!-- Comment -->
+			<div class="relative flex flex-col flex-shrink-0 items-center mr-2">
+				<!-- User Avatar -->
+				<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="z-10">
+					<img
+					loading="lazy"
+					:src="item.creator.avatar || 'http://placekitten.com/200/300'"
+					alt="avatar"
+					class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:rounded-none sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+					/>
+				</NuxtLink>
+				<!-- Comment Collapse Bar -->
+				<div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed" v-show="!isCollapsed"></div>
+			</div>
+			<!-- User Details -->
+			<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
+				<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
+					<div class="flex items-center" :class="{'mt-2':!isCollapsed}">
+						<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
+							<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm">
+								<strong>{{ item.creator.name }}</strong>
+								<!-- Role -->
+								<span v-if="item.creator.admin" class="ml-1 badge badge-blue">Admin</span>
+							</NuxtLink>
+							<!-- Parent Context Link -->
+							<!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								   <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1"></path>
+								</svg>
+								<span>"parent author"</span>
+							</NuxtLink>-->
+							<span v-show="!isCollapsed" class="space-x-2">
+								<!-- Timestamp -->
+								<span :title="comment.published">{{ formatDate(new Date(comment.published)) }}</span>
+								<!-- Edited Timestamp -->
+								<span v-if="comment.updated">
+									<span class="font-black text-gray-400 dark:text-gray-500">·</span>
+									<span :title="comment.updated" class="pl-1 italic">
+										Edited {{ formatDate(new Date(comment.updated)) }}
+									</span>
 								</span>
 							</span>
-						</span>
-						<!-- Score -->
-						<span class="hidden md:flex items-center space-x-2">
-							<span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
-							<span>
-								{{ item.counts.score + voteType }} {{ item.counts.score + voteType === 1 ? 'pt' : 'pts' }}
+							<!-- Score -->
+							<span class="hidden md:flex items-center space-x-2">
+								<span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
+								<span>
+									{{ item.counts.score + voteType }} {{ item.counts.score + voteType === 1 ? 'pt' : 'pts' }}
+								</span>
 							</span>
-						</span>
-						<!-- Reply Count -->
-						<span v-show="isCollapsed && item.replies.length" class="flex items-center space-x-2">
-							<span class="font-black text-gray-400 dark:text-gray-500">·</span>
-							<span>
-								{{ item.replies.length }} {{ item.replies.length === 1 ? 'reply' : 'replies' }}
+							<!-- Reply Count -->
+							<span v-show="isCollapsed && item.replies.length" class="flex items-center space-x-2">
+								<span class="font-black text-gray-400 dark:text-gray-500">·</span>
+								<span>
+									{{ item.replies.length }} {{ item.replies.length === 1 ? 'reply' : 'replies' }}
+								</span>
 							</span>
-						</span>
+						</div>
 					</div>
+					<!-- Comment Edit Form -->
+					<InputsEdit v-if="isEditing" :id="comment.id" :body="comment.body" type="comment" @hasEdited="onHasEdited" @closed="isEditing = false;"/>
+					<!-- Comment Text Body -->
+					<div class="comment-body" v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
 				</div>
-				<!-- Comment Edit Form -->
-				<InputsEdit v-if="isEditing" :id="comment.id" :body="comment.body" type="comment" @hasEdited="onHasEdited" @closed="isEditing = false;"/>
-				<!-- Comment Text Body -->
-				<div class="comment-body" v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
+				<!-- Comment Actions -->
+				<ul class="relative flex flex-grow flex-wrap items-center space-x-4" v-show="!isCollapsed && !isEditing">
+					<li>
+						<!-- If logged in, allow upvoting -->
+						<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(1)" :disabled="item.post.deleted">
+							Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
+						</button>
+						<!-- Else, redirect to login -->
+						<NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+							Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
+						</NuxtLink>
+					</li>
+					<li>
+						<!-- If logged in, allow downvoting -->
+						<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === -1 ? 'text-secondary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(-1)" :disabled="item.post.deleted">
+							Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
+						</button>
+						<!-- Else, redirect to login -->
+						<NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+							Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
+						</NuxtLink>
+					</li>
+					<li v-if="isAuthed && !isAuthor">
+						<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" :class="{'cursor-not-allowed':item.post.deleted}" @click="isReplying = true" :disabled="item.post.deleted">
+							Reply
+						</button>
+					</li>
+					<li v-if="isAuthed">
+						<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
+							{{ isSaved ? 'Unsave' : 'Save' }}
+						</button>
+					</li>
+					<li v-if="isAuthed && isAuthor">
+						<button @click="isEditing = !isEditing" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+							Edit
+						</button>
+					</li>
+					<li v-if="isAuthed && isAuthor">
+						<button @click="confirmDelete" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+							Delete
+						</button>
+					</li>
+					<li v-if="isAuthed && !isAuthor">
+						<button @click="confirmReport" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+							Report
+						</button>
+					</li>
+					<li v-if="isAdmin">
+						<button @click="confirmRemove" class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
+							Remove
+						</button>
+					</li>
+				</ul>
+				<!-- Write Form -->
+		            <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
+		                  <img
+		                  loading="lazy"
+		                  :src="userStore.user.avatar"
+		                  alt="avatar"
+		                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
+		                  />
+		                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="isReplying = false;" @comment-published="onCommentPublished"/>
+		            </div>
+				<!-- Replies -->
+				<ListsComments v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset" class="relative"/>
+				<!-- Continue Thread Link -->
+				<NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed" :to="`/post/${item.post.id}/${comment.id}`" class="relative inline-block text-primary text-sm hover:underline mt-2">
+					Continue this thread &#8594;
+				</NuxtLink>
 			</div>
-			<!-- Comment Actions -->
-			<ul class="relative flex flex-grow flex-wrap items-center space-x-4" v-show="!isCollapsed && !isEditing">
-				<li>
-					<!-- If logged in, allow upvoting -->
-					<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === 1 ? 'text-primary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(1)" :disabled="item.post.deleted">
-						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
-					</button>
-					<!-- Else, redirect to login -->
-					<NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-						Upvote ({{ voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes }})
-					</NuxtLink>
-				</li>
-				<li>
-					<!-- If logged in, allow downvoting -->
-					<button v-if="isAuthed" class="text-xs font-medium" :class="[{'cursor-not-allowed':item.post.deleted},voteType === -1 ? 'text-secondary' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400']" @click="vote(-1)" :disabled="item.post.deleted">
-						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
-					</button>
-					<!-- Else, redirect to login -->
-					<NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-						Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
-					</NuxtLink>
-				</li>
-				<li v-if="isAuthed && !isAuthor">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" :class="{'cursor-not-allowed':item.post.deleted}" @click="isReplying = true" :disabled="item.post.deleted">
-						Reply
-					</button>
-				</li>
-				<li v-if="isAuthed">
-					<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
-						{{ isSaved ? 'Unsave' : 'Save' }}
-					</button>
-				</li>
-				<li v-if="isAuthed && isAuthor">
-					<button @click="isEditing = !isEditing" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-						Edit
-					</button>
-				</li>
-				<li v-if="isAuthed && isAuthor">
-					<button @click="confirmDelete" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-						Delete
-					</button>
-				</li>
-				<li v-if="isAuthed && !isAuthor">
-					<button @click="confirmReport" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-						Report
-					</button>
-				</li>
-				<li v-if="isAdmin">
-					<button @click="confirmRemove" class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
-						Remove
-					</button>
-				</li>
-			</ul>
-			<!-- Write Form -->
-	            <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
-	                  <img
-	                  loading="lazy"
-	                  :src="userStore.user.avatar"
-	                  alt="avatar"
-	                  class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
-	                  />
-	                  <InputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="isReplying = false;" @comment-published="onCommentPublished"/>
-	            </div>
-			<!-- Replies -->
-			<ListsComments v-if="!route.meta.hasRepliesDisabled && item.replies.length && level <= limit" v-show="!isCollapsed" :comments="item.replies" :offset="offset" class="relative"/>
-			<!-- Continue Thread Link -->
-			<NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed" :to="`/post/${item.post.id}/${comment.id}`" class="relative inline-block text-primary text-sm hover:underline mt-2">
-				Continue this thread &#8594;
-			</NuxtLink>
 		</div>
-		<!-- Stretched Link -->
-		<!-- TODO: Replace with <NuxtLink> once hash behavior (page jump) is better supported -->
-		<a v-if="route.name === 'search'" class="absolute w-full h-full inset" :href="`/post/${item.post.id}#${comment.id}`"/>
 	</div>
 </template>
 
@@ -147,7 +152,6 @@
 	import { baseURL } from "@/server/constants";
 	import { formatDate } from '@/utils/formatDate';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
-	import { useSave } from '@/composables/save';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
 	import { useCommentsStore } from '@/stores/StoreComments';

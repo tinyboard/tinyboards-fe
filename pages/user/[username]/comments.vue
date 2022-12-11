@@ -8,7 +8,8 @@
 	import { useComments } from '@/composables/comments';
 
 	definePageMeta({
-		key: (route) => route.fullPath
+		key: (route) => route.fullPath,
+		'hasRepliesDisabled': true
 	});
 
 	// Import thread components.
