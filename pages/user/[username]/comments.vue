@@ -1,5 +1,5 @@
 <template>
-	<component v-if="user" :user="user" :comments="comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="user" :user="user" :comments="comments.comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
