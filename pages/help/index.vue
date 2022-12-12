@@ -27,7 +27,7 @@
 					</ul>
 				</div>
 				<!-- Sidebar -->
-				<NavigationSidebar />
+				<ContainersSidebar />
 			</div>
 		</section>
 	</main>

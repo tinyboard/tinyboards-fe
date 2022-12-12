@@ -3,15 +3,11 @@
 		<div class="mx-auto max-w-8xl flex items-center justify-between px-2.5 sm:px-6">
 			<ul class="flex items-center overflow-x-auto scrollbar-hidden p-[1px] m-[-1px]">
 				<li class="text-sm leading-6 flex-shrink-0" v-for="link in links" :key="link.name">
-					<NuxtLink v-if="!link.isExternal" :to="link.href" custom v-slot="{ href, navigate, isActive }">
+					<NuxtLink :external="link.isExternal" :to="link.href" custom v-slot="{ href, navigate, isActive }">
 						<a :href="href" :target="link.target" @click="navigate" :class="[isActive && !disableActiveClass ? 'text-primary shadow-[0_1px_0_rgba(var(--color-primary))]' : 'text-gray-500 hover:text-primary', 'px-4 py-2.5 inline-block']">
 							{{ link.name }}
 						</a>
 					</NuxtLink>
-					<!-- External Links -->
-					<a v-else :href="link.href" :target="link.target" class="px-2.5 sm:px-4 py-2.5 inline-block text-gray-500 hover:text-primary">
-						{{ link.name }}
-					</a>
 				</li>
 			</ul>
 		</div>
