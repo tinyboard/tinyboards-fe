@@ -444,4 +444,13 @@
 		-webkit-mask-image: linear-gradient(180deg,#000 65%,transparent);
 		mask-image: linear-gradient(180deg,#000 65%,transparent);
 	}
+	.prose :deep(img) {
+		max-width: 100px;
+		aspect-ratio: auto;
+	}
+	@media (min-width: 768px) {
+		.prose :deep(img) {
+			max-width: 240px;
+		}
+	}
 </style>

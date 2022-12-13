@@ -552,17 +552,13 @@
 </script>
 
 <style scoped>
-	.upvoted > svg {
-		fill: rgba(var(--color-primary));
+	.prose :deep(img) {
+		max-width: 100px;
+		aspect-ratio: auto;
 	}
-	.upvote:active > svg, .downvote:active > svg {
-		transform: translateY(-8px);
-		transition: transform 200ms cubic-bezier(.1,-.5,.6,1.2);
-	}
-	.downvote:active > svg {
-		transform: translateY(8px);
-	}
-	.downvoted > svg {
-		fill: rgba(var(--color-secondary));
+	@media (min-width: 768px) {
+		.prose :deep(img) {
+			max-width: 240px;
+		}
 	}
 </style>

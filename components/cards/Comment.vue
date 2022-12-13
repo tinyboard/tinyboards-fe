@@ -95,8 +95,8 @@
 							Downvote ({{ voteType === -1 ? item.counts.downvotes - 1 : item.counts.downvotes }})
 						</NuxtLink>
 					</li>
-					<li v-if="isAuthed && !isAuthor">
-						<button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" :class="{'cursor-not-allowed':item.post.deleted}" @click="isReplying = true" :disabled="item.post.deleted">
+					<li v-if="isAuthed && !isAuthor && !route.meta.hasRepliesDisabled && !item.post.locked && !item.post.deleted">
+						<button @click="isReplying = true" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
 							Reply
 						</button>
 					</li>
