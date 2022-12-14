@@ -85,7 +85,9 @@
     'https://i.imgur.com/YDbnReb.png',
     'https://i.imgur.com/X7zDwCM.gif',
     'https://i.imgur.com/ZT8ZpX4.jpg',
-    'https://i.imgur.com/It1ro7S.png'
+    'https://i.imgur.com/It1ro7S.png',
+    'https://i.imgur.com/wJ4wVjd.png',
+    'https://i.imgur.com/HN953k0.png'
     ];
 
   const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`
