@@ -1,10 +1,9 @@
 <template>
 	<div>
-		<!-- TODO: Replace with <NuxtLink> once hash behavior (page jump) is better supported -->
 		<p v-if="route.meta.hasRepliesDisabled" class="mb-1">
-			<a :href="`/post/${item.post.id}#${comment.id}`">
+			<NuxtLink external :href="`/post/${item.post.id}/${comment.id}`">
 				{{ item.post.title }}
-			</a>
+			</NuxtLink>
 		</p>
 		<div :id="`comment-${comment.id}`" class="comment group flex relative" :class="{ 'opacity-60 hover:opacity-100 focus:opacity-100 items-center': isCollapsed }">
 			<!-- Stretched Click Area -->
