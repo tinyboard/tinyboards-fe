@@ -16,7 +16,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Email address</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0">
+						<div class="mt-4 md:col-span-2 md:mt-0">
 							<input required type="email" name="email-address" id="email-address" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="elon@spacex.com" v-model="settings.email"/>
 							<p class="mt-2 text-sm text-gray-500">
 								Used for account recovery purposes only.
@@ -30,7 +30,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Password</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0 flex flex-col space-y-4">
+						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col space-y-4">
 							<!-- Current Password -->
 							<div>
 								<label for="password" class="block text-sm font-bold">Current password</label>

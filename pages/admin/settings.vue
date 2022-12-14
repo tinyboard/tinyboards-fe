@@ -16,7 +16,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Site name</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0">
+						<div class="mt-4 md:col-span-2 md:mt-0">
 							<input type="text" name="site-name" id="site-name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="tinyboard" />
 							<p class="mt-2 text-sm text-gray-500">
 								The name of your tinyboard. Visible wherever <span class="pre">site.name</span> is present.
@@ -30,7 +30,7 @@
 							<p class="text-base font-bold leading-6 text-gray-900">Registration</p>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0">
+						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div>
 								<div class="flex items-center">
 									<InputsSwitch :isEnabled="settings.isRegistrationEnabled" @enabled="settings.isRegistrationEnabled = !settings.isRegistrationEnabled"/>
@@ -40,7 +40,7 @@
 									Allow new accounts to be created.
 								</p>
 							</div>
-							<div class="mt-6" :class="{'opacity-50':!settings.isRegistrationEnabled}">
+							<div class="mt-4" :class="{'opacity-50':!settings.isRegistrationEnabled}">
 								<div class="flex items-center">
 									<InputsSwitch :isDisabled="!settings.isRegistrationEnabled" :isEnabled="settings.isInviteRequired" @enabled="settings.isInviteRequired = !settings.isInviteRequired"/>
 									<label class="ml-2 font-medium text-gray-900">Require invite to join</label>

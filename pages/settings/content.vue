@@ -16,7 +16,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Show NSFW</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0">
+						<div class="mt-4 md:col-span-2 md:mt-0">
 							<InputsSwitch :isEnabled="settings.show_nsfw" @enabled="settings.show_nsfw = !settings.show_nsfw"/>
 							<p class="mt-2 text-sm text-gray-500">
 								Show adult content marked as "not safe for work".

@@ -16,7 +16,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Avatar</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0 flex items-center">
+						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
 							<img v-if="settings.avatar" :src="settings.avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
@@ -37,7 +37,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Banner</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0 flex flex-col">
+						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col">
 								<img v-if="settings.banner" :src="settings.banner" class="w-full h-24 object-cover p-0.5 border bg-white"/>
 								<div v-else class="w-full h-24 rounded-md border border-gray-300 border-dashed"></div>
 								<div class="mt-5">
@@ -58,7 +58,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Display name</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0">
+						<div class="mt-4 md:col-span-2 md:mt-0">
 							<input type="text" name="company-website" id="display-name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="elon" />
 							<p class="mt-2 text-sm text-gray-500">
 								The name next to your posts and comments. Your profile URL will always be /elon.
@@ -72,7 +72,7 @@
 							<label class="text-base font-bold leading-6 text-gray-900">Biography</label>
 						</div>
 						<!-- Inputs -->
-						<div class="mt-5 md:col-span-2 md:mt-0">
+						<div class="mt-4 md:col-span-2 md:mt-0">
 							<textarea id="biography" name="biography" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="A stranger surfing this World Wide Web." v-model="settings.bio"/>
 							<p class="mt-2 text-sm text-gray-500">Brief description about yourself. Markdown supported.</p>
 						</div>
