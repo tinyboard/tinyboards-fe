@@ -10,14 +10,14 @@
 			<form @submit.prevent="onSubmit" @submit="submitSettings()">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Site Name -->
-					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+					<div class="md:grid md:grid-cols-3 md:gap-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
 							<label class="text-base font-bold leading-6 text-gray-900">Site name</label>
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" name="site-name" id="site-name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="tinyboard" />
+							<input type="text" name="site-name" id="site-name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="tinyboard" maxlength="36"/>
 							<p class="mt-2 text-sm text-gray-500">
 								The name of your tinyboard. Visible wherever <span class="pre">site.name</span> is present.
 							</p>
