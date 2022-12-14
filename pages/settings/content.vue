@@ -13,11 +13,14 @@
 					<div class="md:grid md:grid-cols-3 md:gap-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<label class="text-base font-bold leading-6 text-gray-900">Show NSFW</label>
+							<p class="text-base font-bold leading-6 text-gray-900">NSFW</p>
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<InputsSwitch :isEnabled="settings.show_nsfw" @enabled="settings.show_nsfw = !settings.show_nsfw"/>
+							<div class="flex items-center">
+								<InputsSwitch :isEnabled="settings.show_nsfw" @enabled="settings.show_nsfw = !settings.show_nsfw"/>
+								<label class="ml-2 font-medium text-gray-900">Show NSFW content</label>
+							</div>
 							<p class="mt-2 text-sm text-gray-500">
 								Show adult content marked as "not safe for work".
 							</p>
