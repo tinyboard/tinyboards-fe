@@ -314,7 +314,7 @@
 				</strong>
 				<MenusSort :sorts="sorts" isLeft class="ml-auto"/>
 			</div>
-							<!-- Single Discussion Alert -->
+			<!-- Single Discussion Alert -->
 			<div v-if="!!route.params.comment" class="flex items-center justify-center sm:justify-start mb-2.5 sm:mb-4 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
 				<p class="text-sm text-yellow-800">
 					You are viewing a single conversation.
@@ -326,7 +326,7 @@
 			<!-- Comments & States -->
 			<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x">
 				<!-- Write Form -->
-				<div v-if="isAuthed && !item.post.locked" class="flex md:space-x-2">
+				<div v-if="isAuthed && !item.post.locked && !route.params.comment" class="flex md:space-x-2">
 					<img
 					loading="lazy"
 					:src="userStore.user.avatar"
