@@ -8,7 +8,7 @@
 				<CardsBanner
 				class="col-span-full"
 				title="Admin Panel"
-				sub-title="Manage your entire TinyBoard."
+				sub-title="Manage your tinyboard."
 				image-url="https://i.imgur.com/Q4Eidtx.jpeg"
 				/>
 			</div>

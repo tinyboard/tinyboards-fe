@@ -44,6 +44,9 @@
 	strong {
 		font-weight: 600;
 	}
+	pre, .pre {
+		@apply p-0.5 bg-gray-50 border rounded shadow-inner-white text-pink-600 font-mono;
+	}
 	/* Hide scrollbar for Chrome, Safari and Opera */
 	.scrollbar-hidden::-webkit-scrollbar {
 		display: none;

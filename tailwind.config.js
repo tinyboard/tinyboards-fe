@@ -40,7 +40,7 @@ module.exports = {
       yellow: colors.yellow,
       orange: colors.orange,
       green: colors.green,
-      purple: colors.violet,
+      pink: colors.pink,
     },
     fontFamily: {
       'sans': ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
