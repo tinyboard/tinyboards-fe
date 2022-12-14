@@ -137,7 +137,7 @@
 					<!-- Sorts & View Options -->
 					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border sm:shadow-inner-white sm:rounded-md">
 						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
-						<div class="ml-auto flex space-x-2">
+						<div v-if="type === 'post'" class="ml-auto flex space-x-2">
 							<button class="ml-auto" @click="isCompact = false">
 								<!-- Rows Icon -->
 								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
