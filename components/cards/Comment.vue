@@ -25,7 +25,7 @@
 			<!-- User Details -->
 			<div class="flex-grow" :class="{'flex items-center':isCollapsed}">
 				<div :id="comment.id" :class="{'flex flex-grow items-center leading-none':isCollapsed}">
-					<div class="flex items-center" :class="{'mt-2':!isCollapsed}">
+					<div class="flex items-center min-h-[24px] sm:min-h-[36px]">
 						<div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
 							<NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`" class="flex items-center text-sm">
 								<strong>{{ item.creator.name }}</strong>
