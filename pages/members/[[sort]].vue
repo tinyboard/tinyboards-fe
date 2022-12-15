@@ -13,11 +13,11 @@
 			</div>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
-			<div class="col-span-full px-2.5 sm:px-0">
+		<section class="container mx-auto max-w-8xl grid grid-cols-12 my-4 sm:my-6 sm:px-4 md:px-6">
+			<div class="col-span-full">
 				<ul v-if="members" class="w-full grid grid-cols-4 gap-2 sm:gap-4 overflow-hidden">
 					<li v-for="(member, i) in members.members" :key="i" class="w-full col-span-full md:col-span-2 lg:col-span-1">
-						<NuxtLink :to="`/user/${member.user.name}`" class="relative flex flex-col p-2.5 rounded-md bg-white hover:bg-gray-50 border shadow-inner-white">
+						<NuxtLink :to="`/user/${member.user.name}`" class="relative flex flex-col p-2.5 sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white">
 							<span class="absolute top-1 right-3 font-bold text-lg text-gray-300">
 								#{{ i + 1 }}
 							</span>
@@ -59,51 +59,8 @@
 					</li>
 				</ul>
 			</div>
-			<div class="col-span-full mt-4 px-2.5 sm:px-0">
-				<NavigationPagination
-                :total-pages="totalPages"
-                :total="250"
-                :per-page="25"
-                :current-page="Number.parseInt(currentPage)"
-                v-slot="{
-                      startPage,
-                      endPage,
-                      pages,
-                      isFirstPage,
-                      isLastPage,
-                      onClickPreviousPage,
-                      onClickPage,
-                      onClickNextPage,
-                      isPageActive,
-                      pageChanged
-                }"
-                @page-changed="onPageChange">
-					<ul class="flex items-center text-sm text-gray-500 font-bold space-x-1">
-						<li>
-							<button class="button button-sm white" @click="onClickPreviousPage" :disabled="isFirstPage">
-								Prev
-							</button>
-						</li>
-						<li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
-							<button type="button" class="button button-sm" @click="onClickPage(page.name)" :class="isPageActive(page.name) ? 'primary opacity-100' : 'white'" :aria-label="`Go to page ${page.name}`">
-								{{ page.name }}
-							</button>
-						</li>
-						<li v-if="totalPages >= 4" v-show="currentPage < totalPages - 1">
-							<span class="text-gray-400 px-2">...</span>
-						</li>
-						<li v-if="totalPages >= 4" v-show="currentPage < totalPages - 1">
-							<button type="button" class="button button-sm" @click="onClickPage(totalPages)" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
-								{{ totalPages }}
-							</button>
-						</li>
-						<li>
-							<button class="button button-sm white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
-								Next
-							</button>
-						</li>
-					</ul>
-				</NavigationPagination>
+			<div v-if="totalPages > 1" class="col-span-full mt-4 px-2.5 sm:px-0">
+				<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
 			</div>
 		</section>
 	</main>
@@ -128,28 +85,35 @@
 	const router = useRouter();
 	const route = useRoute();
 
-	// Feed sorts.
+	// Pagination
+	const page = computed(() => Number.parseInt(route.query.page) || 1);
+	const limit = computed(() => Number.parseInt(route.query.limit) || 25);
+
+	// Members
 	const sorts = ['new','old','mostcomments','mostposts','mostrep'];
 
 	const sort = computed(() => {
 		return sorts.includes(route.params.sort) ? route.params.sort : 'new';
 	});
 
-	// Fetch members by sort.
 	const { data: members, pending, error, refresh } = await useFetch("/members", {
 		query: { sort: sort.value },
-		limit: 25,
+		limit: limit.value,
+		page: page.value,
 		baseURL
 	});
 
-	// Pagination
-	const totalPages = 4;
-	const currentPage = ref(route.query.page || 1);
-
-	const onPageChange = (page) => {
-		currentPage.value = page;
-		router.push(`${route.path}?page=${page}`)
+	if (error.value && error.value.response) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'We could not find the page you were looking for. Try better next time.',
+			fatal: true
+		})
 	};
+
+	const totalPages = computed(() => {
+		return Math.round(members.value.length / members.value.total_count) || 1;
+	})
 
 	// Links for sub navigation bar.
 	const links = [

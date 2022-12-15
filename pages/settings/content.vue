@@ -4,7 +4,7 @@
 			<!-- Page Heading & Description -->
 			<div class="p-4 border-b">
 				<h3 class="text-lg font-medium leading-6 text-gray-900">Content</h3>
-				<p class="mt-1 text-sm text-gray-600">Manage how content is displayed on this TinyBoard.</p>
+				<p class="mt-1 text-sm text-gray-600">Manage what content is presented to you.</p>
 			</div>
 			<!-- Form -->
 			<form @submit.prevent="onSubmit" @submit="submitSettings()">

@@ -27,29 +27,55 @@
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<p class="text-base font-bold leading-6 text-gray-900">Registration</p>
+							<label class="text-base font-bold leading-6 text-gray-900">Registration</label>
 						</div>
-						<!-- Inputs -->
-						<div class="mt-4 md:col-span-2 md:mt-0">
-							<div>
-								<div class="flex items-center">
-									<InputsSwitch :isEnabled="settings.isRegistrationEnabled" @enabled="settings.isRegistrationEnabled = !settings.isRegistrationEnabled"/>
-									<label class="ml-2 font-medium text-gray-900">Allow registration</label>
-								</div>
-								<p class="mt-2 text-sm text-gray-500">
-									Allow new accounts to be created.
-								</p>
-							</div>
-							<div class="mt-4" :class="{'opacity-50':!settings.isRegistrationEnabled}">
-								<div class="flex items-center">
-									<InputsSwitch :isDisabled="!settings.isRegistrationEnabled" :isEnabled="settings.isInviteRequired" @enabled="settings.isInviteRequired = !settings.isInviteRequired"/>
-									<label class="ml-2 font-medium text-gray-900">Require invite to join</label>
-								</div>
-								<p class="mt-2 text-sm text-gray-500">
-									Require an invitation to create an account.
-								</p>
-							</div>
-						</div>
+						<!-- Radio Group -->
+						<ul class="mt-4 md:col-span-2 md:mt-0 flex flex-col space-y-4">
+							<li class="flex">
+							    <div class="flex items-center h-5">
+							        <input id="open-radio" aria-describedby="open-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							    </div>
+							    <div class="ml-2 text-sm">
+							        <label for="open-radio" class="font-medium text-gray-900 dark:text-gray-300">Open</label>
+							        <p id="open-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+								        Anyone with Internet access can join your tinyboard.
+								    </p>
+							    </div>
+							</li>
+							<li class="flex">
+							    <div class="flex items-center h-5">
+							        <input id="app-radio" aria-describedby="app-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							    </div>
+							    <div class="ml-2 text-sm">
+							        <label for="app-radio" class="font-medium text-gray-900 dark:text-gray-300">Application-only</label>
+							        <p id="app-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+								        Accounts must be manually approved by mods before they can engage the community.
+								    </p>
+							    </div>
+							</li>
+							<li class="flex">
+							    <div class="flex items-center h-5">
+							        <input id="invite-radio" aria-describedby="invite-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							    </div>
+							    <div class="ml-2 text-sm">
+							        <label for="invite-radio" class="font-medium text-gray-900 dark:text-gray-300">Invite-only</label>
+							        <p id="invite-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+								        A one-time invite link is required to register. Each member has 2 invite links.
+								    </p>
+							    </div>
+							</li>
+							<li class="flex">
+							    <div class="flex items-center h-5">
+							        <input id="closed-radio" aria-describedby="closed-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							    </div>
+							    <div class="ml-2 text-sm">
+							        <label for="closed-radio" class="font-medium text-gray-900 dark:text-gray-300">Closed</label>
+							        <p id="closed-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
+								        New accounts cannot be created. Nobody can register.
+								    </p>
+							    </div>
+							</li>
+						</ul>
 					</div>
 				</div>
 				<!-- Footer -->
