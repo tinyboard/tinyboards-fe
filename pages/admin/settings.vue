@@ -60,18 +60,7 @@
 							    <div class="ml-2 text-sm">
 							        <label for="invite-radio" class="font-medium text-gray-900 dark:text-gray-300">Invite-only</label>
 							        <p id="invite-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
-								        A one-time invite link is required to register. Each member has 2 invite links.
-								    </p>
-							    </div>
-							</li>
-							<li class="flex">
-							    <div class="flex items-center h-5">
-							        <input id="closed-radio" aria-describedby="closed-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-							    </div>
-							    <div class="ml-2 text-sm">
-							        <label for="closed-radio" class="font-medium text-gray-900 dark:text-gray-300">Closed</label>
-							        <p id="closed-radio-text" class="text-xs font-normal text-gray-500 dark:text-gray-300">
-								        New accounts cannot be created. Nobody can register.
+								        A one-time invite link is required to register. Only admins may create invite links.
 								    </p>
 							    </div>
 							</li>

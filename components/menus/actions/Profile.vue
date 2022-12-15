@@ -1,5 +1,5 @@
 <template>
-  <Menu as="div" class="relative z-20">
+  <Menu as="div" class="relative z-40">
     <div>
       <MenuButton :class="buttonClass ? buttonClass : 'button button-sm white'">
         <slot name="button">
@@ -51,13 +51,21 @@
           <!-- Ban/Unban -->
           <MenuItem :disabled="user.is_admin" v-slot="{ active, close }">
             <button @click="confirmBan(); close()" class="group flex items-center w-full px-4 py-1.5" :class="active ? 'bg-gray-100 text-red-700' : 'text-red-500 hover:text-red-700'">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <!-- User Slash Icon -->
+              <svg v-if="user.is_banned" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <circle cx="9" cy="7" r="4"></circle>
+                 <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+                 <path d="M16 11l2 2l4 -4"></path>
+              </svg>
+              <!-- User Check Icon -->
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <path d="M14.274 10.291a4 4 0 1 0 -5.554 -5.58m-.548 3.453a4.01 4.01 0 0 0 2.62 2.65"></path>
                  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 1.147 .167m2.685 2.681a4 4 0 0 1 .168 1.152v2"></path>
                  <line x1="3" y1="3" x2="21" y2="21"></line>
               </svg>
-              <span>Ban {{ user.username }}</span>
+              <span>{{ user.is_banned ? 'Unban' : 'Ban' }} {{ user.username }}</span>
             </button>
           </MenuItem>
           <!-- Purge Content -->
