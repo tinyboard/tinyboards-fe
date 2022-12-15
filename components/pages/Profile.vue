@@ -17,7 +17,7 @@
 								</svg>
 								<span>
 									Member since
-									<span class="font-medium text-gray-600">
+									<span :title="user.created_at" class="font-medium text-gray-600">
 										{{ format(parseISO(user.created_at), 'MMM dd, yyyy') }}
 									</span>
 								</span>
