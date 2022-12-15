@@ -36,6 +36,8 @@
 	const modalSticky = defineAsyncComponent(() => import('@/components/dialogs/ModalSticky'));
 	const modalLock = defineAsyncComponent(() => import('@/components/dialogs/ModalLock'));
 	const modalRemove = defineAsyncComponent(() => import('@/components/dialogs/ModalRemove'));
+	const modalBan = defineAsyncComponent(() => import('@/components/dialogs/ModalBan'));
+	const modalPurge = defineAsyncComponent(() => import('@/components/dialogs/ModalPurge'));
 
 	// Object lookup to select modal.
 	const components = { 
@@ -43,6 +45,8 @@
 		'ModalReport': modalReport,
 		'ModalSticky': modalSticky,
 		'ModalLock': modalLock,
-		'ModalRemove': modalRemove
+		'ModalRemove': modalRemove,
+		'ModalBan': modalBan,
+		'ModalPurge': modalPurge
 	};
 </script>

@@ -79,24 +79,41 @@
 						alt="avatar"
 						class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
 						/>
-						<!-- Info -->
+						<!-- Info & Actions -->
 						<div class="flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
+							<!-- Name & Role -->
 							<div class="flex items-center">
-								<!-- Display Name -->
 								<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
 									{{ user.username }}
 								</h1>
-								<!-- Role -->
 								<span v-if="user.is_admin" class="ml-2 badge badge-large badge-blue">Admin</span>
 							</div>
+							<!-- Bio -->
 							<p class="mt-2.5 lg:w-4/5 xl:w-3/5" :class="!user.bio ? 'text-gray-400 italic' : 'text-gray-100'">
 								{{ user.bio || 'No bio...' }}
 							</p>
+							<!-- Stats -->
 							<small class="sm:hidden mt-2 text-gray-300">
 								Joined {{ format(parseISO(user.created_at), 'MMM dd, yyyy') }}
 							</small>
+							<!-- Actions -->
+							<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
+								<li v-if="isSelf">
+									<NuxtLink to="/settings/profile" class="button button-sm white">
+										Edit profile
+									</NuxtLink>
+								</li>
+								<li v-else>
+									<button class="button button-sm white" disabled>
+										Message
+									</button>
+								</li>
+								<li v-if="!isSelf">
+									<MenusActionsProfile :user="user" :isAdmin="isAdmin" :isSelf="isSelf"/>
+								</li>
+							</ul>
 							<!-- Mobile Stats -->
-							<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-2.5 pt-2.5 md:pt-0">
+							<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-4 pt-2.5 md:pt-0">
 								<li>
 									<span>
 										<strong>{{ reputation }}</strong>
@@ -121,15 +138,6 @@
 				</div>
 			</div>
 		</section>
-		<!-- No User State -->
-		<!-- TODO: handle this with middleware -->
-		<!-- <section v-if="error" class="container mx-auto my-24 px-4 flex justify-center">
-			<div class="text-center">
-				<h1 class="text-5xl font-bold text-gray-900">404</h1>
-				<p class="mt-1 text-xl font-bold">The user you are looking for is an unperson</p>
-				<p class="mt-2 text-gray-700">You are likely seeing this because you typed the username manually and made a typo. Please do better next time.</p>
-			</div>
-		</section> -->
 		<!-- Main Content -->
 		<section v-if="!user.is_deleted && !user.is_banned" class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
 			<div class="col-span-full flex gap-6">
@@ -176,6 +184,7 @@
 </template>
 
 <script setup>
+	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { format, parseISO } from "date-fns";
 
 	const props = defineProps({
@@ -196,6 +205,21 @@
 	});
 
 	const route = useRoute();
+
+	const userStore = useLoggedInUser();
+
+	// Is Authed
+	const isAuthed = userStore.isAuthed;
+
+	// Is Self
+	const isSelf = computed(() => {
+		return !!userStore.user && userStore.user.name === props.user.username
+	});
+
+	// Admin
+	const isAdmin = computed(() => {
+		return !!userStore.user && userStore.user.admin
+	});
 
 	const isCompact = ref(false);
 

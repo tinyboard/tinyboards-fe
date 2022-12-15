@@ -81,17 +81,6 @@
               <span>Posts</span>
             </NuxtLink>
           </MenuItem>
-          <!-- Saved Link -->
-          <!-- <MenuItem v-slot="{ active, close }">
-            <NuxtLink to="/saved" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
-              </svg>
-              <span>Saved</span>
-            </NuxtLink>
-          </MenuItem> -->
-          <!-- User Settings Link -->
           <MenuItem v-slot="{ active, close }">
             <NuxtLink to="/settings/profile" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
