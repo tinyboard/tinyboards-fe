@@ -194,22 +194,6 @@
 							<span class="text-sm font-medium">{{ isSaved ? 'Unsave' : 'Save' }}</span>
 						</button>
 					</li>
-					<!-- <li class="ml-6 hidden md:list-item">
-						<button @click="() => {}" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-							<svg v-show="!item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path>
-								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
-							</svg>
-							<svg v-show="item.subscribed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<line x1="3" y1="3" x2="21" y2="21"></line>
-								<path d="M17 17h-13a4 4 0 0 0 2 -3v-3a7 7 0 0 1 1.279 -3.716m2.072 -1.934c.209 -.127 .425 -.244 .649 -.35a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3"></path>
-								<path d="M9 17v1a3 3 0 0 0 6 0v-1"></path>
-							</svg>
-							<span class="text-sm font-medium">{{ item.subscribed ? 'Unsubscribe' : 'Subscribe' }}</span>
-						</button>
-					</li> -->
 					<li v-if="!isAuthor" class="ml-6 hidden md:list-item">
 						<button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="confirmReport">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -282,7 +266,7 @@
 							<span class="text-sm font-medium">{{ item.post.locked ? 'Unlock' : 'Lock' }}</span>
 						</button>
 					</li>
-					<li v-if="isAdmin" class="ml-6 hidden lg:list-item">
+					<li v-if="isAdmin && !isAuthor" class="ml-6 hidden lg:list-item">
 						<button class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600" @click="confirmRemove">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

@@ -119,7 +119,7 @@
 							Report
 						</button>
 					</li>
-					<li v-if="isAdmin">
+					<li v-if="isAdmin && !isAuthor">
 						<button @click="confirmRemove" class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
 							Remove
 						</button>
