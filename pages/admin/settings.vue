@@ -15,12 +15,24 @@
 						<div class="md:col-span-1">
 							<label class="text-base font-bold leading-6 text-gray-900">Site name</label>
 						</div>
-						<!-- Inputs -->
+						<!-- Input -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" name="site-name" id="site-name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="tinyboard" maxlength="36"/>
+							<input type="text" name="site-name" id="site-name" v-model="settings.name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="tinyboard" maxlength="36"/>
 							<p class="mt-2 text-sm text-gray-500">
 								The name of your tinyboard. Visible wherever <span class="pre">site.name</span> is present.
 							</p>
+						</div>
+					</div>
+					<!-- Site Description -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Description</label>
+						</div>
+						<!-- Input -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="A cozy little corner of the Internet where we discuss the intersection of technology and society." v-model="settings.description"/>
+							<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
 						</div>
 					</div>
 					<!-- Registration -->
@@ -33,7 +45,7 @@
 						<ul class="mt-4 md:col-span-2 md:mt-0 flex flex-col space-y-4">
 							<li class="flex">
 							    <div class="flex items-center h-5">
-							        <input id="open-radio" aria-describedby="open-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							        <input id="open-radio" aria-describedby="open-radio-text" type="radio" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="OpenMode" v-model="settings.site_mode">
 							    </div>
 							    <div class="ml-2 text-sm">
 							        <label for="open-radio" class="font-medium text-gray-900 dark:text-gray-300">Open</label>
@@ -44,7 +56,7 @@
 							</li>
 							<li class="flex">
 							    <div class="flex items-center h-5">
-							        <input id="app-radio" aria-describedby="app-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							        <input id="app-radio" aria-describedby="app-radio-text" type="radio" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="ApplicationMode" v-model="settings.site_mode">
 							    </div>
 							    <div class="ml-2 text-sm">
 							        <label for="app-radio" class="font-medium text-gray-900 dark:text-gray-300">Application-only</label>
@@ -55,7 +67,7 @@
 							</li>
 							<li class="flex">
 							    <div class="flex items-center h-5">
-							        <input id="invite-radio" aria-describedby="invite-radio-text" type="radio" value="" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+							        <input id="invite-radio" aria-describedby="invite-radio-text" type="radio" name="invite-mode" class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" value="InviteMode" v-model="settings.site_mode">
 							    </div>
 							    <div class="ml-2 text-sm">
 							        <label for="invite-radio" class="font-medium text-gray-900 dark:text-gray-300">Invite-only</label>
@@ -65,6 +77,40 @@
 							    </div>
 							</li>
 						</ul>
+					</div>
+					<!-- Email Verificaiton -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<p class="text-base font-bold leading-6 text-gray-900">Verification</p>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<div class="flex items-center text-sm">
+								<InputsSwitch id="nsfw" :isEnabled="settings.email_verification_required" @enabled="settings.email_verification_required = !settings.email_verification_required"/>
+								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Require email verification</label>
+							</div>
+							<p class="mt-2 text-sm text-gray-500">
+								Require members to have a verified email address before engaging the community.
+							</p>
+						</div>
+					</div>
+					<!-- NSFW -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<p class="text-base font-bold leading-6 text-gray-900">NSFW</p>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<div class="flex items-center text-sm">
+								<InputsSwitch id="nsfw" :isEnabled="settings.enable_nsfw" @enabled="settings.enable_nsfw = !settings.enable_nsfw"/>
+								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Show NSFW content</label>
+							</div>
+							<p class="mt-2 text-sm text-gray-500">
+								Allow adult content marked "not safe for work" to be posted.
+							</p>
+						</div>
 					</div>
 				</div>
 				<!-- Footer -->
@@ -91,23 +137,8 @@
 	const toast = useToastStore();
 	const authCookie = useCookie("token").value;
 
-	// File inputs.
-	const onFileChange = (e,type) => {
-		console.log(type)
-		const file = e.target.files[0];
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			if (type === 'avatar') {
-				settings.value.avatar = reader.result;
-			} else {
-				settings.value.banner = reader.result;
-			}
-		};
-		reader.readAsDataURL(file);
-	};
-
 	// Fetch site settings.
-	const { data, pending, error, refresh } = await useFetch("/admin", {
+	const { data, pending, error, refresh } = await useFetch("/admin/site_settings", {
 		baseURL,
 		method: "get",
 		headers: {
@@ -116,25 +147,29 @@
 	});
 
 	// Settings.
-	let settings = ref({});
+	const settings = ref({});
 
 	if (data.value) {
-		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
+		settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
 	};
 
 	// Submit settings.
 	const isLoading = ref(false);
 
-	const isRegistrationEnabled = ref(false);
-	const isInviteRequired = ref(false);
-
 	const submitSettings = () => {
 		isLoading.value = true;
-		useFetch('/admin', {
+		useFetch('/admin/site_settings', {
 			baseURL,
 			method: "put",
 			body: {
-				"bio": settings.value.bio
+			  "name": settings.value.name,
+			  "description": settings.value.description,
+			  "enable_downvotes": settings.value.enable_downvotes,
+			  "site_mode": settings.value.site_mode,
+			  "enable_nsfw": settings.value.enable_nsfw,
+			  "application_question": settings.value.application_question,
+			  "private_instance": settings.value.private_instance,
+			  "email_verification_required": settings.value.email_verification_required
 			},
 			headers: {
 				Authorization: authCookie ? `Bearer ${authCookie}` : '',
