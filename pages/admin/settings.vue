@@ -105,7 +105,7 @@
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
 								<InputsSwitch id="nsfw" :isEnabled="settings.enable_nsfw" @enabled="settings.enable_nsfw = !settings.enable_nsfw"/>
-								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Show NSFW content</label>
+								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Allow NSFW content</label>
 							</div>
 							<p class="mt-2 text-sm text-gray-500">
 								Allow adult content marked "not safe for work" to be posted.

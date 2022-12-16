@@ -17,12 +17,12 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<div class="flex items-center">
+							<div class="flex items-center text-sm">
 								<InputsSwitch :isEnabled="settings.show_nsfw" @enabled="settings.show_nsfw = !settings.show_nsfw"/>
 								<label class="ml-2 font-medium text-gray-900">Show NSFW content</label>
 							</div>
 							<p class="mt-2 text-sm text-gray-500">
-								Show adult content marked as "not safe for work".
+								Show adult content marked "not safe for work".
 							</p>
 						</div>
 					</div>
