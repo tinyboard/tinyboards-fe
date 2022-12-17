@@ -49,10 +49,4 @@
 	});
 
 	watch(() => route.query, () => commentsRefresh());
-
-	// Sub navbar links
-	const links = [
-		{ name: 'Posts', href: `/user/${route.params.username}`},
-		{ name: 'Comments', href: `/user/${route.params.username}/comments` }
-		]
 </script>
