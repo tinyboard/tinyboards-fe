@@ -50,12 +50,16 @@
       // Post
       let { item, pending, error, refresh } = await usePost(route.params.id);
 
-      if (!error.value) {
-            postsStore.posts = [item.value.post_view];
-            item = computed(() => postsStore.getPost(route.params.id));
-      } else {
-            console.error(error.value);
+      if (error.value && error.value.response) {
+            throw createError({
+                  statusCode: 404,
+                  statusMessage: 'We could not find the page you were looking for. Try better next time.',
+                  fatal: true
+            })
       };
+
+      postsStore.posts = [item.value.post_view];
+      item = computed(() => postsStore.getPost(route.params.id));
 
       // Comments
       const sort = ref(route.query.sort);

@@ -23,20 +23,23 @@
 
 	const { data: user, error, pending, refresh } = await useFetchUser(username.value);
 
+	if (error.value && error.value.response) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'We could not find the page you were looking for. Try better next time.',
+			fatal: true
+		})
+	};
+
 	const isRemoved = computed(() => {
 		const u = JSON.parse(JSON.stringify(user.value));
 		return u.is_deleted || u.is_banned;
 	});
 
-	// Pagination
-	const totalPages = 4;
-	const page = computed(() => route.query.page || 1);
-
-	const onPageChange = (page) => {
-		router.push(`${route.path}?page=${page}`)
-	};
-
 	// Posts
+	const page = computed(() => route.query.page || 1);
+    const limit = computed(() => route.query.limit || 25);
+
 	const postsStore = usePostsStore();
 
 	const sorts = ['hot','new','topall','topmonth','topweek','topday','mostcomments','newcomments'];
@@ -46,7 +49,7 @@
 
 	const { items, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({
 		sort: sort.value,
-		limit: 25,
+		limit: limit.value,
 		page: page.value,
 		creator_id: user.value.id
 	}, 'posts');

@@ -40,6 +40,7 @@
 		{ name: 'Overview', href: '/admin/overview' },
 		{ name: 'Settings', href: '/admin/settings' },
 		{ name: 'Mod Queue', href: '/admin/queue' },
-		{ name: 'Users', href: '/admin/users' }
+		{ name: 'Users', href: '/admin/users' },
+		{ name: 'Invites', href: '/admin/invites' }
 		];
 	</script>

@@ -65,7 +65,7 @@
                         </div>
 					</div>
 					<!-- Posts -->
-               <ListsPosts v-if="type !== 'comment' && posts.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+               			<ListsPosts v-if="type !== 'comment' && posts?.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
 					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
@@ -88,6 +88,53 @@
 							Please try again
 						</p>
 					</div>
+					<!-- Pagination -->
+					<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
+                  <NavigationPagination
+                  :total-pages="totalPages"
+                  :total="250"
+                  :per-page="25"
+                  :current-page="Number.parseInt(page)"
+                  v-slot="{
+                        startPage,
+                        endPage,
+                        pages,
+                        isFirstPage,
+                        isLastPage,
+                        onClickPreviousPage,
+                        onClickPage,
+                        onClickNextPage,
+                        isPageActive,
+                        pageChanged
+                  }"
+                  @page-changed="onPageChange">
+                        <ul class="flex items-center text-sm text-gray-500 font-bold space-x-1">
+                              <li>
+                                    <button class="button button-sm white" @click="onClickPreviousPage" :disabled="isFirstPage">
+                                          Prev
+                                    </button>
+                              </li>
+                              <li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
+                                    <button type="button" class="button button-sm" @click="onClickPage(page.name)" :class="isPageActive(page.name) ? 'primary' : 'white'" :aria-label="`Go to page ${page.name}`">
+                                          {{ page.name }}
+                                    </button>
+                              </li>
+                              <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+                                    <span class="text-gray-400 px-2">...</span>
+                              </li>
+                              <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+                                    <button type="button" class="button button-sm" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
+                                          {{ totalPages }}
+                                    </button>
+                              </li>
+                              <li>
+                                    <button class="button button-sm white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
+                                          Next
+                                    </button>
+                              </li>
+                        </ul>
+                  </NavigationPagination>
+            	</div>
 				</div>
 				<!-- Sidebar -->
 				<ContainersSidebar />
@@ -125,11 +172,19 @@
 	// TODO: move this to cookie.
 	const isCompact = ref(false);
 
+	// Pagination
+   const page = computed(() => route.query.page || 1);
+
+   const onPageChange = (page) => {
+         router.push(`${route.path}?page=${page}`)
+   };
+
 	// Search params.
+	const type = computed(() => route.query.type || 'post');
 	const text = ref(route.query.query);
 	const sort = ref(route.query.sort);
-	const type = ref(route.query.type);
 	const hasNsfw = ref(false);
+	const limit = computed(() => route.query.limit || 5);
 
 	// Posts & comments store.
 	const postStore = usePostsStore();
@@ -141,13 +196,21 @@
 			query: route.query.query,
 			sort: route.query.sort,
 			nsfw: false,
-			limit: 25
+			limit: limit.value
 		},
 		baseURL
 	});
 
 	postStore.posts = results.value.posts;
 	const posts = postStore.posts;
+
+	const totalPages = computed(() => {
+		if (type.value === 'post') {
+			return Math.round(posts.length / results.value.total_count) || 1;
+		} else {
+			return Math.round(results.value.comments.length / results.value.total_count) || 1;
+		}
+   });
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 

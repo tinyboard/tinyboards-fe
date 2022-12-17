@@ -38,52 +38,10 @@
                               <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
                               <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
                               <!-- Pagination -->
-                              <div v-if="posts.length" class="w-full mt-4 px-2.5 sm:px-0">
-                                    <NavigationPagination
-                                    :total-pages="totalPages"
-                                    :total="250"
-                                    :per-page="25"
-                                    :current-page="Number.parseInt(page)"
-                                    v-slot="{
-                                          startPage,
-                                          endPage,
-                                          pages,
-                                          isFirstPage,
-                                          isLastPage,
-                                          onClickPreviousPage,
-                                          onClickPage,
-                                          onClickNextPage,
-                                          isPageActive,
-                                          pageChanged
-                                    }"
-                                    @page-changed="onPageChange">
-                                          <ul class="flex items-center text-sm text-gray-500 font-bold space-x-1">
-                                                <li>
-                                                      <button class="button button-sm white" @click="onClickPreviousPage" :disabled="isFirstPage">
-                                                            Prev
-                                                      </button>
-                                                </li>
-                                                <li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
-                                                      <button type="button" class="button button-sm" @click="onClickPage(page.name)" :class="isPageActive(page.name) ? 'primary' : 'white'" :aria-label="`Go to page ${page.name}`">
-                                                            {{ page.name }}
-                                                      </button>
-                                                </li>
-                                                <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
-                                                      <span class="text-gray-400 px-2">...</span>
-                                                </li>
-                                                <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
-                                                      <button type="button" class="button button-sm" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
-                                                            {{ totalPages }}
-                                                      </button>
-                                                </li>
-                                                <li>
-                                                      <button class="button button-sm white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
-                                                            Next
-                                                      </button>
-                                                </li>
-                                          </ul>
-                                    </NavigationPagination>
+                              <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
+                                    <NavigationPaginate :total-pages="totalPages" :total="250" :per-page="limit" :current-page="page"/>
                               </div>
+
                         </div>
                         <!-- Sidebar -->
                         <ContainersSidebar />
@@ -107,12 +65,8 @@
       const isCompact = ref(false);
 
       // Pagination
-      const totalPages = 4;
-      const page = computed(() => route.query.page || 1);
-
-      const onPageChange = (page) => {
-            router.push(`${route.path}?page=${page}`)
-      };
+      const page = computed(() => Number.parseInt(route.query.page) || 1);
+      const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
       // Posts
       const postsStore = usePostsStore();
@@ -124,12 +78,24 @@
 
       const { items, paginate, pending, error, refresh } = await getListing({
             sort: sort.value,
-            limit: 25,
-            page: page
+            limit: limit.value,
+            page: page.value
       }, 'posts');
+
+      if (error.value && error.value.response) {
+            throw createError({
+                  statusCode: 404,
+                  statusMessage: 'We could not find the page you were looking for. Try better next time.',
+                  fatal: true
+            })
+      };
 
       postsStore.posts = items;
       const posts = postsStore.posts;
+
+      const totalPages = computed(() => {
+            return Math.round(posts.length / items.total_count) || 1;
+      })
 
       // Links for sub navbar
       const links = [

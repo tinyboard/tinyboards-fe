@@ -23,6 +23,14 @@
 
 	const { data: user, error, pending, refresh } = await useFetchUser(username.value);
 
+	if (error.value && error.value.response) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'We could not find the page you were looking for. Try better next time.',
+			fatal: true
+		})
+	};
+
 	const isRemoved = computed(() => {
 		const u = JSON.parse(JSON.stringify(user.value));
 		return u.is_deleted || u.is_banned;
@@ -41,14 +49,6 @@
 	});
 
 	watch(() => route.query, () => commentsRefresh());
-
-	// Pagination
-	const totalPages = 4;
-	const page = computed(() => route.query.page || 1);
-
-	const onPageChange = (page) => {
-		router.push(`${route.path}?page=${page}`)
-	};
 
 	// Sub navbar links
 	const links = [
