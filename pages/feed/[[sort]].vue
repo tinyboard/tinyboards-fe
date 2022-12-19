@@ -35,8 +35,17 @@
                                     </div>
                               </div>
                               <!-- Posts -->
-                              <ListsPosts :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
-                              <!-- <TablesPosts :posts="posts" :title="sort" :isLoading="pending" :hasError="error"/> -->
+                              <ListsPosts v-if="posts?.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+                              <!-- Empty State -->
+                              <div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+                                    <p>
+                                          <span class="font-medium">
+                                                There are not posts at this time.
+                                          </span>
+                                          <br/>
+                                          Try posting something yourself
+                                    </p>
+                              </div>
                               <!-- Pagination -->
                               <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
                                     <NavigationPaginate :total-pages="totalPages" :total="250" :per-page="limit" :current-page="page"/>

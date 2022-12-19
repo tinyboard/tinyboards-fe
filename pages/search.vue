@@ -67,7 +67,7 @@
 					<!-- Posts -->
                			<ListsPosts v-if="type !== 'comment' && posts?.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<ListsComments v-else-if="results.comments.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<ListsComments v-else-if="results.comments?.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
 					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
@@ -79,7 +79,7 @@
 						</p>
 					</div>
 					<!-- Error State -->
-					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
 								There was an error fetching results for "{{ route.query.query }}".
