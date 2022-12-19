@@ -140,10 +140,7 @@
 	// Fetch site settings.
 	const { data, pending, error, refresh } = await useFetch("/admin/site_settings", {
 		baseURL,
-		method: "get",
-		headers: {
-			Authorization: authCookie ? `Bearer ${authCookie}` : '',
-		}
+		method: "get"
 	});
 
 	// Settings.

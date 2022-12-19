@@ -128,6 +128,9 @@
 	import { format, parseISO } from "date-fns";
 
 	definePageMeta({
+		middleware: ['admin'],
+		'hasAuthRequired': true,
+		'isAdminRequired': true,
 		'alias': '/admin/overview',
 		'title': 'Overview'
 	});
