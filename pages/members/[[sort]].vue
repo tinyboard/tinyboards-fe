@@ -87,7 +87,7 @@
 
 	// Pagination
 	const page = computed(() => Number.parseInt(route.query.page) || 1);
-	const limit = computed(() => Number.parseInt(route.query.limit) || 10);
+	const limit = computed(() => Number.parseInt(route.query.limit) || 24);
 
 	// Members
 	const sorts = ['new','old','mostcomments','mostposts','mostrep'];
