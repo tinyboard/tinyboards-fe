@@ -106,13 +106,15 @@
 		// Validate invite code
 		const { data, pending, error, refresh } = await useFetch(`/validate_invite/${invite.value}`, {
 			baseURL,
-			method: "get"
+			method: "post",
+			body: {
+				'invite_token': invite.value
+			}
 		});
 		// Set state
-		if (data.value) {
+		if (!error.value) {
 			isValidInvite.value = true;
-		}
-		else {
+		} else {
 			console.log(`${invite.value} is not a valid invite code.`)
 			invite.value = null;
 		}
@@ -131,7 +133,8 @@
 	function signup() {
 		userStore.signup({
 			username: name.value,
-			password: password.value
+			password: password.value,
+			invite_token: invite.value
 		})
 		.then(token => {
 			Cookies.set('token', token);

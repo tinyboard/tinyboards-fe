@@ -39,7 +39,7 @@ export const useLoggedInUser = defineStore("auth", {
         });
       });
     },
-    signup({ username, password }) {
+    signup({ username, password, invite_token }) {
       return new Promise((resolve, reject) => {
         useFetch("/auth/signup", {
           baseURL,
@@ -48,6 +48,7 @@ export const useLoggedInUser = defineStore("auth", {
           body: {
             username,
             password,
+            invite_token
           },
         })
         .then(({ data }) => {

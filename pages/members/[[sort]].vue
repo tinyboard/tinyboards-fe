@@ -87,7 +87,7 @@
 
 	// Pagination
 	const page = computed(() => Number.parseInt(route.query.page) || 1);
-	const limit = computed(() => Number.parseInt(route.query.limit) || 25);
+	const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 	// Members
 	const sorts = ['new','old','mostcomments','mostposts','mostrep'];
@@ -97,9 +97,11 @@
 	});
 
 	const { data: members, pending, error, refresh } = await useFetch("/members", {
-		query: { sort: sort.value },
-		limit: limit.value,
-		page: page.value,
+		query: {
+			sort: sort.value,
+			limit: limit.value,
+			page: page.value
+		},
 		baseURL
 	});
 
@@ -112,7 +114,7 @@
 	};
 
 	const totalPages = computed(() => {
-		return Math.round(members.value.length / members.value.total_count) || 1;
+		return (members.value.total_count / limit.value) || 1;
 	})
 
 	// Links for sub navigation bar.

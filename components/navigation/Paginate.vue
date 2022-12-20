@@ -10,15 +10,15 @@
                         {{ page.name }}
                   </NuxtLink>
             </li>
-            <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+            <li v-if="totalPages >= 4" v-show="page < totalPages">
                   <span class="text-gray-400 px-2">...</span>
             </li>
-            <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+            <li v-if="totalPages >= 4" v-show="page < totalPages">
                   <NuxtLink external :to="`${route.path}?page=${endPage}`" class="button button-sm" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
                         {{ totalPages }}
                   </NuxtLink>
             </li>
-            <li v-if="page < totalPages - 1">
+            <li v-if="page < totalPages">
                   <NuxtLink external :to="nextPage" class="button button-sm white">
                         Next
                   </NuxtLink>
@@ -52,6 +52,8 @@
       });
 
       const route = useRoute();
+
+      const page = computed(() => route.query.page || 1);
 
       // Computed properties
       const startPage = computed(() => {
