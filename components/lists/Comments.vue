@@ -2,7 +2,7 @@
 	<!-- List of Comments -->
 	<ul v-if="comments.length" class="mt-4 first:mt-0 first-of-type:mt-0">
 		<li v-for="item in comments" :key="item.comment.id" class="mt-4 first:mt-0">
-			<component v-if="item" :item="item" :is="item.comment.deleted || item.comment.removed ? commentRemoved : comment"/>
+			<component v-if="item" :item="item" :is="item.comment.is_deleted || item.comment.is_removed ? commentRemoved : comment"/>
 		</li>
 	</ul>
 </template>

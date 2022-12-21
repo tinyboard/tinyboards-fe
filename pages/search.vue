@@ -34,10 +34,10 @@
 						<!-- NSFW Checkbox -->
 						<div class="md:col-span-4 flex">
 							<div class="flex h-5 items-center">
-								<input id="nsfw" name="nsfw" type="checkbox" v-model="hasNsfw" class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
+								<input id="is_nsfw" name="is_nsfw" type="checkbox" v-model="hasNsfw" class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
 							</div>
 							<div class="ml-3 text-sm">
-								<label for="nsfw" class="font-bold text-gray-700 select-none">Include NSFW results</label>
+								<label for="is_nsfw" class="font-bold text-gray-700 select-none">Include NSFW results</label>
 								<p class="text-gray-500">Show results marked "not safe for work"</p>
 							</div>
 						</div>
@@ -195,7 +195,7 @@
 			type: type.value ?? 'post',
 			query: route.query.query,
 			sort: route.query.sort,
-			nsfw: false,
+			is_nsfw: false,
 			limit: limit.value
 		},
 		baseURL

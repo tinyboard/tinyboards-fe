@@ -101,11 +101,11 @@
         // Update state.
         if (type === 'post') {
           postsStore.updatePost(id, {
-            deleted: true
+            is_deleted: true
           });
         } else {
           commentsStore.updateComment(id, {
-            deleted: true
+            is_deleted: true
           });
         };
         // Parse response.
@@ -113,7 +113,7 @@
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`${type} deleted!`,
+            header:`${type} is_deleted!`,
             message:`Your ${type} was removed forever.`,
             type:'success'
           });

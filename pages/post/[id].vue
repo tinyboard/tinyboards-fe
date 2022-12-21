@@ -9,7 +9,7 @@
              <div class="col-span-full flex gap-6 sm:py-6">
                   <!-- Thread -->
                   <div class="relative w-full">
-                        <component v-if="item" :item="item" :comments="comments" :is="item.post.deleted ? threadDeleted : thread"/>
+                        <component v-if="item" :item="item" :comments="comments" :is="item.post.is_deleted ? threadDeleted : thread"/>
                         <!-- Error -->
                         <div v-else class="relative w-full">
                               <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
