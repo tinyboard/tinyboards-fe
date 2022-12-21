@@ -41,7 +41,7 @@
 	useHead({
 		title: `Tinyboards | ${route.meta.title ?? 'Error'}`,
 		meta: [{ property: 'og:title',
-			content: `Tinybards | ${route.meta.title}`
+			content: `Tinyboards | ${route.meta.title}`
 		}]
 	});
 
@@ -51,9 +51,6 @@
 	{ name: 'About', href: '/help/about' },
 	{ name: 'FAQ', href: '/help' },
 	{ name: 'House Rules', href: '/help/rules' },
-	// { name: 'Terms', href: '/terms' },
-	// { name: 'Privacy', href: '/privacy' },
-	// { name: 'Source Code', href: '/source-code' }
 	];
 </script>
 
