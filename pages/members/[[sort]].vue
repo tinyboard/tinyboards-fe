@@ -96,13 +96,12 @@
 		return sorts.includes(route.params.sort) ? route.params.sort : 'new';
 	});
 
-	const { data: members, pending, error, refresh } = await useFetch("/members", {
+	const { data: members, pending, error, refresh } = await useFetch("https://the.tree-house.cloud/api/v1/members", {
 		query: {
 			sort: sort.value,
 			limit: limit.value,
 			page: page.value
-		},
-		baseURL
+		}
 	});
 
 	if (error.value && error.value.response) {
