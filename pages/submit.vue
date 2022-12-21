@@ -134,12 +134,22 @@
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',
 				}
 			})
-			.then(({ data }) => {
-				const post = JSON.parse(JSON.stringify(data.value.post_view.post));
-				// Show success toast.
-				toast.addNotification({header:'Post created',message:'Your post was published!',type:'success',isVisibleOnRouteChange:true});
-				// Navigate to thread page.
-				navigateTo(`/post/${post.id}`);
+			.then(({ data, error }) => {
+				if (data.value) {
+					const post = JSON.parse(JSON.stringify(data.value.post_view.post));
+					// Show success toast.
+					toast.addNotification({header:'Post created',message:'Your post was published!',type:'success',isVisibleOnRouteChange:true});
+					// Navigate to thread page.
+					navigateTo(`/post/${post.id}`);
+				} else {
+					// Show error toast.
+					toast.addNotification({
+						header:'Failed to post',
+						message:'Your post failed to publish. Please try again.',
+						type:'error',
+						isVisibleOnRouteChange:true
+					});
+				};
 			})
 			.catch((error) => {
 				console.log(error);
