@@ -113,7 +113,7 @@
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`${type} is_deleted!`,
+            header:`${type} deleted!`,
             message:`Your ${type} was removed forever.`,
             type:'success'
           });
