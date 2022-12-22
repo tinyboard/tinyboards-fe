@@ -14,7 +14,7 @@
 					<div class="hidden md:block w-1/3">
 						<div class="ml-4 flex items-baseline space-x-4">
 							<div class="relative">
-								<Search/>
+								<PopoversSearch/>
 							</div>
 						</div>
 					</div>
@@ -93,4 +93,6 @@
 	import { useSiteStore } from '@/stores/StoreSite.js'
 
 	const site = useSiteStore()
+	const isOpen = false;
+	const dark = false;
 </script>

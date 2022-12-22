@@ -1,7 +1,7 @@
 <template>
 	<Popover v-slot="{ open }">
 		<PopoverButton as="div" class="w-96 appearance-none">
-			<form class="group relative" @submit.prevent="onSubmit" @submit="search()">
+			<form class="group relative" @submit.prevent="search">
 				<div class="absolute left-3 top-[8px]">
 					<button class="text-white/20 hover:text-gray-400" type="submit">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -70,12 +70,11 @@
 	</transition>
 </Popover>
 </template>
-
 <script>
-	import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
+	import { Popover, PopoverButton, PopoverPanel, PopoverOverlay } from '@headlessui/vue';
 
 	export default {
-		components: { Popover, PopoverButton, PopoverPanel },
+		components: { Popover, PopoverButton, PopoverPanel, PopoverOverlay },
 		data() {
 			return {
 				searchTerm: this.$route.query.q,

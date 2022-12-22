@@ -63,10 +63,10 @@
 									<ul class="flex flex-col space-y-2">
 										<li class="flex">
 											<div class="flex h-5 items-center">
-												<input id="nsfw" name="nsfw" type="checkbox" v-model="isNsfw" class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
+												<input id="is_nsfw" name="is_nsfw" type="checkbox" v-model="isNsfw" class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
 											</div>
 											<div class="ml-3 text-sm">
-												<label for="nsfw" class="font-bold text-red-700 select-none">NFSW</label>
+												<label for="is_nsfw" class="font-bold text-red-700 select-none">NFSW</label>
 												<p class="text-gray-500">This post is for 18+ audiences</p>
 											</div>
 										</li>
@@ -128,7 +128,7 @@
 					"type_": "text",
 					"url": url.value,
 					"body": body.value,
-					"nsfw": isNsfw.value
+					"is_nsfw": isNsfw.value
 				},
 				headers: {
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',

@@ -28,7 +28,7 @@
 				<div class="hidden md:flex items-center">
 					<!-- Search Box -->
 					<div class="mr-4 flex items-center space-x-4">
-						<form class="group relative" @submit.prevent="onSubmit" @submit="search()">
+						<form class="group relative" @submit.prevent="search">
 							<div class="absolute left-3 top-2">
 								<button class="text-white/20 hover:text-white" type="submit">
 									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">

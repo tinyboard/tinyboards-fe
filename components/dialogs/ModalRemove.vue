@@ -103,11 +103,11 @@
         // Update state.
         if (type === 'post') {
           postsStore.updatePost(id, {
-            removed: true
+            is_removed: true
           });
         } else {
           commentsStore.updateComment(id, {
-            removed: true
+            is_removed: true
           });
         };
         // Parse response.
