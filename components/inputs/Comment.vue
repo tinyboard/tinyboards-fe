@@ -1,6 +1,6 @@
 <template>
 	<form @submit.prevent="onSubmit" @submit="submitComment()" class="relative flex flex-col items-end w-full">
-		<textarea required placeholder="Write a comment..." rows="4" class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="body"/>
+		<textarea required placeholder="Write a comment..." rows="4" class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="body"/>
 		<div class="flex space-x-2 mt-2">
 			<button v-if="parentId" type="button" class="button white w-24" @click="close">Cancel</button>
 			<button class="button primary min-w-[96px]" :class="{ 'loading':isLoading }" :disabled="isLoading">

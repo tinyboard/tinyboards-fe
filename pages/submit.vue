@@ -53,7 +53,7 @@
 										</span>
 										<div id="post-body" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
 											<!-- <InputsTiptap class="bg-white"/> -->
-											<textarea placeholder="Enter some words worth reading..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
+											<textarea placeholder="Enter some words worth reading..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
 										</div>
 									</label>
 								</div>
