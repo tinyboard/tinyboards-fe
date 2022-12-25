@@ -147,12 +147,13 @@ const {
   pending,
   error,
   refresh,
-} = await useFetch("https://the.tree-house.cloud/api/v1/members", {
+} = await useFetch("/members", {
   query: {
     sort: sort.value,
     limit: limit.value,
     page: page.value,
   },
+  baseURL
 });
 
 if (error.value && error.value.response) {
