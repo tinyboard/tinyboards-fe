@@ -9,7 +9,7 @@
 				</li>
 			</ul>
 			<p class="mt-2 text-xs text-gray-400 text-center sm:text-left">
-				Powered by TinyBoards. Handcrafted by community members.
+				Powered by Tinyboards. Crafted with <span class="text-primary/50">&#9829;</span> by the community.
 			</p>
 		</div>
 	</footer>
