@@ -632,9 +632,9 @@
           class="px-4 py-24 text-center text-gray-400"
         >
           <p>
-            This post sucks so bad, no one's bothered to reply to it.
+            <span class="font-medium">This post sucks so bad, no one's bothered to reply to it</span>
             <br />
-            You could be the first one to point that out and laugh at it.
+            You could be the first one to point that out and laugh at it
           </p>
         </div>
         <!-- Error -->
