@@ -149,11 +149,9 @@
       <!-- Post Content -->
       <div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
         <!-- Title -->
-        <h1
-          class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100"
-        >
+        <NuxtLink :to="!!item.post.url ? item.post.url : `/post/${item.post.id}`" class="text-lg md:text-xl font-medium dark:text-gray-100">
           {{ item.post.title }}
-        </h1>
+        </NuxtLink>
       </div>
       <!-- Post Embed -->
       <div

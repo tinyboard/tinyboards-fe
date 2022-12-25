@@ -48,9 +48,8 @@
                               </div>
                               <!-- Pagination -->
                               <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
-                                    <NavigationPaginate :total-pages="totalPages" :total="250" :per-page="limit" :current-page="page"/>
+                                    <NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
                               </div>
-
                         </div>
                         <!-- Sidebar -->
                         <ContainersSidebar />
@@ -103,8 +102,8 @@
       const posts = postsStore.posts;
 
       const totalPages = computed(() => {
-            return Math.round(posts.length / items.total_count) || 1;
-      })
+            return items.value.total_count / limit.value || 1;
+      });
 
       // Links for sub navbar
       const links = [

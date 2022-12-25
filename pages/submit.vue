@@ -106,9 +106,9 @@
 
 	const router = useRouter();
 
-	const title = ref("");
-	const url = ref("");
-	const body = ref("");
+	const title = ref(null);
+	const url = ref(null);
+	const body = ref(null);
 	const isNsfw = ref(false);
 
 	let hasFocusedUrl = ref(false);
