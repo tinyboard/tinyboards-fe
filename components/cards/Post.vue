@@ -106,7 +106,7 @@
             :class="isCompact ? 'ml-2' : 'ml-auto'"
           >
             <!-- Pin Icon -->
-            <span v-if="item.post.stickied" title="Post pinned by the mods">
+            <span v-if="item.post.is_stickied" title="Post pinned by the mods">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="text-green-500 w-4 h-4"
@@ -126,7 +126,7 @@
               </svg>
             </span>
             <!-- Lock Icon -->
-            <span v-if="item.post.locked" title="Post locked by the mods">
+            <span v-if="item.post.is_locked" title="Post locked by the mods">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="text-yellow-500 w-4 h-4"
@@ -471,7 +471,7 @@
             >
               <!-- Pin Icon -->
               <svg
-                v-show="!item.post.stickied"
+                v-show="!item.post.is_stickied"
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24"
@@ -490,7 +490,7 @@
               </svg>
               <!-- Pin Off Icon -->
               <svg
-                v-show="item.post.stickied"
+                v-show="item.post.is_stickied"
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24"
@@ -509,7 +509,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="text-sm font-medium">{{
-                item.post.stickied ? "Unpin" : "Pin"
+                item.post.is_stickied ? "Unpin" : "Pin"
               }}</span>
             </button>
           </li>
@@ -703,7 +703,7 @@ const confirmSticky = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isStickied: props.item.post.stickied,
+      isStickied: props.item.post.is_stickied,
     },
   });
 };

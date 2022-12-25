@@ -2,7 +2,7 @@
   <div class="relative w-full flex flex-col sm:space-y-6">
     <!-- Pinned Banner -->
     <div
-      v-if="item.post.stickied"
+      v-if="item.post.is_stickied"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white"
     >
       <svg
@@ -21,7 +21,7 @@
         <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
       </svg>
       <div>
-        <strong> Pinned post </strong>
+        <strong>Pinned post</strong>
         <br />
         <p class="text-sm text-green-800">
           This post was pinned by the mods. It is probably important.
@@ -30,7 +30,7 @@
     </div>
     <!-- Locked Banner -->
     <div
-      v-if="item.post.locked"
+      v-if="item.post.is_locked"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white"
     >
       <svg
@@ -49,7 +49,7 @@
         <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
       </svg>
       <div>
-        <strong> Post locked </strong>
+        <strong>Post locked</strong>
         <br />
         <p class="text-sm text-yellow-800">
           This post was locked by the admins. Voting and replying are disabled.
@@ -443,7 +443,7 @@
             >
               <!-- Pin Icon -->
               <svg
-                v-show="!item.post.stickied"
+                v-show="!item.post.is_stickied"
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24"
@@ -462,7 +462,7 @@
               </svg>
               <!-- Pin Off Icon -->
               <svg
-                v-show="item.post.stickied"
+                v-show="item.post.is_stickied"
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24"
@@ -481,7 +481,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="text-sm font-medium">{{
-                item.post.stickied ? "Unpin" : "Pin"
+                item.post.is_stickied ? "Unpin" : "Pin"
               }}</span>
             </button>
           </li>
@@ -492,7 +492,7 @@
             >
               <!-- Lock Icon -->
               <svg
-                v-show="!item.post.locked"
+                v-show="!item.post.is_locked"
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24"
@@ -509,7 +509,7 @@
               </svg>
               <!-- Unlock Icon -->
               <svg
-                v-show="item.post.locked"
+                v-show="item.post.is_locked"
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24"
@@ -525,7 +525,7 @@
                 <path d="M8 11v-5a4 4 0 0 1 8 0"></path>
               </svg>
               <span class="text-sm font-medium">{{
-                item.post.locked ? "Unlock" : "Lock"
+                item.post.is_locked ? "Unlock" : "Lock"
               }}</span>
             </button>
           </li>
@@ -605,7 +605,7 @@
       >
         <!-- Write Form -->
         <div
-          v-if="isAuthed && !item.post.locked && !route.params.comment"
+          v-if="isAuthed && !item.post.is_locked && !route.params.comment"
           class="flex md:space-x-2"
         >
           <img
@@ -799,7 +799,7 @@ const confirmSticky = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isStickied: props.item.post.stickied,
+      isStickied: props.item.post.is_stickied,
     },
   });
 };
@@ -811,7 +811,7 @@ const confirmLock = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isLocked: props.item.post.locked,
+      isLocked: props.item.post.is_locked,
     },
   });
 };
