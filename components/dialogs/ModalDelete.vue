@@ -17,7 +17,7 @@
                 <p class="text-sm text-gray-500">
                   Your {{ type ?? 'post' }} will be forever removed from this TinyBoard.
                   <br/>
-                  You won't be able to recover it.
+                  <strong>You won't be able to recover it.</strong>
                 </p>
               </div>
               <div class="mt-4 flex space-x-2 justify-end">
