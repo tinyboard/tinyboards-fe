@@ -529,7 +529,7 @@ const toggleReplying = () => {
 }
 .comment-collapse-bar::before {
   content: "";
-  left: calc(50% - 1px);
+  left: calc(50% - 0.5px);
   width: 14px;
   height: calc(100% - 24px);
   @apply absolute bottom-0 border-l border-gray-300;
