@@ -617,7 +617,7 @@
           <InputsComment
             :post-id="item.post.id"
             :parent-id="null"
-            @comment-creation_date="onCommentPublished"
+            @comment-published="onCommentPublished"
           />
         </div>
         <!-- Comments -->

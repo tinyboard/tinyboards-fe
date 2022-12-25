@@ -250,7 +250,7 @@
                 'text-gray-900 dark:text-gray-300': voteType === 0,
               }"
             >
-              {{ item.counts.score + voteType }}
+              {{ item.counts.score + item.my_vote === 0 ? 0 : voteType }}
             </span>
             <button
               @click="vote(-1)"
@@ -552,7 +552,7 @@
         <div class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
           <dl class="flex justify-between">
             <dt>Score&nbsp;</dt>
-            <dd class="font-medium">{{ item.counts.score + voteType }}</dd>
+            <dd class="font-medium">{{ item.counts.score + item.my_vote === 0 ? 0 : voteType }}</dd>
           </dl>
           <dl class="flex justify-between">
             <dt>Replies&nbsp;</dt>
@@ -637,18 +637,14 @@ const vote = async (type = 0) => {
       Authorization: authCookie ? `Bearer ${authCookie}` : "",
     },
   }).then(({ data, error }) => {
-    if (data.value) {
-      data = JSON.parse(JSON.stringify(data.value));
-    } else {
+    if (error.value) {
       // Revert failed vote & show error toast.
-      setTimeout(() => {
-        voteType.value = 0;
-        toast.addNotification({
-          header: "Vote failed",
-          message: "Your vote failed to cast. Please try again.",
-          type: "error",
-        });
-      }, 400);
+      voteType.value = props.item.my_vote;
+      toast.addNotification({
+        header: "Vote failed",
+        message: "Your vote failed to cast. Please try again.",
+        type: "error",
+      });
       // Log the error.
       console.error(error.value);
     }

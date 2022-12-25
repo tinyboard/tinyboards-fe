@@ -374,7 +374,7 @@ const vote = async (type = 0) => {
     } else {
       // Revert failed vote & show error toast.
       setTimeout(() => {
-        voteType.value = 0;
+        voteType.value = item.value.my_vote;
         toast.addNotification({
           header: "Vote failed",
           message: "Your vote failed to cast. Please try again.",

@@ -20,6 +20,16 @@ export const usePostsStore = defineStore('posts', {
   },
   // Actions
   actions: {
+    updateRoot(id, options) {
+      for (let i = 0; i < this.posts.length; i++) {
+        if (this.posts[i].post.id === id) {
+          this.posts[i] = {
+            ...this.posts[i],
+            ...options
+          };
+        }
+      }
+    },
     updatePost(id, options) {
       for (let i = 0; i < this.posts.length; i++) {
         if (this.posts[i].post.id === id) {
