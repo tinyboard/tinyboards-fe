@@ -197,7 +197,8 @@
 			query: {
 				...route.query,
 				type: route.query.type ?? 'post',
-				query: text.value ?? '404'
+				query: text.value ?? '404',
+				sort: route.query.sort ?? 'new'
 			}
 		})
 	};

@@ -182,7 +182,7 @@
 	// Search params.
 	const type = computed(() => route.query.type || 'post');
 	const text = ref(route.query.query);
-	const sort = ref(route.query.sort);
+	const sort = ref(route.query.sort) || 'new';
 	const hasNsfw = ref(false);
 	const limit = computed(() => route.query.limit || 5);
 
@@ -192,7 +192,7 @@
 	// Fetch search results.
 	const { data: results, pending, error, refresh } = await useFetch("/search", {
 		query: {
-			type: type.value ?? 'post',
+			type: type.value,
 			query: route.query.query,
 			sort: route.query.sort,
 			is_nsfw: false,
@@ -210,7 +210,7 @@
 		} else {
 			return Math.round(results.value.comments.length / results.value.total_count) || 1;
 		}
-   });
+   	});
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 
