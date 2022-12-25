@@ -246,7 +246,7 @@
                 'text-gray-900 dark:text-gray-300': voteType === 0,
               }"
             >
-              {{ item.counts.score + voteType }}
+              {{ item.counts.score + item.my_vote === 0 ? 0 : voteType }}
             </span>
             <button
               @click="vote(-1)"
