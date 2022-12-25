@@ -26,7 +26,7 @@
         ></path>
       </svg>
       <div>
-        <strong> This post was removed by the admins </strong>
+        <strong>This post was removed by the admins</strong>
         <br />
         <p class="text-sm text-red-800">
           All user interactions with this post have been locked

@@ -20,7 +20,7 @@
         <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
       </svg>
       <div>
-        <strong> This post was deleted by the author </strong>
+        <strong>This post was deleted by the author</strong>
         <br />
         <p class="text-sm text-yellow-800">
           Discussion and voting has been locked
