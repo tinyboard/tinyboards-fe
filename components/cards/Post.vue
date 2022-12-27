@@ -593,7 +593,7 @@
         <div class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
           <dl class="flex justify-between">
             <dt>Score&nbsp;</dt>
-            <dd class="font-medium">{{ item.counts.score + item.my_vote === 0 ? 0 : voteType }}</dd>
+            <dd class="font-medium">{{ item.counts.score + voteType }}</dd>
           </dl>
           <dl class="flex justify-between">
             <dt>Replies&nbsp;</dt>
