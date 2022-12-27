@@ -81,7 +81,7 @@
     <div>
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">Share</h2>
       <input
-        :value="`https://tinyboards.net/p/${item.post.id}`"
+        :value="`https://the.tree-house.cloud/p/${item.post.id}`"
         class="w-full p-1 text-sm mb-4"
         @focus="$event.target.select()"
       />
