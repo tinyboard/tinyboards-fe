@@ -1,4 +1,5 @@
 import { formatDistanceToNowStrict, isValid } from "@/node_modules/date-fns";
+import { zonedTimeToUtc } from 'date-fns-tz';
 import locale from '@/node_modules/date-fns/locale/en-US';
 
 const formatDistanceLocale = {
@@ -37,15 +38,16 @@ function formatDistance(token, count, options) {
 }
 
 export function formatDate(date) {
-  let timestamp = date ? new Date(date) : '';
+  const timestamp = date ? new Date(date) : '';
+  const zonedDate = zonedTimeToUtc(timestamp, 'UTC');
   try {
     if (isValid(timestamp)) {
-      return formatDistanceToNowStrict(timestamp, {
+      return formatDistanceToNowStrict(zonedDate, {
         addSuffix: true,
         locale: {
           ...locale,
           formatDistance,
-        },
+        }
       })
     }
   } catch (error) {
