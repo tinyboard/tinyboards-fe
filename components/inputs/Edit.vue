@@ -1,6 +1,6 @@
 <template>
 	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="relative flex flex-col items-end w-full">
-		<textarea required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody"/>
+		<textarea required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
 		<div class="flex space-x-2 mt-2">
 			<button type="button" class="button gray" @click="emit('closed');">
 				Cancel
@@ -44,36 +44,49 @@
 	const localBody = ref(props.body);
 	const isLoading = ref(false);
 
+	// Handle key press
+	const inputHandler = (e) => {
+      if (e.keyCode === 13 && e.shiftKey) {
+        e.preventDefault();
+        submitEdit();
+      }
+    };
+
+	// Submit edit
 	const submitEdit = () => {
-		isLoading.value = true;
-		useFetch(`/${props.type}s/${props.id}`, {
-			baseURL,
-			method: "put",
-			body: {
-				"body": localBody.value
-			},
-			headers: {
-				Authorization: authCookie ? `Bearer ${authCookie}` : '',
-			}
-		})
-		.then(({ data, error }) => {
-			if (data.value) {
-				data = JSON.parse(JSON.stringify(data.value));
-				// Emit response.
-				emit('hasEdited',data);
-				// Close the input.
-				emit('closed');
-				// Show success toast.
-				toast.addNotification({header:'Edits saved',message:`Your ${props.type} was updated.`,type:'success'});
-			} else {
-				// Log the error.
-				console.error(error.value);
-				// Show error toast.
-				toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
-		});
+		if (localBody.value) {
+			isLoading.value = true;
+			useFetch(`/${props.type}s/${props.id}`, {
+				baseURL,
+				method: "put",
+				body: {
+					"body": localBody.value
+				},
+				headers: {
+					Authorization: authCookie ? `Bearer ${authCookie}` : '',
+				}
+			})
+			.then(({ data, error }) => {
+				if (data.value) {
+					data = JSON.parse(JSON.stringify(data.value));
+					// Emit response.
+					emit('hasEdited',data);
+					// Close the input.
+					emit('closed');
+					// Show success toast.
+					toast.addNotification({header:'Edits saved',message:`Your ${props.type} was updated.`,type:'success'});
+				} else {
+					// Log the error.
+					console.error(error.value);
+					// Show error toast.
+					toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
+				}
+			})
+			.finally(() => {
+				isLoading.value = false;
+			});
+		} else {
+			toast.addNotification({header:'Edits failed',message:'Your edits need some text! Please try again.',type:'error'});
+		}
 	};
 </script>
