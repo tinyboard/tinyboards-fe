@@ -56,12 +56,12 @@
             <p class="flex items-center space-x-2 text-sm mt-1 text-gray-400">
               <!-- Timestamp -->
               <span>{{ formatDate(new Date(item.post.creation_date)) }}</span>
-              <span v-if="item.post.updated">
+              <span v-if="item.post.edited_date">
                 <span class="font-black text-gray-400 dark:text-gray-500"
                   >·</span
                 >
                 <span class="pl-1 italic">
-                  Edited {{ formatDate(new Date(item.post.updated)) }}
+                  Edited {{ formatDate(new Date(item.post.edited_date)) }}
                 </span>
               </span>
               <!-- Ratio -->

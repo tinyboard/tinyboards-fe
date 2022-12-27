@@ -80,12 +80,12 @@
               <span :title="item.post.creation_date" class="ml-2">
                 <span>{{ formatDate(new Date(item.post.creation_date)) }}</span>
               </span>
-              <span class="ml-2" v-if="item.post.updated">
+              <span class="ml-2" v-if="item.post.edited_date">
                 <span class="font-black text-gray-400 dark:text-gray-500"
                   >·</span
                 >
                 <span class="italic pl-1">
-                  Edited {{ formatDate(new Date(item.post.updated)) }}</span
+                  Edited {{ formatDate(new Date(item.post.edited_date)) }}</span
                 >
               </span>
               <!-- Tags -->
