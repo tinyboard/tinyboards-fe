@@ -194,7 +194,7 @@
             v-show="!isCompact"
             class="mt-2 relative overflow-hidden"
             :class="{
-              'max-h-56 overlay': !isExpanded && item.post.body.length > 800,
+              'max-h-56 overlay': !isExpanded && (item.post.body.length > 800 || item.post.body.includes('![](http'))
             }"
           >
             <div
@@ -318,7 +318,7 @@
             </NuxtLink>
           </li>
           <li
-            v-if="item.post.body.length > 800 && item.post.body_html"
+            v-if="(item.post.body.length > 800 || item.post.body.includes('![](http')) && item.post.body_html"
             class="ml-6 hidden sm:list-item"
           >
             <button
