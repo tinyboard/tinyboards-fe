@@ -117,6 +117,7 @@ const images = [
   "https://i.imgur.com/It1ro7S.png",
   "https://i.imgur.com/wJ4wVjd.png",
   "https://i.imgur.com/HN953k0.png",
+  "https://i.imgur.com/nep99Uk.jpg"
 ];
 
 const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`;
