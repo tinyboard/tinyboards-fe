@@ -218,7 +218,9 @@
           <li
             class="ml-auto sm:ml-0 group flex items-center space-x-2 leading-none text-sm font-medium"
           >
+            <!-- If logged in, allow upvoting -->
             <button
+              v-if="isAuthed"
               @click="vote(1)"
               class="upvote"
               :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'"
@@ -239,6 +241,24 @@
                 ></path>
               </svg>
             </button>
+            <!-- Else, redirect to login -->
+            <NuxtLink v-else to="/login" class="text-gray-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path
+                  d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"
+                ></path>
+              </svg>
+            </NuxtLink>
             <span
               :class="{
                 'text-primary': voteType === 1,
@@ -246,9 +266,11 @@
                 'text-gray-900 dark:text-gray-300': voteType === 0,
               }"
             >
-              {{ item.counts.score + item.my_vote === 0 ? 0 : voteType }}
+              {{ item.counts.score + voteType }}
             </span>
+            <!-- If logged in, allow downvoting -->
             <button
+              v-if="isAuthed"
               @click="vote(-1)"
               class="downvote"
               :class="
@@ -271,6 +293,24 @@
                 ></path>
               </svg>
             </button>
+            <!-- Else, redirect to login -->
+            <NuxtLink v-else to="/login" class="text-gray-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path
+                  d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z"
+                ></path>
+              </svg>
+            </NuxtLink>
           </li>
           <li class="ml-6 hidden sm:list-item">
             <NuxtLink

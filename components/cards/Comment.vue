@@ -86,14 +86,11 @@
                 </span>
               </span>
               <!-- Score -->
-              <span class="hidden md:flex items-center space-x-2">
-                <span
-                  class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500"
-                  >·</span
-                >
+              <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`" class="hidden md:flex items-center space-x-2">
+                <span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
-                  {{ item.counts.score + voteType }}
-                  {{ item.counts.score + voteType === 1 ? "pt" : "pts" }}
+                  {{ score }}
+                  {{ score ** 2 === 1 ? "pt" : "pts" }}
                 </span>
               </span>
               <!-- Reply Count -->
@@ -146,9 +143,7 @@
               @click="vote(1)"
               :disabled="item.post.is_deleted"
             >
-              Upvote ({{
-                voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes
-              }})
+              {{ voteType === 1 ? 'Upvoted' : 'Upvote' }}
             </button>
             <!-- Else, redirect to login -->
             <NuxtLink
@@ -156,9 +151,7 @@
               to="/login"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium"
             >
-              Upvote ({{
-                voteType === 1 ? item.counts.upvotes + 1 : item.counts.upvotes
-              }})
+              Upvote
             </NuxtLink>
           </li>
           <li>
@@ -175,11 +168,7 @@
               @click="vote(-1)"
               :disabled="item.post.is_deleted"
             >
-              Downvote ({{
-                voteType === -1
-                  ? item.counts.downvotes - 1
-                  : item.counts.downvotes
-              }})
+              {{ voteType === -1 ? 'Downvoted' : 'Downvote' }}
             </button>
             <!-- Else, redirect to login -->
             <NuxtLink
@@ -187,11 +176,7 @@
               to="/login"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium"
             >
-              Downvote ({{
-                voteType === -1
-                  ? item.counts.downvotes - 1
-                  : item.counts.downvotes
-              }})
+              Downvote
             </NuxtLink>
           </li>
           <li
@@ -386,6 +371,11 @@ const vote = async (type = 0) => {
     }
   });
 };
+
+const score = computed(() => {
+  // return item.value.counts.score + (item.value.my_vote + voteType.value === 0 ? 0 : voteType.value) || 0
+  return item.value.counts.score + voteType.value;
+})
 
 // Author
 const isAuthor = computed(() => {
