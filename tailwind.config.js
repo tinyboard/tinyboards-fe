@@ -10,7 +10,7 @@ module.exports = {
     "./pages/**/*.vue",
     "./pages/*.vue",
     "./plugins/**/*.{js,ts}"
-  ],
+    ],
   theme: {
     colors: {
       primary: ({ opacityVariable, opacityValue }) => {
@@ -63,6 +63,15 @@ module.exports = {
       },
       maxWidth: {
         '8xl': '90rem'
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            img: {
+              display: 'inline-block'
+            }
+          }
+        }
       }
     },
     variants: {
@@ -72,5 +81,5 @@ module.exports = {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography')
-  ]
+    ]
 }
