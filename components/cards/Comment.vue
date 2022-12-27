@@ -495,6 +495,9 @@ const toggleReplying = () => {
 .comment-body {
   @apply prose prose-sm text-gray-900 max-w-none;
 }
+.comment-body :deep(p:first-of-type) {
+  @apply mt-0;
+}
 .comment-body :deep(img) {
   max-width: 100px;
   aspect-ratio: auto;
