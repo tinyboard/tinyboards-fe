@@ -1,6 +1,6 @@
-import { formatDistanceToNowStrict, isValid } from "date-fns";
+import { formatDistanceToNowStrict, isValid } from "date-fns/esm";
 import { zonedTimeToUtc } from 'date-fns-tz/esm';
-import locale from 'date-fns/locale/en-US';
+import locale from 'date-fns/esm/locale/en-US';
 
 const formatDistanceLocale = {
   lessThanXSeconds: '{{count}}s',
