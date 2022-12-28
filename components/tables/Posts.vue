@@ -267,7 +267,7 @@ const props = defineProps({
 });
 
 const userStore = useLoggedInUser();
-const isAdmin = userStore.user && userStore.user.admin;
+const isAdmin = userStore.user && userStore.user.is_admin;
 
 const titles = {
   hot: "hot",

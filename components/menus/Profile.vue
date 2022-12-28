@@ -35,7 +35,7 @@
               <!-- Username -->
               <p class="text-sm text-gray-900 leading-normal">
                 <strong>{{ v.name }}</strong>
-                <span v-if="v.admin" class="ml-1 badge badge-blue">Admin</span>
+                <span v-if="v.is_admin" class="ml-1 badge badge-blue">Admin</span>
               </p>
               <!-- User Reputation -->
               <div class="flex items-center space-x-1 text-xs">
