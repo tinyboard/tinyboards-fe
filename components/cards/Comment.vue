@@ -273,7 +273,7 @@
           :to="`/post/${item.post.id}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2"
         >
-          Continue this thread &#8594;
+          Continue thread &#8594;
         </NuxtLink>
       </div>
     </div>
