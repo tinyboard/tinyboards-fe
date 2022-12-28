@@ -86,7 +86,7 @@
                 </span>
               </span>
               <!-- Score -->
-              <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`" class="hidden md:flex items-center space-x-2">
+              <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`" class="flex items-center space-x-2">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
                   {{ score }}
