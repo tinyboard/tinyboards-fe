@@ -48,11 +48,28 @@
         </div>
         <!-- Mod Actions -->
         <div v-if="isAdmin && !isSelf" class="py-2 text-sm">
+          <!-- Manage Admin -->
+          <MenuItem v-slot="{ active, close }">
+            <button @click="confirmAdmin(); close()" class="group flex items-center w-full px-4 py-1.5" :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
+              <!-- Sheild Slash Icon -->
+              <svg v-if="user.is_admin" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <line x1="3" y1="3" x2="21" y2="21"></line>
+                 <path d="M17.669 17.669a12 12 0 0 1 -5.669 3.331a12 12 0 0 1 -8.5 -15c.797 .036 1.589 0 2.366 -.126m3.092 -.912a12 12 0 0 0 3.042 -1.962a12 12 0 0 0 8.5 3a12 12 0 0 1 -1.117 9.379"></path>
+              </svg>
+              <!-- Shield Icon -->
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
+              </svg>
+              <span>{{ user.is_admin ? 'Remove' : 'Make' }} admin</span>
+            </button>
+          </MenuItem>
           <!-- Ban/Unban -->
           <MenuItem :disabled="user.is_admin" v-slot="{ active, close }">
             <button @click="confirmBan(); close()" class="group flex items-center w-full px-4 py-1.5" :class="active ? 'bg-gray-100 text-red-700' : 'text-red-500 hover:text-red-700'">
               <!-- User Slash Icon -->
-              <svg v-if="user.is_banned" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg v-if="user.is_banned" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <circle cx="9" cy="7" r="4"></circle>
                  <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
@@ -112,6 +129,19 @@
       required: true
     }
   });
+
+  // Confirm Admin
+  const confirmAdmin = () => {
+    modalStore.setModal({
+      modal: 'ModalAdmin',
+      id: props.user.id,
+      isOpen: true,
+      options: {
+        'is_admin': props.user.is_admin,
+        'user': props.user
+      }
+    });
+  };
 
   // Ban & Unban
   const confirmBan = () => {
