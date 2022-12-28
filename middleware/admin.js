@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 	const userStore = useLoggedInUser();
 	// Redirect to login if page requires authenticated session.
 	// Redirect to feed if page requires unauthenticated session.
-	if (userStore.user && !userStore.user.admin && to.meta.isAdminRequired) {
+	if (userStore.user && !userStore.user.is_admin && to.meta.isAdminRequired) {
 		return navigateTo('/feed');
 	}
 });

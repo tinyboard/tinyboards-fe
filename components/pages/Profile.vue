@@ -218,7 +218,7 @@
 
 	// Admin
 	const isAdmin = computed(() => {
-		return !!userStore.user && userStore.user.admin
+		return !!userStore.user && userStore.user.is_admin
 	});
 
 	const isCompact = ref(false);

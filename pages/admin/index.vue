@@ -88,7 +88,7 @@
                       member.user.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.admin" class="ml-1 badge badge-blue"
+                    <span v-if="member.user.is_admin" class="ml-1 badge badge-blue"
                       >Admin</span
                     >
                   </NuxtLink>
@@ -132,7 +132,7 @@
                       member.user.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.admin" class="ml-1 badge badge-blue"
+                    <span v-if="member.user.is_admin" class="ml-1 badge badge-blue"
                       >Admin</span
                     >
                   </NuxtLink>
@@ -179,7 +179,7 @@
                       member.user.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.admin" class="ml-1 badge badge-blue"
+                    <span v-if="member.user.is_admin" class="ml-1 badge badge-blue"
                       >Admin</span
                     >
                   </NuxtLink>

@@ -61,7 +61,7 @@
               <div class="flex">
                 <strong class="text-sm">{{ user.user.name }}</strong>
                 <!-- Role -->
-                <span v-if="user.user.admin" class="ml-1 badge badge-blue"
+                <span v-if="user.user.is_admin" class="ml-1 badge badge-blue"
                   >Admin</span
                 >
               </div>

@@ -24,7 +24,7 @@
           {{ item.creator.name }}
         </strong>
         <!-- Role -->
-        <span v-if="item.creator.admin" class="ml-1 badge badge-blue"
+        <span v-if="item.creator.is_admin" class="ml-1 badge badge-blue"
           >Admin</span
         >
       </NuxtLink>

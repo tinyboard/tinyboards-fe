@@ -91,7 +91,7 @@
               <!-- Username -->
               <strong>{{ item.creator.name }}</strong>
               <!-- Role -->
-              <span v-if="item.creator.admin" class="ml-1 badge badge-blue"
+              <span v-if="item.creator.is_admin" class="ml-1 badge badge-blue"
                 >Admin</span
               >
             </NuxtLink>
@@ -806,7 +806,7 @@ const isAuthor = computed(() => {
 
 // Admin
 const isAdmin = computed(() => {
-  return !!userStore.user && userStore.user.admin;
+  return !!userStore.user && userStore.user.is_admin;
 });
 
 // Edit
