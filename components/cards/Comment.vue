@@ -87,7 +87,7 @@
               </span>
               <!-- Score -->
               <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`" class="hidden md:flex items-center space-x-2">
-                <span class="hidden md:inline-block font-black text-gray-400 dark:text-gray-500">·</span>
+                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
                   {{ score }}
                   {{ score ** 2 === 1 ? "pt" : "pts" }}
