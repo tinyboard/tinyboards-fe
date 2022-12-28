@@ -90,7 +90,7 @@
       if (data.value) {
         // Update post state.
         postsStore.updatePost(id, {
-          locked: !props.options.isLocked
+          is_locked: !props.options.isLocked
         });
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));

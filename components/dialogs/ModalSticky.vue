@@ -90,7 +90,7 @@
       if (data.value) {
         // Update post state.
         postsStore.updatePost(id, {
-          stickied: !props.options.isStickied
+          is_stickied: !props.options.isStickied
         });
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
