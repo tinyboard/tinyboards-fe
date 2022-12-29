@@ -5,7 +5,12 @@
                   <NavigationNavbarSub :links="links" class="sm:order-first"/>
                   <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
                         <!-- Banner -->
-                        <CardsBanner class="col-span-full"/>
+                        <CardsBanner
+                        :title="route.params.board ?? 'Feed'"
+                        :sub-title="route.params.board ? 'Board description goes here' : 'The front-page. All your posts are belong to us.'"
+                        image-url="https://i.imgur.com/TV07zoE.jpeg"
+                        class="col-span-full"
+                        />
                   </div>
             </section>
             <!-- Main Content -->
@@ -67,6 +72,7 @@
       const route = useRoute();
 
       definePageMeta({
+        'alias': ['/b/:board?/feed/:sort?','/b/:board?/:sort?'],
         key: (route) => route.fullPath
       });
 
@@ -109,5 +115,5 @@
       const links = [
             { name: 'New Thread', href: '/submit' },
             { name: 'House Rules', href: '/help/rules', target: '_blank' }
-      ];
+            ];
 </script>
