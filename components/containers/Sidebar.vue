@@ -3,7 +3,7 @@
     class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
   >
     <div class="p-2.5 bg-white border shadow-polaroid">
-      <img class="w-full h-64 aspect-auto object-cover" :src="selectedImage" />
+      <img loading="lazy" class="w-full h-64 aspect-auto object-cover" :src="selectedImage" />
       <small class="mt-4 block leading-none text-gray-400">
         Art submission by community members
       </small>
@@ -54,6 +54,7 @@
         >
           <NuxtLink :to="`/user/${user.user.name}`" class="flex space-x-2">
             <img
+              loading="lazy"
               class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
               :src="user.user.avatar"
             />
