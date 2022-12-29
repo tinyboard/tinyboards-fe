@@ -26,13 +26,13 @@
           alt="java blinkie"
         />
         <p>
-          <a
-            href="https://www.youtube.com/watch?v=jfKfPfyJRdk"
-            target="_blank"
+          <NuxtLink
+            external
+            to="https://www.youtube.com/watch?v=jfKfPfyJRdk"
             style="color: #a60d0d; font-style: italic; font-family: 'Georgia'"
           >
             LoFi Stream
-          </a>
+          </NuxtLink>
         </p>
       </div>
     </div>
