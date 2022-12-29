@@ -39,6 +39,7 @@
 <script setup>
   import { ref } from 'vue'
   import { baseURL } from "@/server/constants";
+  import { useApi } from '@/composables/api';
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -86,17 +87,12 @@
   const removeItem = async () => {
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useFetch(`/mod/remove_${type}`, {
-      baseURL,
+    await useApi("/remove", {
       body: {
-          [`${type}_id`]: id,
+          "target_fullname": `${type === 'post' ? 't3' : 't1'}_${id}`,
           "reason": "Violating community rules.",
-          "removed": true
       },
       method: "post",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
     })
     .then(({ data }) => {
       if (data.value) {
