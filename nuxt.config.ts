@@ -14,6 +14,8 @@ export default defineNuxtConfig({
     // Static page generated on-demand once
     '/help/**': { static: true },
     '/': { redirect: '/feed' },
+    // Force server-side rendering
+    '/user/**': { ssr: true },
   }
 });
 
