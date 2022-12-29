@@ -184,7 +184,7 @@
           <NuxtLink
             class="font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
             :class="{ 'sm:text-lg': !isCompact }"
-            external
+            :external="!!item.post.url"
             :to="!!item.post.url ? item.post.url : `/post/${item.post.id}`"
           >
             {{ item.post.title }}
