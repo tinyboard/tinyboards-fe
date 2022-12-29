@@ -149,7 +149,7 @@
       <!-- Post Content -->
       <div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
         <!-- Title -->
-        <NuxtLink :external="!!item.post.url" :to="!!item.post.url ? item.post.url : `/post/${item.post.id}`" class="text-lg md:text-xl font-medium dark:text-gray-100">
+        <NuxtLink :external="!!item.post.url" :to="!!item.post.url ? item.post.url : `/post/${item.post.id}`" :target="item.post.url ? '_blank' : null" class="text-lg md:text-xl font-medium dark:text-gray-100">
           {{ item.post.title }}
         </NuxtLink>
       </div>
