@@ -4,6 +4,7 @@ import { useApi } from "@/composables/api";
 export async function getListing(query, type_) {
   // let page = 1;
   let items = ref([]);
+  let totalCount = ref(0);
   let endpoints = {
     posts: "/feed",
     comments: "/comment",
@@ -11,7 +12,7 @@ export async function getListing(query, type_) {
   async function request(query) {
     const { data, pending, error, refresh } = await useApi(endpoints[type_], {
       query: { ...query },
-      key: "get_" + type_ + "_key"
+      key: "get_" + type_ + "_key",
     });
 
     //console.info("console log");
@@ -19,6 +20,7 @@ export async function getListing(query, type_) {
     //console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
     if (data.value) {
       items.value = [...items.value, ...data.value[type_]];
+      totalCount.value = data.value["total_count"];
     }
 
     return {
@@ -37,6 +39,7 @@ export async function getListing(query, type_) {
 
   return {
     items,
+    totalCount,
     paginate,
     pending,
     error,

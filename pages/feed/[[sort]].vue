@@ -90,7 +90,7 @@
             return sorts.includes(route.params.sort) ? route.params.sort : 'hot';
       });
 
-      const { items, paginate, pending, error, refresh } = await getListing({
+      const { items, totalCount, paginate, pending, error, refresh } = await getListing({
             sort: sort.value,
             limit: limit.value,
             page: page.value
