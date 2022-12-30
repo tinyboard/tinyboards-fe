@@ -38,12 +38,12 @@
                 <span v-if="v.is_admin" class="ml-1 badge badge-blue">Admin</span>
               </p>
               <!-- User Reputation -->
-              <div class="flex items-center space-x-1 text-xs">
+              <!-- <div class="flex items-center space-x-1 text-xs">
                 <span class="text-yellow-500">&#9733;</span>
                 <span class="text-gray-600">
-                  2.4M reputation
+                  {{ reputation }}
                 </span>
-              </div>
+              </div> -->
             </div>
           </NuxtLink>
         </MenuItem>
@@ -72,7 +72,7 @@
           </MenuItem>
           <!-- Posts Link -->
           <MenuItem v-slot="{ active, close }">
-            <NuxtLink to="/posts" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
+            <NuxtLink :to="`/user/${v.name}/posts`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
@@ -134,7 +134,7 @@
   });
 
   const v = ref(props.user);
-
+  
   const logout = () => {
     Cookies.remove('token');
     userStore.logout();
