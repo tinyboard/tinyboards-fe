@@ -72,6 +72,14 @@
 
       const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, { sort: sort.value });
 
+      if (type.value === 'comment' && commentsError.value && commentsError.value.response || comments.value[0].comment.post_id !== item.value.post.id) {
+            throw createError({
+                  statusCode: 404,
+                  statusMessage: 'We could not find the page you were looking for. Try better next time.',
+                  fatal: true
+            })
+      };
+
       watch(() => route.query, () => commentsRefresh());
 
       // Links
