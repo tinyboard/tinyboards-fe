@@ -16,7 +16,7 @@
 	const route = useRoute();
 
 	useHead({
-		title: `TinyBoards | ${route.meta.title ?? 'Feed'}`,
+		title: `Tinyboards | ${route.meta.title ?? 'Feed'}`,
 		meta: [
 		{
 			property: 'og:title',
