@@ -108,7 +108,7 @@
       const posts = postsStore.posts;
 
       const totalPages = computed(() => {
-            return items.value.total_count / limit.value || 1;
+            return Math.ceil(totalCount.value / limit.value || 1);
       });
 
       // Links for sub navbar

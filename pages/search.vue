@@ -89,52 +89,9 @@
 						</p>
 					</div>
 					<!-- Pagination -->
-					<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
-                  <NavigationPagination
-                  :total-pages="totalPages"
-                  :total="250"
-                  :per-page="25"
-                  :current-page="Number.parseInt(page)"
-                  v-slot="{
-                        startPage,
-                        endPage,
-                        pages,
-                        isFirstPage,
-                        isLastPage,
-                        onClickPreviousPage,
-                        onClickPage,
-                        onClickNextPage,
-                        isPageActive,
-                        pageChanged
-                  }"
-                  @page-changed="onPageChange">
-                        <ul class="flex items-center text-sm text-gray-500 font-bold space-x-1">
-                              <li>
-                                    <button class="button button-sm white" @click="onClickPreviousPage" :disabled="isFirstPage">
-                                          Prev
-                                    </button>
-                              </li>
-                              <li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
-                                    <button type="button" class="button button-sm" @click="onClickPage(page.name)" :class="isPageActive(page.name) ? 'primary' : 'white'" :aria-label="`Go to page ${page.name}`">
-                                          {{ page.name }}
-                                    </button>
-                              </li>
-                              <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
-                                    <span class="text-gray-400 px-2">...</span>
-                              </li>
-                              <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
-                                    <button type="button" class="button button-sm" @click="onClickPage(totalPages)" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
-                                          {{ totalPages }}
-                                    </button>
-                              </li>
-                              <li>
-                                    <button class="button button-sm white" type="button" @click="onClickNextPage" :disabled="isLastPage" aria-label="Next page">
-                                          Next
-                                    </button>
-                              </li>
-                        </ul>
-                  </NavigationPagination>
-            	</div>
+					<!-- <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
+						<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
+            			</div> -->
 				</div>
 				<!-- Sidebar -->
 				<ContainersSidebar />
@@ -206,9 +163,9 @@
 
 	const totalPages = computed(() => {
 		if (type.value === 'post') {
-			return Math.round(posts.length / results.value.total_count) || 1;
+			return Math.ceil(posts.length / results.value.total_count) || 1;
 		} else {
-			return Math.round(results.value.comments.length / results.value.total_count) || 1;
+			return Math.ceil(results.value.comments.length / results.value.total_count) || 1;
 		}
    	});
 

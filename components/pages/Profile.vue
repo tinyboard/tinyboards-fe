@@ -177,6 +177,10 @@
 							They must not be that interesting
 						</p>
 					</div>
+					<!-- Pagination -->
+					<!-- <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
+						<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
+					</div> -->
 				</div>
 			</div>
 		</section>
@@ -201,6 +205,18 @@
 		type: {
 			type: String,
 			default: 'post'
+		},
+		totalPages: {
+			type: Number,
+			default: 0
+		},
+		totalPages: {
+			type: Number,
+			default: 25
+		},
+		page: {
+			type: Number,
+			default: 1
 		}
 	});
 

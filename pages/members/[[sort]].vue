@@ -166,7 +166,7 @@ if (error.value && error.value.response) {
 }
 
 const totalPages = computed(() => {
-  return members.value.total_count / limit.value || 1;
+  return Math.ceil(members.value.total_count / limit.value || 1);
 });
 
 // Links for sub navigation bar.
