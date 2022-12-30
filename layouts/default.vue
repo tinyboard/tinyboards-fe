@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<NuxtLoadingIndicator color="rgba(255,255,255,0.25)" height="3"/>
 		<!-- Navigation Bar -->
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
