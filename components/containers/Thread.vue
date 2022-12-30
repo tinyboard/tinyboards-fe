@@ -870,22 +870,22 @@ const sorts = [
   {
     name: "Hot",
     key: "hot",
-    href: { query: { ...route.query, sort: "hot" } },
+    href: { path: route.fullPath, query: { ...route.query, sort: "hot" } },
   },
   {
     name: "Latest",
     key: "new",
-    href: { query: { ...route.query, sort: "new" } },
+    href: { path: route.fullPath, query: { ...route.query, sort: "new" } },
   },
   {
     name: "Oldest",
     key: "old",
-    href: { query: { ...route.query, sort: "old" } },
+    href: { path: route.fullPath, query: { ...route.query, sort: "old" } },
   },
   {
     name: "Top All",
     key: "top",
-    href: { query: { ...route.query, sort: "top" } },
+    href: { path: route.fullPath, query: { ...route.query, sort: "top" } },
   },
 ];
 </script>
