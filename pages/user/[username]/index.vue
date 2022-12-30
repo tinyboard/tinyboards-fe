@@ -7,17 +7,19 @@
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { getListing } from '@/composables/posts';
 
+	const route = useRoute();
+
 	definePageMeta({
 		'alias': ['/user/:username/overview','/user/:username/posts'],
 		key: (route) => route.fullPath
 	});
 
 	useHead({
-		title: `Tinyboards | ${route.query.username}'s profile`,
+		title: `Tinyboards | ${route.params.username}'s profile`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `Tinyboards | ${route.query.username}'s profile`
+			content: `Tinyboards | ${route.params.username}'s profile`
 		}
 		]
 	});
@@ -25,8 +27,6 @@
 	// Import thread components.
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
     const ProfileRemoved = defineAsyncComponent(() => import('@/components/pages/ProfileRemoved'));
-
-	const route = useRoute();
 
 	// User
 	const username = computed(() => route.params.username);
