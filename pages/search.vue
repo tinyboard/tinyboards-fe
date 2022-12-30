@@ -117,11 +117,11 @@
 	});
 
 	useHead({
-		title: `TinyBoards | ${route.query.query}`,
+		title: `Tinyboards | ${route.query.query}`,
 		meta: [
 		{
 			property: 'og:title',
-			content: 'TinyBoards | Search'
+			content: 'Tinyboards | search'
 		}
 		]
 	});
@@ -130,11 +130,11 @@
 	const isCompact = ref(false);
 
 	// Pagination
-   const page = computed(() => route.query.page || 1);
+	const page = computed(() => route.query.page || 1);
 
-   const onPageChange = (page) => {
-         router.push(`${route.path}?page=${page}`)
-   };
+	const onPageChange = (page) => {
+		router.push(`${route.path}?page=${page}`)
+	};
 
 	// Search params.
 	const type = computed(() => route.query.type || 'post');
@@ -167,7 +167,7 @@
 		} else {
 			return Math.ceil(results.value.comments.length / results.value.total_count) || 1;
 		}
-   	});
+	});
 
 	// Handle search input.
 	const submitSearch = (text) => router.push({ 
@@ -183,7 +183,7 @@
 	const links = [
 		{ name: 'Posts', href: { query: { query: text.value, type: 'post' } } },
 		{ name: 'Comments', href: { query: { query: text.value, type: 'comment' } } },
-	];
+		];
 
 	// Post sort options.
 	const postSorts = [

@@ -12,6 +12,16 @@
 		'hasRepliesDisabled': true
 	});
 
+	useHead({
+		title: `Tinyboards | ${route.query.username}'s profile`,
+		meta: [
+		{
+			property: 'og:title',
+			content: `Tinyboards | ${route.query.username}'s profile`
+		}
+		]
+	});
+
 	// Import thread components.
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
     const ProfileRemoved = defineAsyncComponent(() => import('@/components/pages/ProfileRemoved'));

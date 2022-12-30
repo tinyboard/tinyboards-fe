@@ -71,6 +71,17 @@
 
       watch(() => route.query, () => commentsRefresh());
 
-      // Sub Navigation Links
+      // Links
       const links = [{ name: 'Comments', href: '#comments' }];
+
+      // Document head
+      useHead({
+            title: `Tinyboards | ${item.value.post.title}`,
+            meta: [
+            {
+                  property: 'og:title',
+                  content: `Tinyboards | ${route.query.username}`
+            }
+            ]
+      });
 </script>
