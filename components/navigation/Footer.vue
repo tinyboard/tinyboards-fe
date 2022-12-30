@@ -11,11 +11,32 @@
 			<p class="mt-2 text-xs text-gray-400 text-center sm:text-left">
 				Powered by Tinyboards. Crafted with <span class="text-primary/50">&#9829;</span> by the community.
 			</p>
+			<ul v-if="isAdmin" class="flex justify-center sm:justify-start gap-2 mt-4 -mx-1">
+				<li class="px-1 flex-shrink-0">
+					<NuxtLink to="/admin" class="text-xs text-gray-500 hover:text-primary">
+						Admin Control Panel
+					</NuxtLink>
+				</li>
+				<li class="px-1 flex-shrink-0">
+					<NuxtLink to="/admin/invites" class="text-xs text-gray-500 hover:text-primary">
+						Invite a friend
+					</NuxtLink>
+				</li>
+			</ul>
 		</div>
 	</footer>
 </template>
 
 <script setup>
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+
+	const userStore = useLoggedInUser();
+
+	// Admin
+	const isAdmin = computed(() => {
+	  return !!userStore.user && userStore.user.is_admin;
+	});
+
 	// Define footer links
 	const links = [
 		{ name: 'About', href: '/help/about' },
