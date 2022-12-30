@@ -42,6 +42,7 @@
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
+  import { useApi } from '@/composables/api';
   import {
     TransitionRoot,
     TransitionChild,
@@ -75,16 +76,11 @@
 
   const removeItem = async () => {
     const id = item.value.post.id;
-    await useFetch(`/mod/lock_post`, {
-      baseURL,
+    await useApi(`/${item.value.post.is_locked ? 'unlock' : 'lock'}`, {
       body: {
-          "post_id": id,
-          "locked": !props.options.isLocked
+          "target_fullname": `t3_${id}`
       },
       method: "post",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
     })
     .then(({ data }) => {
       if (data.value) {
