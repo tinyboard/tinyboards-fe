@@ -27,17 +27,18 @@ export async function usePostComments(id, query = {}) {
 }
 
 export async function useComments(id, type = 'post', query = {}) {
-  type = type === 'post' ? 'post_id' : 'comment_id';
-
-  console.log(type)
+  const url = type === 'post' ? '/comments' : `/comments/${id}`;
 
   const {
     data: listing,
     pending,
     error,
     refresh,
-  } = await useApi(`/comments?${type}=${id}`, {
-    query: { ...query },
+  } = await useApi(url, {
+    query: {
+      ...query,
+      ...(type === 'post' && { post_id: id })
+    },
     key: `${type}_${id}_comments`,
   });
 

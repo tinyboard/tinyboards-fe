@@ -664,7 +664,7 @@
         <ListsComments
           v-if="comments.length"
           :comments="comments"
-          :offset="offset"
+          :offset="!!route.params.comment ? 3 : null"
         />
         <!-- Empty -->
         <div

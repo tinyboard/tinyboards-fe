@@ -31,7 +31,7 @@
       import { baseURL } from "@/server/constants";
       import { usePostsStore } from '@/stores/StorePosts';
       import { usePost } from '@/composables/post';
-      import { usePostComments } from '@/composables/comments';
+      import { useComments } from '@/composables/comments';
 
       definePageMeta({
             alias: ['/b/:board/p/:id/:comment?','/p/:id/:comment?','/b/:board/post/:id/:comment?','/post/:id/:comment?'],
@@ -62,12 +62,15 @@
       item = computed(() => postsStore.getPost(route.params.id));
 
       // Comments
-      const sort = ref(route.query.sort);
+      const id = computed(() => {
+            return !!route.params.comment ? route.params.comment : route.params.id
+      });
       const type = computed(() => {
-            return route.params.comment ? 'comment' : 'post'
+            return !!route.params.comment ? 'comment' : 'post'
       })
+      const sort = ref(route.query.sort);
 
-      const { comments, commentsPending, commentsError, commentsRefresh } = await usePostComments(route.params.id, { sort: sort.value });
+      const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, { sort: sort.value });
 
       watch(() => route.query, () => commentsRefresh());
 

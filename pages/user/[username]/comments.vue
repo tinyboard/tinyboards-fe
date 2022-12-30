@@ -5,7 +5,6 @@
 <script setup>
 	import { baseURL } from '@/server/constants';
 	import { useFetchUser } from '@/composables/user';
-	import { useComments } from '@/composables/comments';
 
 	definePageMeta({
 		key: (route) => route.fullPath,
