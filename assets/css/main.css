@@ -74,6 +74,25 @@
 		from { background-position: 0 0; }
 		to { background-position: 100% 0; }
 	}
+	.flashing-text {
+		transform: rotate(-20deg);
+		animation: FlashingText 0.5s ease-in-out infinite;
+		color: #FFFF00;
+		font-size: 12px;
+		font-weight: bold;
+		text-shadow: 0 2px 0 #383838;
+	}
+	@keyframes FlashingText {
+		0% {
+			transform: scale(1) rotate(-20deg);
+		}
+		50% {
+			transform: scale(1.05) rotate(-20deg);
+		}
+		100% {
+			transform: scale(1) rotate(-20deg);
+		}
+	}
 }
 
 @layer components {

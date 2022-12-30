@@ -3,7 +3,7 @@
 		<div class="mx-auto max-w-8xl px-2.5 sm:px-6">
 			<div class="flex items-center justify-between h-12 sm:h-14">
 				<div class="flex flex-grow items-center">
-					<div class="flex-shrink-0">
+					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
 						<NuxtLink to="/feed" class="font-bold text-lg text-white">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block mr-2">
@@ -11,6 +11,9 @@
 							</svg>
 							<span>{{ site.name }}</span>
 						</NuxtLink>
+						<span class="absolute -right-5 -bottom-1 flashing-text font-mono">
+							{{ selectedText }}
+						</span>
 					</div>
 					<!-- Core Navigation Links -->
 					<div class="hidden md:block w-1/3 ml-8">
@@ -180,6 +183,7 @@
 	import { ref } from 'vue';
 	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
+	import { shuffle } from "@/utils/shuffleArray";
 
 	const route = useRoute();
 	const router = useRouter();
@@ -211,6 +215,23 @@
 	{ name: 'Members', href: '/members' },
 	{ name: 'FAQ', href: '/help/faq' }
 	]
+
+	// Yellow Text
+	const yellowText = [
+		'It works!',
+		'pre-alpha',
+		'00110001',
+		'kroner',
+		'It\'s PHP!',
+		'It\'s jQuery!',
+		'It\'s Rails!'
+	];
+
+	const selectedText = ref(null);
+
+	if (typeof window === 'undefined') {
+		selectedText.value = shuffle(yellowText)[0] ?? 'It\'s Rails!';
+	};
 </script>
 
 <!-- <script>
