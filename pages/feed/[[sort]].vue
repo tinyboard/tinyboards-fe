@@ -21,17 +21,17 @@
                               <div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-b sm:border sm:shadow-inner-white sm:rounded-md">
                                     <MenusSort/>
                                     <div class="ml-auto flex space-x-2">
-                                          <button class="ml-auto" @click="isCompact = false">
+                                          <button class="ml-auto" @click="preferCardView = false">
                                                 <!-- Rows Icon -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="preferCardView ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                    <rect x="4" y="4" width="16" height="6" rx="2"></rect>
                                                    <rect x="4" y="14" width="16" height="6" rx="2"></rect>
                                                 </svg>
                                           </button>
-                                          <button class="ml-auto" @click="isCompact = true">
+                                          <button class="ml-auto" @click="preferCardView = true">
                                                 <!-- Cards Icon -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="isCompact ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="preferCardView ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
                                                    <line x1="4" y1="12" x2="20" y2="12"></line>
@@ -40,7 +40,7 @@
                                     </div>
                               </div>
                               <!-- Posts -->
-                              <ListsPosts v-if="posts?.length" :posts="posts" :isCompact="isCompact" :isLoading="pending" :hasError="error"/>
+                              <ListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
                               <!-- Empty State -->
                               <div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
                                     <p>
@@ -76,7 +76,9 @@
         key: (route) => route.fullPath
       });
 
-      const isCompact = ref(false);
+      const preferCardView = useCookie('preferCardView');
+      // true by default
+      preferCardView.value = preferCardView.value === undefined ? true : preferCardView.value;
 
       // Pagination
       const page = computed(() => Number.parseInt(route.query.page) || 1);
