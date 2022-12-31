@@ -21,7 +21,7 @@
     >
       <div class="col-span-full">
         <ul
-          v-if="members"
+          v-if="members.members.length"
           class="w-full grid grid-cols-4 gap-2 sm:gap-4 overflow-hidden"
         >
           <li

@@ -96,7 +96,7 @@
 	const yellowText = [
 		'It works!',
 		'pre-alpha',
-		'00110001',
+		'seq-approved',
 		'kroner',
 		'It\'s PHP!',
 		'It\'s jQuery!',
