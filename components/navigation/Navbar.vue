@@ -94,13 +94,14 @@
 
 	// Yellow Text
 	const yellowText = [
-		'It works!',
 		'pre-alpha',
 		'seq-approved',
 		'kroner',
 		'It\'s PHP!',
 		'It\'s jQuery!',
-		'It\'s Rails!'
+		'It\'s Rails!',
+		'It\'s SSR!',
+		'In Motion'
 	];
 
 	const selectedText = ref(null);
