@@ -7,7 +7,7 @@
 		<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-b sm:border sm:rounded-md sm:shadow-inner-xs">
 			<p>
 				<span class="font-medium">
-					There are no replies in your inbox...
+					There are no {{ $route.params.type === 'unread' ? 'unread messages' : $route.params.type || 'messages' }} in your inbox...
 				</span>
 				<br/>
 				you must not be popular
@@ -19,7 +19,7 @@
 <script setup>
 	definePageMeta({
 		'hasAuthRequired': true,
-		'hasRepliesDisabled': true
+		'hasRepliesDisabled': true,
 	});
 
 	const messages = [];
