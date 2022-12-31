@@ -56,66 +56,6 @@
         </p>
       </div>
     </div>
-    <!-- Deleted banner -->
-    <div v-if="item.post.is_deleted"
-      class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <rect x="5" y="11" width="14" height="10" rx="2"></rect>
-        <circle cx="12" cy="16" r="1"></circle>
-        <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
-      </svg>
-      <div>
-        <strong>This post was deleted by the author</strong>
-        <br />
-        <p class="text-sm text-yellow-800">
-          Discussion and voting has been locked
-        </p>
-      </div>
-    </div>
-    <!-- Removed banner -->
-    <div v-else-if="item.post.is_removed"
-      class="order-2 sm:order-first flex items-center justify-center sm:justify-start mb-2.5 sm:mb-0 p-2.5 text-center sm:text-left text-red-900 bg-red-200 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path
-          d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385"
-        ></path>
-        <path d="M6 9l4 4"></path>
-        <path d="M13 10l-4 -4"></path>
-        <path d="M3 21h7"></path>
-        <path
-          d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z"
-        ></path>
-      </svg>
-      <div>
-        <strong>This post was removed by the admins</strong>
-        <br />
-        <p class="text-sm text-red-800">
-          {{ isAuthor ? "It doesn't appear on the feed, and post contents are hidden from other users." : "All user interactions with this post have been locked" }}
-        </p>
-      </div>
-    </div>
     <!-- Post -->
     <div
       class="sm:order-2 w-full sm:p-4 bg-white border-b sm:border sm:shadow-inner-xs sm:rounded-md"
@@ -138,7 +78,7 @@
           <img
             v-else
             loading="lazy"
-            src="/assets/default_pfp.png"
+            src=""
             alt="avatar"
             class="flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
           />
@@ -159,7 +99,7 @@
               v-else
               class="text-sm text-gray-400 dark:text-gray-400 font-bold"
             >
-              [deleted user]
+              deleted user
             </span>
             <p class="flex items-center space-x-2 text-sm text-gray-400">
               <!-- Timestamp -->
@@ -629,7 +569,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin && !item.post.is_removed" class="ml-6 hidden lg:list-item">
+          <li v-if="isAdmin && !isAuthor" class="ml-6 hidden lg:list-item">
             <button
               class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600"
               @click="confirmRemove"
@@ -657,19 +597,6 @@
               </svg>
               <span class="text-sm font-medium">Remove</span>
             </button>
-          </li>
-          <li v-if="isAdmin && item.post.is_removed" class="ml-6 hidden lg:list-item">
-              <button
-                class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
-                @click="confirmRemove"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <circle cx="12" cy="12" r="9"></circle>
-                  <path d="M9 12l2 2l4 -4"></path>
-                </svg>
-                <span class="text-sm font-medium">Approve</span>
-              </button>
           </li>
         </ul>
       </div>
