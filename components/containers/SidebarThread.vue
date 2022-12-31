@@ -5,7 +5,7 @@
   >
     <!-- Author Details -->
     <div
-      v-if="!item.post.is_deleted"
+      v-if="!(item.post.is_deleted || item.post.is_removed)"
       class="p-4 border rounded-md shadow-inner-white"
     >
       <NuxtLink
