@@ -114,11 +114,11 @@
 
 <script setup>
 useHead({
-  title: "TinyBoards | Members",
+  title: "Tinyboards | Members",
   meta: [
     {
       property: "og:title",
-      content: "TinyBoards | Members",
+      content: "Tinyboards | Members",
     },
   ],
 });
