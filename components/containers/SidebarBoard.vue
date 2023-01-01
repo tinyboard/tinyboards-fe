@@ -8,7 +8,7 @@
                 About
                 <span class="text-gray-700 text-opacity-70">/b/{{ board.name }}</span>
             </h2>
-            <div class="prose prose-sm text-gray-900 px-2">
+            <div class="prose prose-sm text-gray-900">
                 <p v-if="board.sidebar_html">{{ board.sidebar_html }}</p>
                 <p v-else>{{ board.description }}</p>
             </div>
