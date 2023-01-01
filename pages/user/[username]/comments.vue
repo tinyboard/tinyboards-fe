@@ -6,6 +6,8 @@
 	import { baseURL } from '@/server/constants';
 	import { useFetchUser } from '@/composables/user';
 
+	const route = useRoute();
+
 	definePageMeta({
 		key: (route) => route.fullPath,
 		'hasRepliesDisabled': true
@@ -24,8 +26,6 @@
 	// Import thread components.
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
     const ProfileRemoved = defineAsyncComponent(() => import('@/components/pages/ProfileRemoved'));
-
-	const route = useRoute();
 
 	// User
 	const username = computed(() => route.params.username);
