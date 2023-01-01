@@ -1,7 +1,7 @@
 <template>
       <main class="flex flex-col pt-12 sm:pt-14">
             <!-- Sub Navigation & Banner -->
-            <section class="hidden md:flex flex-col">
+            <section class="flex-col" :class="route.params.board ? 'flex' : 'hidden md:flex'">
                   <NavigationNavbarSub :links="links" class="sm:order-first"/>
                   <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
                         <!-- Banner -->
