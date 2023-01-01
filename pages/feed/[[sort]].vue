@@ -79,7 +79,7 @@
 
       
       definePageMeta({
-            'alias': ['/b/:board?/feed/:sort?','/b/:board?/:sort?'],
+            'alias': ['','/b/:board?/feed/:sort?','/b/:board?/:sort?'],
             key: (route) => route.fullPath
       });
       
