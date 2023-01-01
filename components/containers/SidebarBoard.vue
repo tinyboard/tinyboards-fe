@@ -96,7 +96,7 @@
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                             <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
                         </svg>
-                        <span>Mod Self</span>
+                        <span>Mod self</span>
                     </button>
                 </li>
                 <li>
@@ -108,7 +108,7 @@
                             <line x1="14" y1="10" x2="14.01" y2="10"></line>
                             <path d="M10 14a3.5 3.5 0 0 0 4 0"></path>
                         </svg>
-                        <span>Hide from Combined Feeds</span>
+                        <span>Hide from combined feeds</span>
                     </button>
                 </li>
                 <li>
