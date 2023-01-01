@@ -6,11 +6,7 @@
                   <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
                         <!-- Banner -->
                         <CardsBoardBanner v-if="route.params.board"
-                              :board="{
-                                    name: route.params.board,
-                                    title: 'Board title, defaults to board name',
-                                    description: 'Board short description, max 256 chars'
-                              }"
+                              :board="dummyBoard"
                               class="col-span-full"
                         />
                         <CardsBanner
@@ -66,7 +62,8 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebar />
+                        <ContainersSidebarBoard v-if="route.params.board" :board="dummyBoard" />
+                        <ContainersSidebar v-else />
                   </div>
             </section>
       </main>
@@ -80,18 +77,25 @@
       const router = useRouter();
       const route = useRoute();
 
+      
       definePageMeta({
-        'alias': ['/b/:board?/feed/:sort?','/b/:board?/:sort?'],
-        key: (route) => route.fullPath
+            'alias': ['/b/:board?/feed/:sort?','/b/:board?/:sort?'],
+            key: (route) => route.fullPath
       });
-
+      
       const preferCardView = useCookie('preferCardView');
       // true by default
       preferCardView.value = preferCardView.value === undefined ? true : preferCardView.value;
-
+      
       // Pagination
       const page = computed(() => Number.parseInt(route.query.page) || 1);
       const limit = computed(() => Number.parseInt(route.query.limit) || 25);
+      
+      const dummyBoard = {
+            name: route.params.board,
+            title: 'Board title, defaults to board name',
+            description: 'Board short description, max 256 chars'
+      };
 
       // Posts
       const postsStore = usePostsStore();
