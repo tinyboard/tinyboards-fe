@@ -1,14 +1,14 @@
 <template>
-	<div id="banner" class="flex flex-row space-x-5 items-center p-4 sm:px-12 sm:py-4 bg-gray-200/50 sm:rounded-md sm:shadow-inner-white bg-cover bg-center lights" :style="{ backgroundImage: `url(${board.banner_url || 'https://i.imgur.com/O4ivfHf.jpg'})` }">
+	<div id="banner" class="flex flex-row space-x-5 items-center p-4 sm:px-12 sm:py-6 bg-gray-200/50 sm:rounded-md sm:shadow-inner-white bg-cover bg-center lights" :style="{ backgroundImage: `url(${board.banner_url || 'https://i.imgur.com/O4ivfHf.jpg'})` }">
         <img :src="board.icon_url || 'https://i.imgur.com/mt4KFVX.png'" class="w-28 h-28 rounded-md border border-gray-400" />
 		<div class="relative flex flex-col justify-between overflow-hidden">
 			<h1 class="text-3xl text-gray-100 leading-9 font-extrabold">
 				{{ board.title || board.name }}
 			</h1>
-            <h6 class="font-bold text-gray-100 text-sm">
+            <h6 class="font-semibold text-opacity-80 text-gray-100 text-sm">
                 /b/{{ board.name }}
             </h6>
-			<p class="text-base text-lg text-gray-200 leading-7 truncate text-ellipsis max-w-md sm:max-w-2xl">
+			<p class="text-base text-gray-100 leading-7 truncate text-ellipsis max-w-md sm:max-w-2xl">
 				{{ board.description || 'this text will eventually be customizable by mods' }}
 			</p>
 		</div>
