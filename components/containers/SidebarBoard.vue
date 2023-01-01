@@ -96,7 +96,7 @@
                         <line x1="14" y1="10" x2="14.01" y2="10"></line>
                         <path d="M10 14a3.5 3.5 0 0 0 4 0"></path>
                     </svg>
-                    <span>Hide from combined feeds</span>
+                    <span>Hide from Combined Feeds</span>
                 </button>
             </li>
             <li>
