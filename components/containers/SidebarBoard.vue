@@ -3,13 +3,7 @@
       class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
       <div>
-        <h2 class="font-bold leading-5 text-base mb-3 px-2 pb-1 border-b">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                <polyline points="11 12 12 12 12 16 13 16"></polyline>
-            </svg>
+        <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
             <span>About</span> <span class="text-gray-700 text-opacity-70">/b/{{ board.name }}</span></h2>
         <div class="prose prose-sm text-gray-900 px-2">
           <p v-if="board.sidebar_html" :v-html="board.sidebar_html" />
@@ -17,11 +11,7 @@
         </div>
       </div>
       <div>
-        <h2 class="font-bold leading-5 text-base mb-1 px-2 pb-1 border-b">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
-            </svg>
+        <h2 class="font-bold leading-5 text-base mb-1 pb-1 border-b">
             <span>Moderation</span>
         </h2>
         <ul class="space-y-1">
@@ -37,7 +27,7 @@
             </li>
             <li>
                 <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
                     </svg>
@@ -46,7 +36,7 @@
             </li>
             <li>
                 <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M14.274 10.291a4 4 0 1 0 -5.554 -5.58m-.548 3.453a4.01 4.01 0 0 0 2.62 2.65"></path>
                         <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 1.147 .167m2.685 2.681a4 4 0 0 1 .168 1.152v2"></path>
@@ -57,7 +47,7 @@
             </li>
             <li>
                 <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25"></path>
                         <circle cx="8.5" cy="10.5" r="1"></circle>
@@ -70,26 +60,22 @@
         </ul>
       </div>
       <div>
-        <h2 class="font-bold leading-5 text-base mb-1 px-2 pb-1 border-b">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4z"></path>
-            </svg>
+        <h2 class="font-bold leading-5 text-base mb-1 pb-1 border-b">
             <span>Admin Tools</span>
         </h2>
         <ul class="space-y-1">
             <li>
-                <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <NuxtLink class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
                     </svg>
                     <span>Mod Self</span>
-                </button>
+                </NuxtLink>
             </li>
             <li>
                 <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7"></path>
                         <line x1="10" y1="10" x2="10.01" y2="10"></line>
@@ -181,24 +167,4 @@
     refresh,
   } = await useApi(`/board/${board.name}/mod/mods`);*/
   </script>
-  
-  <style scoped>
-  .shadow-polaroid,
-  .shadow-polaroid > * {
-    position: relative;
-  }
-  .shadow-polaroid::before {
-    content: "";
-    position: absolute;
-    bottom: -15px;
-    right: 0px;
-    width: 100%;
-    height: 100%;
-    background: url("/assets/images/shadow-lg.png") no-repeat bottom right;
-  }
-
-  .icon {
-    @apply w-4 h-4 mr-2 inline;
-  }
-  </style>
   
