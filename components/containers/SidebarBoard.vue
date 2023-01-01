@@ -2,6 +2,16 @@
     <div
       class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
+    <router-link :to="`/b/${board.name}/submit`" custom v-slot="{ navigate }">
+		<button class="button primary w-full font-bold text-left" @click="navigate" @keypress.enter="navigate" role="link">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+                <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+            </svg>
+			Create Post
+		</button>
+	  </router-link>
       <div>
         <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
             <span>About</span> <span class="text-gray-700 text-opacity-70">/b/{{ board.name }}</span></h2>
@@ -55,6 +65,20 @@
                         <circle cx="16.5" cy="10.5" r="1"></circle>
                     </svg>
                     <span>Appearance</span>
+                </button>
+            </li>
+            <li>
+                <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <line x1="9" y1="6" x2="20" y2="6"></line>
+                        <line x1="9" y1="12" x2="20" y2="12"></line>
+                        <line x1="9" y1="18" x2="20" y2="18"></line>
+                        <line x1="5" y1="6" x2="5" y2="6.01"></line>
+                        <line x1="5" y1="12" x2="5" y2="12.01"></line>
+                        <line x1="5" y1="18" x2="5" y2="18.01"></line>
+                    </svg>
+                    <span>Moderation Log</span>
                 </button>
             </li>
         </ul>
