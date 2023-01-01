@@ -225,7 +225,8 @@
 		'It\'s jQuery!',
 		'It\'s Rails!',
 		'It\'s SSR!',
-		'In Motion'
+		'In Motion',
+		'est. 2023'
 	];
 
 	const selectedText = ref(null);
