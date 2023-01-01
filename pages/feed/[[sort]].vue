@@ -94,7 +94,13 @@
       const dummyBoard = {
             name: route.params.board,
             title: 'Board title, defaults to board name',
-            description: 'Board short description, max 256 chars'
+            description: 'Board short description, max 256 chars',
+            followers_count: 304,
+            posts_count: 1902,
+            comments_count: 13929,
+            created_at: '2022-11-27T19:31:27.730335',
+            icon_url: 'https://i.ibb.co/r4D7WWs/scott-goodwill-y8-Ngwq34-Ak-unsplash.jpg',
+            banner_url: 'https://i.ibb.co/7kfB6Y0/chris-schog-En-Ca-UE4-QNOw-unsplash.jpg'
       };
 
       // Posts

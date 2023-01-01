@@ -116,19 +116,19 @@
 							<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-4 pt-2.5 md:pt-0">
 								<li>
 									<span>
-										<strong>{{ reputation }}</strong>
+										<strong>{{ reputation.toLocaleString() }}</strong>
 										Reputation
 									</span>
 								</li>
 								<li class="ml-4">
 									<span>
-										<strong>{{ user.posts_count }}</strong>
+										<strong>{{ user.posts_count.toLocaleString() }}</strong>
 										{{ user.posts_count === 1 ? 'Post' : 'Posts' }}
 									</span>
 								</li>
 								<li class="ml-4">
 									<span>
-										<strong>{{ user.comments_count }}</strong>
+										<strong>{{ user.comments_count.toLocaleString() }}</strong>
 										{{ user.comments_count === 1 ? 'Comment' : 'Comments' }}
 									</span>
 								</li>
