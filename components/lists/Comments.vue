@@ -2,7 +2,7 @@
 	<!-- List of Comments -->
 	<ul v-if="comments.length" class="mt-4 first:mt-0 first-of-type:mt-0">
 		<li v-for="item in comments" :key="item.comment.id" class="mt-4 first:mt-0">
-			<component v-if="item" :item="item" :offset="offset" :is="item.comment.is_deleted || item.comment.is_removed ? commentRemoved : comment"/>
+			<component v-if="item" :item="item" :offset="offset" :is="item.comment.is_deleted || item.comment.is_removed ? CommentRemoved : Comment"/>
 		</li>
 	</ul>
 </template>
@@ -19,8 +19,8 @@
 	});
 
 	// Import comment components.
-	const comment = defineAsyncComponent(() => import('@/components/cards/Comment'));
-	const commentRemoved = defineAsyncComponent(() => import('@/components/cards/CommentRemoved'));
+	const Comment = defineAsyncComponent(() => import('@/components/cards/Comment'));
+	const CommentRemoved = defineAsyncComponent(() => import('@/components/cards/CommentRemoved'));
 
 	/*
 	let error = props.commentData.error;

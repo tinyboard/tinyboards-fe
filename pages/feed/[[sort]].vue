@@ -62,8 +62,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarBoard v-if="route.params.board" :board="dummyBoard" />
-                        <ContainersSidebar v-else />
+                        <component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? dummyBoard : null"/>
                   </div>
             </section>
       </main>
@@ -74,9 +73,12 @@
       import { usePostsStore } from '@/stores/StorePosts';
       import { getListing } from '@/composables/posts';
 
+      // Import sidebar components
+      const Sidebar = defineAsyncComponent(() => import('@/components/containers/Sidebar'));
+      const SidebarBoard = defineAsyncComponent(() => import('@/components/containers/SidebarBoard'));
+
       const router = useRouter();
       const route = useRoute();
-
       
       definePageMeta({
             'alias': ['','/b/:board?/feed/:sort?','/b/:board?/:sort?'],
