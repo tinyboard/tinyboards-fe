@@ -3,8 +3,8 @@
       class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
     <router-link :to="`/b/${board.name}/submit`" custom v-slot="{ navigate }">
-		<button class="button primary w-full font-bold text-left" @click="navigate" @keypress.enter="navigate" role="link">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+		<button class="flex items-center button primary" @click="navigate" @keypress.enter="navigate" role="link">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-5 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
                 <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
@@ -14,7 +14,8 @@
 	  </router-link>
       <div>
         <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
-            <span>About</span> <span class="text-gray-700 text-opacity-70">/b/{{ board.name }}</span></h2>
+            About <span class="text-gray-700 text-opacity-70">/b/{{ board.name }}</span>
+        </h2>
         <div class="prose prose-sm text-gray-900 px-2">
           <p v-if="board.sidebar_html" :v-html="board.sidebar_html" />
           <p v-else>{{ board.description }}</p>
@@ -27,7 +28,7 @@
         <ul class="space-y-1">
             <li>
                 <button class="w-full bg-gray-300 bg-opacity-0 hover:bg-opacity-40 p-2 rounded text-left">
-                    <svg class="w-4 h-4 mr-2 inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
