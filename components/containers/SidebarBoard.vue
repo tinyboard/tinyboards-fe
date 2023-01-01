@@ -1,8 +1,15 @@
 <template>
     <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
+        <!-- Create Post -->
         <NuxtLink :to="`/b/${board.name}/submit`" class="flex items-center button primary">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+               <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+               <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+            </svg>
             Create Post
         </NuxtLink>
+        <!-- Board Details -->
         <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                 About
@@ -13,6 +20,7 @@
                 <p v-else>{{ board.description }}</p>
             </div>
         </div>
+        <!-- Board Moderation -->
         <div>
             <h2 class="font-bold leading-5 text-base mb-1 pb-1 border-b">
                 <span>Moderation</span>
@@ -76,6 +84,7 @@
                 </li>
             </ul>
         </div>
+        <!-- Board Admin Actions -->
         <div>
             <h2 class="font-bold leading-5 text-base pb-1 border-b">
                 <span>Admin Tools</span>
