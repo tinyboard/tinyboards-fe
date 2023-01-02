@@ -175,6 +175,6 @@ const links = [
   { name: "Oldest", href: `/members/old` },
   { name: "Most Posts", href: `/members/mostposts` },
   { name: "Most Comments", href: `/members/mostcomments` },
-  { name: "Most Points", href: `/members/mostrep` },
+  { name: "Most Reputation", href: `/members/mostrep` },
 ];
 </script>
