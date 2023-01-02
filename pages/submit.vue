@@ -19,8 +19,8 @@
 				<!-- Form -->
 				<form @submit.prevent="onSubmit" @submit="submit()" class="block w-full">
 					<div class="bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
-						<div v-if="hasBoard" class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between">
-							<div class="flex flex-row space-x-2">
+						<div v-if="hasBoard" class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
+							<div class="flex flex-row space-x-2 items-center">
 								<img :src="dummyBoard.icon_url" class="w-10 h-10 rounded hidden md:block" />
 								<div class="w-full text-center md:text-left">
 									<p class="font-bold text-gray-700">You are posting to /b/{{ dummyBoard.name }}</p>
