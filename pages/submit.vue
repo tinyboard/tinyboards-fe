@@ -94,7 +94,7 @@
 						</div>
 					</div>
 				</form>
-				<component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? dummyBoard : null"/>
+				<component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? dummyBoard : null" :submitPage="true" />
 			</div>
 		</section>
 	</main>
