@@ -146,7 +146,7 @@
             banner_url: 'https://i.ibb.co/7kfB6Y0/chris-schog-En-Ca-UE4-QNOw-unsplash.jpg'
       };
 
-	const boardName = ref(dummyBoard.name);
+	const boardName = ref(dummyBoard.name ?? 'campfire');
 	const title = ref(null);
 	const url = ref(null);
 	const body = ref(null);
