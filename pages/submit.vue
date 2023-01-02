@@ -3,7 +3,7 @@
 		<!-- Sub Navigation & Banner -->
 		<section class="flex flex-col">
 			<NavigationNavbarSub :links="links" class="sm:order-first"/>
-			<div class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
+			<div class="order-first sm:order-last container mx-auto max-w-7xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
 				<CardsBanner
 				title="Create new post"
@@ -14,8 +14,8 @@
 			</div>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
-			<div class="col-span-full flex flex-col gap-6">
+		<section class="container mx-auto max-w-7xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
+			<div class="col-span-full flex flex-row gap-6">
 				<!-- Form -->
 				<form @submit.prevent="onSubmit" @submit="submit()" class="block w-full">
 					<div class="overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
@@ -79,6 +79,7 @@
 						</div>
 					</div>
 				</form>
+				<component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? dummyBoard : null"/>
 			</div>
 		</section>
 	</main>
@@ -95,6 +96,11 @@
 		]
 	});
 
+	definePageMeta({
+        'alias': ['','/b/:board?/submit'],
+        key: (route) => route.fullPath
+    });
+
 	import { ref } from 'vue';
 	import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js'
@@ -105,6 +111,23 @@
 	const toast = useToastStore();
 
 	const router = useRouter();
+	const route = useRoute();
+
+	// Import sidebar components
+	const Sidebar = defineAsyncComponent(() => import('@/components/containers/Sidebar'));
+    const SidebarBoard = defineAsyncComponent(() => import('@/components/containers/SidebarBoard'));
+
+	const dummyBoard = {
+            name: route.params.board,
+            title: 'Board title, defaults to board name',
+            description: 'Board short description, max 256 chars',
+            followers_count: 304,
+            posts_count: 1902,
+            comments_count: 13929,
+            created_at: '2022-11-27T19:31:27.730335',
+            icon_url: 'https://i.ibb.co/r4D7WWs/scott-goodwill-y8-Ngwq34-Ak-unsplash.jpg',
+            banner_url: 'https://i.ibb.co/7kfB6Y0/chris-schog-En-Ca-UE4-QNOw-unsplash.jpg'
+      };
 
 	const title = ref(null);
 	const url = ref(null);
