@@ -21,13 +21,13 @@
 					<div class="bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
 						<div v-if="hasBoard" class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
 							<div class="flex flex-row space-x-2 items-center">
-								<img :src="dummyBoard.icon_url" class="w-10 h-10 rounded hidden md:block" />
+								<img :src="dummyBoard.icon_url" class="hidden md:block w-11 h-11 object-cover p-0.5 border bg-white hover:bg-gray-200" alt="board icon"/>
 								<div class="w-full text-center md:text-left">
 									<p class="font-bold text-gray-700">You are posting to /b/{{ dummyBoard.name }}</p>
 									<p class="text-sm text-gray-500">Maybe board mods will be able to customze the text here later</p>
 								</div>
 							</div>
-							<button class="button white" @click="() => hasBoard = false">Change</button>
+							<button class="button white" @click="hasBoard = false">Change board</button>
 						</div>
 						<div class="p-4 bg-white">
 							<div class="grid grid-cols-6 gap-4">
@@ -132,7 +132,7 @@
 	const Sidebar = defineAsyncComponent(() => import('@/components/containers/Sidebar'));
     const SidebarBoard = defineAsyncComponent(() => import('@/components/containers/SidebarBoard'));
 
-	const hasBoard = ref(route.params.board !== undefined);
+	const hasBoard = ref(!!route.params.board);
 
 	const dummyBoard = {
             name: route.params.board,
@@ -146,7 +146,7 @@
             banner_url: 'https://i.ibb.co/7kfB6Y0/chris-schog-En-Ca-UE4-QNOw-unsplash.jpg'
       };
 
-	const boardName = ref(hasBoard ? dummyBoard.name : '');
+	const boardName = ref(dummyBoard.name);
 	const title = ref(null);
 	const url = ref(null);
 	const body = ref(null);
