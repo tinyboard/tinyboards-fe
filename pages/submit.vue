@@ -19,20 +19,22 @@
 				<!-- Form -->
 				<form @submit.prevent="onSubmit" @submit="submit()" class="block w-full">
 					<div class="bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
-						<div v-if="hasBoard" class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
+						<div v-if="!isEditingBoard" class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
 							<div class="flex flex-row space-x-2 items-center">
 								<img :src="dummyBoard.icon_url" class="hidden md:block w-11 h-11 object-cover p-0.5 border bg-white hover:bg-gray-200" alt="board icon"/>
 								<div class="w-full text-center md:text-left">
-									<p class="font-bold text-gray-700">You are posting to /b/{{ dummyBoard.name }}</p>
+									<p class="font-bold text-gray-700">You are posting to /b/{{ boardName }}</p>
 									<p class="text-sm text-gray-500">Maybe board mods will be able to customze the text here later</p>
 								</div>
 							</div>
-							<button class="button white" @click="hasBoard = false">Change board</button>
+							<button class="button white" @click="isEditingBoard = true">
+								Change board
+							</button>
 						</div>
 						<div class="p-4 bg-white">
 							<div class="grid grid-cols-6 gap-4">
 								<!-- Board -->
-								<div v-if="!hasBoard" class="col-span-full">
+								<div v-if="isEditingBoard" class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Board</label>
 									<input type="text" name="title" id="title" placeholder="Enter board to post to, without the b/" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="boardName" required/>
 								</div>
@@ -94,7 +96,6 @@
 						</div>
 					</div>
 				</form>
-				<!-- <component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? dummyBoard : null" :submitPage="true" /> -->
 			</div>
 		</section>
 	</main>
@@ -102,11 +103,11 @@
 
 <script setup>
 	useHead({
-		title: 'TinyBoards | Create a Post',
+		title: 'Tinyboards | Create a post',
 		meta: [
 		{
 			property: 'og:title',
-			content: 'TinyBoards | Create a Post'
+			content: 'Tinyboards | Create a post'
 		}
 		]
 	});
@@ -128,11 +129,7 @@
 	const router = useRouter();
 	const route = useRoute();
 
-	// Import sidebar components
-	const Sidebar = defineAsyncComponent(() => import('@/components/containers/Sidebar'));
-    const SidebarBoard = defineAsyncComponent(() => import('@/components/containers/SidebarBoard'));
-
-	const hasBoard = ref(!!route.params.board);
+	const isEditingBoard = ref(false);
 
 	const dummyBoard = {
             name: route.params.board,
