@@ -38,12 +38,12 @@
                 <span v-if="v.is_admin" class="ml-1 badge badge-blue">Admin</span>
               </p>
               <!-- User Reputation -->
-              <!-- <div class="flex items-center space-x-1 text-xs">
+              <div class="flex items-center space-x-1 text-xs">
                 <span class="text-yellow-500">&#9733;</span>
                 <span class="text-gray-600">
-                  {{ v.counts.rep }}
+                  {{ v.rep }}
                 </span>
-              </div> -->
+              </div>
             </div>
           </NuxtLink>
         </MenuItem>

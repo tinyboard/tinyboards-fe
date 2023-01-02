@@ -44,7 +44,7 @@
 								<span>
 									Reputation
 									<span class="font-medium text-gray-600">
-										{{ reputation }}
+										{{ user.rep.toLocaleString() }}
 									</span>
 								</span>
 							</li>
@@ -56,7 +56,7 @@
 									<path d="M16 5l3 3"></path>
 								</svg>
 								<span>Posts
-									<span class="font-medium text-gray-600">{{ user.posts_count }}</span>
+									<span class="font-medium text-gray-600">{{ user.posts_count.toLocaleString() }}</span>
 								</span>
 							</li>
 							<li class="ml-6 flex items-center">
@@ -65,7 +65,7 @@
 									<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 								</svg>
 								<span>Comments
-									<span class="font-medium text-gray-600">{{ user.comments_count }}</span>
+									<span class="font-medium text-gray-600">{{ user.comments_count.toLocaleString() }}</span>
 								</span>
 							</li>
 						</ul>
@@ -116,7 +116,7 @@
 							<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-4 pt-2.5 md:pt-0">
 								<li>
 									<span>
-										<strong>{{ reputation.toLocaleString() }}</strong>
+										<strong>{{ user.rep.toLocaleString() }}</strong>
 										Reputation
 									</span>
 								</li>
@@ -240,15 +240,6 @@
     const preferCardView = useCookie('preferCardView');
     // true by default
     preferCardView.value = preferCardView.value === undefined ? true : preferCardView.value;
-
-	const reputation = computed(() => {
-		const u = props.user;
-		const score = u.posts_score + u.comments_score;
-		const count = u.posts_count + u.comments_count;
-		const num = score / count * 100
-		if (!isFinite(num)) return 0;
-		return num.toFixed(0);
-	});
 
 	// Post sorts options
 	const postSorts = [
