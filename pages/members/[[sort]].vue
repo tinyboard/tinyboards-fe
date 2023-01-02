@@ -90,9 +90,9 @@
                   </small>
                   <!-- Reputation -->
                   <small v-else class="text-gray-400 block">
-                    <span class="font-medium">{{
-                      member.counts.post_score + member.counts.comment_score
-                    }}</span>
+                    <span class="font-medium">
+                      {{ member.counts.rep }}
+                    </span>
                     reputation
                   </small>
                 </div>
