@@ -121,6 +121,7 @@
 
 	definePageMeta({
         'alias': ['','/b/:board?/submit'],
+        'hasAuthRequired': true,
         key: (route) => route.fullPath
     });
 
