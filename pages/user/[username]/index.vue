@@ -11,7 +11,7 @@
 
 	definePageMeta({
 		'alias': ['/user/:username/overview','/user/:username/posts'],
-		key: (route) => route.fullPath
+		key: (route) => route.fullPath,
 	});
 
 	useHead({

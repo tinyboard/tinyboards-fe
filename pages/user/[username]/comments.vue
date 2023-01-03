@@ -14,11 +14,11 @@
 	});
 
 	useHead({
-		title: `Tinyboards | ${route.query.username}'s profile`,
+		title: `Tinyboards | ${route.params.username}'s profile`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `Tinyboards | ${route.query.username}'s profile`
+			content: `Tinyboards | ${route.params.username}'s profile`
 		}
 		]
 	});
