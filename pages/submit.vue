@@ -152,7 +152,7 @@
 
 	const boardName = ref(dummyBoard.name ?? 'campfire');
 	const title = ref(null);
-	const url = ref(null);
+	const url = ref(route.query.url);
 	const body = ref(null);
 	const isNsfw = ref(false);
 

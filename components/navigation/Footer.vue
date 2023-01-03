@@ -41,6 +41,6 @@
 	const links = [
 		{ name: 'About', href: '/help/about' },
 		{ name: 'Members', href: '/members' },
-		{ name: 'House Rules', href: '/help/rules' },
+		{ name: 'Rules', href: '/help/rules' },
 		]
 </script>
