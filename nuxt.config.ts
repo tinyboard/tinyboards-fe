@@ -1,6 +1,9 @@
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 import { defineNuxtConfig } from "nuxt/config";
 
+const tls = require('tls');
+tls.DEFAULT_ECDH_CURVE = 'auto';
+
 export default defineNuxtConfig({
 	alias: {
         pinia: '/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs',
