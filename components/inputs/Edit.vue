@@ -1,25 +1,27 @@
 <template>
 	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="relative flex flex-col items-end w-full">
 		<!-- Textarea -->
-		<textarea required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
-		<div class="mt-2 flex items-start justify-between w-full">
-			<!-- Show/hide MD Preview -->
-			<button type="button" class="text-xs text-primary" @click="isPreviewVisible = !isPreviewVisible">
-				{{ isPreviewVisible ? 'Hide' : 'Show' }} preview
-			</button>
-			<!-- Action Buttons -->
-			<div class="flex space-x-2">
-				<button type="button" class="button gray" @click="close">
-					Cancel
-				</button>
-				<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="props.body === localBody || isLoading">
-					Save changes
-				</button>
-			</div>
-		</div>
+		<textarea v-show="!isPreviewVisible" required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
 		<!-- MD Preview -->
-		<div v-show="isPreviewVisible" class="my-4 p-2.5 w-full rounded-md bg-white border">
+		<div v-show="isPreviewVisible" class="w-full" style="min-height: 118px;">
 			<div class="prose prose-sm" v-html="preview"></div>
+		</div>
+		<button type="button" v-show="isPreviewVisible" class="absolute right-0 top-0 button button-sm gray" @click="isPreviewVisible = false">
+			<span class="text-xs text-gray-400 hover:text-gray-600 uppercase font-medium tracking-wide">Preview</span>
+			<span class="ml-2 text-red-500">&#10006;</span>
+		</button>
+		<!-- Action Buttons -->
+		<div class="mt-2 flex w-full">
+			<!-- Show/hide MD Preview -->
+			<button type="button" class="button gray" @click="isPreviewVisible = !isPreviewVisible">
+				{{ isPreviewVisible ? 'Edit' : 'Show preview' }}
+			</button>
+			<button type="button" class="ml-auto button gray" @click="close">
+				Cancel
+			</button>
+			<button type="submit" class="ml-2 button primary" :class="{ 'loading':isLoading }" :disabled="props.body === localBody || isLoading">
+				Save changes
+			</button>
 		</div>
 	</form>
 </template>
@@ -32,17 +34,17 @@
 	const props = defineProps({
 		id: {
 			type: Number,
-			default: null,
+		default: null,
 			required: true
 		},
 		body: {
 			type: String,
-			default: null,
+		default: null,
 			required: true
 		},
 		type: {
 			type: String,
-			default: 'post',
+		default: 'post',
 			required: true
 		},
 	});
