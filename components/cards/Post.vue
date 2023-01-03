@@ -197,7 +197,7 @@
             }"
           >
             <div
-              class="prose prose-sm text-gray-900 max-w-none"
+              class="prose prose-sm max-w-none"
               v-html="item.post.body_html"
             ></div>
           </div>

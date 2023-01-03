@@ -192,7 +192,7 @@
         class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden"
       >
         <div
-          class="prose prose-sm text-gray-900 max-w-none"
+          class="prose prose-sm max-w-none"
           v-html="item.post.body_html"
         ></div>
       </div>

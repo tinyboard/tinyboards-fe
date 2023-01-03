@@ -64,15 +64,16 @@ module.exports = {
       maxWidth: {
         '8xl': '90rem'
       },
-      typography: {
+      typography: (theme) => ({
         DEFAULT: {
           css: {
+            color: theme('colors.gray.900'),
             img: {
               display: 'inline-block'
             }
           }
         }
-      }
+      })
     },
     variants: {
       margin: ['responsive', 'first']
