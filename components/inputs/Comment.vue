@@ -11,7 +11,7 @@
 			<div class="prose prose-sm" v-html="preview"></div>
 		</div>
 		<button type="button" v-show="isPreviewVisible" class="absolute right-0 top-0 button button-sm gray" @click="isPreviewVisible = false">
-			<span class="text-xs text-gray-400 hover:text-gray-600 uppercase font-medium tracking-wide">Preview</span>
+			<span class="text-xs text-gray-400 uppercase font-medium tracking-wide">Preview</span>
 			<span class="ml-2 text-red-500">&#10006;</span>
 		</button>
 		<!-- Action Buttons -->
