@@ -17,8 +17,8 @@
 		<!-- Action Buttons -->
 		<div class="mt-2 flex justify-end w-full">
 			<!-- Show/hide MD Preview -->
-			<button type="button" class="button gray" @click="isPreviewVisible = !isPreviewVisible">
-				{{ isPreviewVisible ? 'Edit' : 'Show preview' }}
+			<button type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible">
+				{{ isPreviewVisible ? 'Edit' : 'Preview' }}
 			</button>
 			<button v-if="parentId" type="button" class="ml-auto button white w-24" @click="close">Cancel</button>
 			<button class="button primary min-w-[96px] ml-2" :class="{ 'loading':isLoading }" :disabled="isLoading">
