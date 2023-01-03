@@ -22,7 +22,7 @@
           console.log('pasted')
           router.push(`/submit?url=${clipText}`)
         }
-        else if (url.test(clipText) && route.name !== '/submit' && !!board) {
+        else if (url.test(clipText) && route.name !== 'submit' && !!board) {
           console.log('pasted')
           router.push(`/b/${board}/submit?url=${clipText}`)
         }
