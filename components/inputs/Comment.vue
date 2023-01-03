@@ -92,7 +92,7 @@
 						// Show success toast.
 						toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
 					} else {
-						console.log(error.value);
+						console.error(error.value);
 						// Show error toast.
 						toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
 					}

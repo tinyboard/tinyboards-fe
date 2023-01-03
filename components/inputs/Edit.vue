@@ -1,19 +1,31 @@
 <template>
 	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="relative flex flex-col items-end w-full">
+		<!-- Textarea -->
 		<textarea required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
-		<div class="flex space-x-2 mt-2">
-			<button type="button" class="button gray" @click="emit('closed');">
-				Cancel
+		<div class="mt-2 flex items-start justify-between w-full">
+			<!-- Show/hide MD Preview -->
+			<button type="button" class="text-xs text-primary" @click="isPreviewVisible = !isPreviewVisible">
+				{{ isPreviewVisible ? 'Hide' : 'Show' }} preview
 			</button>
-			<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="props.body === localBody || isLoading">
-				Save changes
-			</button>
+			<!-- Action Buttons -->
+			<div class="flex space-x-2">
+				<button type="button" class="button gray" @click="close">
+					Cancel
+				</button>
+				<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="props.body === localBody || isLoading">
+					Save changes
+				</button>
+			</div>
+		</div>
+		<!-- MD Preview -->
+		<div v-show="isPreviewVisible" class="my-4 p-2.5 w-full rounded-md bg-white border">
+			<div class="prose prose-sm" v-html="preview"></div>
 		</div>
 	</form>
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import { marked } from 'marked';
 	import { baseURL } from "@/server/constants";
 	import { useToastStore } from '@/stores/StoreToast';
 
@@ -44,13 +56,25 @@
 	const localBody = ref(props.body);
 	const isLoading = ref(false);
 
+	// Markdown previewing
+	const isPreviewVisible = ref(false);
+
+	const preview = computed(() => {
+		return marked.parse(localBody.value)
+	});
+
+	const close = () => {
+		emit('closed');
+		isPreviewVisible.value = false;
+	};
+
 	// Handle key press
 	const inputHandler = (e) => {
-      if (e.keyCode === 13 && e.shiftKey) {
-        e.preventDefault();
-        submitEdit();
-      }
-    };
+		if (e.keyCode === 13 && e.shiftKey) {
+			e.preventDefault();
+			submitEdit();
+		}
+	};
 
 	// Submit edit
 	const submitEdit = () => {
@@ -84,6 +108,7 @@
 			})
 			.finally(() => {
 				isLoading.value = false;
+				isPreviewVisible.value = false;
 			});
 		} else {
 			toast.addNotification({header:'Edits failed',message:'Your edits need some text! Please try again.',type:'error'});
