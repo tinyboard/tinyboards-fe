@@ -15,13 +15,13 @@
 			<span class="ml-2 text-red-500">&#10006;</span>
 		</button>
 		<!-- Action Buttons -->
-		<div class="mt-2 flex justify-end space-x-2">
-			<button v-if="parentId" type="button" class="button white w-24" @click="close">Cancel</button>
+		<div class="mt-2 flex justify-end w-full">
 			<!-- Show/hide MD Preview -->
 			<button type="button" class="button gray" @click="isPreviewVisible = !isPreviewVisible">
 				{{ isPreviewVisible ? 'Edit' : 'Show preview' }}
 			</button>
-			<button class="button primary min-w-[96px]" :class="{ 'loading':isLoading }" :disabled="isLoading">
+			<button v-if="parentId" type="button" class="ml-auto button white w-24" @click="close">Cancel</button>
+			<button class="button primary min-w-[96px] ml-2" :class="{ 'loading':isLoading }" :disabled="isLoading">
 				{{ parentId ? 'Reply' : 'Comment' }}
 			</button>
 		</div>
