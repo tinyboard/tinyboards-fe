@@ -16,11 +16,11 @@
 	const route = useRoute();
 
 	useHead({
-		title: `Tinyboards | ${route.meta.title ?? 'Feed'}`,
+		title: `Tinyboards | ${route.meta.title ?? 'feed'}`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `TinyBoards | ${route.meta.title}`
+			content: `Tinyboards | ${route.meta.title}`
 		}
 		]
 	});

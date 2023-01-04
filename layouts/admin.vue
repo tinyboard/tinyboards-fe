@@ -27,11 +27,11 @@
 	const route = useRoute();
 	
 	useHead({
-		title: `Tinyboards | Admin ${route.meta.title ?? 'Overview'}`,
+		title: `Tinyboards | Admin ${route.meta.title ?? 'overview'}`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `TinyBoards | Admin ${route.meta.title ?? 'Overview'}`
+			content: `Tinyboards | Admin ${route.meta.title ?? 'overview'}`
 		}
 		]
 	});

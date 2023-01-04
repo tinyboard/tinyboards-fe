@@ -27,9 +27,9 @@
 	const route = useRoute();
 
 	useHead({
-		title: `Tinyboards | ${route.meta.title ?? 'Inbox'}`,
+		title: `Tinyboards | ${route.meta.title ?? 'inbox'}`,
 		meta: [{ property: 'og:title',
-			content: `TinyBoards | ${route.meta.title}`
+			content: `Tinyboards | ${route.meta.title}`
 		}]
 	});
 
