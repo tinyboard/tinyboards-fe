@@ -91,7 +91,7 @@
             meta: [
             {
                   property: 'og:title',
-                  content: `Tinyboards | ${route.query.username}`
+                  content: `Tinyboards | ${item.value.post.title}`
             }
             ]
       });
