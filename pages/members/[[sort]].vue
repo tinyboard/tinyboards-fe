@@ -68,7 +68,7 @@
                   </small>
                   <!-- Post Count -->
                   <small
-                    v-else-if="sort === 'mostcomments'"
+                    v-else-if="sort === 'mostposts'"
                     class="text-gray-400 block"
                   >
                     <span class="font-medium">
