@@ -56,7 +56,7 @@
 	const isPreviewVisible = ref(false);
 
 	const preview = computed(() => {
-		return marked.parse(body.value ?? 'Start typing your comment...')
+		return marked.parse(body.value ?? '')
 	});
 
 	const close = () => {
