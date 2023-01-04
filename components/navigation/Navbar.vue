@@ -52,16 +52,12 @@
 						</button>
 					</div>
 					<div class="flex flex-col items-center mt-8 px-4 py-2">
-						<router-link to="/login" custom v-slot="{ navigate }">
-							<button class="button outlinePrimary w-full" @click="navigate" @keypress.enter="navigate" role="link">
+						<NuxtLink to="/login" class="button outlinePrimary w-full">
 								Sign in
-							</button>
-						</router-link>
-						<router-link to="/register" custom v-slot="{ navigate }">
-							<button class="button primary mt-2 w-full" @click="navigate" @keypress.enter="navigate" role="link">
+						</NuxtLink>
+						<NuxtLink to="/register" class="button primary mt-2 w-full">
 								Sign up
-							</button>
-						</router-link>
+						</NuxtLink>
 					</div>
 					<router-link to="/following" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
 						<i class="far fa-info-circle text-center fa-fw mr-3"></i><span>About</span>
