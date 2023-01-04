@@ -73,7 +73,7 @@
             <NuxtLink :to="`/user/${item.creator.name}`" class="flex-shrink-0">
               <img
                 loading="lazy"
-                :src="item.creator.avatar || 'http://placekitten.com/200/300'"
+                :src="item.creator.avatar || 'https://placekitten.com/200/300'"
                 alt="avatar"
                 class="hidden sm:inline w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200"
               />
@@ -94,7 +94,7 @@
                 <!-- Avatar - Mobile Only -->
                 <img
                   loading="lazy"
-                  :src="item.creator.avatar || 'http://placekitten.com/200/300'"
+                  :src="item.creator.avatar || 'https://placekitten.com/200/300'"
                   alt="avatar"
                   class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded-sm"
                 />

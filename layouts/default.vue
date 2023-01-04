@@ -20,7 +20,7 @@
 		meta: [
 		{
 			property: 'og:title',
-			content: `Tinyboards | ${route.meta.title}`
+			content: `Tinyboards | ${route.meta.title ?? 'feed'}`
 		}
 		]
 	});

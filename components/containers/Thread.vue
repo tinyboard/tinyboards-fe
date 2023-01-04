@@ -69,7 +69,7 @@
           <NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`">
             <img
               loading="lazy"
-              :src="item.creator.avatar || 'http://placekitten.com/200/300'"
+              :src="item.creator.avatar || 'https://placekitten.com/200/300'"
               alt="avatar"
               class="flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
             />

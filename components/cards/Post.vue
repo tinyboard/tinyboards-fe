@@ -14,7 +14,7 @@
     >
       <img
         loading="lazy"
-        :src="item.creator.avatar || 'http://placekitten.com/200/300'"
+        :src="item.creator.avatar || 'https://placekitten.com/200/300'"
         alt="avatar"
         class="w-16 h-16 object-cover p-0.5 border bg-white hover:bg-gray-200"
       />
@@ -35,7 +35,7 @@
       >
         <img
           loading="lazy"
-          :src="item.creator.avatar || 'http://placekitten.com/200/300'"
+          :src="item.creator.avatar || 'https://placekitten.com/200/300'"
           alt="avatar"
           class="w-9 h-9 object-cover p-0.5 border bg-white hover:bg-gray-200"
         />
@@ -58,7 +58,7 @@
                 <!-- Avatar (mobile only) -->
                 <img
                   loading="lazy"
-                  :src="item.creator.avatar || 'http://placekitten.com/200/300'"
+                  :src="item.creator.avatar || 'https://placekitten.com/200/300'"
                   alt="avatar"
                   class="sm:hidden flex-shrink-0 w-6 h-6 object-cover"
                 />
