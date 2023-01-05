@@ -199,6 +199,7 @@
 	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { shuffle } from "@/utils/shuffleArray";
+	import Cookies from 'js-cookie';
 
 	const route = useRoute();
 	const router = useRouter();
