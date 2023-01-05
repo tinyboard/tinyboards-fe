@@ -83,21 +83,19 @@
 						<MenusProfile :user="v"/>
 					</div>
 				</div>
-				<div class="-mr-1 flex space-x-1 md:hidden">
-					<!-- Search button -->
-					<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="searchtoggleDrawer">
-						<span class="sr-only">Search</span>
-						<!-- Menu Icon -->
-						<i class="far fa-search fa-fw fa-lg"></i>
-					</button>
+				<div class="flex space-x-2 md:hidden">
 					<!-- Create post button -->
-					<NuxtLink tag="button" class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" to="/submit">
+					<NuxtLink class="inline-flex items-center justify-center p-1 text-white" to="/submit">
 						<span class="sr-only">Create post</span>
-						<!-- Menu Icon -->
-						<i class="far fa-feather fa-fw fa-lg"></i>
+						<!-- Pencil Icon -->
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						   <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+						   <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+						</svg>
 					</NuxtLink>
 					<!-- Mobile menu button -->
-					<button class="inline-flex items-center justify-center p-1 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="toggleDrawer">
+					<button class="inline-flex items-center justify-center p-1 text-white" @click="toggleDrawer">
 						<span class="sr-only">Open main menu</span>
 						<!-- Menu Icon -->
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -117,7 +115,7 @@
 		</transition>
 		<aside class="transform top-0 right-0 w-5/6 bg-white dark:bg-gray-800 fixed h-full py-3 overflow-y-auto ease-in-out transition-all duration-200 z-75" :class="isOpen ? 'translate-x-0' : 'translate-x-full'">
 			<div class="absolute top-3 left-3">
-				<button class="inline-flex items-center justify-center p-1 text-gray-700 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="toggleDrawer">
+				<button class="inline-flex items-center justify-center p-1 text-gray-700 dark:text-gray-400" @click="toggleDrawer">
 					<span class="sr-only">Close menu</span>
 					<!-- Arrow Left Icon -->
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
