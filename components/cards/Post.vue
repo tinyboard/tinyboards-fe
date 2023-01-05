@@ -1,29 +1,16 @@
 <template>
   <div
-    class="flex sm:gap-4"
+    class="group flex flex-row-reverse sm:gap-4"
     :class="[
       { 'first:sm:rounded-t-md last:sm:rounded-b-md': isCompact },
       status,
     ]"
   >
-    <!-- Avatar - Desktop Only -->
-    <NuxtLink
-      v-show="!isCompact"
-      :to="`/user/${item.creator.name}`"
-      class="sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right"
-    >
-      <img
-        loading="lazy"
-        :src="item.creator.avatar || 'https://placekitten.com/200/300'"
-        alt="avatar"
-        class="w-16 h-16 object-cover p-0.5 border bg-white hover:bg-gray-200"
-      />
-    </NuxtLink>
     <div
-      class="flex-grow p-2.5 sm:p-4 shadow-inner-white"
+      class="relative flex-grow p-2.5 sm:p-4 shadow-inner-white hover:bg-gray-50 card"
       :class="[
         isCompact
-          ? 'flex items-center hover:bg-gray-50 border-inherit'
+          ? 'flex items-center border-inherit'
           : 'border-y sm:border-x sm:rounded-md',
         status ? `${status}` : 'bg-white',
       ]"
@@ -45,7 +32,7 @@
         <div
           v-if="item.creator"
           scope="row"
-          class="flex items-center text-gray-900 dark:text-white"
+          class="z-10 relative flex items-center text-gray-900 dark:text-white"
         >
           <div class="flex flex-col flex-shrink-0 sm:truncate">
             <p
@@ -182,7 +169,7 @@
         <!-- Post Title & Body -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink
-            class="font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
+            class="z-10 relative font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
             :class="{ 'sm:text-lg': !isCompact }"
             :to="`/post/${item.post.id}`"
           >
@@ -204,7 +191,7 @@
         </div>
         <!-- Actions -->
         <ul
-          class="mt-4 flex flex-grow items-center"
+          class="z-10 relative mt-4 flex flex-grow items-center"
           :class="{ 'sm:hidden': isCompact }"
         >
           <li class="sm:hidden">
@@ -605,7 +592,22 @@
         v-show="isCompact"
         class="ml-auto w-1/6 hidden sm:flex items-center justify-end"
       ></div>
+      <!-- Stretched link (card mode only) -->
+      <NuxtLink :to="`/post/${item.post.id}`" class="absolute inset-0" :class="{'sm:hidden':isCompact}"></NuxtLink>
     </div>
+    <!-- Avatar - Desktop Only -->
+    <NuxtLink
+      v-show="!isCompact"
+      :to="`/user/${item.creator.name}`"
+      class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right"
+    >
+      <img
+        loading="lazy"
+        :src="item.creator.avatar || 'https://placekitten.com/200/300'"
+        alt="avatar"
+        class="w-16 h-16 object-cover p-0.5 border bg-white hover:bg-gray-200"
+      />
+    </NuxtLink>
   </div>
 </template>
 
@@ -787,6 +789,10 @@ const percentUpvoted = computed(() => {
   transform: rotate(45deg);
   @apply border-l border-b;
 }
+.card:hover + .arrow__right::before {
+  @apply bg-gray-50
+}
+
 .removed > div,
 .removed .arrow__right::before {
   @apply bg-red-100 border-red-300;
