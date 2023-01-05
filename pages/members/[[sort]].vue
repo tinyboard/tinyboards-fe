@@ -123,7 +123,6 @@ useHead({
   ],
 });
 
-import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { baseURL } from "@/server/constants";
 import { format, parseISO } from "date-fns";
