@@ -85,7 +85,7 @@
 				</div>
 				<div class="-mr-1 flex space-x-1 md:hidden">
 					<!-- Search button -->
-					<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="searchDrawer">
+					<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="searchtoggleDrawer">
 						<span class="sr-only">Search</span>
 						<!-- Menu Icon -->
 						<i class="far fa-search fa-fw fa-lg"></i>
@@ -97,10 +97,15 @@
 						<i class="far fa-feather fa-fw fa-lg"></i>
 					</NuxtLink>
 					<!-- Mobile menu button -->
-					<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="drawer">
+					<button class="inline-flex items-center justify-center p-1 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="toggleDrawer">
 						<span class="sr-only">Open main menu</span>
 						<!-- Menu Icon -->
-						<i class="far fa-bars fa-fw fa-lg"></i>
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						   <line x1="4" y1="6" x2="20" y2="6"></line>
+						   <line x1="4" y1="12" x2="20" y2="12"></line>
+						   <line x1="4" y1="18" x2="20" y2="18"></line>
+						</svg>
 					</button>
 				</div>
 			</div>
@@ -108,73 +113,85 @@
 
 		<!-- Mobile Menu -->
 		<transition enter-class="opacity-0" enter-active-class="ease-out transition-all duration-100" enter-to-class="opacity-200" leave-class="opacity-100" leave-active-class="ease-out transition-all duration-200" leave-to-class="opacity-0">
-			<div @keydown.esc="isOpen = false" v-show="isOpen" class="z-10 fixed inset-0 transition-opacity">
-				<div @click="isOpen = false" class="absolute inset-0 bg-gray-900 opacity-80" tabindex="0">
-				</div>
-			</div>
+			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen" class="fixed inset-0 bg-black/80"></div>
 		</transition>
 		<aside class="transform top-0 right-0 w-5/6 bg-white dark:bg-gray-800 fixed h-full py-3 overflow-y-auto ease-in-out transition-all duration-200 z-75" :class="isOpen ? 'translate-x-0' : 'translate-x-full'">
-			<div class="absolute top-4 left-3">
-				<button class="inline-flex items-center justify-center p-1 text-gray-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="drawer">
+			<div class="absolute top-3 left-3">
+				<button class="inline-flex items-center justify-center p-1 text-gray-700 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" @click="toggleDrawer">
 					<span class="sr-only">Close menu</span>
-					<!-- Menu Icon -->
-					<i class="far fa-long-arrow-left fa-fw fa-lg"></i>
+					<!-- Arrow Left Icon -->
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+					   <line x1="5" y1="12" x2="19" y2="12"></line>
+					   <line x1="5" y1="12" x2="9" y2="16"></line>
+					   <line x1="5" y1="12" x2="9" y2="8"></line>
+					</svg>
 				</button>
 			</div>
-			<div class="flex flex-col items-center text-center px-6 py-2">
-				<NuxtLink @click="isOpen = false" :to="`/user/${v.name}`">
-					<img class="w-16 h-16 object-cover rounded-sm" :src="v.avatar" alt="user avatar"/>
-				</NuxtLink>
-				<div class="truncate mt-2">
-					<NuxtLink @click="isOpen = false" :to="`/user/${v.name}`" class="text-xl font-bold leading-5 text-gray-900 dark:text-gray-200">
-						{{ v.name }}
-					</NuxtLink>
-					<ul class="flex items-center space-x-2 mt-1 mb-0 text-xs text-gray-500 dark:text-gray-400">
-						<li>
-							503 followers
-						</li>
-						<li>
-							<span class="font-hairline">
-								|
+			<div class="flex flex-col mt-10 mb-4 px-4">
+				<NuxtLink :to="`/user/${v.name}`" class="flex items-center" @click="toggleDrawer">
+					<!-- User Avatar -->
+					<img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
+					<div class="pl-2 truncate">
+						<!-- Username -->
+						<p class="text-sm text-gray-900 leading-normal">
+							<strong>{{ v.name }}</strong>
+							<span v-if="v.is_admin" class="ml-1 badge badge-blue">Admin</span>
+						</p>
+						<!-- User Reputation -->
+						<div class="flex items-center space-x-1 text-xs">
+							<span class="text-yellow-500">&#9733;</span>
+							<span class="text-gray-600">
+								{{ v.rep ?? 0 }} reputation
 							</span>
-						</li>
-						<li>
-							2.4M Reputation
-						</li>
-					</ul>
-				</div>
+						</div>
+					</div>
+				</NuxtLink>
 			</div>
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
-			<!-- <NuxtLink to="/inbox" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
-				<i class="far fa-envelope text-center fa-fw mr-3"></i><span>Inbox</span>
-			</NuxtLink>
-			<NuxtLink to="/following" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
-				<i class="far fa-user text-center fa-fw mr-3"></i><span>Following</span>
-			</NuxtLink>
-			<NuxtLink to="/guilds" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
-				<i class="far fa-users-crown text-center fa-fw mr-3"></i><span>Guilds</span>
-			</NuxtLink>
-			<NuxtLink to="/saved" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
-				<i class="far fa-bookmark text-center fa-fw mr-3"></i><span>Saved</span>
-			</NuxtLink>
-			<NuxtLink to="/settings" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
-				<i class="far fa-cog text-center fa-fw mr-3"></i><span>My Account</span>
-			</NuxtLink>
-			<NuxtLink to="/mod" class="block px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="isOpen = false">
-				<i class="far fa-crown text-center fa-fw mr-3"></i><span>Moderation</span>
-			</NuxtLink> -->
-			<!-- <div class="hidden items-center px-4 py-2 text-lg text-gray-700 dark:text-gray-200">
-				<i class="far fa-signal-stream text-center fa-fw mr-3" :class="{'text-green-500':online}"></i><span>Appear Online</span>
-				<t-toggle v-model="online" variant="success" class="ml-auto"/>
-			</div> -->
-			<!-- <button class="flex items-center px-4 py-2 text-lg text-gray-700 dark:text-gray-200" @click="dark = !dark">
-				<i class="far text-center fa-fw mr-3" :class="dark ? 'fa-sunglasses' : 'fa-moon'"></i>
-				<span>{{ dark ? 'Light Theme' : 'Dark Theme'}}</span>
-			</button> -->
+			<NuxtLink :to="`/user/${v.name}`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+					<circle cx="12" cy="7" r="4"></circle>
+					<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+				</svg>
+				<span>My Profile</span>
+            </NuxtLink>
+            <NuxtLink to="/inbox" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                 <polyline points="3 7 12 13 21 7"></polyline>
+              </svg>
+              <span>Inbox</span>
+            </NuxtLink>
+            <NuxtLink :to="`/user/${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+                 <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+              </svg>
+              <span>Posts</span>
+            </NuxtLink>
+            <NuxtLink to="/settings/profile" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+                 <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span>Settings</span>
+            </NuxtLink>
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
-			<NuxtLink to="#" class="block px-4 py-2 text-lg text-red-500" role="menuitem" @click="isOpen = false">
-				<i class="far fa-sign-out fa-rotate-180 text-center fa-fw mr-3"></i><span>Sign Out</span>
-			</NuxtLink>
+			<button @click="logout(); toggleDrawer()" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <path d="M13 12v.01"></path>
+                 <path d="M3 21h18"></path>
+                 <path d="M5 21v-16a2 2 0 0 1 2 -2h7.5m2.5 10.5v7.5"></path>
+                 <path d="M14 7h7m-3 -3l3 3l-3 3"></path>
+              </svg>
+              <span>Sign Out</span>
+            </button>
 		</aside>
 	</nav>
 </template>
@@ -190,8 +207,6 @@
 	const userStore = useLoggedInUser();
 
 	const site = useSiteStore();
-
-	const isOpen = ref(false);
 
 	const text = ref(route.query.q)
 
@@ -234,6 +249,19 @@
 	if (typeof window === 'undefined') {
 		selectedText.value = shuffle(yellowText)[0] ?? 'It\'s Rails!';
 	};
+
+	// Mobile menu
+	const isOpen = ref(false);
+
+	const toggleDrawer = () => {
+		isOpen.value = !isOpen.value;
+	}
+
+	const logout = () => {
+	    Cookies.remove('token');
+	    userStore.logout();
+	    router.go({path: '/feed'});
+	 };
 </script>
 
 <!-- <script>
@@ -297,10 +325,10 @@
 			search() {
 				this.$router.push("/search?q="+this.searchTerm);
 			},
-			drawer() {
+			toggleDrawer() {
 				this.isOpen = !this.isOpen;
 			},
-			searchDrawer() {
+			searchtoggleDrawer() {
 				this.isSearch = !this.isSearch;
 			}
 		},

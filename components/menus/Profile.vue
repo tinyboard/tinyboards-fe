@@ -41,7 +41,7 @@
               <div class="flex items-center space-x-1 text-xs">
                 <span class="text-yellow-500">&#9733;</span>
                 <span class="text-gray-600">
-                  {{ v.rep }}
+                  {{ v.rep ?? 0 }} reputation
                 </span>
               </div>
             </div>
