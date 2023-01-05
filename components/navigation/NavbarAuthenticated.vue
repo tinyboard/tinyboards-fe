@@ -179,6 +179,26 @@
               </svg>
               <span>Settings</span>
             </NuxtLink>
+           	<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
+            <NuxtLink to="/help/faq" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
+            	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            		<path d="M12 8h.01"></path>
+            		<path d="M11 12h1v4h1"></path>
+            		<path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
+            	</svg>
+            	<span>About</span>
+            </NuxtLink>
+            <NuxtLink to="/help/rules" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
+            	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            		<path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+            		<path d="M5 8v-3a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5"></path>
+            		<circle cx="6" cy="14" r="3"></circle>
+            		<path d="M4.5 17l-1.5 5l3 -1.5l3 1.5l-1.5 -5"></path>
+            	</svg>
+            	<span>Rules</span>
+            </NuxtLink>
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
 			<button @click="logout(); toggleDrawer()" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
