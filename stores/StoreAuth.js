@@ -56,7 +56,7 @@ export const useLoggedInUser = defineStore("auth", {
             const token = data.value.jwt;
             this.fetchUserPromise(token)
             .then(({ data }) => {
-              this.user = data.value;
+              this.user = data.value.user;
               this.token = token;
               this.isAuthed = true;
               resolve(token);
@@ -89,7 +89,7 @@ export const useLoggedInUser = defineStore("auth", {
         }
       })
       .then(({ data }) => {
-        this.user = data.value;
+        this.user = data.value.user;
         this.token = authToken;
         this.isAuthed = true;
       })

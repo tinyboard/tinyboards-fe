@@ -21,7 +21,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         }
       })
       .then(({ data }) => {
-        userStore.user = data.value;
+        userStore.user = data.value.user;
         userStore.token = jwt;
         userStore.isAuthed = true;
       })
