@@ -5,7 +5,7 @@
         <!-- Username -->
         <div class="flex items-center space-x-1 mr-2">
           <p class="text-base text-white">
-            <strong>{{ v.name }}</strong>
+            <strong>{{ user.name }}</strong>
           </p>
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="white" stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -13,7 +13,7 @@
           </svg>
         </div>
         <!-- User Avatar -->
-        <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border border-black/10 bg-black/10" :src="v.avatar" alt="user avatar"/>
+        <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border border-black/10 bg-black/10" :src="user.avatar" alt="user avatar"/>
       </MenuButton>
     </div>
 
@@ -28,20 +28,20 @@
       <MenuItems class="absolute right-0 w-64 mt-4 origin-top-right bg-white divide-y divide-gray-100 rounded shadow-lg border focus:outline-none">
         <!-- User Details -->
         <MenuItem v-slot="{ active, close }">
-          <NuxtLink :to="`/user/${v.name}`" class="flex items-center p-4" @click="close">
+          <NuxtLink :to="`/user/${user.name}`" class="flex items-center p-4" @click="close">
             <!-- User Avatar -->
-            <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
+            <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="user.avatar" alt="user avatar"/>
             <div class="pl-2 truncate">
               <!-- Username -->
               <p class="text-sm text-gray-900 leading-normal">
-                <strong>{{ v.name }}</strong>
-                <span v-if="v.is_admin" class="ml-1 badge badge-blue">Admin</span>
+                <strong>{{ user.name }}</strong>
+                <span v-if="user.is_admin" class="ml-1 badge badge-blue">Admin</span>
               </p>
               <!-- User Reputation -->
-              <div class="flex items-center space-x-1 text-xs">
-                <span class="text-yellow-500">&#9733;</span>
+              <div class="flex items-center text-xs">
+                <span class="text-yellow-500">&#9733;&nbsp;</span>
                 <span class="text-gray-600">
-                  {{ v.rep ?? 0 }} reputation
+                  {{ counts.rep ?? 0 }} reputation
                 </span>
               </div>
             </div>
@@ -50,7 +50,7 @@
         <div class="py-2 text-sm">
           <!-- Profile Link -->
           <MenuItem v-slot="{ active, close }">
-            <NuxtLink :to="`/user/${v.name}`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
+            <NuxtLink :to="`/user/${user.name}`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <circle cx="12" cy="7" r="4"></circle>
@@ -67,12 +67,13 @@
                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
                  <polyline points="3 7 12 13 21 7"></polyline>
               </svg>
-              <span>Inbox</span>
+              Inbox
+              <span v-if="unread > 0" class="pl-1 text-primary">{{ unread }}</span>
             </NuxtLink>
           </MenuItem>
           <!-- Posts Link -->
           <MenuItem v-slot="{ active, close }">
-            <NuxtLink :to="`/user/${v.name}/posts`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
+            <NuxtLink :to="`/user/${user.name}/posts`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
@@ -130,10 +131,13 @@
   const router = useRouter();
 
   const props = defineProps({
-    user: Object
+    user: Object,
+    counts: Object,
+    unread: {
+      type: Number,
+      default: 0
+    }
   });
-
-  const v = ref(props.user);
   
   const logout = () => {
     Cookies.remove('token');

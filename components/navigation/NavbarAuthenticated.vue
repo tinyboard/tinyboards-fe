@@ -54,7 +54,7 @@
 					<!-- User Links -->
 					<div class="ml-4 flex items-center space-x-2 md:ml-6">
 						<!-- Admin Tools Link -->
-						<NuxtLink v-if="v.is_admin" to="/admin" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
+						<NuxtLink v-if="v.is_admin" to="/admin" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded">
 							<span class="sr-only">View admin tools</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -62,7 +62,7 @@
 							</svg>
 						</NuxtLink>
 						<!-- Create Post Link -->
-						<NuxtLink to="/submit" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
+						<NuxtLink to="/submit" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded">
 							<span class="sr-only">Create new post</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -71,16 +71,19 @@
 							</svg>
 						</NuxtLink>
 						<!-- Inbox Link -->
-						<NuxtLink to="/inbox" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
+						<NuxtLink to="/inbox" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded">
 							<span class="sr-only">View inbox</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<rect x="3" y="5" width="18" height="14" rx="2"></rect>
 								<polyline points="3 7 12 13 21 7"></polyline>
 							</svg>
+							<span v-if="unread > 0" class="absolute top-0 right-0 flex items-center justify-center p-1 leading-none rounded-sm bg-white">
+								<strong class="text-xs text-primary">{{ unread < 99 ? unread : '99+' }}</strong>
+							</span>
 						</NuxtLink>
 						<!-- Profile Dropdown -->
-						<MenusProfile :user="v"/>
+						<MenusProfile :user="v" :counts="counts" :unread="unread"/>
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-2 md:hidden">
@@ -164,10 +167,10 @@
 							<span v-if="v.is_admin" class="ml-1 badge badge-blue">Admin</span>
 						</p>
 						<!-- User Reputation -->
-						<div class="flex items-center space-x-1 text-xs">
-							<span class="text-yellow-500">&#9733;</span>
+						<div class="flex items-center text-xs">
+							<span class="text-yellow-500">&#9733;&nbsp;</span>
 							<span class="text-gray-600">
-								{{ v.rep ?? 0 }} reputation
+								{{ counts.rep ?? 0 }} reputation
 							</span>
 						</div>
 					</div>
@@ -253,7 +256,7 @@
 
 	const site = useSiteStore();
 
-	const text = ref(route.query.q)
+	const text = ref(route.query.q);
 
 	const search = () => {
 		router.push({
@@ -268,6 +271,8 @@
 	};
 
 	const v = userStore.user;
+	const counts = userStore.counts;
+	const unread = userStore.unread;
 
 	// Define sub-navigation menu links
 	const links = [
@@ -303,10 +308,10 @@
 	}
 
 	const logout = () => {
-	    Cookies.remove('token');
-	    userStore.logout();
-	    router.go({path: '/feed'});
-	 };
+		Cookies.remove('token');
+		userStore.logout();
+		router.go({path: '/feed'});
+	};
 </script>
 
 <!-- <script>
