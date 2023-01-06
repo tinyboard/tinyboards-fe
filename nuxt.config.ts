@@ -8,9 +8,6 @@ export default defineNuxtConfig({
 	alias: {
         pinia: '/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs',
     },
-    build: {
-        analyze: true
-    },
     css: ["~/assets/css/main.css"],
     modules: [
       "@pinia/nuxt",
