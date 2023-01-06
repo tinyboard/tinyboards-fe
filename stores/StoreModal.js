@@ -3,7 +3,8 @@ import { defineStore } from 'pinia';
 export const useModalStore = defineStore('modal', {
   // State
   state: () => {
-    return { 
+    return {
+      hasInit: false,
       modal: null,
       id: null,
       contentType: 'post',
@@ -14,6 +15,7 @@ export const useModalStore = defineStore('modal', {
   // Actions
   actions: {
     setModal(modal) {
+      this.hasInit = true;
       this.modal = modal.modal;
       this.id = modal.id;
       this.contentType = modal.contentType;

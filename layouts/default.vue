@@ -5,8 +5,8 @@
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
 		<NavigationFooter />
-		<LazyDialogsToastList v-if="toastStore.notifications.length"/>
-		<LazyDialogsModalList v-if="!!modalStore.modal"/>
+		<LazyDialogsToastList v-if="toastStore.hasInit"/>
+		<LazyDialogsModalList v-if="modalStore.hasInit"/>
 	</div>
 </template>
 
