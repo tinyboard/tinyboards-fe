@@ -281,7 +281,6 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
 import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
