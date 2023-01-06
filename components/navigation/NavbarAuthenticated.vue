@@ -53,15 +53,15 @@
 					</div>
 					<!-- User Links -->
 					<div class="ml-4 flex items-center space-x-2 md:ml-6">
-						<!-- Admin Link -->
-						<NuxtLink v-if="v.is_admin" to="/admin" tag="button" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
+						<!-- Admin Tools Link -->
+						<NuxtLink v-if="v.is_admin" to="/admin" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
 							<span class="sr-only">View admin tools</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
 							</svg>
 						</NuxtLink>
-						<!-- Create Link -->
+						<!-- Create Post Link -->
 						<NuxtLink to="/submit" class="flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 hover:text-primary dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:shadow-inner-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white rounded-md">
 							<span class="sr-only">Create new post</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -84,7 +84,15 @@
 					</div>
 				</div>
 				<div class="flex space-x-2 md:hidden">
-					<!-- Create post button -->
+					<!-- Admin Tools Link -->
+					<NuxtLink v-if="v.is_admin" to="/admin" class="inline-flex items-center justify-center p-1 text-white">
+						<span class="sr-only">View admin tools</span>
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
+						</svg>
+					</NuxtLink>
+					<!-- Create Post Link -->
 					<NuxtLink class="inline-flex items-center justify-center p-1 text-white" to="/submit">
 						<span class="sr-only">Create post</span>
 						<!-- Pencil Icon -->
@@ -94,7 +102,7 @@
 						   <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
 						</svg>
 					</NuxtLink>
-					<!-- Mobile menu button -->
+					<!-- Mobile Menu Button -->
 					<button class="inline-flex items-center justify-center p-1 text-white" @click="toggleDrawer">
 						<span class="sr-only">Open main menu</span>
 						<!-- Menu Icon -->
@@ -108,7 +116,6 @@
 				</div>
 			</div>
 		</div>
-
 		<!-- Mobile Menu -->
 		<transition enter-class="opacity-0" enter-active-class="duration-300 ease-out" enter-to-class="opacity-100" leave-class="opacity-100" leave-active-class="duration-200 ease-in" leave-to-class="opacity-0">
 			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen" class="fixed inset-0 bg-black/80"></div>
