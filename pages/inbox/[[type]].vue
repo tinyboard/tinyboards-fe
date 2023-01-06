@@ -1,6 +1,6 @@
 <template>
 	<NuxtLayout name="inbox">
-		<div class="bg-white sm:shadow-inner-xs sm:rounded-md border-y sm:border-x overflow-hidden">
+		<div class="bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
 			<!-- Messages -->
 			<ul v-if="notifications[type].length" class="divide-y divide-gray-100">
 				<!-- Notification -->
