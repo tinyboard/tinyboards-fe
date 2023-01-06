@@ -646,7 +646,7 @@
         <!-- Write Form -->
         <div
           v-if="isAuthed && !item.post.is_locked && !route.params.comment"
-          class="flex md:space-x-2"
+          class="flex md:space-x-2 mb-2 sm:mb-0"
         >
           <img
             loading="lazy"
