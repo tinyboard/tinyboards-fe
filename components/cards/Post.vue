@@ -176,8 +176,7 @@
             {{ item.post.title }}
           </NuxtLink>
           <div
-            v-if="item.post.body_html"
-            v-if="!isCompact"
+            v-if="!isCompact && item.post.body_html"
             class="mt-2 relative overflow-hidden"
             :class="{
               'max-h-56 overlay': !isExpanded && (item.post.body.length > 800 || item.post.body.includes('![](http'))
