@@ -5,13 +5,15 @@
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
 		<NavigationFooter />
-		<DialogsToastList />
-		<DialogsModalList/>
+		<LazyDialogsToastList v-if="toastStore.notifications.length"/>
+		<LazyDialogsModalList v-if="!!modalStore.modal"/>
 	</div>
 </template>
 
 <script setup>
 	import { useLoggedInUser } from '@/stores/StoreAuth';
+	import { useModalStore } from "@/stores/StoreModal";
+	import { useToastStore } from "@/stores/StoreToast";
 
 	const route = useRoute();
 
@@ -27,6 +29,9 @@
 
 	const userStore = useLoggedInUser();
 	const isAuthed = userStore.isAuthed;
+
+	const modalStore = useModalStore();
+	const toastStore = useToastStore();
 
 	const Navbar = 	defineAsyncComponent(() => import('@/components/navigation/Navbar'));
 	const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));
