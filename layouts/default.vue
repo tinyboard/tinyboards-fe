@@ -5,8 +5,8 @@
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
 		<NavigationFooter />
-		<LazyDialogsToastList />
-		<LazyDialogsModalList />
+		<DialogsToastList />
+		<DialogsModalList />
 	</div>
 </template>
 

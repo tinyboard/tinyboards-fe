@@ -5,7 +5,7 @@
                   <NavigationNavbarSub :links="links" class="sm:order-first"/>
                   <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
                         <!-- Banner -->
-                        <CardsBoardBanner v-if="route.params.board"
+                        <LazyCardsBoardBanner v-if="route.params.board"
                               :board="dummyBoard"
                               class="col-span-full"
                         />
@@ -45,7 +45,7 @@
                                     </div>
                               </div>
                               <!-- Posts -->
-                              <ListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
+                              <LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
                               <!-- Empty State -->
                               <div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
                                     <p>
@@ -58,7 +58,7 @@
                               </div>
                               <!-- Pagination -->
                               <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
-                                    <NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
+                                    <LazyNavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
                               </div>
                         </div>
                         <!-- Sidebar -->
