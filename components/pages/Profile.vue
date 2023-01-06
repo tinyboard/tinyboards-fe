@@ -77,10 +77,10 @@
 						loading="lazy"
 						:src="user.avatar_url"
 						alt="avatar"
-						class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
+						class="relative flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
 						/>
 						<!-- Info & Actions -->
-						<div class="flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
+						<div class="relative flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
 							<!-- Name & Role -->
 							<div class="flex items-center">
 								<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
@@ -312,9 +312,6 @@
 </script>
 
 <style scoped>
-	#details > * {
-		z-index: 10;
-	}
 	#details::before {
 		content: '';
 		background: rgba(0,0,0,0.9);
