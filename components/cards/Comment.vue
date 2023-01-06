@@ -255,7 +255,7 @@
           />
         </div>
         <!-- Replies -->
-        <ListsComments
+        <LazyListsComments
           v-if="
             !route.meta.hasRepliesDisabled &&
             item.replies.length &&
