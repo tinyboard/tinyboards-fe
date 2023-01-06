@@ -94,6 +94,10 @@
                   content: `Tinyboards | ${item.value.post.title}`
             },
             {
+                  name: 'og:description',
+                  content: item.value.post.body.substring(0, 60)
+            },
+            {
                   name: 'description',
                   content: item.value.post.body.substring(0, 160)
             }
