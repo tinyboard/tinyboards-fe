@@ -126,8 +126,9 @@
 					</svg>
 				</button>
 			</div>
+			<!-- Mobile Search -->
 			<form class="group relative mx-4 mt-10 mb-4" @submit.prevent="search(); toggleDrawer();">
-				<div class="absolute left-2.5 top-2.5">
+				<div class="absolute" style="top: 9px; left: 0.625rem;">
 					<button class="text-gray-300" type="submit">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -135,7 +136,7 @@
 					</button>
 				</div>
 				<input required type="text" class="form-input gray px-8" v-model="text" placeholder="Search this place"/>
-				<div v-show="text" class="absolute right-2.5 top-2.5">
+				<div v-show="text" class="absolute" style="top: 9px; right: 0.625rem;">
 					<button class="text-gray-300" @click="text = null">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
