@@ -177,56 +177,57 @@
 				</NuxtLink>
 			</div>
 			<!-- Inbox Link -->
-            <NuxtLink to="/inbox" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                 <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                 <polyline points="3 7 12 13 21 7"></polyline>
-              </svg>
-              <span>Inbox</span>
-            </NuxtLink>
-            <!-- My Posts Link -->
-            <NuxtLink :to="`/user/${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                 <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
-                 <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
-              </svg>
-              <span>Posts</span>
-            </NuxtLink>
-            <!-- My Settings Link -->
-            <NuxtLink to="/settings/profile" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                 <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
-                 <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-              <span>Settings</span>
-            </NuxtLink>
-            <!-- Divider -->
-           	<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
-           	<!-- About Link -->
-            <NuxtLink to="/help/faq" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
-            	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            		<path d="M12 8h.01"></path>
-            		<path d="M11 12h1v4h1"></path>
-            		<path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
-            	</svg>
-            	<span>About</span>
-            </NuxtLink>
-            <!-- Rules Link -->
-            <NuxtLink to="/help/rules" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
-            	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            		<path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-            		<path d="M5 8v-3a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5"></path>
-            		<circle cx="6" cy="14" r="3"></circle>
-            		<path d="M4.5 17l-1.5 5l3 -1.5l3 1.5l-1.5 -5"></path>
-            	</svg>
-            	<span>Rules</span>
-            </NuxtLink>
-            <!-- Divider -->
+         <NuxtLink to="/inbox" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+              <polyline points="3 7 12 13 21 7"></polyline>
+           </svg>
+           Inbox
+           <span v-if="unread > 0" class="text-primary">&nbsp;{{ unread }}</span>
+         </NuxtLink>
+         <!-- My Posts Link -->
+         <NuxtLink :to="`/user/${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+              <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+           </svg>
+           <span>Posts</span>
+         </NuxtLink>
+         <!-- My Settings Link -->
+         <NuxtLink to="/settings/profile" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+           </svg>
+           <span>Settings</span>
+         </NuxtLink>
+         <!-- Divider -->
+        	<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
+        	<!-- About Link -->
+         <NuxtLink to="/help/faq" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
+         	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+         		<path d="M12 8h.01"></path>
+         		<path d="M11 12h1v4h1"></path>
+         		<path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z"></path>
+         	</svg>
+         	<span>About</span>
+         </NuxtLink>
+         <!-- Rules Link -->
+         <NuxtLink to="/help/rules" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
+         	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+         		<path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+         		<path d="M5 8v-3a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5"></path>
+         		<circle cx="6" cy="14" r="3"></circle>
+         		<path d="M4.5 17l-1.5 5l3 -1.5l3 1.5l-1.5 -5"></path>
+         	</svg>
+         	<span>Rules</span>
+         </NuxtLink>
+         <!-- Divider -->
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
 			<!-- Sign Out Button -->
 			<button @click="logout(); toggleDrawer()" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900">

@@ -68,7 +68,7 @@
                  <polyline points="3 7 12 13 21 7"></polyline>
               </svg>
               Inbox
-              <span v-if="unread > 0" class="pl-1 text-primary">{{ unread }}</span>
+              <span v-if="unread > 0" class="text-primary">&nbsp;10</span>
             </NuxtLink>
           </MenuItem>
           <!-- Posts Link -->
