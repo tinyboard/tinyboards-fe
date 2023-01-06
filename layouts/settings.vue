@@ -9,7 +9,7 @@
 				class="col-span-full"
 				title="Settings"
 				sub-title="Manage your public profile and more."
-				image-url="https://i.imgur.com/7PgqWij.png"
+				image-url="https://forum.porpl.net/image/51bc2d71-6c70-4add-a7b0-03fed9024fb6.webp"
 				/>
 			</div>
 		</section>
