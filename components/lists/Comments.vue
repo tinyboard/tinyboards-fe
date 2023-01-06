@@ -8,8 +8,6 @@
 </template>
 
 <script setup>
-	import { defineAsyncComponent } from 'vue';
-
 	const props = defineProps({
 		comments: Array,
 		offset: {
