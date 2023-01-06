@@ -178,7 +178,7 @@
         />
       </div>
       <!-- Post Edit Form -->
-      <InputsEdit
+      <LazyInputsEdit
         v-if="isEditing"
         :id="item.post.id"
         :body="item.post.body"
@@ -654,7 +654,7 @@
             alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
           />
-          <InputsComment
+          <LazyInputsComment
             :post-id="item.post.id"
             :parent-id="null"
             @comment-published="onCommentPublished"

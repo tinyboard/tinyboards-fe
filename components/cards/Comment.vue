@@ -109,7 +109,7 @@
             </div>
           </div>
           <!-- Comment Edit Form -->
-          <InputsEdit
+          <LazyInputsEdit
             v-if="isEditing"
             :id="comment.id"
             :body="comment.body"
@@ -247,7 +247,7 @@
             alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
           />
-          <InputsComment
+          <LazyInputsComment
             :post-id="item.comment.post_id"
             :parent-id="item.comment.id"
             @closed="isReplying = false"
