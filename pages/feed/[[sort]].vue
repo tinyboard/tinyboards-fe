@@ -87,7 +87,7 @@
       
       const preferCardView = useCookie('preferCardView');
       // true by default
-      preferCardView.value = preferCardView.value === undefined ? true : preferCardView.value;
+      preferCardView.value = preferCardView.value === undefined ? false : preferCardView.value;
       
       // Pagination
       const page = computed(() => Number.parseInt(route.query.page) || 1);
