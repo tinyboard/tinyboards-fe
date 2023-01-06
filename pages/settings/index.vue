@@ -59,7 +59,7 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" name="company-website" id="display-name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="elon" />
+							<input type="text" name="company-website" id="display-name" class="mt-1 form-input gray" placeholder="elon" />
 							<p class="mt-2 text-sm text-gray-500">
 								The name next to your posts and comments. Your profile URL will always be /elon.
 							</p>

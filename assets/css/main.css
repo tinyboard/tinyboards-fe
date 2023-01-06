@@ -154,7 +154,7 @@
 		@apply text-gray-900 placeholder-gray-400 bg-white border-gray-200 focus:bg-white focus:border-primary focus:ring-primary
 	}
 	.form-input.gray {
-		@apply text-gray-900 placeholder-gray-400 bg-gray-50 border-gray-200 focus:bg-white focus:border-primary focus:ring-primary
+		@apply text-gray-900 placeholder-gray-400 bg-gray-100 border-gray-200 focus:bg-white focus:border-primary focus:ring-primary
 	}
 	.form-input.red {
 		@apply text-red-900 placeholder-red-400 bg-red-50 border-red-200 focus:bg-white focus:border-red-500 focus:ring-red-500

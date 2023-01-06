@@ -36,12 +36,12 @@
 								<!-- Board -->
 								<div v-if="isEditingBoard" class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Board</label>
-									<input type="text" name="title" id="title" placeholder="Enter board to post to, without the b/" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="boardName" required/>
+									<input type="text" name="title" id="title" placeholder="Enter board to post to, without the b/" class="mt-1 form-input gray" v-model="boardName" required/>
 								</div>
 								<!-- Title -->
 								<div class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Title</label>
-									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="title" required/>
+									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 form-input gray" v-model="title" required/>
 								</div>
 								<!-- Link -->
 								<div class="col-span-full">
@@ -52,7 +52,7 @@
 												optional
 											</em>
 										</span>
-										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="url" :required="!body" @focus="hasFocusedUrl = true;"/>
+										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 form-input gray" v-model="url" :required="!body" @focus="hasFocusedUrl = true;"/>
 										<p class="mt-2 peer-invalid:visible invisible text-red-600 text-sm" :class="!body && hasFocusedUrl ? 'opacity-100': 'opacity-0 pointer-events-none'">
 											Please provide a valid URL.
 										</p>
