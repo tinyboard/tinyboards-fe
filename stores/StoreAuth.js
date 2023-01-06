@@ -5,6 +5,8 @@ export const useLoggedInUser = defineStore("auth", {
   state: () => {
     return {
       user: null,
+      counts: null,
+      unread: null,
       token: null,
       isAuthed: false
     };
@@ -57,6 +59,8 @@ export const useLoggedInUser = defineStore("auth", {
             this.fetchUserPromise(token)
             .then(({ data }) => {
               this.user = data.value.user;
+              this.counts = data.value.counts;
+              this.unread = data.value.unread_notifications;
               this.token = token;
               this.isAuthed = true;
               resolve(token);
@@ -90,6 +94,8 @@ export const useLoggedInUser = defineStore("auth", {
       })
       .then(({ data }) => {
         this.user = data.value.user;
+        this.counts = data.value.counts;
+        this.unread = data.value.unread_notifications;
         this.token = authToken;
         this.isAuthed = true;
       })
