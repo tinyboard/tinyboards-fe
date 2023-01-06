@@ -4,7 +4,7 @@
 			<!-- Messages -->
 			<ul v-if="notifications[type].length" class="space-y-4">
 				<!-- Notification -->
-				<li v-for="(notification, i) in notifications.replies" :key="i" class="flex" :class="{'bg-gray-50':notification.comment_reply.read}">
+				<li v-for="(notification, i) in notifications.replies" :key="i" class="flex" :class="{'bg-gray-100':!notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
 				</li>
 			</ul>
