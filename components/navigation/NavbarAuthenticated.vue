@@ -110,7 +110,7 @@
 		</div>
 
 		<!-- Mobile Menu -->
-		<transition enter-class="opacity-0" enter-active-class="ease-out transition-all duration-100" enter-to-class="opacity-200" leave-class="opacity-100" leave-active-class="ease-out transition-all duration-200" leave-to-class="opacity-0">
+		<transition enter-class="opacity-0" enter-active-class="duration-300 ease-out" enter-to-class="opacity-100" leave-class="opacity-100" leave-active-class="duration-200 ease-in" leave-to-class="opacity-0">
 			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen" class="fixed inset-0 bg-black/80"></div>
 		</transition>
 		<aside class="transform top-0 right-0 w-5/6 bg-white dark:bg-gray-800 fixed h-full py-3 overflow-y-auto ease-in-out transition-all duration-200 z-75" :class="isOpen ? 'translate-x-0' : 'translate-x-full'">
