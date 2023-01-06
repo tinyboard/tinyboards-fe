@@ -9,7 +9,7 @@
                               :board="dummyBoard"
                               class="col-span-full"
                         />
-                        <CardsBanner
+                        <LazyCardsBanner
                         v-else
                         title="Feed"
                         sub-title="The front-page. All your posts are belong to us."
