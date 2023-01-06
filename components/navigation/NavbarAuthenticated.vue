@@ -126,7 +126,26 @@
 					</svg>
 				</button>
 			</div>
-			<div class="flex flex-col mt-10 mb-4 px-4">
+			<form class="group relative mx-4 mt-10 mb-4" @submit.prevent="search(); toggleDrawer();">
+				<div class="absolute left-2.5 top-2.5">
+					<button class="text-gray-300" type="submit">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+						</svg>
+					</button>
+				</div>
+				<input required type="text" class="form-input gray px-8" v-model="text" placeholder="Search this place"/>
+				<div v-show="text" class="absolute right-2.5 top-2.5">
+					<button class="text-gray-300" @click="text = null">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							<circle cx="12" cy="12" r="9"></circle>
+							<path d="M10 10l4 4m0 -4l-4 4"></path>
+						</svg>
+					</button>
+				</div>
+			</form>
+			<div class="flex flex-col mb-2 px-4">
 				<NuxtLink :to="`/user/${v.name}`" class="flex items-center" @click="toggleDrawer">
 					<!-- User Avatar -->
 					<img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
@@ -146,7 +165,6 @@
 					</div>
 				</NuxtLink>
 			</div>
-			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
 			<NuxtLink :to="`/user/${v.name}`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
