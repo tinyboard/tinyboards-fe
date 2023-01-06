@@ -105,6 +105,18 @@
 						   <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
 						</svg>
 					</NuxtLink>
+					<!-- Inbox Link -->
+					<NuxtLink to="/inbox" class="inline-flex items-center justify-center p-1 text-white">
+						<span class="sr-only">View inbox</span>
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							<rect x="3" y="5" width="18" height="14" rx="2"></rect>
+							<polyline points="3 7 12 13 21 7"></polyline>
+						</svg>
+						<span v-if="unread > 0" class="absolute top-0 right-0 flex items-center justify-center p-1 leading-none rounded-sm bg-white">
+							<strong class="text-xs text-primary">{{ unread < 99 ? unread : '99+' }}</strong>
+						</span>
+					</NuxtLink>
 					<!-- Mobile Menu Button -->
 					<button class="inline-flex items-center justify-center p-1 text-white" @click="toggleDrawer">
 						<span class="sr-only">Open main menu</span>
