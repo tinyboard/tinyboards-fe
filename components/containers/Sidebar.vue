@@ -56,7 +56,7 @@
             <img
               loading="lazy"
               class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-              :src="user.user.avatar ?? 'https://placekitten.com/50/50'"
+              :src="user.user.avatar ?? 'https://placekitten.com/36/36'"
             />
             <div class="flex flex-col justify-center leading-normal">
               <div class="flex">
