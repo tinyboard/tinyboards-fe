@@ -162,7 +162,7 @@ if (error.value && error.value.response) {
       "We could not find the page you were looking for. Try better next time.",
     fatal: true,
   });
-}
+};
 
 const totalPages = computed(() => {
   return Math.ceil(members.value.total_count / limit.value || 1);

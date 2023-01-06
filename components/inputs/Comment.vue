@@ -36,11 +36,11 @@
 	const props = defineProps({
 		parentId: {
 			type: Number,
-		default: null
+			default: null
 		},
 		postId: {
 			type: Number,
-		default: null
+			default: null
 		},
 	});
 
