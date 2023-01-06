@@ -84,9 +84,7 @@
             key: (route) => route.fullPath
       });
       
-      const preferCardView = useCookie('preferCardView');
-      // false by default
-      preferCardView.value = preferCardView.value === undefined ? false : preferCardView.value;
+      const preferCardView = useCookie('preferCardView') ?? false;
       
       // Pagination
       const page = computed(() => Number.parseInt(route.query.page) || 1);

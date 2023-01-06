@@ -124,9 +124,7 @@
 		]
 	});
 
-	const preferCardView = useCookie('preferCardView');
-   // false by default
-   preferCardView.value = preferCardView.value === undefined ? false : preferCardView.value;
+	const preferCardView = useCookie('preferCardView') ?? false;
 
 	// Pagination
 	const page = computed(() => route.query.page || 1);
