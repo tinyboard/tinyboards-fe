@@ -9,7 +9,7 @@
 			leave-from-class="opacity-100"
 			leave-to-class="opacity-0"
 			appear>
-				<DialogsToast v-for="toast in toast.notifications" :key="toast.id" :notification="toast"/>
+				<LazyDialogsToast v-for="toast in toast.notifications" :key="toast.id" :notification="toast"/>
 			</transition-group>
 		</div>
 	</div>
