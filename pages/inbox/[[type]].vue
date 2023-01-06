@@ -2,20 +2,22 @@
 	<NuxtLayout name="inbox">
 		<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x">
 			<!-- Messages -->
-			<ul v-if="notifications.replies.length" class="space-y-4">
+			<ul v-if="notifications[type].length" class="space-y-4">
 				<!-- Notification -->
-				<li v-for="(notification, i) in notifications.replies" :key="i" class="flex hover:bg-gray-50">
+				<li v-for="(notification, i) in notifications.replies" :key="i" class="flex" :class="{'bg-gray-50':notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
 				</li>
 			</ul>
 			<!-- Empty State -->
-			<p v-else>
-				<span class="font-medium">
-					There are no {{ route.params.type === 'unread' ? 'unread messages' : route.params.type || 'messages' }} in your inbox...
-				</span>
-				<br/>
-				you must not be popular
-			</p>
+			<div v-else class="px-4 py-24 text-center text-gray-500">
+				<p>
+					<span class="font-medium">
+						There are no {{ route.params.type === 'unread' ? 'unread messages' : route.params.type || 'messages' }} in your inbox...
+					</span>
+					<br/>
+					you must not be popular
+				</p>
+			</div>
 			<!-- Pagination -->
 			<LazyNavigationPaginate v-if="totalPages > 1" :total-pages="totalPages" :per-page="limit" :current-page="page" class="mt-4"/>
 		</div>
