@@ -94,7 +94,7 @@ const {
   error,
   refresh,
 } = await useFetch("/members", {
-  query: { sort: "new", limit: 10 },
+  query: { sort: "new", limit: 8 },
   baseURL,
 });
 
