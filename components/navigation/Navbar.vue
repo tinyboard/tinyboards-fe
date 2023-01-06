@@ -23,7 +23,7 @@
 						Sign up
 					</NuxtLink>
 				</div>
-				<div class="flex space-x-2 md:hidden">
+				<div class="-mr-1 flex space-x-2 md:hidden">
 					<!-- Mobile menu button -->
 					<button class="inline-flex items-center justify-center p-1 text-white" @click="toggleDrawer">
 						<span class="sr-only">Open main menu</span>

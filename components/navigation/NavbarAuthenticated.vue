@@ -83,7 +83,7 @@
 						<MenusProfile :user="v"/>
 					</div>
 				</div>
-				<div class="flex space-x-2 md:hidden">
+				<div class="-mr-1 flex space-x-2 md:hidden">
 					<!-- Admin Tools Link -->
 					<NuxtLink v-if="v.is_admin" to="/admin" class="inline-flex items-center justify-center p-1 text-white">
 						<span class="sr-only">View admin tools</span>
