@@ -69,7 +69,6 @@
 </template>
 
 <script setup>
-      import { computed, ref } from 'vue';
       import { usePostsStore } from '@/stores/StorePosts';
       import { getListing } from '@/composables/posts';
 
@@ -86,7 +85,7 @@
       });
       
       const preferCardView = useCookie('preferCardView');
-      // true by default
+      // false by default
       preferCardView.value = preferCardView.value === undefined ? false : preferCardView.value;
       
       // Pagination
