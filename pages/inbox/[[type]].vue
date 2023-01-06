@@ -1,10 +1,10 @@
 <template>
 	<NuxtLayout name="inbox">
-		<div class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x">
+		<div class="bg-white sm:shadow-inner-xs sm:rounded-md border-y sm:border-x overflow-hidden">
 			<!-- Messages -->
-			<ul v-if="notifications[type].length" class="space-y-4">
+			<ul v-if="notifications[type].length" class="divide-y divide-gray-100">
 				<!-- Notification -->
-				<li v-for="(notification, i) in notifications.replies" :key="i" class="flex" :class="{'bg-gray-100':!notification.comment_reply.read}">
+				<li v-for="(notification, i) in notifications.replies" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':!notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
 				</li>
 			</ul>
