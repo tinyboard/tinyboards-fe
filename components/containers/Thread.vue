@@ -661,7 +661,7 @@
           />
         </div>
         <!-- Comments -->
-        <ListsComments
+        <LazyListsComments
           v-if="comments.length"
           :comments="comments"
           :offset="!!route.params.comment ? 3 : null"
