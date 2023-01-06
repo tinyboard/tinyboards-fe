@@ -1,5 +1,5 @@
 <template>
-  <Menu as="div" class="relative z-10">
+  <Menu as="div" class="relative z-20">
     <div>
       <MenuButton :class="buttonClass ? buttonClass : 'button button-sm white'">
         <slot name="button">

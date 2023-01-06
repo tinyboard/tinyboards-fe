@@ -71,7 +71,7 @@
 						</ul>
 					</div>
 					<!-- Details -->
-					<div id="details" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${user.banner_url})` }">
+					<div id="details" class="z-30 relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${user.banner_url})` }">
 						<!-- Avatar -->
 						<img
 						loading="lazy"
