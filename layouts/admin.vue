@@ -9,7 +9,7 @@
 				class="col-span-full"
 				title="Admin Panel"
 				sub-title="Manage your tinyboard."
-				image-url="https://i.imgur.com/Q4Eidtx.jpeg"
+				image-url="https://forum.porpl.net/image/51bc2d71-6c70-4add-a7b0-03fed9024fb6.webp"
 				/>
 			</div>
 		</section>

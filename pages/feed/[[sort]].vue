@@ -13,7 +13,7 @@
                         v-else
                         title="Feed"
                         sub-title="The front-page. All your posts are belong to us."
-                        image-url="https://i.imgur.com/TV07zoE.jpeg"
+                        image-url="https://forum.porpl.net/image/51bc2d71-6c70-4add-a7b0-03fed9024fb6.webp"
                         class="col-span-full"
                         />
                   </div>

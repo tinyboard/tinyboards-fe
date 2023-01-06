@@ -8,17 +8,21 @@ export default defineNuxtConfig({
 	alias: {
         pinia: '/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs',
     },
-	css: ["~/assets/css/main.css"],
-	modules: [
-		"@pinia/nuxt",
-    	"@nuxtjs/tailwindcss"
-  	],
-	routeRules: {
-    // Static page generated on-demand once
-    '/help/**': { static: true },
-    '/': { redirect: '/feed' },
-    // Force server-side rendering
-    '/user/**': { ssr: true },
-  }
+    build: {
+        analyze: true
+    },
+    css: ["~/assets/css/main.css"],
+    modules: [
+      "@pinia/nuxt",
+      "@nuxtjs/tailwindcss"
+    ],
+    routeRules: {
+        // Static page generated on-demand once
+        '/help/**': { static: true },
+        '/': { redirect: '/feed' },
+        // Force server-side rendering
+        '/user/**': { ssr: true },
+    },
+    modern: true
 });
 
