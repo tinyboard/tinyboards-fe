@@ -73,7 +73,7 @@
         </div>
       </div>
       <!-- Replies -->
-      <ListsComments
+      <LazyListsComments
         v-if="item.replies.length && level <= limit"
         v-show="!isCollapsed"
         :comments="item.replies"
