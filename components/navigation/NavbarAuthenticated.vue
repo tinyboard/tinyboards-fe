@@ -173,14 +173,7 @@
 					</div>
 				</NuxtLink>
 			</div>
-			<NuxtLink :to="`/user/${v.name}`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
-				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-					<circle cx="12" cy="7" r="4"></circle>
-					<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
-				</svg>
-				<span>My Profile</span>
-            </NuxtLink>
+			<!-- Inbox Link -->
             <NuxtLink to="/inbox" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -189,6 +182,7 @@
               </svg>
               <span>Inbox</span>
             </NuxtLink>
+            <!-- My Posts Link -->
             <NuxtLink :to="`/user/${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -197,6 +191,7 @@
               </svg>
               <span>Posts</span>
             </NuxtLink>
+            <!-- My Settings Link -->
             <NuxtLink to="/settings/profile" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -205,7 +200,9 @@
               </svg>
               <span>Settings</span>
             </NuxtLink>
+            <!-- Divider -->
            	<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
+           	<!-- About Link -->
             <NuxtLink to="/help/faq" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
             	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
             		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -215,6 +212,7 @@
             	</svg>
             	<span>About</span>
             </NuxtLink>
+            <!-- Rules Link -->
             <NuxtLink to="/help/rules" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
             	<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
             		<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -225,7 +223,9 @@
             	</svg>
             	<span>Rules</span>
             </NuxtLink>
+            <!-- Divider -->
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
+			<!-- Sign Out Button -->
 			<button @click="logout(); toggleDrawer()" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
