@@ -6,7 +6,7 @@
 		<slot/>
 		<NavigationFooter />
 		<DialogsToastList />
-		<DialogsModalList />
+		<DialogsModalList/>
 	</div>
 </template>
 
@@ -28,6 +28,6 @@
 	const userStore = useLoggedInUser();
 	const isAuthed = userStore.isAuthed;
 
-	const Navbar = resolveComponent('NavigationNavbar');
-	const NavbarAuthenticated = resolveComponent('NavigationNavbarAuthenticated');
+	const Navbar = 	defineAsyncComponent(() => import('@/components/navigation/Navbar'));
+	const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));
 </script>
