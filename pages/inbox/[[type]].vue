@@ -24,7 +24,7 @@
 			<div v-else class="px-4 py-24 text-center text-gray-500">
 				<p>
 					<span class="font-medium">
-						There are no {{ route.params.type === 'unread' ? 'unread messages' : route.params.type || 'messages' }} in your inbox...
+						There are no {{ type === 'unread' ? 'unread messages' : type || 'messages' }} in your inbox...
 					</span>
 					<br/>
 					you must not be popular
