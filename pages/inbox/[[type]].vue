@@ -1,10 +1,22 @@
 <template>
 	<NuxtLayout name="inbox">
 		<div class="bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
+			<!-- Page Heading & Description -->
+			<div v-if="notifications[type].length" class="flex items-center p-4 border-b">
+				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">{{ type }}</h2>
+				<div class="ml-auto flex items-center space-x-4">
+					<p class="text-sm text-gray-600">
+						You have <strong>{{ notifications.total_count ?? 0 }}</strong> unread {{ route.params.type === 'unread' ? 'unread messages' : route.params.type || 'messages' }}
+					</p>
+					<button class="button button-sm gray">
+						&#10003; Mark all read
+					</button>
+				</div>
+			</div>
 			<!-- Messages -->
 			<ul v-if="notifications[type].length" class="divide-y divide-gray-100">
 				<!-- Notification -->
-				<li v-for="(notification, i) in notifications.replies" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':!notification.comment_reply.read}">
+				<li v-for="(notification, i) in notifications.replies" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
 				</li>
 			</ul>
