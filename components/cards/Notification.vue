@@ -10,7 +10,7 @@
 				{{ notification.creator.name }}
 			</NuxtLink>
 			replied to you in
-			<NuxtLink :href="`/post/${notification.post.id}/${notification.comment.id}`">
+			<NuxtLink :href="`/post/${notification.post.id}/${notification.comment.parent_id}`">
 				{{ notification.post.title }}
 			</NuxtLink>
 		</p>
@@ -34,7 +34,7 @@
 					<p class="mt-1 text-sm text-gray-600">
 						{{ formatDate(reply.comment.creation_date) }}
 						<span class="font-black text-gray-400 dark:text-gray-500">·&nbsp;</span>
-						<NuxtLink :to="`/post/${reply.post.id}/${reply.comment.parent_id}`">
+						<NuxtLink :to="`/post/${notification.post.id}/${notification.comment.parent_id}`">
 							View thread
 						</NuxtLink>
 					</p>
