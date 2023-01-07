@@ -257,7 +257,7 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
+	import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { shuffle } from "@/utils/shuffleArray";
@@ -285,7 +285,24 @@
 
 	const v = userStore.user;
 	const counts = userStore.counts;
-	const unread = userStore.unread;
+	const unread = ref(userStore.unread);
+
+	// Notifications count
+	const authCookie = useCookie("token").value;
+
+	const fetchNotifcationCount = () => {
+		useFetch("/notifications/unread", {
+			baseURL,
+			headers: {
+				Authorization: `Bearer ${authCookie}`,
+			}
+		})
+		.then(({ data }) => {
+			unread.value = data.value.total_count
+		})
+	};
+
+	watch(() => route.fullPath, () => fetchNotifcationCount());
 
 	// Define sub-navigation menu links
 	const links = [
