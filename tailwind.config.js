@@ -73,6 +73,11 @@ module.exports = {
               color: theme('colors.secondary'),
               textDecoration: 'none'
             },
+            blockquote: {
+              borderLeftWidth: '2px',
+              fontStyle: 'normal',
+              fontWeight: 'normal'
+            },
             img: {
               display: 'inline-block'
             }
