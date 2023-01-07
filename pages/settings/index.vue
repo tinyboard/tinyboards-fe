@@ -21,7 +21,7 @@
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
-									{{ settings.avatar ? 'Change' : 'Upload avatar' }}
+									{{ settings.avatar ? 'Change avatar' : 'Upload avatar' }}
 								</label>
 								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event,'avatar')"/>
 								<small class="block mt-2 text-gray-400">
@@ -42,7 +42,7 @@
 								<div v-else class="w-full h-24 rounded-md border border-gray-300 border-dashed"></div>
 								<div class="mt-5">
 									<label for="banner-upload" class="inline-block button gray cursor-pointer">
-										{{ settings.banner ? 'Change' : 'Upload banner' }}
+										{{ settings.banner ? 'Change banner' : 'Upload banner' }}
 									</label>
 									<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event)"/>
 									<small class="block mt-2 text-gray-400">
