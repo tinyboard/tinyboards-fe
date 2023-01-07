@@ -6,7 +6,7 @@
 				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">{{ type }}</h2>
 				<div class="ml-auto flex items-center space-x-4">
 					<p class="text-sm text-gray-600">
-						You have <strong>{{ notifications.total_count ?? 0 }}</strong> unread {{ route.params.type === 'unread' ? 'unread messages' : route.params.type || 'messages' }}
+						You have <strong>{{ notifications.total_count ?? 0 }}</strong> unread {{ type === 'unread' ? 'unread messages' : type || 'messages' }}
 					</p>
 					<button class="button button-sm gray">
 						&#10003; Mark all read
