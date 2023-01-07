@@ -16,7 +16,7 @@
 			<!-- Messages -->
 			<ul v-if="notifications[type]?.length" class="divide-y divide-gray-100 border-b border-gray-100">
 				<!-- Notification -->
-				<li v-for="(notification, i) in notifications.replies" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':notification.comment_reply.read}">
+				<li v-for="(notification, i) in notifications[type]" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
 				</li>
 			</ul>
