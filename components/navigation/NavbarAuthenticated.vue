@@ -54,7 +54,7 @@
 					<!-- User Links -->
 					<div class="ml-4 flex items-center space-x-2 md:ml-6">
 						<!-- Admin Tools Link -->
-						<NuxtLink v-if="v.is_admin" to="/admin" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded">
+						<NuxtLink v-if="v.is_admin" to="/admin" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded" title="Admin control panel">
 							<span class="sr-only">View admin tools</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -62,7 +62,7 @@
 							</svg>
 						</NuxtLink>
 						<!-- Create Post Link -->
-						<NuxtLink to="/submit" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded">
+						<NuxtLink to="/submit" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded" title="Submit a post">
 							<span class="sr-only">Create new post</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -71,12 +71,12 @@
 							</svg>
 						</NuxtLink>
 						<!-- Inbox Link -->
-						<NuxtLink to="/inbox" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded">
+						<NuxtLink to="/inbox" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded" title="Inbox">
 							<span class="sr-only">View inbox</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<rect x="3" y="5" width="18" height="14" rx="2"></rect>
-								<polyline points="3 7 12 13 21 7"></polyline>
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+							   <path d="M4 13h3l3 3h4l3 -3h3"></path>
 							</svg>
 							<span v-if="unread > 0" class="absolute top-0 right-0 flex items-center justify-center p-1 leading-none rounded-sm bg-white">
 								<strong class="text-xs text-primary">{{ unread < 99 ? unread : '99+' }}</strong>
@@ -109,12 +109,14 @@
 					<NuxtLink to="/inbox" class="inline-flex items-center justify-center p-1 text-white">
 						<span class="sr-only">View inbox</span>
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							<rect x="3" y="5" width="18" height="14" rx="2"></rect>
-							<polyline points="3 7 12 13 21 7"></polyline>
+						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+						   <path d="M4 13h3l3 3h4l3 -3h3"></path>
 						</svg>
-						<span v-if="unread > 0" class="absolute top-0 right-0 flex items-center justify-center p-1 leading-none rounded-sm bg-white">
-							<strong class="text-xs text-primary">{{ unread < 99 ? unread : '99+' }}</strong>
+						<span v-if="unread > 0" class="absolute" style="top: 3px; right: 3px">
+							<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-2 h-2 text-white">
+							  <circle cx="100" cy="100" r="100" />
+							</svg>
 						</span>
 					</NuxtLink>
 					<!-- Mobile Menu Button -->
@@ -190,13 +192,13 @@
 			</div>
 			<!-- Inbox Link -->
          <NuxtLink to="/inbox" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
-           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-              <polyline points="3 7 12 13 21 7"></polyline>
-           </svg>
-           Inbox
-           <span v-if="unread > 0" class="text-primary">&nbsp;{{ unread }}</span>
+				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+					<rect x="4" y="4" width="16" height="16" rx="2"></rect>
+					<path d="M4 13h3l3 3h4l3 -3h3"></path>
+				</svg>
+	        	<span>Inbox</span>
+	        	<strong v-if="unread > 0" class="text-primary">&nbsp;{{ unread }}</strong>
          </NuxtLink>
          <!-- My Posts Link -->
          <NuxtLink :to="`/user/${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">

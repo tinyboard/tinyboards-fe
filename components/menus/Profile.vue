@@ -63,12 +63,12 @@
           <MenuItem v-slot="{ active, close }">
             <NuxtLink to="/inbox" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                 <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                 <polyline points="3 7 12 13 21 7"></polyline>
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <path d="M4 13h3l3 3h4l3 -3h3"></path>
               </svg>
-              Inbox
-              <span v-if="unread > 0" class="text-primary">&nbsp;{{ unread }}</span>
+              <span>Inbox</span>
+              <strong v-if="unread > 0" class="text-primary">&nbsp;{{ unread }}</strong>
             </NuxtLink>
           </MenuItem>
           <!-- Posts Link -->
