@@ -302,7 +302,9 @@
 		})
 	};
 
-	watch(() => route.fullPath, () => fetchNotifcationCount());
+	watch(route, (to) => {
+      fetchNotifcationCount()
+   });
 
 	// Define sub-navigation menu links
 	const links = [
