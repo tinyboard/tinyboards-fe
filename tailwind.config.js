@@ -68,6 +68,10 @@ module.exports = {
         DEFAULT: {
           css: {
             color: theme('colors.gray.900'),
+            a: {
+              fontWeight: 'normal',
+              color: theme('colors.secondary')
+            },
             img: {
               display: 'inline-block'
             }
