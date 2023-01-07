@@ -46,7 +46,7 @@
 
 	definePageMeta({
 		'hasAuthRequired': true,
-		'hasRepliesDisabled': true,
+		'hasRepliesDisabled': true
 	});
 
 	const authCookie = useCookie("token").value;
@@ -70,6 +70,15 @@
 			Authorization: authCookie ? `Bearer ${authCookie}` : '',
 		}
 	})
+
+	if (error.value && error.value.response) {
+		throw createError({
+			statusCode: 404,
+			statusMessage:
+			"We could not find the page you were looking for. Try better next time.",
+			fatal: true,
+		});
+	};
 	
 	if (notifications.value.unread_count) {
 		unreadCount.value = notifications.value.unread_count;
@@ -101,15 +110,6 @@
 		})
 		.finally(() => {
 			isLoading.value = false;
-		});
-	};
-
-	if (error.value && error.value.response) {
-		throw createError({
-			statusCode: 404,
-			statusMessage:
-			"We could not find the page you were looking for. Try better next time.",
-			fatal: true,
 		});
 	};
 

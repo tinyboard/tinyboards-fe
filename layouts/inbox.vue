@@ -34,8 +34,7 @@
 	});
 
 	const links = [
-	{ name: 'Unread', href: '/inbox/unread' },
-	{ name: 'Replies', href: '/inbox/replies' },
+	{ name: 'Replies', href: '/inbox' },
 	{ name: 'Mentions', href: '/inbox/mentions' },
 	];
 </script>
