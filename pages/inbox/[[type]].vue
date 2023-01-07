@@ -32,7 +32,6 @@
 			</div>
 			<!-- Pagination -->
 			<LazyNavigationPaginate v-if="totalPages > 1" :total-pages="totalPages" :per-page="limit" :current-page="page" class="p-2.5 sm:p-4"/>
-			'notifications.total_count'	{{ notifications.total_count }}
 		</div>
 	</NuxtLayout>
 </template>
