@@ -70,7 +70,8 @@ module.exports = {
             color: theme('colors.gray.900'),
             a: {
               fontWeight: 'normal',
-              color: theme('colors.secondary')
+              color: theme('colors.secondary'),
+              textDecoration: 'none'
             },
             img: {
               display: 'inline-block'
