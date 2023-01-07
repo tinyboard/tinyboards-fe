@@ -34,7 +34,6 @@
 	});
 
 	const links = [
-	{ name: 'All', href: '/inbox' },
 	{ name: 'Unread', href: '/inbox/unread' },
 	{ name: 'Replies', href: '/inbox/replies' },
 	{ name: 'Mentions', href: '/inbox/mentions' },
