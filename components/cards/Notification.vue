@@ -14,7 +14,7 @@
 				{{ notification.post.title }}
 			</NuxtLink>
 		</p>
-		<div class="prose prose-sm" v-html="notification.comment.body_html"></div>
+		<div class="prose prose-sm max-w-none" v-html="notification.comment.body_html"></div>
 		<p class="mt-1 text-sm text-gray-600">
 			{{ formatDate(notification.comment.creation_date) }}
 			<span class="font-black text-gray-400 dark:text-gray-500">·</span>
@@ -30,7 +30,7 @@
 						</NuxtLink>
 						replied
 					</p>
-					<div class="prose prose-sm" v-html="reply.comment.body_html"></div>
+					<div class="prose prose-sm max-w-none" v-html="reply.comment.body_html"></div>
 					<p class="mt-1 text-sm text-gray-600">
 						{{ formatDate(reply.comment.creation_date) }}
 						<span class="font-black text-gray-400 dark:text-gray-500">·&nbsp;</span>

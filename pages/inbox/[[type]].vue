@@ -2,19 +2,19 @@
 	<NuxtLayout name="inbox">
 		<div class="bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
 			<!-- Page Heading & Description -->
-			<div v-if="notifications[type].length" class="flex items-center p-4 border-b">
+			<div v-if="notifications[type]?.length" class="flex items-center p-4 border-b">
 				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">{{ type }}</h2>
 				<div class="ml-auto flex items-center space-x-4">
 					<p class="text-sm text-gray-600">
-						You have <strong>{{ notifications.total_count ?? 0 }}</strong> unread {{ type === 'unread' ? 'unread messages' : type || 'messages' }}
+						You have <strong>{{ unreadCount }}</strong> unread {{ type === 'unread' ? 'unread messages' : type || 'messages' }}
 					</p>
-					<button class="button button-sm gray">
+					<button class="button button-sm gray" @click="markRead" :disabled="unreadCount === 0 || isLoading">
 						&#10003; Mark all read
 					</button>
 				</div>
 			</div>
 			<!-- Messages -->
-			<ul v-if="notifications[type].length" class="divide-y divide-gray-100 border-b border-gray-100">
+			<ul v-if="notifications[type]?.length" class="divide-y divide-gray-100 border-b border-gray-100">
 				<!-- Notification -->
 				<li v-for="(notification, i) in notifications.replies" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
@@ -39,8 +39,10 @@
 <script setup>
 	import { baseURL } from '@/server/constants';
 	import { formatDate } from "@/utils/formatDate";
+	import { useToastStore } from "@/stores/StoreToast";
 
 	const route = useRoute();
+	const toast = useToastStore();
 
 	definePageMeta({
 		'hasAuthRequired': true,
@@ -54,6 +56,8 @@
 	const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 	// Fetch notifications
+	const unreadCount = ref(0);
+
 	const type = ref(route.params.type || 'replies');
 
 	const { data: notifications, pending, error, refresh } = await useFetch(`/notifications/${type.value}`, {
@@ -65,7 +69,40 @@
 		headers: {
 			Authorization: authCookie ? `Bearer ${authCookie}` : '',
 		}
-	});
+	})
+	
+	if (notifications.value.unread_count) {
+		unreadCount.value = notifications.value.unread_count;
+	};
+
+	const isLoading = ref(false);
+
+	const markRead = () => {
+		isLoading.value = true;
+		useFetch(`/notifications/${type.value}/mark_read`, {
+			baseURL,
+			method: "post",
+			body: {},
+			headers: {
+				Authorization: authCookie ? `Bearer ${authCookie}` : '',
+			}
+		})
+		.then(({ data, error }) => {
+			if (!error.value) {
+				unreadCount.value = 0;
+				// Show success toast.
+				toast.addNotification({header:'Marked all read',message:`All ${type.value} marked as read.`,type:'success'});
+			} else {
+				// Show error toast.
+				toast.addNotification({header:'Failed to mark all read',message:'Please try again.',type:'error'});
+				// Log the error.
+				console.error(error.value);
+			}
+		})
+		.finally(() => {
+			isLoading.value = false;
+		});
+	};
 
 	if (error.value && error.value.response) {
 		throw createError({
