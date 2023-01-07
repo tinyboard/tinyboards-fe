@@ -14,7 +14,7 @@
 				</div>
 			</div>
 			<!-- Messages -->
-			<ul v-if="notifications[type].length" class="divide-y divide-gray-100">
+			<ul v-if="notifications[type].length" class="divide-y divide-gray-100 border-b border-gray-100">
 				<!-- Notification -->
 				<li v-for="(notification, i) in notifications.replies" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-50':notification.comment_reply.read}">
 					<LazyCardsNotification :notification="notification"/>
@@ -31,7 +31,7 @@
 				</p>
 			</div>
 			<!-- Pagination -->
-			<LazyNavigationPaginate v-if="totalPages > 1" :total-pages="totalPages" :per-page="limit" :current-page="page" class="mt-4"/>
+			<LazyNavigationPaginate v-if="totalPages > 1" :total-pages="totalPages" :per-page="limit" :current-page="page" class="p-2.5 sm:p-4"/>
 		</div>
 	</NuxtLayout>
 </template>
