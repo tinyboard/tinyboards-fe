@@ -14,7 +14,7 @@
                   <span class="text-gray-400 px-2">...</span>
             </li>
             <li v-if="totalPages >= 4" v-show="page < totalPages">
-                  <NuxtLink external :to="`${route.path}?page=${endPage}`" class="button button-sm" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
+                  <NuxtLink external :to="`${route.path}?page=${totalPages}`" class="button button-sm" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
                         {{ totalPages }}
                   </NuxtLink>
             </li>
