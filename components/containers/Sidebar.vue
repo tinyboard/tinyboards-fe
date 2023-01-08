@@ -28,16 +28,16 @@
         <p>
           <NuxtLink
             to="https://forum.porpl.net/p/32"
-            style="color: #a60d0d; font-style: italic; font-family: 'Georgia'"
+            style="color: #a60d0d; font-family: 'Georgia'"
           >
-            Bug Megathread
+            👾 Bug Megathread
           </NuxtLink>
           <br/>
           <NuxtLink
             to="https://forum.porpl.net/p/6"
-            style="color: #a60d0d; font-style: italic; font-family: 'Georgia'"
+            style="color: #a60d0d; font-family: 'Georgia'"
           >
-            Feature Request Megathread
+            🛠️ Feature Request Megathread
           </NuxtLink>
         </p>
       </div>
