@@ -113,8 +113,8 @@
 						   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
 						   <path d="M4 13h3l3 3h4l3 -3h3"></path>
 						</svg>
-						<span v-if="unread > 0" class="absolute" style="top: 3px; right: 3px">
-							<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-2 h-2 text-white">
+						<span v-if="unread > 0" class="absolute" style="top: 1px; right: 1px">
+							<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3 text-white border-2 border-primary">
 							  <circle cx="100" cy="100" r="100" />
 							</svg>
 						</span>
