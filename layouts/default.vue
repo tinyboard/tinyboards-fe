@@ -46,10 +46,9 @@
     	// Loop through images and attach event listener
 		for (let i=0; i<imageNodes.length; i++) {       
 		    imageNodes[i].addEventListener('click', (e) => {
-		    	console.log(e.target.src)
 		    	modalStore.setModal({
 		    		modal: "ModalImage",
-		    		id: `${e.target.src}-${i}`,
+		    		id: i,
 		    		isOpen: true,
 		    		options: {
 		    			img: e.target
