@@ -27,14 +27,14 @@
         />
         <p>
           <NuxtLink
-            to="https://forum.porpl.net/p/32"
+            to="https://forum.porpl.net/p/6"
             style="color: #a60d0d; font-family: 'Georgia'"
           >
             👾 Bug Megathread
           </NuxtLink>
           <br/>
           <NuxtLink
-            to="https://forum.porpl.net/p/6"
+            to="https://forum.porpl.net/p/32"
             style="color: #a60d0d; font-family: 'Georgia'"
           >
             🛠️ Feature Request Megathread
