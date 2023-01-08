@@ -20,7 +20,7 @@
                         </div>
                   </div>
                   <!-- Sidebar -->
-                  <ContainersSidebarThread :item="item" />
+                  <ContainersSidebarThread :item="item" :stats="stats"/>
             </div>
       </section>
 </main>
@@ -57,6 +57,10 @@
                   fatal: true
             })
       };
+
+      // Author stats
+      const stats = ref(null);
+      stats.value = item.value.author_counts;
 
       postsStore.posts = [item.value.post_view];
       item = computed(() => postsStore.getPost(route.params.id));

@@ -28,22 +28,22 @@
           >Admin</span
         >
       </NuxtLink>
-      <div class="flex flex-wrap -m-2">
-        <div class="w-2/4 p-2 leading-normal">
-          <strong>120</strong>
+      <div v-if="stats" class="flex flex-wrap -m-2">
+        <div class="w-2/4 p-2 text-sm">
+          <strong>{{ stats.post_count }}</strong>
           <p class="text-sm text-gray-500">Posts</p>
         </div>
-        <div class="w-2/4 p-2">
-          <strong>45</strong>
+        <div class="w-2/4 p-2 text-sm">
+          <strong>{{ stats.comment_count }}</strong>
           <p class="text-sm text-gray-500">Comments</p>
         </div>
-        <div class="w-2/4 p-2">
-          <strong>120</strong>
+        <div class="w-2/4 p-2 text-sm">
+          <strong>{{ stats.rep }}</strong>
           <p class="text-sm text-gray-500">Reputation</p>
         </div>
-        <div class="w-2/4 p-2">
-          <strong>12K</strong>
-          <p class="text-sm text-gray-500">Hours lurking</p>
+        <div class="w-2/4 p-2 text-sm">
+          <strong>{{ format(parseISO(item.creator.creation_date), "MMM dd, yyyy") }}</strong>
+          <p class="text-gray-500">Joined</p>
         </div>
       </div>
     </div>
@@ -90,10 +90,17 @@
 </template>
 
 <script setup>
-import { format, parseISO } from "date-fns";
+  import { format, parseISO } from "date-fns";
 
-// Define author
-const props = defineProps({
-  item: Object,
-});
+  // Define author
+  const props = defineProps({
+    item: {
+      type: Object,
+      required: true
+    },
+    stats: {
+      type: Object,
+      required: false
+    }
+  });
 </script>
