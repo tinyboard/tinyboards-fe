@@ -35,4 +35,34 @@
 
 	const Navbar = 	defineAsyncComponent(() => import('@/components/navigation/Navbar'));
 	const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));
+
+	// Expand image
+	const enlargeImage = (imgElement) => {
+    	window.alert("Hi, I'm going to enlarge this image: "+imgElement.src);
+    };
+
+    const getImages = () => {
+    	const imageNodes = document.querySelectorAll(".img-expand");
+    	// Loop through images and attach event listener
+		for (let i=0; i<imageNodes.length; i++) {       
+		    imageNodes[i].addEventListener('click', (e) => {
+		    	console.log(e.target.src)
+		    	modalStore.setModal({
+		    		modal: "ModalImage",
+		    		id: `${e.target.src}-${i}`,
+		    		isOpen: true,
+		    		options: {
+		    			img: e.target
+		    		}
+		    	});
+		    });
+		};
+    };
+
+	watch(route, (to) => {
+		if (process.client) {
+			// Get all images from DOM
+			getImages();
+		};
+	}, { immediate: true });
 </script>
