@@ -37,10 +37,6 @@
 	const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));
 
 	// Expand image
-	const enlargeImage = (imgElement) => {
-    	window.alert("Hi, I'm going to enlarge this image: "+imgElement.src);
-    };
-
     const getImages = () => {
     	const imageNodes = document.querySelectorAll(".img-expand");
     	// Loop through images and attach event listener
