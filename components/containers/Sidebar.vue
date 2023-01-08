@@ -27,7 +27,6 @@
         />
         <p>
           <NuxtLink
-            external
             to="https://forum.porpl.net/p/32"
             style="color: #a60d0d; font-style: italic; font-family: 'Georgia'"
           >
@@ -35,7 +34,6 @@
           </NuxtLink>
           <br/>
           <NuxtLink
-            external
             to="https://forum.porpl.net/p/6"
             style="color: #a60d0d; font-style: italic; font-family: 'Georgia'"
           >
