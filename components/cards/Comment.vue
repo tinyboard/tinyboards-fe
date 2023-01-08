@@ -195,20 +195,20 @@
               Reply
             </button>
           </li>
-          <li v-if="isAuthed">
-            <button
-              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
-              @click="save"
-            >
-              {{ isSaved ? "Unsave" : "Save" }}
-            </button>
-          </li>
           <li v-if="isAuthed && isAuthor">
             <button
               @click="isEditing = !isEditing"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
             >
               Edit
+            </button>
+          </li>
+          <li v-if="isAuthed">
+            <button
+              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
+              @click="save"
+            >
+              {{ isSaved ? "Unsave" : "Save" }}
             </button>
           </li>
           <li v-if="isAuthed && isAuthor">
