@@ -601,30 +601,21 @@
         </ul>
       </div>
     </div>
-    <!-- Banner -->
-    <div
-      v-if="!isAuthed"
-      id="comments"
-      class="order-3 w-full border-y md:border-x md:rounded-md p-4 shadow-inner-white"
-    >
-      <p class="text-base text-gray-500 dark:text-gray-100 text-center">
-        <span class="font-medium">Want to join the discussion? </span>
-        <NuxtLink to="/register">Sign up to comment</NuxtLink>
-      </p>
-    </div>
     <!-- Comment Section -->
-    <div class="order-last flex flex-col">
+    <div id="comments" class="order-last flex flex-col">
       <!-- Comment Count & Sort Menu -->
       <div
         class="flex items-center sm:mb-4 p-2.5 sm:p-4 bg-gray-100 sm:border sm:shadow-inner-white sm:rounded-md"
       >
-        <strong class="text-base leading-4 dark:text-gray-100">
-          {{
-            item.counts.comments === 1
-              ? "1 comment"
-              : `${item.counts.comments} comments`
-          }}
-        </strong>
+        <p>
+          <strong class="text-base leading-4 dark:text-gray-100">
+            {{
+              item.counts.comments === 1
+                ? "1 comment"
+                : `${item.counts.comments} comments`
+            }}
+          </strong>
+        </p>
         <MenusSort :sorts="sorts" isLeft class="ml-auto" />
       </div>
       <!-- Single Discussion Alert -->
@@ -650,12 +641,14 @@
           v-if="isAuthed && !item.post.is_locked && !route.params.comment"
           class="flex md:space-x-2 mb-2 sm:mb-0"
         >
+          <!-- Avatar -->
           <img
             loading="lazy"
             :src="userStore.user.avatar"
             alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
           />
+          <!-- Input -->
           <LazyInputsComment
             :post-id="item.post.id"
             :parent-id="null"
