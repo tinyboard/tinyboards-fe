@@ -1,6 +1,6 @@
 <template>
 	<!-- Avatar -->
-	<NuxtLink class="flex-shrink-0" :to="`/user/${notification.creator.name}`">
+	<NuxtLink v-if="notification" class="flex-shrink-0" :to="`/user/${notification.creator.name}`">
 		<img loading="lazy" :src="notification.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
 	</NuxtLink>
 	<!-- Details -->
