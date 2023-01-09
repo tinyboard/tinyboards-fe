@@ -62,6 +62,8 @@
 	const context = computed(() => {
 		if (!!props.notification.comment.parent_id) {
 			return `/post/${props.notification.post.id}/${props.notification.comment.parent_id}`
+		} else if (!!props.notification.comment.id) {
+			return `/post/${props.notification.post.id}/${props.notification.comment.id}`
 		} else {
 			return `/post/${props.notification.post.id}`
 		}
