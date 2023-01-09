@@ -27,20 +27,20 @@
           >Admin</span
         >
       </NuxtLink>
-      <div v-if="stats" class="flex flex-wrap -m-2">
-        <div class="w-2/4 p-2 text-sm">
+      <div v-if="stats" class="flex flex-wrap -m-1">
+        <div class="w-2/4 p-1 text-sm">
           <strong>{{ stats.post_count }}</strong>
           <p class="text-sm text-gray-500">Posts</p>
         </div>
-        <div class="w-2/4 p-2 text-sm">
+        <div class="w-2/4 p-1 text-sm">
           <strong>{{ stats.comment_count }}</strong>
           <p class="text-sm text-gray-500">Comments</p>
         </div>
-        <div class="w-2/4 p-2 text-sm">
+        <div class="w-2/4 p-1 text-sm">
           <strong>{{ stats.rep }}</strong>
           <p class="text-sm text-gray-500">Reputation</p>
         </div>
-        <div class="w-2/4 p-2 text-sm">
+        <div class="w-2/4 p-1 text-sm">
           <strong>{{ format(parseISO(item.creator.creation_date), "MMM dd, yyyy") }}</strong>
           <p class="text-gray-500">Joined</p>
         </div>
