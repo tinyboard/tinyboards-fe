@@ -13,7 +13,7 @@
                         <!-- Error -->
                         <div v-else class="relative w-full">
                               <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded-md">
-                                    <div role="status" class="max-w-sm animate-pulse">
+                                    <div role="status" class="max-w-sm">
                                           <h1>There was an error.</h1>
                                     </div>
                               </div>
