@@ -10,7 +10,7 @@
 				{{ notification.creator.name }}
 			</NuxtLink>
 			replied to you in
-			<NuxtLink :href="`/post/${notification.post.id}/${notification.comment.parent_id}`">
+			<NuxtLink :href="context">
 				{{ notification.post.title }}
 			</NuxtLink>
 		</p>
@@ -34,7 +34,7 @@
 					<p class="mt-1 text-sm text-gray-600">
 						{{ formatDate(reply.comment.creation_date) }}
 						<span class="font-black text-gray-400 dark:text-gray-500">·&nbsp;</span>
-						<NuxtLink :to="`/post/${notification.post.id}/${notification.comment.parent_id}`">
+						<NuxtLink :to="context">
 							View thread
 						</NuxtLink>
 					</p>
@@ -57,6 +57,15 @@
 
 	const isReplying = ref(false);
 	const replies = ref([]);
+
+	// Contextual link
+	const context = computed(() => {
+		if (!!props.notification.comment.parent_id) {
+			return `/post/${props.notification.post.id}/${props.notification.comment.parent_id}`
+		} else {
+			return `/post/${props.notification.post.id}`
+		}
+	});
 
 	// Reply
 	const onCommentPublished = (comment) => {
