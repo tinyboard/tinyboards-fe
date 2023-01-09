@@ -195,7 +195,7 @@
         >
           <li class="sm:hidden">
             <NuxtLink
-              :to="`/post/${item.post.id}`"
+              :to="`/post/${item.post.id}#comments`"
               class="text-sm font-medium leading-none text-gray-500 dark:text-gray-400 hover:text-gray-700"
             >
               {{
@@ -353,7 +353,7 @@
           </li>
           <li class="ml-6 hidden sm:list-item">
             <NuxtLink
-              :to="`/post/${item.post.id}`"
+              :to="`/post/${item.post.id}#comments`"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700"
             >
               <svg
