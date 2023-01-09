@@ -6,12 +6,13 @@
       </NuxtLink>
     </p>
     <div
-      :id="`comment-${comment.id}`"
+      :id="comment.id"
       class="comment group flex relative"
       :class="{
         'opacity-60 hover:opacity-100 focus:opacity-100 items-center':
           isCollapsed,
       }"
+      style="scroll-margin-top: 7rem;"
     >
       <!-- Stretched Click Area -->
       <div
@@ -44,7 +45,6 @@
       <!-- User Details -->
       <div class="flex-grow" :class="{ 'flex items-center': isCollapsed }">
         <div
-          :id="comment.id"
           :class="{ 'flex flex-grow items-center leading-none': isCollapsed }"
         >
           <div class="flex items-center min-h-[24px] sm:min-h-[36px]">
@@ -466,14 +466,6 @@ const toggleReplying = () => {
 </script>
 
 <style scoped>
-:target::before {
-  content: "";
-  display: block;
-  height: 3.5rem;
-  margin: -3.5rem 0 0;
-  pointer-events: none;
-  z-index: -1;
-}
 :target::after {
   content: "";
   position: absolute;
@@ -504,12 +496,6 @@ const toggleReplying = () => {
 @media (min-width: 768px) {
   .comment-body :deep(img) {
     max-width: 240px;
-  }
-  :target:before {
-    content: "";
-    display: block;
-    height: 104px;
-    margin: -104px 0 0;
   }
 }
 /* Collapse Bar */
