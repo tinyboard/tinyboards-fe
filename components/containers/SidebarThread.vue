@@ -6,7 +6,6 @@
     <!-- Author Details -->
     <div
       v-if="!item.post.is_deleted"
-      class="p-4 border rounded-md shadow-inner-white"
     >
       <NuxtLink
         :to="`/user/${item.creator.name}`"
