@@ -35,7 +35,7 @@
 					</li>
 				</ul>
 				<form @submit.prevent="onSubmit" @submit="submitMessage()" class="flex items-end space-x-2 p-2.5 sm:p-4">
-					<textarea ref="textarea" required rows="1" class="form-input gray scrollbar-hidden" :placeholder="`Message ${route.params.id}`" v-model="text" autofocus @input="inputHandler" @keydown="inputHandler"></textarea>
+					<textarea ref="textarea" required rows="1" class="form-input gray scrollbar-hidden" :placeholder="`Message ${route.params.id}`" v-model="text" autofocus @input="inputHandler" @keydown="inputHandler" style="resize: none;"></textarea>
 					<button type="submit" class="flex items-center button primary">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
