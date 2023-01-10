@@ -1,47 +1,108 @@
 <template>
 	<NuxtLayout name="inbox">
-		<div class="h-full bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
+		<div class="h-full bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border">
 			<!-- Page Heading & Description -->
-			<div class="flex items-center p-4 border-b">
-				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">Messages</h2>
-				<div class="ml-auto flex items-center space-x-4">
-					<p class="text-sm text-gray-600">
-						<strong>{{ unreadCount ?? 0 }}</strong> unread messages
-					</p>
+			<div class="flex items-center p-4 bg-white border-b rounded-t-md">
+				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">
+					<NuxtLink to="/inbox/messages">Messages</NuxtLink>
+					<span class="px-2 text-gray-300">/</span>
+					<span>{{ route.params.id }}</span>
+				</h2>
+				<div class="ml-auto flex items-center space-x-2">
 					<button class="button button-sm gray" @click="markRead" :disabled="unreadCount === 0 || isLoading">
-						&#10003; Mark all read
+						&#10003; Mark read
+					</button>
+					<button class="flex items-center button button-sm gray" @click="markRead" :disabled="unreadCount === 0 || isLoading">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						   <line x1="4" y1="7" x2="20" y2="7"></line>
+						   <line x1="10" y1="11" x2="10" y2="17"></line>
+						   <line x1="14" y1="11" x2="14" y2="17"></line>
+						   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+						   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+						</svg>
+						Delete
 					</button>
 				</div>
 			</div>
 			<!-- Messages -->
-			<!-- <ul v-if="notifications[type]?.length" class="divide-y divide-gray-100 border-b border-gray-100">
-				<li v-for="(notification, i) in notifications[type]" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-100':notification.comment_reply?.read || notification.user_mention?.read}">
-					<LazyCardsNotification :notification="notification"/>
-				</li>
-			</ul> -->
-			<!-- Empty State -->
-			<div class="px-4 py-24 text-center text-gray-500">
-				<p>
-					<span class="font-medium">
-						There are no messages in your inbox...
-					</span>
-					<br/>
-					how about composing a message
-					<div class="mt-4 flex justify-center">
-						<NuxtLink class="flex items-center button gray">
-							<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							   <path d="M8 20l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4h4z"></path>
-							   <path d="M13.5 6.5l4 4"></path>
-							   <path d="M16 18h4m-2 -2v4"></path>
-							</svg>
-							Compose message
-						</NuxtLink>
-					</div>
-				</p>
+			<div class="h-full">
+				<ul class="h-96 flex flex-col flex-col-reverse overflow-y-scroll p-2.5 sm:p-4">
+					<li v-for="(message,i) in messages.slice().reverse()" :key="message" class="flex mt-4">
+						<div class="flex w-3/4 p-2.5">
+							{{ message }}
+						</div>
+					</li>
+				</ul>
+				<form @submit.prevent="onSubmit" @submit="submitMessage()" class="flex items-end space-x-2 p-2.5 sm:p-4">
+					<textarea ref="textarea" required rows="1" class="form-input gray scrollbar-hidden" :placeholder="`Message ${route.params.id}`" v-model="text" autofocus @input="inputHandler" @keydown="inputHandler"></textarea>
+					<button type="submit" class="flex items-center button primary">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						   <line x1="10" y1="14" x2="21" y2="3"></line>
+						   <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5"></path>
+						</svg>
+						<span>Send</span>
+					</button>
+				</form>
 			</div>
+			<!-- Empty State -->
 			<!-- Pagination -->
 			<!-- <LazyNavigationPaginate v-if="totalPages > 1" :total-pages="totalPages" :per-page="limit" :current-page="page" class="p-2.5 sm:p-4"/> -->
 		</div>
 	</NuxtLayout>
 </template>
+
+<script setup>
+	const route = useRoute();
+
+	const messages = ref([]);
+
+	const rows = ref(1);
+	const text = ref(null);
+
+	const textarea = ref(null);
+
+	const submitMessage = () => {
+		if (text.value.replace(/\s/g,'').length) {
+			messages.value.push(text.value);
+			textarea.value.style.height = "38px";
+			text.value = null;
+		}
+	}
+
+	// Resize textarea
+	const resize = () => {
+      let element = textarea.value;
+
+      element.style.height = "0px";
+      element.style.height = element.scrollHeight + 2 + "px";
+	};
+
+	// Handle key press
+	const inputHandler = (e) => {
+		if (e.keyCode === 13 && e.shiftKey) {
+			e.preventDefault();
+			submitMessage();
+		} else {
+			resize();
+		}
+	};
+
+    onMounted(() => {
+	  textarea.value.focus();
+	})
+
+	// onMounted(() => {
+	// 	const tx = document.getElementById("my-input");
+	// 	for (let i = 0; i < tx.length; i++) {
+	// 	  tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+	// 	  tx[i].addEventListener("input", inputHandler, false);
+	// 	}
+
+	// 	function inputHanlder() {
+	// 	  this.style.height = 0;
+	// 	  this.style.height = (this.scrollHeight) + "px";
+	// 	}
+	// });
+</script>
