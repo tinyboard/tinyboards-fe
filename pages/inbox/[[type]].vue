@@ -1,6 +1,6 @@
 <template>
 	<NuxtLayout name="inbox">
-		<div class="bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
+		<div class="h-full bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
 			<!-- Page Heading & Description -->
 			<div v-if="notifications[type]?.length" class="flex items-center p-4 border-b">
 				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">{{ type }}</h2>
