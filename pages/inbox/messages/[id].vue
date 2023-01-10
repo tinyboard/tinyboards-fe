@@ -58,9 +58,7 @@
 
 	const messages = ref([]);
 
-	const rows = ref(1);
 	const text = ref(null);
-
 	const textarea = ref(null);
 
 	const submitMessage = () => {
