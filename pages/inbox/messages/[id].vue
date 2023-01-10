@@ -92,17 +92,4 @@
     onMounted(() => {
 	  textarea.value.focus();
 	})
-
-	// onMounted(() => {
-	// 	const tx = document.getElementById("my-input");
-	// 	for (let i = 0; i < tx.length; i++) {
-	// 	  tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-	// 	  tx[i].addEventListener("input", inputHandler, false);
-	// 	}
-
-	// 	function inputHanlder() {
-	// 	  this.style.height = 0;
-	// 	  this.style.height = (this.scrollHeight) + "px";
-	// 	}
-	// });
 </script>
