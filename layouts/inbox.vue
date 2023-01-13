@@ -70,6 +70,16 @@
 							</a>
 						</NuxtLink>
 					</li> -->
+					<li class="relative">
+						<button class="w-full flex items-center px-4 py-2.5 border border-r-0 rounded-l-md font-bold text-gray-400 hover:text-gray-600 border-transparent" disabled>
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+							   <path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"></path>
+							   <path d="M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2"></path>
+							</svg>
+							Messages
+						</button>
+					</li>
 				</ul>
 			</div>
 			<div class="h-full w-full flex flex-col gap-6 md:p-4 bg-gray-50 md:border md:rounded-md md:shadow-inner-white">
