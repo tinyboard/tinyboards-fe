@@ -1,9 +1,9 @@
 <template>
 	<NuxtLayout name="inbox">
-		<div class="h-full bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
+		<div class="flex flex-col h-full bg-white sm:shadow-inner-white sm:rounded-md border-b sm:border sm:overflow-hidden">
 			<!-- Page Heading & Description -->
 			<div v-if="notifications[type]?.length" class="flex items-center p-4 border-b">
-				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">{{ type }}</h2>
+				<h2 class="text-lg font-bold leading-6 text-gray-900 capitalize">{{ type }}</h2>
 				<div class="ml-auto flex items-center space-x-4">
 					<p class="text-sm text-gray-600">
 						<strong>{{ unreadCount }}</strong> unread {{ type }}
@@ -14,7 +14,7 @@
 				</div>
 			</div>
 			<!-- Messages -->
-			<ul v-if="notifications[type]?.length" class="divide-y divide-gray-100 border-b border-gray-100">
+			<ul v-if="notifications[type]?.length" class="h-full divide-y divide-gray-100 border-b border-gray-100 sm:overflow-auto">
 				<!-- Notification -->
 				<li v-for="(notification, i) in notifications[type]" :key="i" class="p-2.5 sm:p-4 flex" :class="{'bg-gray-100':notification.comment_reply?.read || notification.user_mention?.read}">
 					<LazyCardsNotification :notification="notification"/>
@@ -46,7 +46,8 @@
 
 	definePageMeta({
 		'hasAuthRequired': true,
-		'hasRepliesDisabled': true
+		'hasRepliesDisabled': true,
+		'isFooterDisabled': true
 	});
 
 	const authCookie = useCookie("token").value;

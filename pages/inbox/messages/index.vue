@@ -1,9 +1,9 @@
 <template>
 	<NuxtLayout name="inbox">
-		<div class="flex flex-col h-full bg-white sm:shadow-inner-xs sm:rounded-md border-b sm:border overflow-hidden">
+		<div class="flex flex-col h-full bg-white sm:shadow-inner-white sm:rounded-md border-b sm:border overflow-hidden">
 			<!-- Page Heading & Description -->
 			<div class="flex items-center p-4 border-b">
-				<h2 class="text-lg font-medium leading-6 text-gray-900 capitalize">Messages</h2>
+				<h2 class="text-lg font-bold leading-6 text-gray-900 capitalize">Messages</h2>
 				<div class="ml-auto flex items-center space-x-4">
 					<p class="text-sm text-gray-600">
 						<strong>{{ unreadCount ?? 0 }}</strong> unread messages

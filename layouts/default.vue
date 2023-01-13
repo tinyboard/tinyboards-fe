@@ -4,7 +4,7 @@
 		<!-- Navigation Bar -->
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
-		<NavigationFooter />
+		<NavigationFooter :class="{'sm:hidden':!route.meta.isFooterDisabled}"/>
 		<LazyDialogsToastList v-if="toastStore.hasInit"/>
 		<LazyDialogsModalList v-if="modalStore.hasInit"/>
 	</div>
