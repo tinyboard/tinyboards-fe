@@ -16,19 +16,19 @@
 			<div class="flex flex-col bg-white mt-4 px-4">
 				<!-- Form -->
 				<input autocomplete="off" required type="text" class="form-input gray" placeholder="Enter a name" v-model="username"/>
-				<!-- Suggestions -->
-				<ul v-if="users?.length" class="mt-4 flex flex-col mb-2">
-					<li v-for="(user,i) in users" :key="i">
-						<NuxtLink :to="`/inbox/messages/${user.name}`" class="flex items-center -mx-2 p-2 hover:bg-gray-100 rounded-md">
-							<!-- Avatar -->
-							<img :src="user.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="flex-shrink-0 object-cover w-9 h-9 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
-							<strong class="text-sm text-secondary ml-2">
-								{{ user.name }}
-							</strong>
-						</NuxtLink>
-					</li>
-				</ul>
 			</div>
+			<!-- Suggestions -->
+			<ul v-if="users?.length" class="flex flex-col h-full sm:p-4 sm:overflow-y-auto">
+				<li v-for="(user,i) in users" :key="i">
+					<NuxtLink :to="`/inbox/messages/${user.name}`" class="flex items-center p-2 hover:bg-gray-100 rounded-md">
+						<!-- Avatar -->
+						<img :src="user.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="flex-shrink-0 object-cover w-9 h-9 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
+						<strong class="text-sm text-secondary ml-2">
+							{{ user.name }}
+						</strong>
+					</NuxtLink>
+				</li>
+			</ul>
 			<!-- Empty State -->
 			<div v-if="!users?.length" class="flex flex-col flex-grow items-center justify-center p-4 text-center text-gray-500">
 				<svg xmlns="http://www.w3.org/2000/svg" class="mb-2 w-6 h-6 text-gray-300" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
