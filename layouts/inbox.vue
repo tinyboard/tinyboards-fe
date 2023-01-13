@@ -15,7 +15,7 @@
 		</section>
 		<!-- Main Content -->
 		<section class="container mx-auto max-w-8xl h-full flex sm:p-4">
-			<div class="h-full w-56 hidden md:flex flex-shrink-0 flex-col gap-4 bg-transparent overflow-y-auto mx-[-1px]">
+			<div class="h-full w-56 hidden md:flex flex-shrink-0 flex-col gap-4 bg-transparent">
 <!-- 				<NuxtLink to="/inbox/messages/new" class="flex items-center button primary mr-4">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -34,7 +34,7 @@
 					</svg>
 					New message
 				</button>
-				<ul class="flex flex-col z-10 text-sm">
+				<ul class="flex flex-col z-10 text-sm mr-[-1px] overflow-y-auto">
 					<li class="relative">
 						<NuxtLink to="/inbox" custom v-slot="{ href, navigate, isActive }">
 							<a :href="href" @click="navigate" class="flex items-center px-4 py-2.5 border border-r-0 rounded-l-md font-bold" :class="isActive ? 'text-gray-600 bg-gray-50 shadow-inner-white' : 'text-gray-400 hover:text-gray-600 border-transparent'">
