@@ -16,7 +16,7 @@
 		<!-- Main Content -->
 		<section class="container mx-auto max-w-8xl h-full flex sm:p-4">
 			<div class="h-full w-56 hidden md:flex flex-shrink-0 flex-col gap-4 bg-transparent overflow-y-auto mx-[-1px]">
-				<NuxtLink to="/inbox/messages/new" class="flex items-center button primary mr-4">
+<!-- 				<NuxtLink to="/inbox/messages/new" class="flex items-center button primary mr-4">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 						<path d="M8 20l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4h4z"></path>
@@ -24,7 +24,16 @@
 						<path d="M16 18h4m-2 -2v4"></path>
 					</svg>
 					New message
-				</NuxtLink>
+				</NuxtLink> -->
+				<button class="flex items-center button primary mr-4" disabled>
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						<path d="M8 20l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4h4z"></path>
+						<path d="M13.5 6.5l4 4"></path>
+						<path d="M16 18h4m-2 -2v4"></path>
+					</svg>
+					New message
+				</button>
 				<ul class="flex flex-col z-10 text-sm">
 					<li class="relative">
 						<NuxtLink to="/inbox" custom v-slot="{ href, navigate, isActive }">
