@@ -110,11 +110,11 @@
 
 <script setup>
 	useHead({
-		title: 'Tinyboards | Create a post',
+		title: 'Tinyboards | create a post',
 		meta: [
 		{
 			property: 'og:title',
-			content: 'Tinyboards | Create a post'
+			content: 'Tinyboards | create a post'
 		}
 		]
 	});
