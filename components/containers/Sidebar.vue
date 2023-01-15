@@ -22,7 +22,7 @@
             to="https://discord.gg/zUDYfg6k4N"
             style="color: #a60d0d; font-family: 'Georgia'"
           >
-            👋 Discord server
+            👋 Join our Discord
           </NuxtLink>
           <br/>
           <NuxtLink
