@@ -15,16 +15,6 @@
           Welcome to tinyboards.net. This is a cozy little corner of the
           Internet where we discuss the intersection of technology and society.
         </p>
-        <img
-          src="https://i.imgur.com/6RWfueV.gif"
-          class="m-0 inline"
-          alt="netscape blinkie"
-        />
-        <img
-          src="https://i.imgur.com/pMHI7hy.gif"
-          class="m-0 ml-2 inline"
-          alt="java blinkie"
-        />
         <p>
           <NuxtLink
             to="https://forum.porpl.net/p/6"
