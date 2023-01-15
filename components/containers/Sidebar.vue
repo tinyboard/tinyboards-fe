@@ -17,6 +17,15 @@
         </p>
         <p>
           <NuxtLink
+            external
+            target="_blank"
+            to="https://discord.gg/zUDYfg6k4N"
+            style="color: #a60d0d; font-family: 'Georgia'"
+          >
+            👋 Discord server
+          </NuxtLink>
+          <br/>
+          <NuxtLink
             to="https://forum.porpl.net/p/6"
             style="color: #a60d0d; font-family: 'Georgia'"
           >
