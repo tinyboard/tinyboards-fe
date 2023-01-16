@@ -132,7 +132,7 @@
 	if (data.value) {
 		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
 	}
-	
+
 	// Submit settings
 	const isLoading = ref(false);
 
@@ -142,9 +142,8 @@
 			baseURL,
 			method: "put",
 			body: {
-				// "avatar": "https://i.imgur.com/U6CBf1D.gif",
-				// "avatar": settings.value.avatar,
-				// "banner": settings.value.banner,
+				"avatar": settings.value.avatar,
+				"banner": settings.value.banner,
 				"bio": settings.value.bio
 			},
 			headers: {
