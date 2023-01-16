@@ -118,7 +118,7 @@
 		reader.readAsDataURL(file);
 	};
 
-	// Fetch user settings.
+	// Fetch user settings
 	const { data, pending, error, refresh } = await useFetch("/settings", {
 		baseURL,
 		method: "get",
@@ -127,14 +127,13 @@
 		}
 	});
 
-	// Settings.
 	let settings = ref({});
 
 	if (data.value) {
 		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
 	}
-
-	// Submit settings.
+	
+	// Submit settings
 	const isLoading = ref(false);
 
 	const submitSettings = () => {
