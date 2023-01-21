@@ -9,6 +9,7 @@ export default defineNuxtConfig({
         pinia: '/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs',
     },
     css: ["~/assets/css/main.css"],
+    modern: true,
     modules: [
       "@pinia/nuxt",
       "@nuxtjs/tailwindcss"
@@ -19,7 +20,6 @@ export default defineNuxtConfig({
         '/': { redirect: '/feed' },
         // Force server-side rendering
         '/user/**': { ssr: true },
-    },
-    modern: true
+    }
 });
 
