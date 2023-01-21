@@ -1,12 +1,13 @@
 <template>
-	<div class="h-full">
+	<div class="h-full" @dragenter.prevent="hasDragged = true;">
 		<NuxtLoadingIndicator color="rgba(255,255,255,0.45)" :height="3"/>
 		<!-- Navigation Bar -->
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
-		<NavigationFooter :class="{'sm:hidden':!route.meta.isFooterDisabled}"/>
+		<NavigationFooter :class="{'sm:hidden':route.meta.isFooterDisabled}"/>
 		<LazyDialogsToastList v-if="toastStore.hasInit"/>
 		<LazyDialogsModalList v-if="modalStore.hasInit"/>
+		<!-- <LazyDialogsDropzone v-if="hasDragged" @drop.prevent="drop" @change="selectedFile"/> -->
 	</div>
 </template>
 
@@ -54,10 +55,24 @@
 		};
     };
 
-	watch(route, (to) => {
-		if (process.client) {
+    watch(route, (to) => {
+    	if (process.client) {
 			// Get all images from DOM
-			getImages();
-		};
-	}, { immediate: true });
+    		getImages();
+    	};
+    }, { immediate: true });
+
+	// Dropzone
+    const hasDragged = ref(false);
+
+    // const dropzoneFile = ref(null);
+
+    // const drop = (payload) => {
+    // 	console.log('has dropped!');
+    // 	dropzoneFile.value = payload.dataTransfer.files[0];
+    // };
+
+    // const selectedFile = () => {
+    // 	dropzoneFile.value = document.querySelector(".dropzoneFile").files[0];
+    // };
 </script>
