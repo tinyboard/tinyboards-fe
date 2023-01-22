@@ -32,7 +32,7 @@
 							</button>
 						</div>
 						<div class="p-4 bg-white">
-							<div class="grid grid-cols-6 gap-4">
+							<div class="grid grid-cols-6 gap-6">
 								<!-- Board -->
 								<div v-if="isEditingBoard" class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Board</label>
@@ -44,7 +44,7 @@
 									<input type="text" name="title" id="title" placeholder="Pick an interesting title" class="mt-1 form-input gray" v-model="title" required/>
 								</div>
 								<!-- Link -->
-								<div class="col-span-full">
+								<div class="relative col-span-full">
 									<label for="link">
 										<span class="flex justify-between text-sm font-bold">
 											Link
@@ -53,14 +53,29 @@
 											</em>
 										</span>
 										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 form-input gray" v-model="url" :required="!body" @focus="hasFocusedUrl = true;"/>
-										<p class="mt-2 peer-invalid:visible invisible text-red-600 text-sm" :class="!body && hasFocusedUrl ? 'opacity-100': 'opacity-0 pointer-events-none'">
+										<p class="absolute right-0 mt-1 peer-invalid:visible invisible text-red-600 text-sm" :class="!body && hasFocusedUrl ? 'opacity-100': 'opacity-0 pointer-events-none'">
 											Please provide a valid URL.
 										</p>
 									</label>
 								</div>
 								<!-- TO-DO: Media Preview -->
-								<!-- Body -->
 								<div class="col-span-full">
+									<label for="title" class="block text-sm font-bold">Image</label>
+									<div class="mt-2 flex items-center">
+										<img v-if="image" :src="image" class="inline-block w-56 object-contain p-0.5 border bg-white mr-5" @click="preview"/>
+										<div>
+											<label for="image-upload" class="inline-block button gray cursor-pointer">
+												{{ image ? 'Change image' : 'Pick image' }}
+											</label>
+											<input id="image-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event)"/>
+											<small class="block mt-2 text-gray-400">
+												PNG, JPG and GIF up to 1MB.
+											</small>
+										</div>
+									</div>
+								</div>
+								<!-- Body -->
+								<div class="relative col-span-full">
 									<label for="body" class="flex justify-between text-sm font-bold">
 										Body
 										<em class="text-gray-400 font-normal">
@@ -71,7 +86,7 @@
 										<!-- <InputsTiptap class="bg-white"/> -->
 										<textarea placeholder="Enter some words worth reading..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
 									</div>
-									<p class="mt-1 flex justify-end items-center text-xs text-gray-400">
+									<p class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
 										<svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 										   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 										   <rect x="3" y="5" width="18" height="14" rx="2"></rect>
@@ -122,16 +137,19 @@
 	definePageMeta({
         'alias': ['','/b/:board?/submit'],
         'hasAuthRequired': true,
+        'isDropzoneDisabled': true,
         key: (route) => route.fullPath
     });
 
 	import { ref } from 'vue';
 	import { baseURL } from "@/server/constants";
-	import { useSiteStore } from '@/stores/StoreSite.js'
+	import { useSiteStore } from '@/stores/StoreSite.js';
+	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
 
 	const site = useSiteStore();
 
+	const modal = useModalStore();
 	const toast = useToastStore();
 
 	const router = useRouter();
@@ -152,14 +170,63 @@
       };
 
 	const boardName = ref(dummyBoard.name ?? 'campfire');
-	const title = ref(null);
+	const title = ref(route.query.title);
 	const url = ref(route.query.url);
+	const image = ref(null);
 	const body = ref(null);
 	const isNsfw = ref(false);
 
 	let hasFocusedUrl = ref(false);
 	let hasFocusedBody = ref(false);
 
+	// Set image and then destroy in storage.
+	const setImage = () => {
+		if (!!sessionStorage.getItem("image")) {
+			image.value = sessionStorage.getItem("image");
+			sessionStorage.removeItem("image");
+		}
+	};
+
+	if (process.client) {
+		setImage();
+	};
+
+	// File input
+	const onFileChange = (e) => {
+		const file = e.target.files[0];
+		// Check for valid image file type and size
+		if (/\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 1000000) {
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				image.value = reader.result;
+				sessionStorage.removeItem("image");
+			};
+			reader.readAsDataURL(file);
+		} else {
+    		toast.addNotification({header:'Wrong format or size',message:'Try a PNG, JPG and GIF up to 1MB.',type:'error'});
+    	};
+	};
+
+	// Image preview
+	const preview = () => {
+		if (!!image.value) {
+			modal.setModal({
+				modal: "ModalImage",
+				id: 1,
+				isOpen: true,
+				options: {
+					img: {
+						'src': image.value,
+						'alt': 'No alt text available.'
+					}
+				}
+			});
+		} else {
+			console.error('No image to preview.')
+		};
+	};
+
+	// Submit post
 	const authCookie = useCookie("token").value;
 
 	const submit = () => {

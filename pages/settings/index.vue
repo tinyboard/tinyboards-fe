@@ -103,7 +103,7 @@
 	const toast = useToastStore();
 	const authCookie = useCookie("token").value;
 
-	// File inputs.
+	// File inputs
 	const onFileChange = (e,type) => {
 		console.log(type)
 		const file = e.target.files[0];
