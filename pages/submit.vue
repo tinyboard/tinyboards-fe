@@ -48,15 +48,34 @@
 									<label for="link">
 										<span class="flex justify-between text-sm font-bold">
 											Link
-											<em class="text-gray-400 font-normal">
-												optional
-											</em>
 										</span>
-										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 form-input gray" v-model="url" :required="!body" @focus="hasFocusedUrl = true;"/>
-										<p class="absolute right-0 mt-1 peer-invalid:visible invisible text-red-600 text-sm" :class="!body && hasFocusedUrl ? 'opacity-100': 'opacity-0 pointer-events-none'">
+										<input type="url" name="link" id="link" placeholder="https://youtube.com" class="peer mt-1 form-input gray" v-model="url" :required="!body && !image" @focus="hasFocusedUrl = true;"/>
+										<p class="absolute right-0 mt-1 peer-invalid:visible invisible text-red-600 text-sm" :class="!body && !image && hasFocusedUrl ? 'opacity-100': 'opacity-0 pointer-events-none'">
 											Please provide a valid URL.
 										</p>
 									</label>
+								</div>
+								<!-- Body -->
+								<div class="relative col-span-full">
+									<label for="body" class="flex justify-between text-sm font-bold">
+										Body
+										<em class="text-gray-400 font-normal">
+											optional if you have a link or image
+										</em>
+									</label>
+									<div id="post-body" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
+										<!-- <InputsTiptap class="bg-white"/> -->
+										<textarea placeholder="Enter some words worth reading..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
+									</div>
+									<p class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
+										<svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+										   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+										   <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+										   <path d="M7 15v-6l2 2l2 -2v6"></path>
+										   <path d="M14 13l2 2l2 -2m-2 2v-6"></path>
+										</svg>
+										Markdown supported
+									</p>
 								</div>
 								<!-- TO-DO: Media Preview -->
 								<div class="col-span-full">
@@ -73,28 +92,6 @@
 											</small>
 										</div>
 									</div>
-								</div>
-								<!-- Body -->
-								<div class="relative col-span-full">
-									<label for="body" class="flex justify-between text-sm font-bold">
-										Body
-										<em class="text-gray-400 font-normal">
-											optional if you have a link
-										</em>
-									</label>
-									<div id="post-body" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
-										<!-- <InputsTiptap class="bg-white"/> -->
-										<textarea placeholder="Enter some words worth reading..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" rows="6" v-model="body" :required="!url" @focus="hasFocusedBody = true;"/>
-									</div>
-									<p class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
-										<svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-										   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-										   <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-										   <path d="M7 15v-6l2 2l2 -2v6"></path>
-										   <path d="M14 13l2 2l2 -2m-2 2v-6"></path>
-										</svg>
-										Markdown supported
-									</p>
 								</div>
 								<!-- Options -->
 								<div class="col-span-full">
