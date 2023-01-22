@@ -83,9 +83,12 @@
 									<div class="mt-2 flex items-center">
 										<img v-if="image" :src="image" class="inline-block w-56 object-contain p-0.5 border bg-white mr-5" @click="preview"/>
 										<div>
-											<label for="image-upload" class="inline-block button gray cursor-pointer">
-												{{ image ? 'Change image' : 'Pick image' }}
+											<label v-if="!image" for="image-upload" class="inline-block button button-small gray cursor-pointer">
+												Pick image
 											</label>
+											<button v-else class="button gray" @click="image = null;">
+												<span class="text-red-500">Remove image</span>
+											</button>
 											<input id="image-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event)"/>
 											<small class="block mt-2 text-gray-400">
 												PNG, JPG and GIF up to 1MB.
