@@ -2,7 +2,7 @@
 	<NuxtLayout name="registration">
 		<!-- Notice -->
 		<!-- Display if site mode requires invite code or application and the invite code is invalid -->
-		<div v-if="isDisabled || site.site_mode === 'ApplicationOnly'" class="w-full max-w-sm flex items-center justify-center sm:justify-start mb-6 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border border-yellow-300 rounded-md shadow-inner-white">
+		<div v-if="isDisabled || site.site_mode === 'ApplicationMode'" class="w-full max-w-sm flex items-center justify-center sm:justify-start mb-6 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border border-yellow-300 rounded-md shadow-inner-white">
 			<svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 			   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 			   <rect x="5" y="11" width="14" height="10" rx="2"></rect>
@@ -16,7 +16,7 @@
 				<br/>
 				<p class="text-sm text-yellow-800">
 					{{ isDisabled ? 'You need a valid invite code to create an account.' :
-					'A mod will need to approve your account before you can access it.' }}
+					'Admins will need to approve your account before you can log in.' }}
 				</p>
 			</div>
 		</div>
@@ -46,9 +46,14 @@
 					<input type="password" id="password" minlength="8" maxlength="60" v-model="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required/>
 				</div>
 				<!-- Invite Code Input -->
-				<div v-if="isDisabled" class="mb-6">
+				<div v-if="isDisabled" :class="isDisabled ? 'mb-4' : 'mb-6'">
 					<label for="invite" class="block text-sm font-bold">Invite code</label>
 					<input type="text" id="invite" v-model="invite" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required/>
+				</div>
+				<!-- Application Mode Answer Input -->
+				<div v-if="site.site_mode === 'ApplicationMode'" class="mb-6">
+					<label for="answer" class="block text-sm font-bold">Application</label>
+					<textarea rows="3" placeholder="Briefly explain why you'd like to join..." class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="answer"></textarea>
 				</div>
 				<!-- Submit Button -->
 				<button type="submit" class="button primary w-full" :disabled="isLoading">
@@ -125,8 +130,10 @@
 	});
 
 	// Registration
-	const name = ref('');
-	const password = ref('');
+	const name = ref(null);
+	const password = ref(null);
+	const answer = ref(null);
+
 
 	const isLoading = ref(false);
 
@@ -134,7 +141,8 @@
 		userStore.signup({
 			username: name.value,
 			password: password.value,
-			invite_token: invite.value
+			invite_token: invite.value,
+			answer: answer.value
 		})
 		.then(token => {
 			Cookies.set('token', token);
