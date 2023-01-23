@@ -11,6 +11,7 @@ module.exports = {
     "./pages/*.vue",
     "./plugins/**/*.{js,ts}"
     ],
+  safelist: ['lite-youtube'],
   theme: {
     colors: {
       primary: ({ opacityVariable, opacityValue }) => {
