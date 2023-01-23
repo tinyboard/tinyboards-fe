@@ -97,6 +97,11 @@
 			transform: scale(1) rotate(-20deg);
 		}
 	}
+	.lite-youtube {
+		display: inline-block;
+		width: 320px;
+		height: 240px;
+	}
 }
 
 @layer components {
