@@ -31,22 +31,22 @@
 					<label for="username" class="block text-sm font-bold">Username</label>
 					<input type="text" id="username" v-model="name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required/>
 				</div>
-				<!-- <div class="mb-4">
+				<div class="mb-4">
 					<label for="email" class="flex text-sm font-bold">
 						Email
-						<em class="ml-auto text-gray-400 font-normal">
+						<em v-if="site.site_mode !== 'ApplicationMode'" class="ml-auto text-gray-400 font-normal">
 							optional
 						</em>
 					</label>
-					<input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" :disabled="isDisabled"/>
-				</div> -->
+					<input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" v-model="email"/>
+				</div>
 				<!-- Password Input -->
-				<div :class="isDisabled ? 'mb-4' : 'mb-6'">
+				<div :class="isDisabled || site.site_mode === 'ApplicationMode' ? 'mb-4' : 'mb-6'">
 					<label for="password" class="block text-sm font-bold">Password</label>
 					<input type="password" id="password" minlength="8" maxlength="60" v-model="password" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required/>
 				</div>
 				<!-- Invite Code Input -->
-				<div v-if="isDisabled" :class="isDisabled ? 'mb-4' : 'mb-6'">
+				<div v-if="isDisabled" class="mb-4">
 					<label for="invite" class="block text-sm font-bold">Invite code</label>
 					<input type="text" id="invite" v-model="invite" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" required/>
 				</div>
@@ -131,6 +131,7 @@
 
 	// Registration
 	const name = ref(null);
+	const email = ref(null);
 	const password = ref(null);
 	const answer = ref(null);
 
@@ -140,6 +141,7 @@
 	function signup() {
 		userStore.signup({
 			username: name.value,
+			email: email.value,
 			password: password.value,
 			invite_token: invite.value,
 			answer: answer.value
