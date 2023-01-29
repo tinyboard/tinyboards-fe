@@ -226,10 +226,42 @@
 		};
 	};
 
-	// Submit post
+
+	// Submit
 	const authCookie = useCookie("token").value;
 
 	const submit = () => {
+		const images = [image.value];
+		// Upload image
+		useFetch('/image', {
+			baseURL,
+			method: 'post',
+			body: {
+				"images": images
+			},
+			headers: {
+				Authorization: authCookie ? `Bearer ${authCookie}` : '',
+			}
+		})
+		.then(({ data, error }) => {
+			if (data.value) {
+				image.value = data.value.files[0].file;
+				// On success, post
+				post();
+			} else {
+				// Show error toast.
+				toast.addNotification({
+					header:'Failed to upload',
+					message:'Your image failed to upload. Please try again.',
+					type:'error',
+					isVisibleOnRouteChange:true
+				});
+			}
+		});
+	};
+
+	// Post
+	const post = () => {
 		return new Promise((resolve, reject) => {
 			useFetch('/posts', {
 				baseURL,
@@ -240,6 +272,7 @@
 					"title": title.value,
 					"type_": "text",
 					"url": url.value,
+					"image": image.value,
 					"body": body.value,
 					"is_nsfw": isNsfw.value
 				},
