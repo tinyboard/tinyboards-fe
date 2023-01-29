@@ -50,10 +50,10 @@
                               <div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
                                     <p>
                                           <span class="font-medium">
-                                                There are not posts at this time.
+                                                There are not posts at this time
                                           </span>
                                           <br/>
-                                          Try posting something yourself
+                                          You can be the first to post...
                                     </p>
                               </div>
                               <!-- Pagination -->
