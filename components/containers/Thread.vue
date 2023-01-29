@@ -168,13 +168,13 @@
       </div>
       <!-- Post Image -->
       <div
-        v-if="item.post.type === 'image'"
-        class="flex justify-center mt-2.5 md:mt-4"
+        v-if="item.post.image"
+        class="flex justify-center mt-2.5 md:mt-4 p-2.5 bg-white border shadow-polaroid"
       >
         <img
-          :src="item.post.url"
+          :src="item.post.image"
           alt="Post image"
-          class="w-full h-full object-cover"
+          class="w-full h-full object-cover img-expand"
         />
       </div>
       <!-- Post Edit Form -->

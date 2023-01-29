@@ -129,19 +129,3 @@ const images = [
 
 const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`;
 </script>
-
-<style scoped>
-.shadow-polaroid,
-.shadow-polaroid > * {
-  position: relative;
-}
-.shadow-polaroid::before {
-  content: "";
-  position: absolute;
-  bottom: -15px;
-  right: 0px;
-  width: 100%;
-  height: 100%;
-  background: url("/assets/images/shadow-lg.png") no-repeat bottom right;
-}
-</style>
