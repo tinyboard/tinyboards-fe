@@ -233,12 +233,9 @@
 	const submit = () => {
 		// Upload image and post otherwise just post
 		if (!!image.value) {
-			const images = [image.value];
 			useFetch('/image', {
 				method: 'post',
-				body: {
-					"images": images
-				},
+				body: image.value,
 				headers: {
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',
 				}
