@@ -166,7 +166,7 @@
             </span>
           </div>
         </div>
-        <!-- Post Title & Body -->
+        <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink
             class="z-10 relative font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
@@ -182,6 +182,22 @@
               'max-h-56 overlay': !isExpanded && (item.post.body.length > 800 || item.post.body.includes('![](http'))
             }"
           >
+            <!-- Post Image -->
+            <div
+              v-if="item.post.image"
+              class="mt-2.5 md:mt-4"
+            >
+              <span class="inline-block p-2.5 bg-white border shadow-polaroid">
+                <img
+                  loading="lazy"
+                  :src="item.post.image"
+                  alt="Post image"
+                  class="object-cover img-expand"
+                  style="max-width: 240px;"
+                />
+              </span>
+            </div>
+            <!-- Post Body -->
             <div
               class="prose prose-sm max-w-none"
               v-html="item.post.body_html"
