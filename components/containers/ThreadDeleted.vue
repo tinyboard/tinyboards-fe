@@ -38,8 +38,7 @@
         <div class="flex items-center w-full overflow-x-auto">
           <!-- Avatar -->
           <img
-            loading="lazy"
-            src=""
+            src="/assets/default_pfp.png"
             alt="avatar"
             class="mr-2 flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
           />
