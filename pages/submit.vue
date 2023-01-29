@@ -239,7 +239,9 @@
 		if (!!image.value) {
 			useFetch('/image', {
 				method: 'post',
-				body: image.value,
+				body: {
+					"image": image.value
+				},
 				headers: {
 					Authorization: authCookie ? `Bearer ${authCookie}` : '',
 				}
