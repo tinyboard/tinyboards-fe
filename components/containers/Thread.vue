@@ -175,7 +175,8 @@
           <img
             :src="item.post.image"
             alt="Post image"
-            class="w-full h-full object-cover img-expand"
+            class="object-cover img-expand"
+            style="max-width: 240px;"
           />
         </span>
       </div>
