@@ -246,7 +246,7 @@
 			})
 			.then(({ data, error }) => {
 				if (data.value) {
-					image.value = `${document.location.origin}/${data.value.files[0].file}`;
+					image.value = data.value.url;
 					// On success, post
 					post();
 				} else {
