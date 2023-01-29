@@ -169,13 +169,15 @@
       <!-- Post Image -->
       <div
         v-if="item.post.image"
-        class="flex justify-center mt-2.5 md:mt-4 p-2.5 bg-white border shadow-polaroid"
+        class="mt-2.5 md:mt-4"
       >
-        <img
-          :src="item.post.image"
-          alt="Post image"
-          class="w-full h-full object-cover img-expand"
-        />
+        <span class="inline-block p-2.5 bg-white border shadow-polaroid">
+          <img
+            :src="item.post.image"
+            alt="Post image"
+            class="w-full h-full object-cover img-expand"
+          />
+        </span>
       </div>
       <!-- Post Edit Form -->
       <LazyInputsEdit
