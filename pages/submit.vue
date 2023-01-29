@@ -235,7 +235,6 @@
 		if (!!image.value) {
 			const images = [image.value];
 			useFetch('/image', {
-				baseURL,
 				method: 'post',
 				body: {
 					"images": images
