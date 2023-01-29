@@ -114,7 +114,9 @@
 							</div>
 						</div>
 						<div class="bg-gray-50 shadow-inner-white border-t p-4">
-							<button type="submit" class="button primary">Create post</button>
+							<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="isLoading">
+								Create post
+							</button>
 						</div>
 					</div>
 				</form>
@@ -226,11 +228,13 @@
 		};
 	};
 
-
 	// Submit
 	const authCookie = useCookie("token").value;
 
+	const isLoading = ref(false);
+
 	const submit = () => {
+		isLoading.value = true;
 		// Upload image and post otherwise just post
 		if (!!image.value) {
 			useFetch('/image', {
@@ -246,6 +250,7 @@
 					// On success, post
 					post();
 				} else {
+					isLoading.value = false;
 					// Show error toast.
 					toast.addNotification({
 						header:'Failed to upload',
@@ -299,6 +304,9 @@
 			})
 			.catch((error) => {
 				console.log(error);
+			})
+			.finally(() => {
+				isLoading.value = false;
 			});
 		});
 	};
