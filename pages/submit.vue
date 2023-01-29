@@ -233,7 +233,7 @@
 	const submit = () => {
 		// Upload image and post otherwise just post
 		if (!!image.value) {
-			const images = [image.value];
+			const images = [image.value.replace(/^data:image\/[a-z]+;base64,/, "")];
 			useFetch('/image', {
 				method: 'post',
 				body: {
