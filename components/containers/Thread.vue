@@ -670,9 +670,9 @@
           class="px-4 py-24 text-center text-gray-400"
         >
           <p>
-            <span class="font-medium">This post sucks so bad, no one's bothered to reply to it</span>
+            <span class="font-medium">No comments</span>
             <br />
-            You could be the first one to point that out and laugh at it
+            You can be the first to reply...
           </p>
         </div>
         <!-- Error -->

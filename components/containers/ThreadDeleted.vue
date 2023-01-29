@@ -143,7 +143,7 @@
           class="px-4 py-24 text-center text-gray-400"
         >
           <p class="font-medium">
-            This post sucks so bad, no one's bothered to reply to it
+            No comments
           </p>
         </div>
         <!-- Error State -->
