@@ -173,8 +173,7 @@
           <img
             :src="item.post.image"
             alt="Post image"
-            class="object-cover img-expand"
-            style="max-width: 240px;"
+            class="sm:max-w-xs object-cover img-expand"
           />
         </span>
       </div>

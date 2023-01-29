@@ -495,7 +495,7 @@ const toggleReplying = () => {
 }
 @media (min-width: 768px) {
   .comment-body :deep(img) {
-    max-width: 240px;
+    max-width: 320px;
   }
 }
 /* Collapse Bar */
