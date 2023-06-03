@@ -22,6 +22,7 @@
             <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
                   <div class="col-span-full flex gap-6">
                         <div class="w-full">
+                              <!-- Submission Form -->
                               <!-- Sorts & View Options -->
                               <div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-b sm:border sm:shadow-inner-white sm:rounded-md">
                                     <MenusSort/>
