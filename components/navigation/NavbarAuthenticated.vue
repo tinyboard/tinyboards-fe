@@ -1,11 +1,11 @@
 <template>
-	<nav class="z-50 fixed w-full bg-primary dark:bg-secondary sm:dark:border-b dark:border-white/10">
+	<nav id="header" class="z-50 fixed w-full bg-primary dark:bg-secondary sm:dark:border-b dark:border-white/10">
 		<div class="mx-auto max-w-8xl px-2.5 sm:px-6">
 			<div class="flex items-center justify-between h-12 sm:h-14">
 				<div class="flex flex-grow items-center">
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
-						<NuxtLink to="/feed" class="font-bold text-lg text-white">
+						<NuxtLink to="/feed" class="header-brand font-bold text-lg text-white">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 inline-block mr-2">
 								<path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
 							</svg>
@@ -15,10 +15,10 @@
 							{{ selectedText }}
 						</span>
 					</div>
-					<!-- Core Navigation Links -->
-					<div class="hidden md:block w-1/3 ml-8">
+					<!-- Main Navigation Links -->
+					<div class="header-menu-main hidden md:block w-1/3 ml-8">
 						<ul class="flex">
-							<li class="flex items-center text-sm leading-5" v-for="link in links" :key="link.name">
+							<li class="header-menu-item flex items-center text-sm leading-5" v-for="link in links" :key="link.name">
 								<NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
 									<a :href="link.href" @click="navigate" :class="[isActive ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 										{{ link.name }}
@@ -28,10 +28,10 @@
 						</ul>
 					</div>
 				</div>
-				<div class="hidden md:flex items-center">
+				<div class="header-search hidden md:flex items-center">
 					<!-- Search Box -->
 					<div class="mr-4 flex items-center space-x-4">
-						<form class="group relative" @submit.prevent="search">
+						<form class="header-search-form group relative" @submit.prevent="search">
 							<div class="absolute left-3 top-2">
 								<button class="text-white/20 hover:text-white" type="submit">
 									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -39,7 +39,7 @@
 									</svg>
 								</button>
 							</div>
-							<input required type="text" class="w-full form-input search px-10" v-model="text" placeholder="Search this place"/>
+							<input id="header-search" required type="text" class="w-full form-input search px-10" v-model="text" placeholder="Search this place"/>
 							<div v-show="text" class="absolute right-3 top-2">
 								<button class="text-white/20 hover:text-white" @click="text = null">
 									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -52,7 +52,7 @@
 						</form>
 					</div>
 					<!-- User Links -->
-					<div class="ml-4 flex items-center space-x-2 md:ml-6">
+					<div class="header-menu-profile ml-4 flex items-center space-x-2 md:ml-6">
 						<!-- Admin Tools Link -->
 						<NuxtLink v-if="v.is_admin" to="/admin" class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded" title="Admin control panel">
 							<span class="sr-only">View admin tools</span>
@@ -159,7 +159,7 @@
 						</svg>
 					</button>
 				</div>
-				<input required type="text" class="form-input gray px-8" v-model="text" placeholder="Search this place"/>
+				<input id="header-search-sm" required type="text" class="form-input gray px-8" v-model="text" placeholder="Search this place"/>
 				<div v-show="text" class="absolute" style="top: 9px; right: 0.625rem;">
 					<button class="text-gray-300" @click="text = null">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
