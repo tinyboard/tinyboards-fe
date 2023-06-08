@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div id="sidebar"
     class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
   >
     <div class="p-2.5 bg-white border shadow-polaroid">

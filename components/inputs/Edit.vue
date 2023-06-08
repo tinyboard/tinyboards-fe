@@ -1,5 +1,5 @@
 <template>
-	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="relative flex flex-col items-end w-full">
+	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="edit-comment-form relative flex flex-col items-end w-full">
 		<!-- Textarea -->
 		<textarea v-show="!isPreviewVisible" required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
 		<!-- MD Preview -->

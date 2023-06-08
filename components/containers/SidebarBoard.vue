@@ -1,5 +1,5 @@
 <template>
-    <div class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
+    <div id="sidebar-board" class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
         <!-- Create Post -->
         <NuxtLink v-if="!submitPage" :to="`/b/${board.name}/submit`" class="flex items-center button primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

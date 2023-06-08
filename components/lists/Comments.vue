@@ -1,6 +1,6 @@
 <template>
 	<!-- List of Comments -->
-	<ul v-if="comments.length" class="mt-4 first:mt-0 first-of-type:mt-0">
+	<ul id="comments-list" v-if="comments.length" class="mt-4 first:mt-0 first-of-type:mt-0">
 		<li v-for="item in comments" :key="item.comment.id" class="mt-4 first:mt-0">
 			<component v-if="item" :item="item" :offset="offset" :is="item.comment.is_deleted || item.comment.is_removed ? CommentRemoved : Comment"/>
 		</li>

@@ -1,5 +1,5 @@
 <template>
-	<form @submit.prevent="onSubmit" @submit="submitComment()" class="relative flex flex-col w-full">
+	<form @submit.prevent="onSubmit" @submit="submitComment()" class="comment-form relative flex flex-col w-full">
 		<!-- Textarea -->
 		<textarea v-show="!isPreviewVisible" required placeholder="Write a comment..." rows="4" class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="body" @keydown="inputHandler"/>
 		<!-- MD Preview -->

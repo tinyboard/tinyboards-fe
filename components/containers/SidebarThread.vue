@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div id="sidebar-thread"
     v-if="item"
     class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
   >

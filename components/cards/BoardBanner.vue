@@ -1,5 +1,5 @@
 <template>
-	<div class="col-span-full bg-gray-200/50 sm:rounded-md sm:border sm:shadow-inner-white">
+	<div id="board-banner" class="col-span-full bg-gray-200/50 sm:rounded-md sm:border sm:shadow-inner-white">
 		<div class="hidden sm:flex items-center space-x-4 p-2.5 sm:p-4 text-sm text-gray-500 leading-normal">
 			<ul class="hidden sm:flex flex-grow items-center text-sm text-gray-400">
 				<li class="flex items-center">
