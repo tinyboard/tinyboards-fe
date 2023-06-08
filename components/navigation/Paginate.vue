@@ -1,24 +1,24 @@
 <template>
-      <ul class="flex items-center text-sm text-gray-500 font-bold space-x-1">
-            <li>
+      <ul id="pagination" class="menu flex items-center text-sm text-gray-500 font-bold space-x-1">
+            <li class="menu-item">
                   <NuxtLink external :to="previousPage" class="button button-sm white" :class="{'disabled':isFirstPage}">
                         Prev
                   </NuxtLink>
             </li>
-            <li v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
+            <li class="menu-item" v-if="totalPages >= 4" v-for="(page, i) in pages" :key="i">
                   <NuxtLink external :to="`${route.path}?page=${page.name}`" class="button button-sm" :class="isPageActive(page.name) ? 'primary' : 'white'" :aria-label="`Go to page ${page.name}`">
                         {{ page.name }}
                   </NuxtLink>
             </li>
-            <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+            <li class="menu-item" v-if="totalPages >= 4" v-show="page < totalPages - 1">
                   <span class="text-gray-400 px-2">...</span>
             </li>
-            <li v-if="totalPages >= 4" v-show="page < totalPages - 1">
+            <li class="menu-item" v-if="totalPages >= 4" v-show="page < totalPages - 1">
                   <NuxtLink external :to="`${route.path}?page=${totalPages}`" class="button button-sm" :disabled="isLastPage" :class="isPageActive(isLastPage) ? 'primary' : 'white'" :aria-label="`Go to page ${totalPages}`">
                         {{ totalPages }}
                   </NuxtLink>
             </li>
-            <li v-if="page < totalPages">
+            <li class="menu-item" v-if="page < totalPages">
                   <NuxtLink external :to="nextPage" class="button button-sm white">
                         Next
                   </NuxtLink>
