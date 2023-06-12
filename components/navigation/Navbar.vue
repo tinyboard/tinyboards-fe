@@ -16,11 +16,11 @@
 					</div>
 				</div>
 				<div class="hidden md:flex space-x-4">
-					<NuxtLink to="/login" class="button primary-25">
-						Log in
-					</NuxtLink>
 					<NuxtLink to="/register" class="button white">
 						Sign up
+					</NuxtLink>
+					<NuxtLink to="/login" class="button primary-25">
+						Log in
 					</NuxtLink>
 				</div>
 				<div class="-mr-1 flex space-x-2 md:hidden">
