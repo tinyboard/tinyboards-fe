@@ -1,8 +1,6 @@
 <template>
   <NuxtLayout name="admin">
-    <div
-      class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md"
-    >
+    <div class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
       <!-- Page Heading & Description -->
       <div class="p-4 border-b">
         <h3 class="text-lg font-medium leading-6 text-gray-900">Overview</h3>
@@ -15,9 +13,7 @@
         <!-- Primary Stats -->
         <div class="relative grid grid-cols-4 gap-4">
           <div class="col-span-2 lg:col-span-1 text-center">
-            <div
-              class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white"
-            >
+            <div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
               <strong class="text-3xl md:text-4xl text-gray-700">328</strong>
               <p class="mt-2 text-gray-500 text-sm font-medium uppercase">
                 Members
@@ -25,9 +21,7 @@
             </div>
           </div>
           <div class="col-span-2 lg:col-span-1 text-center">
-            <div
-              class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white"
-            >
+            <div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
               <strong class="text-3xl md:text-4xl text-gray-700">957</strong>
               <p class="mt-2 text-gray-500 text-sm font-medium uppercase">
                 Posts
@@ -35,9 +29,7 @@
             </div>
           </div>
           <div class="col-span-2 lg:col-span-1 text-center">
-            <div
-              class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white"
-            >
+            <div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
               <strong class="text-3xl md:text-4xl text-gray-700">4,830</strong>
               <p class="mt-2 text-gray-500 text-sm font-medium uppercase">
                 Comments
@@ -45,9 +37,7 @@
             </div>
           </div>
           <div class="col-span-2 lg:col-span-1 text-center">
-            <div
-              class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white"
-            >
+            <div class="p-4 sm:p-6 border bg-gray-100 rounded-md shadow-inner-white">
               <strong class="text-3xl md:text-4xl text-gray-700">57,023</strong>
               <p class="mt-2 text-gray-500 text-sm font-medium uppercase">
                 Votes
@@ -64,9 +54,7 @@
             <h3 class="mb-2 text-gray-500 text-sm font-medium uppercase">
               Top Scoring Members
             </h3>
-            <ul
-              class="flex flex-col border rounded-md overflow-hidden shadow-inner-white"
-            >
+            <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
               <li
                 v-for="(member, i) in members.members.slice(0, 5)"
                 :key="member.user.id"
@@ -179,9 +167,9 @@
                       member.user.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.is_admin" class="ml-1 badge badge-blue"
-                      >Admin</span
-                    >
+                    <span v-if="member.user.is_admin" class="ml-1 badge badge-blue">
+                      Admin
+                    </span>
                   </NuxtLink>
                   <div class="ml-auto flex flex-shrink-0 items-center">
                     <p class="text-gray-400 text-sm font-medium uppercase">
@@ -216,8 +204,8 @@ definePageMeta({
   title: "Overview",
 });
 
-// Settings.
-// Fetch members by sort.
+// Settings
+// Fetch members by sort
 const {
   data: members,
   pending,
