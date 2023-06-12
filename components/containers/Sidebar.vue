@@ -91,23 +91,8 @@ const {
 // Refactor with proper `/assets/images/sidebar-art` folder
 // https://nuxtjs.org/docs/directory-structure/assets/#images
 const images = [
-  "https://i.imgur.com/x0I5K0N.gif",
-  "https://i.imgur.com/amEwe3k.gif",
-  "https://i.imgur.com/Oa39PlB.gif",
-  "https://i.imgur.com/HARAJ3P.gif",
-  "https://i.imgur.com/YOmZ23H.jpg",
-  "https://i.imgur.com/L36MJT3.jpg",
-  "https://i.imgur.com/uRqJSdO.jpg",
-  "https://i.imgur.com/EXbfWEb.gif",
-  "https://i.imgur.com/dOuGQTV.gif",
-  "https://i.imgur.com/YDbnReb.png",
-  "https://i.imgur.com/X7zDwCM.gif",
-  "https://i.imgur.com/ZT8ZpX4.jpg",
-  "https://i.imgur.com/It1ro7S.png",
-  "https://i.imgur.com/wJ4wVjd.png",
-  "https://i.imgur.com/HN953k0.png",
-  "https://i.imgur.com/nep99Uk.jpg"
+  "./_nuxt/assets/images/artwork/sidebar.jpeg",
 ];
 
-const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`;
+const selectedImage = shuffle(images)[0] ?? `./_nuxt/assets/images/artwork/sidebar.jpeg`;
 </script>
