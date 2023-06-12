@@ -36,7 +36,7 @@
 	}
 	a {
 		position: relative;
-		color: #5E81AC;
+		@apply text-primary;
 	}
 	a.disabled {
 		@apply opacity-50 pointer-events-none;
