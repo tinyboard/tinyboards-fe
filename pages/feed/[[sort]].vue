@@ -13,7 +13,7 @@
                         v-else
                         title="Feed"
                         sub-title="The front page of a tinyboard."
-                        image-url="./_nuxt/assets/images/banner/frontpage.jpeg"
+                        image-url="./_nuxt/assets/images/banner/front-page.jpeg"
                         class="col-span-full"
                         />
                   </div>
