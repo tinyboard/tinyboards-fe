@@ -13,7 +13,7 @@
                         v-else
                         title="Feed"
                         sub-title="The front page of a tinyboard."
-                        image-url="./_nuxt/assets/images/artwork/front-page.jpeg"
+                        image-url="/_nuxt/assets/images/artwork/front-page.jpeg"
                         class="col-span-full"
                         />
                   </div>
@@ -100,7 +100,7 @@
             comments_count: 13929,
             created_at: '2022-11-27T19:31:27.730335',
             icon_url: 'https://i.ibb.co/r4D7WWs/scott-goodwill-y8-Ngwq34-Ak-unsplash.jpg',
-            banner_url: 'https://i.ibb.co/7kfB6Y0/chris-schog-En-Ca-UE4-QNOw-unsplash.jpg'
+            banner_url: '/_nuxt/assets/images/artwork/front-page.jpeg'
       };
 
       // Posts

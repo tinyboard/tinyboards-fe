@@ -19,11 +19,11 @@
 		},
 		subTitle: {
 			type: String,
-			default: "The front-page. All your posts are belong to us."
+			default: "The front page of a tinyboard."
 		},
 		imageUrl: {
 			type: String,
-			default: "https://i.imgur.com/O4ivfHf.jpg"
+			default: "./_nuxt/assets/images/artwork/front-page.jpeg"
 		}
 	});
 </script>

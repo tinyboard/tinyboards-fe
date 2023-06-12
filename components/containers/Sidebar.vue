@@ -91,8 +91,8 @@ const {
 // Refactor with proper `/assets/images/sidebar-art` folder
 // https://nuxtjs.org/docs/directory-structure/assets/#images
 const images = [
-  "./_nuxt/assets/images/artwork/sidebar.jpeg",
+  "/_nuxt/assets/images/artwork/sidebar.jpeg",
 ];
 
-const selectedImage = shuffle(images)[0] ?? `./_nuxt/assets/images/artwork/sidebar.jpeg`;
+const selectedImage = shuffle(images)[0] ?? `/_nuxt/assets/images/artwork/sidebar.jpeg`;
 </script>

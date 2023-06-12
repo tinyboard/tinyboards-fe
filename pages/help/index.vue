@@ -8,7 +8,7 @@
 				<CardsBanner
 				title="Help"
 				sub-title="Rules, guides, and the like"
-				image-url="https://i.imgur.com/kGhynxn.png"
+				image-url="/_nuxt/assets/images/artwork/front-page.jpeg"
 				class="col-span-full"/>
 			</div>
 		</section>
