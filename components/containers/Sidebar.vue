@@ -91,24 +91,22 @@ const {
 // Refactor with proper `/assets/images/sidebar-art` folder
 // https://nuxtjs.org/docs/directory-structure/assets/#images
 const images = [
-  "https://forum.porpl.net/image/447288c1-6f77-4616-9029-0a197a498a7a.webp?thumbnail=270",
-  "https://forum.porpl.net/image/d0613892-5740-492d-839b-b7f6e5ae6fee.jpeg?format=webp&thumbnail=400"
-  // "https://i.imgur.com/x0I5K0N.gif",
-  // "https://i.imgur.com/amEwe3k.gif",
-  // "https://i.imgur.com/Oa39PlB.gif",
-  // "https://i.imgur.com/HARAJ3P.gif",
-  // "https://i.imgur.com/YOmZ23H.jpg",
-  // "https://i.imgur.com/L36MJT3.jpg",
-  // "https://i.imgur.com/uRqJSdO.jpg",
-  // "https://i.imgur.com/EXbfWEb.gif",
-  // "https://i.imgur.com/dOuGQTV.gif",
-  // "https://i.imgur.com/YDbnReb.png",
-  // "https://i.imgur.com/X7zDwCM.gif",
-  // "https://i.imgur.com/ZT8ZpX4.jpg",
-  // "https://i.imgur.com/It1ro7S.png",
-  // "https://i.imgur.com/wJ4wVjd.png",
-  // "https://i.imgur.com/HN953k0.png",
-  // "https://i.imgur.com/nep99Uk.jpg"
+  "https://i.imgur.com/x0I5K0N.gif",
+  "https://i.imgur.com/amEwe3k.gif",
+  "https://i.imgur.com/Oa39PlB.gif",
+  "https://i.imgur.com/HARAJ3P.gif",
+  "https://i.imgur.com/YOmZ23H.jpg",
+  "https://i.imgur.com/L36MJT3.jpg",
+  "https://i.imgur.com/uRqJSdO.jpg",
+  "https://i.imgur.com/EXbfWEb.gif",
+  "https://i.imgur.com/dOuGQTV.gif",
+  "https://i.imgur.com/YDbnReb.png",
+  "https://i.imgur.com/X7zDwCM.gif",
+  "https://i.imgur.com/ZT8ZpX4.jpg",
+  "https://i.imgur.com/It1ro7S.png",
+  "https://i.imgur.com/wJ4wVjd.png",
+  "https://i.imgur.com/HN953k0.png",
+  "https://i.imgur.com/nep99Uk.jpg"
 ];
 
 const selectedImage = shuffle(images)[0] ?? `https://i.imgur.com/x0I5K0N.gif`;
