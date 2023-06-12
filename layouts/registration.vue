@@ -1,5 +1,5 @@
 <template>
-	<div id="registration" class="relative flex flex-1 flex-col bg-cover bg-center">
+	<div class="relative flex flex-1 flex-col bg-primary">
 		<nav class="fixed w-full z-50">
 			<div class="mx-auto max-w-8xl px-4 sm:px-6">
 				<h1 class="sr-only">{{ site.name }}</h1>
@@ -56,22 +56,3 @@
 	// { name: 'Source Code', href: '/source-code' }
 	];
 </script>
-
-<style scoped>
-	#registration {
-		background-image: url('https://i.imgur.com/1rGd3Ki.gif');
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
-	}
-	#registration::before {
-		content: '';
-		position: fixed;
-		pointer-events: none;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0,0,0,0.9);
-	}
-</style>
