@@ -32,7 +32,7 @@
 	#banner::before {
 		content: '';
 		background: rgba(0,0,0,0.9);
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.8) 70%);
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.7) 80%);
 		position: absolute;
 		height: 100%;
 		width: 100%;
