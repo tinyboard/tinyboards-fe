@@ -1,5 +1,5 @@
 <template>
-	<nav id="header" class="fixed w-full bg-primary sm:border-b border-black/10 dark:bg-secondary dark:border-white/10 z-50">
+	<nav id="header" class="fixed w-full bg-primary sm:border-b border-black/30 dark:bg-secondary dark:border-white/10 z-50">
 		<div class="mx-auto max-w-8xl px-2.5 sm:px-6">
 			<div class="flex items-center justify-between h-12 sm:h-14">
 				<div class="flex flex-grow items-center">
@@ -10,7 +10,7 @@
 							</svg>
 							<span>{{ site.name }}</span>
 						</NuxtLink>
-						<span class="absolute -right-5 -bottom-1 flashing-text font-mono">
+						<span class="absolute -right-7 bottom-0 flashing-text font-mono">
 							{{ selectedText }}
 						</span>
 					</div>
@@ -95,13 +95,10 @@
 	// Yellow Text
 	const yellowText = [
 		'pre-alpha',
-		'seq-approved',
-		'kroner',
 		'It\'s PHP!',
 		'It\'s jQuery!',
 		'It\'s Rails!',
 		'It\'s SSR!',
-		'In Motion',
 		'est. 2023'
 	];
 

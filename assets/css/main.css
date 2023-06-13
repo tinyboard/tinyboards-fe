@@ -78,7 +78,7 @@
 		transform: rotate(-20deg);
 		animation: FlashingText 0.5s ease-in-out infinite;
 		color: #FFFF00;
-		font-size: 12px;
+		font-size: 11px;
 		font-weight: bold;
 		text-shadow: 0 2px 0 #383838;
 		pointer-events: none;
