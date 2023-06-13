@@ -58,7 +58,7 @@
 								Sign up
 						</NuxtLink>
 						<NuxtLink to="/login" class="button white mt-2 w-full">
-								Sign in
+								Log in
 						</NuxtLink>
 					</div>
 					<NuxtLink to="/help/faq" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200" @click="isOpen = false">
