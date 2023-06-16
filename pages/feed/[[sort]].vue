@@ -135,6 +135,6 @@
       // Links for sub navbar
       const links = [
             { name: 'New Thread', href: '/submit' },
-            { name: 'Rules', href: '/help/rules', target: '_blank' }
+            { name: 'House Rules', href: '/help/rules', target: '_blank' }
             ];
 </script>
