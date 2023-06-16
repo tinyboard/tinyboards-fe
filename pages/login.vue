@@ -1,6 +1,6 @@
 <template>
 	<NuxtLayout name="registration">
-		<form action="/login" @submit.prevent="login" class="w-full max-w-sm bg-white dark:bg-gray-900 shadow-lg rounded-md overflow-hidden">
+		<form action="/login" @submit.prevent="login" class="w-full max-w-sm bg-white shadow-lg rounded-md overflow-hidden">
 			<div v-if="error" class="px-4 py-2 bg-red-500 rounded-t-md shadow-inner-white">
 				<p class="text-center text-white text-sm">
 					<strong>Login failed!</strong>
@@ -8,7 +8,7 @@
 				</p>
 			</div>
 			<div class="px-4 md:px-6 py-6">
-				<h1 class="text-xl text-gray-900 dark:text-gray-100 font-bold mb-6">
+				<h1 class="text-xl text-gray-900 font-bold mb-6">
 					Sign in
 				</h1>
 				<div class="mb-4">
