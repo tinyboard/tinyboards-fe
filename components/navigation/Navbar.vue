@@ -19,7 +19,7 @@
 					<NuxtLink to="/register" class="button white">
 						Sign up
 					</NuxtLink>
-					<NuxtLink to="/login" class="button primary-25">
+					<NuxtLink to="/login" class="button primary">
 						Log in
 					</NuxtLink>
 				</div>

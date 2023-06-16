@@ -43,4 +43,12 @@
 		}
 		]
 	});
+
+	const links = [
+		{ name: 'Get Started', href: '/help/get-started' },
+		{ name: 'About', href: '/help/about' },
+		{ name: 'FAQ', href: '/help/faq' },
+		{ name: 'House Rules', href: '/help/rules' },
+		{ name: 'Formatting Guide', href: 'https://www.markdownguide.org/cheat-sheet/', target: '_blank', isExternal: true },
+	];
 </script>

@@ -23,6 +23,15 @@ module.exports = {
         }
         return `rgb(var(--color-primary))`
       },
+      'primary-hover': ({ opacityVariable, opacityValue }) => {
+        if (opacityValue !== undefined) {
+          return `rgba(var(--color-primary-hover), ${opacityValue})`
+        }
+        if (opacityVariable !== undefined) {
+          return `rgba(var(--color-primary-hover), var(${opacityVariable}, 1))`
+        }
+        return `rgb(var(--color-primary-hover))`
+      },
       secondary: ({ opacityVariable, opacityValue }) => {
         if (opacityValue !== undefined) {
           return `rgba(var(--color-secondary), ${opacityValue})`
