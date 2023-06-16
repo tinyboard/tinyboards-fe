@@ -2,7 +2,7 @@
 	<div class="relative flex flex-1 flex-col bg-primary dark:bg-gray-950">
 		<nav class="fixed w-full z-50">
 			<div class="mx-auto max-w-8xl px-4 sm:px-6">
-				<h1 class="sr-only">{{ site.name }}</h1>
+				<h1 class="sr-only dark:text-gray-100">{{ site.name }}</h1>
 			</div>
 		</nav>
 		<main class="relative flex flex-1 flex-col overflow-hidden py-8 px-4 sm:px-6 lg:px-8">
