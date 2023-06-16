@@ -21,7 +21,7 @@
 			</div>
 		</div>
 		<!-- Form -->
-		<form action="/login" @submit.prevent="signup" class="w-full max-w-sm bg-white border shadow-lg rounded-md overflow-hidden">
+		<form action="/login" @submit.prevent="signup" class="w-full max-w-sm bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-lg rounded-md overflow-hidden">
 			<div class="px-4 md:px-6 py-6">
 				<h1 class="text-xl text-gray-900 font-bold mb-6">
 					{{ isValidInvite ? 'Someone invited you to join' : 'Sign up' }}

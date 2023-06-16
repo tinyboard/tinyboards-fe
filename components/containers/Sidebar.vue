@@ -2,15 +2,15 @@
   <div id="sidebar"
     class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
   >
-    <div class="p-2.5 bg-white border shadow-polaroid">
+    <div class="p-2.5 bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-polaroid">
       <img loading="lazy" class="w-full h-64 aspect-auto object-cover img-expand" :src="selectedImage"/>
       <small class="mt-4 block leading-none text-gray-400">
         Art submission by community members
       </small>
     </div>
-    <div>
-      <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">About</h2>
-      <div class="prose prose-sm text-gray-900">
+    <div class="prose prose-sm prose-invert">
+      <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800">About</h2>
+      <div>
         <p>
           Welcome to tinyboards.net. This is the main instance of tinyboards, the open-source project for cozy communities.
         </p>

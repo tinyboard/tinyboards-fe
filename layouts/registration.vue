@@ -1,5 +1,5 @@
 <template>
-	<div class="relative flex flex-1 flex-col bg-primary">
+	<div class="relative flex flex-1 flex-col bg-primary dark:bg-gray-950">
 		<nav class="fixed w-full z-50">
 			<div class="mx-auto max-w-8xl px-4 sm:px-6">
 				<h1 class="sr-only">{{ site.name }}</h1>
@@ -39,6 +39,9 @@
 	const route = useRoute();
 
 	useHead({
+		bodyAttrs: {
+			class: 'dark'
+		},
 		title: `Tinyboards | ${route.meta.title ?? 'Sign Up'}`,
 		meta: [{ property: 'og:title',
 			content: `Tinyboards | ${route.meta.title}`

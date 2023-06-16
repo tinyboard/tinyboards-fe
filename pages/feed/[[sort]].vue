@@ -24,7 +24,7 @@
                         <div class="w-full">
                               <!-- Submission Form -->
                               <!-- Sorts & View Options -->
-                              <div class="flex items-center mb-4 p-2.5 sm:px-4 sm:py-3 bg-gray-100 border-b sm:border sm:shadow-inner-white sm:rounded-md">
+                              <div class="flex items-center mb-4 p-2.5 sm:px-4 sm:py-3 bg-gray-100 dark:bg-gray-950 border-b sm:border sm:shadow-inner-white sm:rounded-md dark:border-gray-800 dark:shadow-none">
                                     <MenusSort/>
                                     <div class="ml-auto flex space-x-2">
                                           <button class="ml-auto" @click="preferCardView = true">
@@ -48,7 +48,7 @@
                               <!-- Posts -->
                               <LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
                               <!-- Empty State -->
-                              <div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+                              <div v-else class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
                                     <p>
                                           <span class="font-medium">
                                                 There are no posts

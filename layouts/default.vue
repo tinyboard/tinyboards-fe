@@ -19,6 +19,9 @@
 	const router = useRouter();
 
 	useHead({
+		bodyAttrs: {
+			class: 'dark'
+		},
 		title: `Tinyboards | ${route.meta.title ?? 'feed'}`,
 		meta: [
 		{
