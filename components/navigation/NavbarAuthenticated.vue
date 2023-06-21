@@ -319,20 +319,17 @@
 	// Define sub-navigation menu links
 	const links = [
 	{ name: 'Home', href: '/feed' },
+	{ name: 'Global', href: '/all' },
 	{ name: 'Members', href: '/members' },
-	{ name: 'FAQ', href: '/help/faq' }
 	]
 
 	// Yellow Text
 	const yellowText = [
 		'pre-alpha',
-		'seq-approved',
-		'kroner',
 		'It\'s PHP!',
 		'It\'s jQuery!',
 		'It\'s Rails!',
 		'It\'s SSR!',
-		'In Motion',
 		'est. 2023'
 	];
 
