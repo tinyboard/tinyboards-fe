@@ -8,7 +8,7 @@
         Art submission by community members
       </small>
     </div>
-    <div class="prose prose-sm prose-invert">
+    <div class="prose prose-sm dark:prose-invert">
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800">About</h2>
       <div>
         <p>
