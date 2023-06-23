@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" @close="modalStore.closeModal" class="relative z-50">
+    <Dialog as="div" @close="modalStore.closeModal" class="modal-dropzone relative z-50">
       <!-- Backdrop -->
       <TransitionChild as="template" enter="duration-100 ease-out" enter-from="opacity-0" enter-to="opacity-100" leave="duration-100 ease-in" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-black/80" />

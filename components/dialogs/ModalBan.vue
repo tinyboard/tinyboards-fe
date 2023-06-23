@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" @close="modalStore.closeModal" class="relative z-50">
+    <Dialog as="div" @close="modalStore.closeModal" class="modal relative z-50">
       <!-- Backdrop -->
       <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-black/80" />
@@ -11,11 +11,11 @@
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <!-- Header -->
-              <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
+              <DialogTitle as="h3" class="modal-title text-lg font-bold leading-6 text-gray-900">
                 {{ options.user.is_banned ? 'Unban' : 'Ban' }} {{ options.user.username ?? 'this user' }}?
               </DialogTitle>
               <!-- Body -->
-              <div class="mt-2">
+              <div class="modal-body mt-2">
                 <p class="text-sm text-gray-500">
                   {{ options.user.username ?? 'user' }}'s profile and content will be {{ options.user.is_banned ? 'visible' : 'invisible' }} to the community.
                   <br/>
@@ -25,7 +25,7 @@
               <!-- Date Input -->
               <!-- <input v-if="!options.user.is_banned" type="date" name="expiration" value=""> -->
               <!-- Footer -->
-              <div class="mt-4 flex space-x-2 justify-end">
+              <div class="modal-footer mt-4 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>

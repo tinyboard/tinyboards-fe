@@ -1,5 +1,5 @@
 <template>
-	<div v-if="canShow" class="fixed bottom-8 md:bottom-6 left-0 md:left-auto right-0 md:right-6 block w-96 bg-clip-padding z-50 mx-auto">
+	<div v-if="canShow" class="toast-list fixed bottom-8 md:bottom-6 left-0 md:left-auto right-0 md:right-6 block w-96 bg-clip-padding z-50 mx-auto">
 		<div class="space-y-3">
 			<transition-group name="toasts"
 			enter-active-class="origin-bottom-right transition-all duration-300 ease-[cubic-bezier(0.3,0,0,1.3)]"

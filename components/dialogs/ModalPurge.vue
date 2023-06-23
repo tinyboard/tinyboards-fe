@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" @close="modalStore.closeModal" class="relative z-50">
+    <Dialog as="div" @close="modalStore.closeModal" class="modal relative z-50">
       <!-- Backdrop -->
       <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-black/80" />
@@ -15,7 +15,7 @@
                 Purge this {{ type === 'user' && options.user.username ? options.user.username : type }}?
               </DialogTitle>
               <!-- Body -->
-              <div class="mt-2">
+              <div class="modal-body mt-2">
                 <p class="text-sm text-gray-500">
                   This {{ type ?? 'post' }} will be wiped from the database.
                   <br/>
@@ -25,7 +25,7 @@
               <!-- Date Input -->
               <!-- <input v-if="!options.user.is_banned" type="date" name="expiration" value=""> -->
               <!-- Footer -->
-              <div class="mt-4 flex space-x-2 justify-end">
+              <div class="modal-footer mt-4 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
