@@ -36,6 +36,10 @@
 		font-size:  14px;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+		@apply bg-gray-100;
+	}
+	/* https://github.com/shadcn/ui/issues/313 */
+	body.dark {
 		@apply bg-gray-950;
 	}
 	a {
