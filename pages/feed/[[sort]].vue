@@ -1,5 +1,5 @@
 <template>
-      <main class="flex flex-col pt-12 sm:pt-14">
+      <main id="page-feed" class="flex flex-col pt-12 sm:pt-14">
             <!-- Sub Navigation & Banner -->
             <section class="flex-col" :class="route.params.board ? 'flex' : 'hidden md:flex'">
                   <NavigationNavbarSub :links="links" class="sm:order-first"/>

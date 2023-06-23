@@ -1,5 +1,5 @@
 <template>
-	<main class="flex flex-col pt-12 sm:pt-14">
+	<main id="page-search" class="flex flex-col pt-12 sm:pt-14">
 		<!-- Sub Navigation & Banner -->
 		<section class="flex flex-col">
 			<NavigationNavbarSub :links="links" class="sm:order-first"/>

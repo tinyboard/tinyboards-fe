@@ -1,5 +1,5 @@
 <template>
-      <main class="flex flex-col pt-12 sm:pt-14">
+      <main id="page-post" class="flex flex-col pt-12 sm:pt-14">
             <!-- Sub Navigation -->
             <section class="hidden md:block">
                   <NavigationNavbarSub :links="links" disableActiveClass/>

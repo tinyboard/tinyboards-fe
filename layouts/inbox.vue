@@ -1,5 +1,5 @@
 <template>
-	<main class="flex flex-col md:h-screen pt-12 sm:pt-14">
+	<main id="layout-inbox" class="flex flex-col md:h-screen pt-12 sm:pt-14">
 		<!-- Sub Navigation & Banner -->
 		<section class="flex flex-col md:hidden">
 			<NavigationNavbarSub :links="links" class="sm:order-first"/>

@@ -1,5 +1,5 @@
 <template>
-	<div id="error" class="relative flex flex-1 flex-col overflow-hidden">
+	<div id="layout-error" class="relative flex flex-1 flex-col overflow-hidden">
 		<nav class="fixed w-full z-50">
 			<div class="mx-auto max-w-8xl px-4 sm:px-6">
 				<h1 class="sr-only">{{ site.name }}</h1>
