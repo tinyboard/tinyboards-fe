@@ -20,7 +20,7 @@
 
 	useHead({
 		bodyAttrs: {
-			class: 'dark'
+			class: useCookie("theme") ?? 'dark'
 		},
 		title: `Tinyboards | ${route.meta.title ?? 'feed'}`,
 		meta: [

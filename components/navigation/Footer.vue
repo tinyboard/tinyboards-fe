@@ -1,15 +1,20 @@
 <template>
 	<footer id="footer" class="w-full bg-transparent sm:border-t dark:bg-gray-950 dark:border-white/10">
 		<div class="mx-auto max-w-8xl py-5 px-2.5 sm:px-6">
-			<ul class="flex justify-center sm:justify-start gap-2 -mx-1">
-				<li v-for="link in links" :key="link.name" class="px-1 flex-shrink-0">
+			<ul class="menu flex justify-center sm:justify-start gap-2 -mx-1">
+				<li v-for="link in links" :key="link.name" class="menu-item px-1 flex-shrink-0">
 					<NuxtLink :to="link.href" class="text-xs text-gray-500 dark:text-gray-400 hover:text-primary">
 						<strong>{{ link.name }}</strong>
 					</NuxtLink>
 				</li>
+				<li class="menu-item px-1 flex-shrink-0">
+					<button @click="pickTheme" class="text-xs text-gray-500 dark:text-gray-400 hover:text-primary font-bold">
+						Pick Theme
+					</button>
+				</li>
 			</ul>
 			<p class="footer-attribution mt-2 text-xs text-gray-400 dark:text-gray-500 text-center sm:text-left">
-				Powered by Tinyboards. Crafted with <span class="text-primary/50">&#9829;</span> by the community.
+				Powered by tinyboards. Crafted with <span class="text-primary/50">&#9829;</span> by the community.
 			</p>
 			<ul v-if="isAdmin" class="footer-menu flex justify-center sm:justify-start gap-2 mt-4 -mx-1">
 				<li class="menu-item px-1 flex-shrink-0">
@@ -28,9 +33,21 @@
 </template>
 
 <script setup>
+	import { useModalStore } from "@/stores/StoreModal";
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 
 	const userStore = useLoggedInUser();
+
+	// Modal
+	const modalStore = useModalStore();
+
+	// Theme selection
+	const pickTheme = () => {
+	  modalStore.setModal({
+	    modal: "ModalThemes",
+	    isOpen: true
+	  });
+	};
 
 	// Admin
 	const isAdmin = computed(() => {
