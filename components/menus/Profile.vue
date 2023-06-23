@@ -1,5 +1,5 @@
 <template>
-  <Menu as="div" class="relative inline-block text-left">
+  <Menu as="div" id="dropdown-profile" class="dropdown relative inline-block text-left">
     <div>
       <MenuButton class="flex items-center p-1 text-gray-900 font-bold rounded-sm focus:outline-none">
         <!-- Username -->
@@ -25,7 +25,7 @@
     leave-from-class="transform scale-100 opacity-100"
     leave-to-class="transform scale-95 opacity-0"
     >
-      <MenuItems class="absolute right-0 w-64 mt-4 origin-top-right bg-white divide-y divide-gray-100 rounded shadow-lg border focus:outline-none">
+      <MenuItems class="dropdown-menu absolute right-0 w-64 mt-4 origin-top-right bg-white divide-y divide-gray-100 rounded shadow-lg border focus:outline-none">
         <!-- User Details -->
         <MenuItem v-slot="{ active, close }">
           <NuxtLink :to="`/user/${user.name}`" class="flex items-center p-4" @click="close">
