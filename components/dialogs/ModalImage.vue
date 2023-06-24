@@ -7,7 +7,7 @@
       </TransitionChild>
       <!-- Modal -->
       <div class="fixed inset-0 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4">
+        <div class="flex min-h-full items-center justify-center p-2.5 sm:p-4">
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-md transform overflow-hidden transition-all">
               <!-- Body -->

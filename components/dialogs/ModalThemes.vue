@@ -3,9 +3,9 @@
     <Dialog as="div" @close="modalStore.closeModal" class="modal relative z-50">
       <!-- Modal -->
       <div class="fixed inset-0 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="flex min-h-full items-center justify-center p-2.5 sm:p-4 text-center">
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
-            <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white dark:bg-gray-900 p-4 text-left align-middle shadow-xl transition-all">
+            <DialogPanel class="w-full max-w-xl transform overflow-hidden rounded-md bg-white dark:bg-gray-900 p-4 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900 dark:text-gray-100">
                 Pick a theme
               </DialogTitle>
