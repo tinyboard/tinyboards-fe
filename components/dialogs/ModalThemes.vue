@@ -13,11 +13,12 @@
                 <p class="text-sm text-gray-500">
                   If you have a theme idea, start a thread!
                 </p>
-                <ul class="mt-4 flex flex-col space-y-2">
-                  <li v-for="theme in themes" :key="theme.value">
-                    <input :id="`theme-${theme.value}`" type="radio" :value="theme.value" v-model="picked" name="theme" class="hidden peer">
-                    <label :for="`theme-${theme.value}`" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-primary peer-checked:border-primary peer-checked:text-primary hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
-                      {{ theme.text }}
+                <ul class="mt-4 grid grid-cols-2 gap-2">
+                  <li v-for="theme in themes" :key="theme.value" class="relative col-span-full sm:col-span-1">
+                    <input :id="`theme-${theme.value}`" type="radio" :value="theme.value" v-model="picked" name="theme" class="absolute top-4 right-4 peer checked:bg-primary">
+                    <label :for="`theme-${theme.value}`" class="flex flex-col w-full p-4 sm:p-6 text-gray-500 border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-primary peer-checked:border-primary peer-checked:text-primary hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800">
+                      <strong>{{ theme.text }}</strong>
+                      <small class="mt-2 text-gray-400">{{ theme.description }}</small>
                     </label>
                   </li>
                 </ul>
@@ -61,8 +62,8 @@
   const picked = ref(themeCookie);
 
   const themes = ref([
-    { text: 'Daylight', value: '' },
-    { text: 'Midnight', value: 'dark' }
+    { text: 'Daylight', value: '', description: '#FFFFFF' },
+    { text: 'Midnight', value: 'dark', description: '#000000' }
   ]);
 
   watch(picked, (x) => {
