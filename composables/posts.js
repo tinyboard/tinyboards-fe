@@ -6,7 +6,7 @@ export async function getListing(query, type_) {
   let items = ref([]);
   let totalCount = ref(0);
   let endpoints = {
-    posts: "/feed",
+    posts: "/post/list",
     comments: "/comment",
   };
   async function request(query) {
