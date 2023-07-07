@@ -6,7 +6,7 @@ export async function usePost(id) {
     pending,
     error,
     refresh,
-  } = await useApi(`/posts/${id}`, {
+  } = await useApi(`/post/${id}`, {
     key: `post_${id}`,
   });
 

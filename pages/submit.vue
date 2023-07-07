@@ -270,12 +270,12 @@
 	// Post
 	const post = () => {
 		return new Promise((resolve, reject) => {
-			useFetch('/posts', {
+			useFetch('/post', {
 				baseURL,
 				method: "post",
 				body: {
-					"creatorId": 0,
-					"boardId": 1,
+					// "creatorId": 0,
+					"board_id": 1,
 					"title": title.value,
 					"type_": "text",
 					"url": url.value,
