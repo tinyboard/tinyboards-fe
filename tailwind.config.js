@@ -53,7 +53,7 @@ module.exports = {
       pink: colors.pink,
     },
     fontFamily: {
-      'sans': ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+      'sans': ['Mona Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
       'serif': ['Georgia'],
       'mono': ['ui-monospace', 'SFMono-Regular', 'menlo'],
     },
