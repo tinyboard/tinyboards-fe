@@ -77,7 +77,7 @@
 		if (body.value) {
 			isLoading.value = true;
 			return new Promise((resolve, reject) => {
-				useFetch('/comments', {
+				useFetch('/comment', {
 					baseURL,
 					method: "post",
 					body: {
