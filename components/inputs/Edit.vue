@@ -82,7 +82,7 @@
 	const submitEdit = () => {
 		if (localBody.value) {
 			isLoading.value = true;
-			useFetch(`/${props.type}s/${props.id}`, {
+			useFetch(`/${props.type}/${props.id}`, {
 				baseURL,
 				method: "put",
 				body: {
@@ -96,7 +96,7 @@
 				if (data.value) {
 					data = JSON.parse(JSON.stringify(data.value));
 					// Emit response.
-					emit('hasEdited',data);
+					emit('hasEdited', data);
 					// Close the input.
 					emit('closed');
 					// Show success toast.
