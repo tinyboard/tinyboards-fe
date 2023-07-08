@@ -70,7 +70,7 @@
             class="flex items-center px-4 py-3 text-gray-900 dark:text-white"
           >
             <!-- Avatar - Desktop Only -->
-            <NuxtLink :to="`/user/${item.creator.name}`" class="flex-shrink-0">
+            <NuxtLink :to="`/@${item.creator.name}`" class="flex-shrink-0">
               <img
                 loading="lazy"
                 :src="item.creator.avatar || 'https://placekitten.com/200/300'"
@@ -100,7 +100,7 @@
                 />
                 <!-- Display Name -->
                 <NuxtLink
-                  :to="`/user/${item.creator.name}`"
+                  :to="`/@${item.creator.name}`"
                   class="ml-2 sm:ml-0"
                 >
                   <strong>{{ item.creator.name }}</strong>

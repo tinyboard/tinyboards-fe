@@ -24,7 +24,7 @@
         }
         else if (url.test(clipText) && route.name !== 'submit' && !!board) {
           console.log('pasted')
-          router.push(`/b/${board}/submit?url=${clipText}`)
+          router.push(`/+${board}/submit?url=${clipText}`)
         }
       }
     });

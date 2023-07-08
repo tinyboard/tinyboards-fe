@@ -30,7 +30,7 @@
             class="w-full col-span-full md:col-span-2 lg:col-span-1"
           >
             <NuxtLink
-              :to="`/user/${member.user.name}`"
+              :to="`/@${member.user.name}`"
               class="relative flex flex-col p-2.5 sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white"
             >
               <span

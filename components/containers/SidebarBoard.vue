@@ -1,7 +1,7 @@
 <template>
     <div id="sidebar-board" class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
         <!-- Create Post -->
-        <NuxtLink v-if="!submitPage" :to="`/b/${board.name}/submit`" class="flex items-center button primary">
+        <NuxtLink v-if="!submitPage" :to="`/+${board.name}/submit`" class="flex items-center button primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
@@ -13,7 +13,7 @@
         <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                 About
-                <span class="text-gray-700 text-opacity-70">/b/{{ board.name }}</span>
+                <span class="text-gray-700 text-opacity-70">/+{{ board.name }}</span>
             </h2>
             <div class="prose prose-sm text-gray-900">
                 <p v-if="board.sidebar_html">{{ board.sidebar_html }}</p>
@@ -121,7 +121,7 @@
                             <path d="M3 21h7"></path>
                             <path d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z"></path>
                         </svg>
-                        <span>Ban /b/{{ board.name }}</span>
+                        <span>Ban /+{{ board.name }}</span>
                     </button>
                 </li>
             </ul>

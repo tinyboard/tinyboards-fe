@@ -17,7 +17,7 @@
     >
       <NuxtLink
         v-show="isCompact"
-        :to="`/user/${item.creator.name}`"
+        :to="`/@${item.creator.name}`"
         class="hidden sm:flex flex-shrink-0"
       >
         <img
@@ -39,7 +39,7 @@
               class="flex items-center font-normal text-sm text-gray-400 leading-normal"
             >
               <NuxtLink
-                :to="`/user/${item.creator.name}`"
+                :to="`/@${item.creator.name}`"
                 class="flex items-center"
               >
                 <!-- Avatar (mobile only) -->
@@ -612,7 +612,7 @@
     <!-- Avatar - Desktop Only -->
     <NuxtLink
       v-show="!isCompact"
-      :to="`/user/${item.creator.name}`"
+      :to="`/@${item.creator.name}`"
       class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right"
     >
       <img

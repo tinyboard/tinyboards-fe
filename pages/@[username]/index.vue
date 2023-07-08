@@ -10,7 +10,7 @@
 	const route = useRoute();
 
 	definePageMeta({
-		'alias': ['/user/:username/overview','/user/:username/posts'],
+		'alias': ['/@:username/overview','/@:username/posts'],
 		key: (route) => route.fullPath,
 	});
 

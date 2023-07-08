@@ -23,7 +23,7 @@
 							<div class="flex flex-row space-x-2 items-center">
 								<img :src="dummyBoard.icon_url" class="hidden md:block w-11 h-11 object-cover p-0.5 border bg-white hover:bg-gray-200" alt="board icon"/>
 								<div class="w-full text-center md:text-left">
-									<p class="font-bold text-gray-700">You are posting to /b/{{ boardName }}</p>
+									<p class="font-bold text-gray-700">You are posting to +{{ boardName }}</p>
 									<p class="text-sm text-gray-500">Maybe board mods will be able to customze the text here later</p>
 								</div>
 							</div>
@@ -36,7 +36,7 @@
 								<!-- Board -->
 								<div v-if="isEditingBoard" class="col-span-full">
 									<label for="title" class="block text-sm font-bold">Board</label>
-									<input type="text" name="title" id="title" placeholder="Enter board to post to, without the b/" class="mt-1 form-input gray" v-model="boardName" required/>
+									<input type="text" name="title" id="title" placeholder="Enter board to post to, without the +" class="mt-1 form-input gray" v-model="boardName" required/>
 								</div>
 								<!-- Title -->
 								<div class="col-span-full">
@@ -137,7 +137,7 @@
 	});
 
 	definePageMeta({
-        'alias': ['','/b/:board?/submit'],
+        'alias': ['','/+:board?/submit'],
         'hasAuthRequired': true,
         'isDropzoneDisabled': true,
         key: (route) => route.fullPath

@@ -25,7 +25,7 @@
         <!-- User Avatar -->
         <NuxtLink
           v-if="item.creator"
-          :to="`/user/${item.creator.name}`"
+          :to="`/@${item.creator.name}`"
           class="z-10"
         >
           <img
@@ -53,7 +53,7 @@
             >
               <NuxtLink
                 v-if="item.creator"
-                :to="`/user/${item.creator.name}`"
+                :to="`/@${item.creator.name}`"
                 class="flex items-center text-sm"
               >
                 <strong>{{ item.creator.name }}</strong>

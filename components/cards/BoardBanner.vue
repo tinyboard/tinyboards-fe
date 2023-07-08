@@ -84,7 +84,7 @@
 						{{ board.title ?? board.name }}
 					</h1>
 					<p class="text-sm text-gray-200">
-						/b/{{ board.name }}
+						/+{{ board.name }}
 					</p>
 				</div>
 				<!-- Bio -->

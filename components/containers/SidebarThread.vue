@@ -8,7 +8,7 @@
       v-if="!item.post.is_deleted"
     >
       <NuxtLink
-        :to="`/user/${item.creator.name}`"
+        :to="`/@${item.creator.name}`"
         class="group flex items-center mb-4 text-sm"
       >
         <!-- Avatar -->

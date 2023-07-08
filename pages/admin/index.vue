@@ -65,7 +65,7 @@
                     #{{ i + 1 }}
                   </p>
                   <NuxtLink
-                    :to="`/user/${member.user.name}`"
+                    :to="`/@${member.user.name}`"
                     class="ml-3 w-3/4 flex flex-shrink-0 items-center"
                   >
                     <img
@@ -109,7 +109,7 @@
                     #{{ i + 1 }}
                   </p>
                   <NuxtLink
-                    :to="`/user/${member.user.name}`"
+                    :to="`/@${member.user.name}`"
                     class="ml-3 w-3/4 flex flex-shrink-0 items-center"
                   >
                     <img
@@ -156,7 +156,7 @@
                     #{{ i + 1 }}
                   </p>
                   <NuxtLink
-                    :to="`/user/${member.user.name}`"
+                    :to="`/@${member.user.name}`"
                     class="ml-3 w-2/4 flex flex-shrink-0 items-center"
                   >
                     <img

@@ -168,7 +168,7 @@
 				</div>
 			</form>
 			<div class="flex flex-col mb-2 px-4">
-				<NuxtLink :to="`/user/${v.name}`" class="flex items-center" @click="toggleDrawer">
+				<NuxtLink :to="`/@${v.name}`" class="flex items-center" @click="toggleDrawer">
 					<!-- User Avatar -->
 					<img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
 					<div class="pl-2 truncate">
@@ -198,7 +198,7 @@
 	        	<strong v-if="unread > 0" class="text-primary">&nbsp;{{ unread }}</strong>
          </NuxtLink>
          <!-- My Posts Link -->
-         <NuxtLink :to="`/user/${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
+         <NuxtLink :to="`/@${v.name}/posts`" class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900" @click="toggleDrawer">
            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
               <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>

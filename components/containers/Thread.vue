@@ -66,7 +66,7 @@
       >
         <div class="flex items-center w-full overflow-x-auto">
           <!-- Avatar -->
-          <NuxtLink v-if="item.creator" :to="`/user/${item.creator.name}`">
+          <NuxtLink v-if="item.creator" :to="`/@${item.creator.name}`">
             <img
               :src="item.creator.avatar || 'https://placekitten.com/36/36'"
               alt="avatar"
@@ -83,7 +83,7 @@
           <div class="flex flex-col leading-normal ml-2">
             <NuxtLink
               v-if="item.creator"
-              :to="`/user/${item.creator.name}`"
+              :to="`/@${item.creator.name}`"
               class="flex items-center text-sm"
             >
               <!-- Username -->

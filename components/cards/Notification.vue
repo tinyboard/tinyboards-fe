@@ -1,12 +1,12 @@
 <template>
 	<!-- Avatar -->
-	<NuxtLink class="flex-shrink-0" :to="`/user/${notification.creator.name}`">
+	<NuxtLink class="flex-shrink-0" :to="`/@${notification.creator.name}`">
 		<img loading="lazy" :src="notification.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
 	</NuxtLink>
 	<!-- Details -->
 	<div class="w-full ml-2">
 		<p class="text-sm text-gray-600">
-			<NuxtLink :to="`/user/${notification.creator.name}`" class="font-bold">
+			<NuxtLink :to="`/@${notification.creator.name}`" class="font-bold">
 				{{ notification.creator.name }}
 			</NuxtLink>
 			replied to you in
@@ -25,7 +25,7 @@
 				<img loading="lazy" :src="reply.creator.avatar" alt="avatar" class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
 				<div class="w-full ml-2">
 					<p class="text-sm text-gray-600">
-						<NuxtLink :to="`/user/${reply.creator.name}`" class="font-bold">
+						<NuxtLink :to="`/@${reply.creator.name}`" class="font-bold">
 							You
 						</NuxtLink>
 						replied

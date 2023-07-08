@@ -34,7 +34,7 @@
       import { useComments } from '@/composables/comments';
 
       definePageMeta({
-            alias: ['/b/:board/p/:id/:comment?','/p/:id/:comment?','/b/:board/post/:id/:comment?','/post/:id/:comment?'],
+            alias: ['/+:board/p/:id/:comment?','/p/:id/:comment?','/+:board/post/:id/:comment?','/post/:id/:comment?'],
             key: (route) => route.fullPath
       });
 

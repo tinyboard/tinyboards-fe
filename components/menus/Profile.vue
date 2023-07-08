@@ -28,7 +28,7 @@
       <MenuItems class="dropdown-menu absolute right-0 w-64 mt-4 origin-top-right bg-white divide-y divide-gray-100 rounded shadow-lg border focus:outline-none">
         <!-- User Details -->
         <MenuItem v-slot="{ active, close }">
-          <NuxtLink :to="`/user/${user.name}`" class="flex items-center p-4" @click="close">
+          <NuxtLink :to="`/@${user.name}`" class="flex items-center p-4" @click="close">
             <!-- User Avatar -->
             <img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="user.avatar" alt="user avatar"/>
             <div class="pl-2 truncate">
@@ -50,7 +50,7 @@
         <div class="py-2 text-sm">
           <!-- Profile Link -->
           <MenuItem v-slot="{ active, close }">
-            <NuxtLink :to="`/user/${user.name}`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
+            <NuxtLink :to="`/@${user.name}`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <circle cx="12" cy="7" r="4"></circle>
@@ -73,7 +73,7 @@
           </MenuItem>
           <!-- Posts Link -->
           <MenuItem v-slot="{ active, close }">
-            <NuxtLink :to="`/user/${user.name}/posts`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
+            <NuxtLink :to="`/@${user.name}/posts`" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700','group flex items-center w-full px-4 py-1.5']" @click="close">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                  <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>

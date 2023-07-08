@@ -81,7 +81,7 @@
       const route = useRoute();
       
       definePageMeta({
-            'alias': ['','/b/:board?/feed/:sort?','/b/:board?/:sort?'],
+            'alias': ['','/+:board?/feed/:sort?','/+:board?/:sort?'],
             key: (route) => route.fullPath
       });
       
