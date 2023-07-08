@@ -15,14 +15,16 @@
               </DialogTitle>
               <div class="modal-body mt-2">
                 <p class="text-sm text-gray-500">
-                  Select a reason for reporting below.
+                  Enter a reason for reporting below.
                 </p>
+                <label for="reason" class="block mt-4 mb-2 font-semibold uppercase text-sm"> Reason</label>
+                <textarea id="reason" v-model="reason" maxlength="256" placeholder="Enter report reason (max 256 characters)" required rows="2" class="block w-full min-h-[42px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"></textarea>
               </div>
               <div class="modal-footer mt-4 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   Cancel
                 </button>
-                <button class="button primary" @click="submitReport">
+                <button class="button primary" :disabled="reason.trim() === ''" @click="submitReport">
                   Report this {{ type ?? 'post' }}
                 </button>
               </div>
@@ -68,6 +70,8 @@
   // Deletion
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
+
+  const reason = ref("");
 
   const submitReport = async () => {
     const type = props.type;
