@@ -182,7 +182,6 @@
           <li
             v-if="
               isAuthed &&
-              !isAuthor &&
               !route.meta.hasRepliesDisabled &&
               !item.post.locked &&
               !item.post.is_deleted
