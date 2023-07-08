@@ -87,10 +87,11 @@
   const removeItem = async () => {
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useApi("/remove", {
+    await useApi(`/${type === 'post' ? 'post' : 'comment'}/remove`, {
       body: {
-          "target_fullname": `${type === 'post' ? 't3' : 't1'}_${id}`,
+          "target_id": id,
           "reason": "Violating community rules.",
+          "removed": true
       },
       method: "post",
     })
