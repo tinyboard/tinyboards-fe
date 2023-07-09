@@ -77,9 +77,13 @@
     const type = props.type;
     const id = props.id;
 
-    await useFetch(`/${type}s/${id}/report`, {
+    await useFetch(`/${type}/report`, {
       baseURL,
-      method: "delete",
+      method: "post",
+      body: {
+        post_id: id,
+        reason: reason.value
+      },
       headers: {
         Authorization: authCookie ? `Bearer ${authCookie}` : '',
       }

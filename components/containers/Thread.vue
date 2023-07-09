@@ -117,6 +117,13 @@
                 >
                 <span class="pl-2"> {{ percentUpvoted }}% upvoted </span>
               </span>
+              <!-- Report count -->
+              <span v-if="item.report_count">
+                <span class="font-black text-gray-400 dark:text-gray-500"
+                  >·</span
+                >
+                <span class="pl-2 text-yellow-600 dark:text-yellow-700"> {{ item.report_count }} report(s) </span>
+              </span>
               <!-- Tags -->
               <span v-if="item.post.is_nsfw" title="This post is marked 18+">
                 <span class="font-black text-gray-400 dark:text-gray-500"
