@@ -11,7 +11,7 @@
       :class="[
         isCompact
           ? 'flex items-center border-inherit'
-          : 'border-y sm:border-x sm:rounded-md',
+          : 'border-y sm:border-x sm:rounded',
         status ? `${status}` : 'bg-white',
       ]"
     >
@@ -24,7 +24,7 @@
           loading="lazy"
           :src="item.creator.avatar || 'https://placekitten.com/36/36'"
           alt="avatar"
-          class="w-9 h-9 object-cover p-0.5 border bg-white hover:bg-gray-200"
+          class="w-9 h-9 object-cover rounded"
         />
       </NuxtLink>
       <div class="w-full" :class="{ 'sm:ml-4 sm:w-3/6': isCompact }">
@@ -47,7 +47,7 @@
                   loading="lazy"
                   :src="item.creator.avatar || 'https://placekitten.com/24/24'"
                   alt="avatar"
-                  class="sm:hidden flex-shrink-0 w-6 h-6 object-cover"
+                  class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded"
                 />
                 <!-- Username -->
                 <strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
@@ -619,7 +619,7 @@
         loading="lazy"
         :src="item.creator.avatar || 'https://placekitten.com/64/64'"
         alt="avatar"
-        class="w-16 h-16 object-cover p-0.5 border bg-white hover:bg-gray-200"
+        class="w-16 h-16 object-cover rounded"
       />
     </NuxtLink>
   </div>

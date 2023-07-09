@@ -77,7 +77,7 @@
 						loading="lazy"
 						:src="user.avatar_url"
 						alt="avatar"
-						class="relative flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
+						class="relative flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded"
 						/>
 						<!-- Info & Actions -->
 						<div class="relative flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">

@@ -36,7 +36,7 @@
 									</svg>
 								</button>
 							</div>
-							<input id="header-search" required type="text" class="w-full form-input search px-10" v-model="text" placeholder="Search this place"/>
+							<input id="header-search" required type="text" class="w-full form-input search px-10" v-model="text" placeholder="Search"/>
 							<div v-show="text" class="absolute right-3 top-2">
 								<button class="text-white/20 hover:text-white" @click="text = null">
 									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -156,7 +156,7 @@
 						</svg>
 					</button>
 				</div>
-				<input id="header-search-sm" required type="text" class="form-input gray px-8" v-model="text" placeholder="Search this place"/>
+				<input id="header-search-sm" required type="text" class="form-input gray px-8" v-model="text" placeholder="Search posts, @users and +boards"/>
 				<div v-show="text" class="absolute" style="top: 9px; right: 0.625rem;">
 					<button class="text-gray-300" @click="text = null">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -170,7 +170,7 @@
 			<div class="flex flex-col mb-2 px-4">
 				<NuxtLink :to="`/@${v.name}`" class="flex items-center" @click="toggleDrawer">
 					<!-- User Avatar -->
-					<img class="w-9 h-9 object-cover rounded-sm rounded-none p-0.5 border bg-white hover:bg-gray-200" :src="v.avatar" alt="user avatar"/>
+					<img class="w-9 h-9 object-cover rounded" :src="v.avatar" alt="user avatar"/>
 					<div class="pl-2 truncate">
 						<!-- Username -->
 						<p class="text-sm text-gray-900 leading-normal">

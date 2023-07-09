@@ -46,7 +46,7 @@
           <img
             src=""
             alt="avatar"
-            class="mr-2 flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
+            class="mr-2 flex-shrink-0 w-9 h-9 object-cover rounded"
           />
           <div class="flex flex-col leading-4">
             <span class="text-sm text-gray-400 dark:text-gray-200 font-bold">

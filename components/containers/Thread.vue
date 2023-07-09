@@ -70,7 +70,7 @@
             <img
               :src="item.creator.avatar || 'https://placekitten.com/36/36'"
               alt="avatar"
-              class="flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"
+              class="flex-shrink-0 w-9 h-9 object-cover rounded"
             />
           </NuxtLink>
           <!-- Deleted User -->
@@ -78,7 +78,7 @@
             v-else
             src=""
             alt="avatar"
-            class="flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
+            class="flex-shrink-0 w-9 h-9 object-cover rounded"
           />
           <div class="flex flex-col leading-normal ml-2">
             <NuxtLink
@@ -646,7 +646,7 @@
             loading="lazy"
             :src="userStore.user.avatar"
             alt="avatar"
-            class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded-sm sm:rounded-none sm:p-0.5 sm:border bg-white"
+            class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded"
           />
           <!-- Input -->
           <LazyInputsComment
