@@ -21,7 +21,7 @@
 					<div class="bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
 						<div v-if="!isEditingBoard" class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
 							<div class="flex flex-row space-x-2 items-center">
-								<img :src="dummyBoard.icon_url" class="hidden md:block w-11 h-11 object-cover p-0.5 border bg-white hover:bg-gray-200" alt="board icon"/>
+								<img :src="dummyBoard.icon_url" class="hidden md:block w-11 h-11 object-cover rounded" alt="board icon"/>
 								<div class="w-full text-center md:text-left">
 									<p class="font-bold text-gray-700">You are posting to +{{ boardName }}</p>
 									<p class="text-sm text-gray-500">Maybe board mods will be able to customze the text here later</p>
