@@ -79,7 +79,7 @@
     </div>
     <!-- Post -->
     <div
-      class="sm:order-2 w-full sm:p-4 bg-white border-b sm:border sm:shadow-inner-xs sm:rounded-md"
+      class="sm:order-2 w-full sm:p-4 border-b sm:border sm:shadow-inner-xs sm:rounded-md" :class="isAdmin && item.post.is_removed ? 'bg-red-500 bg-opacity-20' : 'bg-white'"
     >
       <!-- Post Meta Information & Content -->
       <div
@@ -601,7 +601,20 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin && !isAuthor" class="ml-6 hidden lg:list-item">
+          <li v-if="isAdmin && item.post.is_removed" class="ml-6 hidden lg:list-item">
+            <button
+              class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
+              @click="confirmRemove"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-check w-4 h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                 <path d="M9 12l2 2l4 -4"></path>
+              </svg>
+              <span class="text-sm font-medium">Approve</span>
+            </button>
+          </li>
+          <li v-else-if="isAdmin" class="ml-6 hidden lg:list-item">
             <button
               class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600"
               @click="confirmRemove"
