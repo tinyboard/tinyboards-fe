@@ -17,3 +17,24 @@ export async function usePost(id) {
     refresh,
   };
 };
+
+export async function usePostReports(id) {
+  const {
+    data,
+    pending,
+    error,
+    refresh
+  } = await useApi('/post/reports', {
+    query: {
+      post_id: id,
+      unresolved_only: true
+    }
+  });
+
+  return {
+    data,
+    pending,
+    error,
+    refresh
+  };
+};

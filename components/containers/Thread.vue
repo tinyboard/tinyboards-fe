@@ -203,6 +203,10 @@
           v-html="item.post.body_html"
         ></div>
       </div>
+      <!-- Reports -->
+      <div v-if="item.report_count" class="mt-3">
+        <CardsReports :id="item.post.id" />
+      </div>
       <!-- Footer -->
       <div
         v-show="!isEditing"
@@ -768,7 +772,7 @@ const save = async () => {
     },
   }).then(({ data, error }) => {
     if (data.value) {
-      data = JSON.parse(JSON.stringify(data.value));
+      //data = JSON.parse(JSON.stringify(data.value));
     } else {
       // Revert failed save & show error toast.
       setTimeout(() => {
