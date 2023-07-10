@@ -28,6 +28,27 @@
         </p>
       </div>
     </div>
+    <!-- Deleted/Removed Banner -->
+    <div
+      v-if="item.post.is_deleted || item.post.is_removed"
+      class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-red-900 bg-red-100 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+         <path d="M4 7l16 0"></path>
+         <path d="M10 11l0 6"></path>
+         <path d="M14 11l0 6"></path>
+         <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+      </svg>
+      <div>
+        <strong>Post {{ item.post.is_removed ? 'removed' : 'deleted' }}</strong>
+        <br />
+        <p class="text-sm text-red-800">
+          This post was {{ item.post.is_removed ? 'removed by the admins' : 'deleted by its author' }}. It is no longer available.
+        </p>
+      </div>
+    </div>
     <!-- Locked Banner -->
     <div
       v-if="item.post.is_locked"
