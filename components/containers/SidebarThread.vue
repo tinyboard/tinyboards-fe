@@ -5,9 +5,9 @@
   >
     <!-- Author Details -->
     <div
-      v-if="!item.post.is_deleted"
+      v-if="!(item.post.is_deleted || item.post.is_removed)"
     >
-      <NuxtLink
+      <NuxtLink v-if="item.creator"
         :to="`/@${item.creator.name}`"
         class="group flex items-center mb-4 text-sm"
       >
