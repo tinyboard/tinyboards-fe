@@ -11,10 +11,13 @@
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
-                Remove this {{ type ?? 'post' }}?
+                {{ props.options.approve ? 'Approve' : 'Remove' }} this {{ type ?? 'post' }}?
               </DialogTitle>
               <div class="modal-body mt-2">
-                <p class="text-sm text-gray-500">
+                <p v-if="props.options.approve" class="text-sm text-gray-500">
+                  This {{ type ?? 'post' }} will be visible to the community, and reports will be dismissed.
+                </p>
+                <p v-else class="text-sm text-gray-500">
                   This {{ type ?? 'post' }} will be removed and invisible to the community.
                   <br/>
                   You can undo this action.
@@ -24,8 +27,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="removeItem">
-                  Yes, remove this {{ type ?? 'post' }}
+                <button :class="props.options.approve ? 'button green' : 'button red'" @click="toggleItemRemove">
+                  Yes, {{ props.options.approve ? 'approve' : 'remove' }} this {{ type ?? 'post' }}
                 </button>
               </div>
             </DialogPanel>
@@ -65,6 +68,9 @@
     type: {
       type: String,
       default: 'post'
+    },
+    options: {
+      type: Object
     }
   });
 
@@ -84,14 +90,14 @@
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
-  const removeItem = async () => {
+  const toggleItemRemove = async () => {
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
     await useApi(`/${type === 'post' ? 'post' : 'comment'}/toggle_remove`, {
       body: {
           "target_id": id,
           "reason": "Violating community rules.",
-          "removed": true
+          "removed": !props.options.approve
       },
       method: "post",
     })
@@ -100,11 +106,11 @@
         // Update state.
         if (type === 'post') {
           postsStore.updatePost(id, {
-            is_removed: true
+            is_removed: !props.options.approve
           });
         } else {
           commentsStore.updateComment(id, {
-            is_removed: true
+            is_removed: !props.options.approve
           });
         };
         // Parse response.
@@ -113,8 +119,8 @@
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header:`${type} removed.`,
-            message:`The ${type} was removed.`,
+            header:`${type} ${props.options.approve ? 'approved' : 'removed'}.`,
+            message:`The ${type} was ${props.options.approve ? 'approved' : 'removed'}.`,
             type:'success'
           });
         }, 400);
@@ -122,8 +128,8 @@
         // Show error toast.
         setTimeout(() => {
           toast.addNotification({
-            header:'Removal failed',
-            message:`Failed to removed ${type}. Please try again.`,
+            header:'Operation failed',
+            message:`Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
             type:'error'
           });
         }, 400);

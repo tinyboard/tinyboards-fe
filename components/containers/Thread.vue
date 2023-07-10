@@ -601,10 +601,10 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin && item.post.is_removed" class="ml-6 hidden lg:list-item">
+          <li v-if="isAdmin && (item.post.is_removed || item.report_count)" class="ml-6 hidden lg:list-item">
             <button
               class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
-              @click="confirmRemove"
+              @click="confirmApprove"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-check w-4 h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -614,7 +614,7 @@
               <span class="text-sm font-medium">Approve</span>
             </button>
           </li>
-          <li v-else-if="isAdmin" class="ml-6 hidden lg:list-item">
+          <li v-if="isAdmin && !item.post.is_removed" class="ml-6 hidden lg:list-item">
             <button
               class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600"
               @click="confirmRemove"
@@ -899,9 +899,24 @@ const confirmLock = () => {
 // Remove
 const confirmRemove = () => {
   modalStore.setModal({
-    modal: "ModalRemove",
+    modal: "ModalRemoveOrApprove",
     id: props.item.post.id,
     isOpen: true,
+    options: {
+      approve: false
+    }
+  });
+};
+
+// Approve
+const confirmApprove = () => {
+  modalStore.setModal({
+    modal: "ModalRemoveOrApprove",
+    id: props.item.post.id,
+    isOpen: true,
+    options: {
+      approve: true
+    }
   });
 };
 
