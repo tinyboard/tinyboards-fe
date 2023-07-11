@@ -26,6 +26,8 @@ export const useLoggedInUser = defineStore("auth", {
         .then(({ data, error }) => {
           if (data.value) {
             this.user = data.value.user.person;
+            this.counts = data.value.user.counts;
+            this.unread = data.value.user.unread_notifications;
             this.token = data.value.jwt;
             this.isAuthed = true;
 
