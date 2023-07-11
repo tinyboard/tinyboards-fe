@@ -28,7 +28,7 @@
 
 <script setup>
       import { computed, defineAsyncComponent, ref } from 'vue';
-      import { baseURL } from "@/server/constants";
+      // import { baseURL } from "@/server/constants";
       import { usePostsStore } from '@/stores/StorePosts';
       import { usePost } from '@/composables/post';
       import { useComments } from '@/composables/comments';

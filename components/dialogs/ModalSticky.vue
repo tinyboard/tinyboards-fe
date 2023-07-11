@@ -38,7 +38,8 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
+  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -75,16 +76,12 @@
 
   const removeItem = async () => {
     const id = item.value.post.id;
-    await useFetch(`/mod/sticky_post`, {
-      baseURL,
+    await useApi(`/mod/sticky_post`, {
       body: {
           "post_id": id,
           "stickied": !props.options.isStickied
       },
-      method: "post",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
+      method: "post"
     })
     .then(({ data }) => {
       if (data.value) {

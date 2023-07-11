@@ -739,10 +739,11 @@ const props = defineProps({
 });
 
 import { reactive, computed } from "vue";
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { usePost } from "@/composables/post";
 import { usePostComments } from "@/composables/comments";
+import { useApi } from "@/composables/api";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
@@ -762,15 +763,11 @@ const voteType = ref(props.item.my_vote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useFetch(`/posts/${props.item.post.id}/vote`, {
-    baseURL,
+  await useApi(`/posts/${props.item.post.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
-    },
-    headers: {
-      Authorization: authCookie ? `Bearer ${authCookie}` : "",
-    },
+    }
   }).then(({ data, error }) => {
     if (data.value) {
       data = JSON.parse(JSON.stringify(data.value));
@@ -795,15 +792,11 @@ const vote = async (type = 0) => {
 const isSaved = ref(props.item.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useFetch(`/posts/${props.item.post.id}/save`, {
-    baseURL,
+  await useApi(`/posts/${props.item.post.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,
-    },
-    headers: {
-      Authorization: authCookie ? `Bearer ${authCookie}` : "",
-    },
+    }
   }).then(({ data, error }) => {
     if (data.value) {
       //data = JSON.parse(JSON.stringify(data.value));

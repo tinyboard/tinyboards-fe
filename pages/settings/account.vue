@@ -65,7 +65,8 @@
 
 <script setup>
 	import { ref } from 'vue';
-	import { baseURL } from "@/server/constants";
+	// import { baseURL } from "@/server/constants";
+	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	definePageMeta({
@@ -77,13 +78,7 @@
 	const authCookie = useCookie("token").value;
 
 	// Fetch user settings.
-	const { data, pending, error, refresh } = await useFetch("/settings", {
-		baseURL,
-		method: "get",
-		headers: {
-			Authorization: authCookie ? `Bearer ${authCookie}` : '',
-		}
-	});
+	const { data, pending, error, refresh } = await useApi("/settings");
 
 	// Settings.
 	let settings = ref({});
@@ -105,14 +100,10 @@
 	// Submit settings.
 	const submitSettings = () => {
 		isLoading.value = true;
-		useFetch('/settings', {
-			baseURL,
+		useApi('/settings', {
 			method: "put",
 			body: {
 				"email": settings.value.email
-			},
-			headers: {
-				Authorization: authCookie ? `Bearer ${authCookie}` : '',
 			}
 		})
 		.then(({ data, error }) => {

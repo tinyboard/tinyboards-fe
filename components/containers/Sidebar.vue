@@ -72,9 +72,10 @@
 </template>
 
 <script setup>
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
+import { useApi } from "@/composables/api";
 
 // Define spotlight users
 const {
@@ -82,9 +83,8 @@ const {
   pending,
   error,
   refresh,
-} = await useFetch("/members", {
-  query: { sort: "new", limit: 8 },
-  baseURL,
+} = await useApi("/members", {
+  query: { sort: "new", limit: 8 }
 });
 
 // TO-DO

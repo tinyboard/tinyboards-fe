@@ -37,7 +37,8 @@
 </template>
 
 <script setup>
-	import { baseURL } from '@/server/constants';
+	// import { baseURL } from '@/server/constants';
+	import { useApi } from "@/composables/api";
 	import { formatDate } from "@/utils/formatDate";
 	import { useToastStore } from "@/stores/StoreToast";
 
@@ -61,14 +62,10 @@
 
 	const type = ref(route.params.type || 'replies');
 
-	const { data: notifications, pending, error, refresh } = await useFetch(`/notifications/${type.value}`, {
+	const { data: notifications, pending, error, refresh } = await useApi(`/notifications/${type.value}`, {
 		query: {
 			limit: limit.value,
 			page: page.value
-		},
-		baseURL,
-		headers: {
-			Authorization: authCookie ? `Bearer ${authCookie}` : '',
 		}
 	})
 
@@ -89,13 +86,9 @@
 
 	const markRead = () => {
 		isLoading.value = true;
-		useFetch(`/notifications/${type.value}/mark_read`, {
-			baseURL,
+		useApi(`/notifications/${type.value}/mark_read`, {
 			method: "post",
-			body: {},
-			headers: {
-				Authorization: authCookie ? `Bearer ${authCookie}` : '',
-			}
+			body: {}
 		})
 		.then(({ data, error }) => {
 			if (!error.value) {

@@ -101,7 +101,8 @@
 </template>
 
 <script setup>
-	import { baseURL } from '@/server/constants';
+	// import { baseURL } from '@/server/constants';
+	import { useApi } from "@/composables/api";
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { useCommentsStore } from '@/stores/StoreComments';
 
@@ -144,15 +145,14 @@
 	const postStore = usePostsStore();
 
 	// Fetch search results.
-	const { data: results, pending, error, refresh } = await useFetch("/search", {
+	const { data: results, pending, error, refresh } = await useApi("/search", {
 		query: {
 			type: type.value,
 			query: route.query.query,
 			sort: route.query.sort,
 			is_nsfw: false,
 			limit: limit.value
-		},
-		baseURL
+		}
 	});
 
 	postStore.posts = results.value.posts;

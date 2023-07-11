@@ -30,7 +30,8 @@
 </template>
 
 <script setup>
-	import { baseURL } from '@/server/constants';
+	// import { baseURL } from '@/server/constants';
+	import { useApi } from "@/composables/api";
 
 	const route = useRoute();
 
@@ -39,15 +40,11 @@
 	// Fetch messages
 	const localMessages = ref([]);
 
-	const { data: messages, pending, error, refresh } = useFetch('/messages', {
+	const { data: messages, pending, error, refresh } = useApi('/messages', {
 		query: {
 			limit: 50,
 			page: 1,
 			parent_id: route.query.new ? null : Number(route.params.id)
-		},
-		baseURL,
-		headers: {
-			Authorization: authCookie ? `Bearer ${authCookie}` : '',
 		}
 	})
 	.then(({ data, error }) => {
@@ -74,7 +71,7 @@
 		list.value.scrollTop = list.value.scrollHeight;
 		// If not empty, submit the messsage
 		if (text.value.replace(/\s/g,'').length) {
-			useFetch(`/messages`, {
+			useApi(`/messages`, {
 				body: {
 					"recipient_id": 0,
 					"subject": "Topic of Convo here",
@@ -82,10 +79,6 @@
 					"chat_id": 1
 				},
 				method: 'post',
-				baseURL,
-				headers: {
-					Authorization: authCookie ? `Bearer ${authCookie}` : '',
-				}
 			})
 			.then(({ data, error }) => {
 				if (data.value) {

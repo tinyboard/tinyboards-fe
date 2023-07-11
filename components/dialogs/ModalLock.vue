@@ -38,7 +38,7 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';

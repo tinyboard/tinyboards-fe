@@ -93,7 +93,7 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
 import { formatDate } from "@/utils/formatDate";
 
 const props = defineProps({

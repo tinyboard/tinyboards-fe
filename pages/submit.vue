@@ -144,10 +144,11 @@
     });
 
 	import { ref } from 'vue';
-	import { baseURL } from "@/server/constants";
+	// import { baseURL } from "@/server/constants";
 	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
+	import { useApi } from "@/composables/api";
 
 	const site = useSiteStore();
 
@@ -270,8 +271,7 @@
 	// Post
 	const post = () => {
 		return new Promise((resolve, reject) => {
-			useFetch('/post', {
-				baseURL,
+			useApi('/post', {
 				method: "post",
 				body: {
 					// "creatorId": 0,
@@ -282,9 +282,6 @@
 					"image": image.value,
 					"body": body.value,
 					"is_nsfw": isNsfw.value
-				},
-				headers: {
-					Authorization: authCookie ? `Bearer ${authCookie}` : '',
 				}
 			})
 			.then(({ data, error }) => {

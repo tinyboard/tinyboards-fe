@@ -267,7 +267,8 @@
 </template>
 
 <script setup>
-	import { baseURL } from "@/server/constants";
+	// import { baseURL } from "@/server/constants";
+	import { useApi } from "@/composables/api";
 	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { shuffle } from "@/utils/shuffleArray";
@@ -301,12 +302,7 @@
 	const authCookie = useCookie("token").value;
 
 	const fetchNotifcationCount = () => {
-		useFetch("/notifications/unread", {
-			baseURL,
-			headers: {
-				Authorization: `Bearer ${authCookie}`,
-			}
-		})
+		useApi("/notifications/unread")
 		.then(({ data }) => {
 			unread.value = data.value.total_count
 		})

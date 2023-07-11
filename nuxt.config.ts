@@ -29,6 +29,12 @@ export default defineNuxtConfig({
     '/': { redirect: '/feed' },
         // Force server-side rendering
     '/user/**': { ssr: true },
+  },
+  runtimeConfig: {
+    public: {
+      domain: '',
+      useHTTPS: false
+    }
   }
 });
 

@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-	import { baseURL } from '@/server/constants';
+	// import { baseURL } from '@/server/constants';
 	import { useFetchUser } from '@/composables/user';
 
 	const route = useRoute();

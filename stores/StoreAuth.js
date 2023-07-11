@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
+import { useApi } from "@/composables/api";
 
 export const useLoggedInUser = defineStore("auth", {
   state: () => {
@@ -8,14 +9,13 @@ export const useLoggedInUser = defineStore("auth", {
       counts: null,
       unread: null,
       token: null,
-      isAuthed: false
+      isAuthed: false,
     };
   },
   actions: {
     login({ nameOrEmail, password }) {
       return new Promise((resolve, reject) => {
-        useFetch("/auth/login", {
-          baseURL,
+        useApi("/auth/login", {
           key: `login_${nameOrEmail}_${Date.now()}`,
           method: "post",
           body: {
@@ -23,30 +23,29 @@ export const useLoggedInUser = defineStore("auth", {
             password,
           },
         })
-        .then(({ data, error }) => {
-          if (data.value) {
-            this.user = data.value.user.person;
-            this.counts = data.value.user.counts;
-            this.unread = data.value.user.unread_notifications;
-            this.token = data.value.jwt;
-            this.isAuthed = true;
+          .then(({ data, error }) => {
+            if (data.value) {
+              this.user = data.value.user.person;
+              this.counts = data.value.user.counts;
+              this.unread = data.value.user.unread_notifications;
+              this.token = data.value.jwt;
+              this.isAuthed = true;
 
-            resolve(data.value);
-          } else {
+              resolve(data.value);
+            } else {
+              this.isAuthed = false;
+              reject(error.value);
+            }
+          })
+          .catch((error) => {
             this.isAuthed = false;
-            reject(error.value);
-          }
-        })
-        .catch((error) => {
-          this.isAuthed = false;
-          reject(error);
-        });
+            reject(error);
+          });
       });
     },
     signup({ username, email, password, invite_token, answer }) {
       return new Promise((resolve, reject) => {
-        useFetch("/auth/signup", {
-          baseURL,
+        useApi("/auth/signup", {
           key: `signup_${username}_${Date.now()}`,
           method: "post",
           body: {
@@ -54,56 +53,50 @@ export const useLoggedInUser = defineStore("auth", {
             email,
             password,
             invite_token,
-            answer
+            answer,
           },
         })
-        .then(({ data }) => {
-          if (data.value.jwt) {
-            const token = data.value.jwt;
-            this.fetchUserPromise(token)
-            .then(({ data }) => {
-              this.user = data.value.user;
-              this.counts = data.value.counts;
-              this.unread = data.value.unread_notifications;
-              this.token = token;
-              this.isAuthed = true;
-              resolve(token);
-            })
-            .catch(({ error }) => {
-              reject(error.value);
-            });
-          } else {
-            reject("Account creation request submitted, wait for admin approval");
-          }
-        })
-        .catch((error) => reject(error.value));
+          .then(({ data }) => {
+            if (data.value.jwt) {
+              const token = data.value.jwt;
+              this.fetchUserPromise(token)
+                .then(({ data }) => {
+                  this.user = data.value.user;
+                  this.counts = data.value.counts;
+                  this.unread = data.value.unread_notifications;
+                  this.token = token;
+                  this.isAuthed = true;
+                  resolve(token);
+                })
+                .catch(({ error }) => {
+                  reject(error.value);
+                });
+            } else {
+              reject(
+                "Account creation request submitted, wait for admin approval"
+              );
+            }
+          })
+          .catch((error) => reject(error.value));
       });
     },
     fetchUserPromise(authToken) {
-      return useFetch("/me", {
-        baseURL,
+      return useApi("/me", {
         key: `get_user_${authToken}`,
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
       });
     },
     fetchUser(authToken) {
-      useFetch("/me", {
-        baseURL,
+      useApi("/me", {
         key: `get_user_${authToken}`,
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        }
       })
-      .then(({ data }) => {
-        this.user = data.value.user;
-        this.counts = data.value.counts;
-        this.unread = data.value.unread_notifications;
-        this.token = authToken;
-        this.isAuthed = true;
-      })
-      .catch(({ error }) => console.error(error));
+        .then(({ data }) => {
+          this.user = data.value.user;
+          this.counts = data.value.counts;
+          this.unread = data.value.unread_notifications;
+          this.token = authToken;
+          this.isAuthed = true;
+        })
+        .catch(({ error }) => console.error(error));
     },
     logout() {
       this.user = null;

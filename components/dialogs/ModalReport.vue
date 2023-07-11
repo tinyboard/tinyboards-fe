@@ -38,7 +38,8 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
+  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import {
@@ -77,15 +78,11 @@
     const type = props.type;
     const id = props.id;
 
-    await useFetch(`/${type}/report`, {
-      baseURL,
+    await useApi(`/${type}/report`, {
       method: "post",
       body: {
         post_id: id,
         reason: reason.value
-      },
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
       }
     })
     .then(({ data }) => {

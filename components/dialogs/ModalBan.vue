@@ -43,7 +43,8 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
+  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -79,18 +80,14 @@
 
   const ban = async () => {
     const isRemoved = props.options.user.is_banned;
-    await useFetch('/mod/ban', {
-      baseURL,
+    await useApi('/mod/ban', {
       body: {
         "target_user_id": props.id,
         "banned": !isRemoved,
         "reason": props.options.reason ?? "Low Quality Shitposting",
         "expires": props.options.expires
       },
-      method: "post",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
+      method: "post"
     })
     .then(({ data }) => {
       if (data.value) {

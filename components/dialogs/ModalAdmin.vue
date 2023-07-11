@@ -43,7 +43,8 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
+  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -79,16 +80,12 @@
 
   const submitAdmin = async () => {
     const isAdmin = props.options.user.is_admin;
-    await useFetch('/admin/add_admin', {
-      baseURL,
+    await useApi('/admin/add_admin', {
       body: {
         "added_user_id": props.id,
         "added": !isAdmin,
       },
-      method: "post",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
+      method: "post"
     })
     .then(({ data }) => {
       if (data.value) {

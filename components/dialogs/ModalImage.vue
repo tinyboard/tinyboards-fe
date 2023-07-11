@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
   import { useModalStore } from '@/stores/StoreModal';
   import {
     TransitionRoot,

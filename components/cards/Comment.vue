@@ -280,12 +280,13 @@
 </template>
 
 <script setup>
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { formatDate } from "@/utils/formatDate";
+import { useApi } from "@/composables/api";
 
 const route = useRoute();
 
@@ -341,14 +342,10 @@ const voteType = ref(item.value.my_vote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useFetch(`/comments/${comment.value.id}/vote`, {
-    baseURL,
+  await useApi(`/comments/${comment.value.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
-    },
-    headers: {
-      Authorization: authCookie ? `Bearer ${authCookie}` : "",
     },
   }).then(({ data, error }) => {
     if (data.value) {
@@ -400,15 +397,11 @@ const onHasEdited = (payload) => {
 const isSaved = ref(comment.value.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useFetch(`/comments/${comment.value.id}/save`, {
-    baseURL,
+  await useApi(`/comments/${comment.value.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,
-    },
-    headers: {
-      Authorization: authCookie ? `Bearer ${authCookie}` : "",
-    },
+    }
   }).then(({ data, error }) => {
     if (data.value) {
       data = JSON.parse(JSON.stringify(data.value));

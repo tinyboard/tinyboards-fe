@@ -43,7 +43,8 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
+  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -85,16 +86,12 @@
 
   const purge = async () => {
     const type = props.type;
-    await useFetch(`/admin/purge_${props.type}`, {
-      baseURL,
+    await useApi(`/admin/purge_${props.type}`, {
       body: {
         [`${type}_id`]: props.id,
         "reason": props.options.reason ?? "Violates community standards",
       },
       method: "post",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
     })
     .then(({ data }) => {
       if (data.value) {

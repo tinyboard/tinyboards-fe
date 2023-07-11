@@ -28,7 +28,8 @@
 
 <script setup>
 	import { marked } from 'marked';
-	import { baseURL } from "@/server/constants";
+	// import { baseURL } from "@/server/constants";
+	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	const props = defineProps({
@@ -82,15 +83,11 @@
 	const submitEdit = () => {
 		if (localBody.value) {
 			isLoading.value = true;
-			useFetch(`/${props.type}/${props.id}`, {
-				baseURL,
+			useApi(`/${props.type}/${props.id}`, {
 				method: "put",
 				body: {
 					"body": localBody.value
 				},
-				headers: {
-					Authorization: authCookie ? `Bearer ${authCookie}` : '',
-				}
 			})
 			.then(({ data, error }) => {
 				if (data.value) {

@@ -170,11 +170,12 @@ const props = defineProps({
 });
 
 import { reactive, computed } from "vue";
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { usePost } from "@/composables/post";
 import { usePostComments } from "@/composables/comments";
 import { useSave } from "@/composables/save";
+import { useApi } from "@/composables/api";
 import { useSubscribe } from "@/composables/subscribe";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
@@ -201,15 +202,11 @@ const { isSubscribed, subscribe } = useSubscribe();
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useFetch(`/posts/${props.item.post.id}/vote`, {
-    baseURL,
+  await useApi(`/posts/${props.item.post.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
-    },
-    headers: {
-      Authorization: authCookie ? `Bearer ${authCookie}` : "",
-    },
+    }
   }).then(({ data }) => {
     if (data.value) {
       data = JSON.parse(JSON.stringify(data.value));

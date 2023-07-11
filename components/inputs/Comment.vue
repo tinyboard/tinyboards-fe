@@ -30,7 +30,8 @@
 
 <script setup>
 	import { marked } from 'marked';
-	import { baseURL } from "@/server/constants";
+	// import { baseURL } from "@/server/constants";
+	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	const props = defineProps({
@@ -77,16 +78,12 @@
 		if (body.value) {
 			isLoading.value = true;
 			return new Promise((resolve, reject) => {
-				useFetch('/comment', {
-					baseURL,
+				useApi('/comment', {
 					method: "post",
 					body: {
 						"body": body.value,
 						"parent_id": props.parentId,
 						"post_id": props.postId
-					},
-					headers: {
-						Authorization: authCookie ? `Bearer ${authCookie}` : '',
 					}
 				})
 				.then(({ data, error }) => {

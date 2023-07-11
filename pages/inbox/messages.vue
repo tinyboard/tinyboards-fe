@@ -74,7 +74,8 @@
 </template>
 
 <script setup>
-	import { baseURL } from '@/server/constants';
+	// import { baseURL } from '@/server/constants';
+	import { useApi } from "@/composables/api";
 	import { useLoggedInUser } from "@/stores/StoreAuth";
 
 	definePageMeta({
@@ -87,14 +88,10 @@
 
 	const userStore = useLoggedInUser();
 
-	const { data: conversations, pending, error, refresh } = await useFetch('/messages', {
+	const { data: conversations, pending, error, refresh } = await useApi('/messages', {
 		query: {
 			limit: 25,
 			page: 1,
-		},
-		baseURL,
-		headers: {
-			Authorization: authCookie ? `Bearer ${authCookie}` : '',
 		}
 	})
 </script>

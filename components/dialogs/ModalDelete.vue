@@ -38,7 +38,8 @@
 
 <script setup>
   import { computed, ref } from 'vue'
-  import { baseURL } from "@/server/constants";
+  // import { baseURL } from "@/server/constants";
+  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -86,15 +87,11 @@
   const deleteItem = async () => {
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useFetch(`/${type}s/${id}`, {
-      baseURL,
+    await useApi(`/${type}/${id}`, {
       body: {
         "deleted": true
       },
       method: "delete",
-      headers: {
-        Authorization: authCookie ? `Bearer ${authCookie}` : '',
-      }
     })
     .then(({ data }) => {
       if (data.value) {

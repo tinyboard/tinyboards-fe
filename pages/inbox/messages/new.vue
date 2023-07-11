@@ -36,7 +36,8 @@
 </template>
 
 <script setup>
-	import { baseURL } from '@/server/constants';
+	// import { baseURL } from '@/server/constants';
+	import { useApi } from "@/composables/api";
 
 	definePageMeta({
 		'hasAuthRequired': true
@@ -49,13 +50,9 @@
 	const authCookie = useCookie("token").value;
 
 	const fetchMembers = () => {
-		useFetch(`/names`, {
+		useApi(`/names`, {
 			query: {
 				q: username.value
-			},
-			baseURL,
-			headers: {
-				Authorization: authCookie ? `Bearer ${authCookie}` : '',
 			}
 		})
 		.then(({ data, error }) => {

@@ -124,7 +124,8 @@ useHead({
 });
 
 import { useRoute } from "vue-router";
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
+import { useApi } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 const router = useRouter();
@@ -146,13 +147,12 @@ const {
   pending,
   error,
   refresh,
-} = await useFetch("/members", {
+} = await useApi("/members", {
   query: {
     sort: sort.value,
     limit: limit.value,
     page: page.value,
   },
-  baseURL
 });
 
 if (error.value && error.value.response) {
