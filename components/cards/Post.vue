@@ -10,9 +10,10 @@
       class="relative flex-grow p-2.5 sm:p-4 shadow-inner-white hover:bg-gray-50 card"
       :class="[
         isCompact
-          ? 'flex items-center border-inherit'
+          ? 'flex border-inherit'
           : 'border-y sm:border-x sm:rounded',
         status ? `${status}` : 'bg-white',
+        isCompact && isExpanded ? 'items-start': 'items-center'
       ]"
     >
       <NuxtLink
@@ -27,7 +28,7 @@
           class="w-9 h-9 object-cover rounded"
         />
       </NuxtLink>
-      <div class="w-full" :class="{ 'sm:ml-4 sm:w-3/6': isCompact }">
+      <div class="w-full" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
         <!-- Author & Post Meta -->
         <div
           v-if="item.creator"
@@ -170,13 +171,13 @@
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink
             class="z-10 relative font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
-            :class="{ 'sm:text-lg': !isCompact }"
+            :class="{ 'sm:text-lg': !isCompact || (isCompact && isExpanded) }"
             :to="`/post/${item.post.id}`"
           >
             {{ item.post.title }}
           </NuxtLink>
           <div
-            v-if="!isCompact && item.post.body_html"
+            v-if="(!isCompact || isExpanded) && item.post.body_html"
             class="mt-2 relative overflow-hidden"
             :class="{
               'max-h-56 overlay': !isExpanded && (item.post.body.length > 800 || item.post.body.includes('![](http'))
@@ -206,7 +207,7 @@
         <!-- Actions -->
         <ul
           class="z-10 relative mt-4 flex flex-grow items-center"
-          :class="{ 'sm:hidden': isCompact }"
+          :class="{ 'sm:hidden': isCompact &&!isExpanded }"
         >
           <li class="sm:hidden">
             <NuxtLink
@@ -596,11 +597,26 @@
               <span class="text-sm font-medium">Remove</span>
             </button>
           </li>
+          <li v-if="isCompact && isExpanded" class="ml-6 hidden md:list-item">
+            <button
+              @click="isExpanded = !isExpanded"
+              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                 <path d="M18 10h-4v-4"></path>
+                 <path d="M20 4l-6 6"></path>
+                 <path d="M6 14h4v4"></path>
+                 <path d="M10 14l-6 6"></path>
+              </svg>            
+              <span class="text-sm font-medium">Collapse</span>
+            </button>
+          </li>
         </ul>
       </div>
       <!-- Post Details (compact mode only) -->
       <div
-        v-show="isCompact"
+        v-show="isCompact && !isExpanded"
         class="ml-auto w-1/6 hidden sm:flex items-center justify-between"
       >
         <div class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
@@ -619,6 +635,16 @@
         v-show="isCompact"
         class="ml-auto w-1/6 hidden sm:flex items-center justify-end"
       ></div>
+      <!-- Expand/Collapse button (compact mode only) -->
+      <button v-show="isCompact && !isExpanded" @click="isExpanded = !isExpanded" class="mx-3 text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <path d="M16 4l4 0l0 4"></path>
+           <path d="M14 10l6 -6"></path>
+           <path d="M8 20l-4 0l0 -4"></path>
+           <path d="M4 20l6 -6"></path>
+        </svg>
+      </button>
       <!-- Stretched link (card mode only) -->
       <NuxtLink :to="`/post/${item.post.id}`" class="absolute inset-0" :class="{'sm:hidden':isCompact}"></NuxtLink>
     </div>
