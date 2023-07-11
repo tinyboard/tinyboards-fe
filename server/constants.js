@@ -1,1 +1,1 @@
-export const baseURL = "http://tinyboards.test/api/v1";
+export const baseURL = "/api/v1";
