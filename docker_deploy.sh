@@ -3,6 +3,9 @@ IMAGE_NAME="kronusdev/tinyboards-fe"
 IMAGE_TAG=$(git rev-parse --short HEAD) # first 7 characters of current commit
 
 echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}, and tagging as latest"
+
+echo "export const baseURL = \"http://${DOMAIN}/api/v1\";" > ./server/constants.js
+
 docker build -f ./Dockerfile -t "${IMAGE_NAME}:${IMAGE_TAG}" .
 docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"
 
