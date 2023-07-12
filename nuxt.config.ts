@@ -32,7 +32,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      domain: 'vidya.cafe',
+      domain: '',
       useHTTPS: true
     }
   }
