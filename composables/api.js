@@ -4,6 +4,8 @@ export function useApi(path, options) {
   const authCookie = useCookie("token").value;
   const config = useRuntimeConfig();
 
+  console.log(config);
+
   return useFetch(path, {
     baseURL: `${config.useHTTPS ? "https" : "http"}://${config.domain}/api/v1`,
     headers: {
