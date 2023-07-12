@@ -32,7 +32,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      domain: '',
+      domain: process.env.DOMAIN,
       useHTTPS: process.env.NODE_ENV == "production"
     }
   }
