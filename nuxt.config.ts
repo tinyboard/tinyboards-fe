@@ -31,7 +31,8 @@ export default defineNuxtConfig({
     '/user/**': { ssr: true },
   },
   publicRuntimeConfig: {
-    baseURL: process.env.BASE_URL
+    domain: process.env.TB_DOMAIN,
+    useHTTPS: process.env.USE_HTTPS
   }
   // runtimeConfig: {
   //   public: {
