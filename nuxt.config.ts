@@ -30,11 +30,14 @@ export default defineNuxtConfig({
         // Force server-side rendering
     '/user/**': { ssr: true },
   },
-  runtimeConfig: {
-    public: {
-      domain: process.env.DOMAIN,
-      useHTTPS: process.env.NODE_ENV == "production"
-    }
+  publicRuntimeConfig: {
+    baseURL: process.env.BASE_URL
   }
+  // runtimeConfig: {
+  //   public: {
+  //     domain: process.env.DOMAIN,
+  //     useHTTPS: process.env.NODE_ENV == "production"
+  //   }
+  // }
 });
 
