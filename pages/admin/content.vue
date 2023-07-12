@@ -3,38 +3,64 @@
 		<div class="flex flex-col">
 			<!-- Page Heading & Description -->
 			<div class="p-4">
-				<h3 class="text-lg font-medium leading-6 text-gray-900">Site</h3>
-				<p class="mt-1 text-sm text-gray-600">Set your site's name and configure how it appears in search results and embeds.</p>
+				<h3 class="text-lg font-medium leading-6 text-gray-900">Content Settings</h3>
+				<p class="mt-1 text-sm text-gray-600">Configure what can be posted and how.</p>
 			</div>
 			<!-- Form -->
 			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
-					<!-- Site Name -->
+					<!-- Federation -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<label class="text-base font-bold leading-6 text-gray-900">Site name</label>
+							<p class="text-base font-bold leading-6 text-gray-900">Federation</p>
 						</div>
-						<!-- Input -->
+						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" name="site-name" id="site-name" v-model="settings.name" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" placeholder="tinyboard" maxlength="36"/>
+							<div class="flex items-center text-sm">
+								<InputsSwitch id="nsfw" :isEnabled="settings.enable_federation" @enabled="settings.enable_federation = !settings.enable_federation"/>
+								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable federation</label>
+							</div>
 							<p class="mt-2 text-sm text-gray-500">
-								The name of your tinyboard. Visible wherever <span class="pre">site.name</span> is present.
+								Opt the site into the Fediverse.
 							</p>
 						</div>
 					</div>
-					<!-- Site Description -->
+					<!-- Boards -->
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<label class="text-base font-bold leading-6 text-gray-900">Description</label>
+							<p class="text-base font-bold leading-6 text-gray-900">Boards</p>
 						</div>
-						<!-- Input -->
+						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" placeholder="A cozy little corner of the Internet where we discuss the intersection of technology and society." v-model="settings.description"/>
-							<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
+							<div class="flex items-center text-sm">
+								<InputsSwitch id="nsfw" :isEnabled="settings.enable_boards" @enabled="settings.enable_boards = !settings.enable_boards"/>
+								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable boards</label>
+							</div>
+							<p class="mt-2 text-sm text-gray-500">
+								Boards are user-created communities on your site where content is posted and moderated by your users. The default board will always belong to the admins.
+							</p>
 						</div>
 					</div>
+					<!-- NSFW -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<p class="text-base font-bold leading-6 text-gray-900">NSFW</p>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<div class="flex items-center text-sm">
+								<InputsSwitch id="nsfw" :isEnabled="settings.enable_nsfw" @enabled="settings.enable_nsfw = !settings.enable_nsfw"/>
+								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Allow NSFW content</label>
+							</div>
+							<p class="mt-2 text-sm text-gray-500">
+								Allow adult content marked "not safe for work" to be posted.
+							</p>
+						</div>
+					</div>
+					
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">

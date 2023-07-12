@@ -68,35 +68,34 @@
 
 <script setup>
 	import { computed, ref } from 'vue';
-	import { baseURL } from "@/server/constants";
+	// import { baseURL } from "@/server/constants";
+	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	const route = useRoute();
+
+	definePageMeta({
+		isFooterDisabled: true,
+		isScrollDisabled: true
+	});
 
 	const authCookie = useCookie("token").value;
 	const toast = useToastStore();
 
 	// Fetch site settings
-	const { data: site, pending, error, refresh } = await useFetch("/admin/site_settings", {
-		baseURL,
-		method: "get"
-	});
+	const { data: site, pending, error, refresh } = await useApi("/admin/site_settings");
 
 	// Pagination
 	const page = computed(() => Number.parseInt(route.query.page) || 1);
 	const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 	// Fetch invites
-	const { data: invites, pendingInvites, errorInvites, refresh: refreshInvites } = await useFetch("/admin/invite", {
+	const { data: invites, pendingInvites, errorInvites, refresh: refreshInvites } = await useApi("/admin/invite", {
 		query: {
 			limit: limit.value,
 			page: page.value
 		},
-		baseURL,
 		method: "get",
-		headers: {
-			Authorization: authCookie ? `Bearer ${authCookie}` : '',
-		}
 	});
 
 	const totalPages = computed(() => {
@@ -108,13 +107,9 @@
 
 	const createInvite = () => {
 		isLoading.value = true;
-		useFetch('/admin/invite', {
-			baseURL,
+		useApi('/admin/invite', {
 			method: "post",
 			body: {},
-			headers: {
-				Authorization: authCookie ? `Bearer ${authCookie}` : '',
-			}
 		})
 		.then(({ data, error }) => {
 			if (data.value) {
@@ -136,13 +131,9 @@
 
 	const deleteInvite = (invite) => {
 		isLoading.value = true;
-		useFetch(`/admin/invite/${invite}`, {
-			baseURL,
+		useApi(`/admin/invite/${invite}`, {
 			method: "delete",
-			body: {},
-			headers: {
-				Authorization: authCookie ? `Bearer ${authCookie}` : '',
-			}
+			body: {}
 		})
 		.then(({ data, error }) => {
 			if (!error.value) {

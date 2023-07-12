@@ -1,15 +1,15 @@
 <template>
   <NuxtLayout name="admin">
-    <div class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
+    <div class="flex flex-col overflow-hidden">
       <!-- Page Heading & Description -->
-      <div class="p-4 border-b">
+      <div class="p-4">
         <h3 class="text-lg font-medium leading-6 text-gray-900">Overview</h3>
         <p class="mt-1 text-sm text-gray-600">
           The most important stats live here.
         </p>
       </div>
       <!-- Stats Grid -->
-      <div class="flex flex-col bg-white p-4">
+      <div class="flex flex-col bg-white p-4 shadow-inner-xs sm:border sm:rounded-md">
         <!-- Primary Stats -->
         <div class="relative grid grid-cols-4 gap-4">
           <div class="col-span-2 lg:col-span-1 text-center">
@@ -193,13 +193,16 @@
 
 <script setup>
 import { ref } from "vue";
-import { baseURL } from "@/server/constants";
+// import { baseURL } from "@/server/constants";
+import { useApi } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 definePageMeta({
   middleware: ["admin"],
   hasAuthRequired: true,
   isAdminRequired: true,
+  isFooterDisabled: true,
+  isScrollDisabled: true,
   alias: "/admin/overview",
   title: "Overview",
 });
@@ -211,10 +214,9 @@ const {
   pending,
   error,
   refresh,
-} = await useFetch("/members", {
+} = await useApi("/members", {
   query: { sort: "mostrep" },
   limit: 5,
-  baseURL,
 });
 
 const {
@@ -222,10 +224,9 @@ const {
   membersNewPending,
   membersNewError,
   membersNewRefresh,
-} = await useFetch("/members", {
+} = await useApi("/members", {
   query: { sort: "new" },
   limit: 5,
-  baseURL,
 });
 
 const {
@@ -233,9 +234,8 @@ const {
   membersPostsPending,
   membersPostsError,
   membersPostsRefresh,
-} = await useFetch("/members", {
+} = await useApi("/members", {
   query: { sort: "mostposts" },
   limit: 5,
-  baseURL,
 });
 </script>

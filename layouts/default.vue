@@ -1,10 +1,10 @@
 <template>
-	<div class="h-full">
+	<div class="h-full" :class="{ 'overflow-hidden': route.meta.isScrollDisabled }">
 		<NuxtLoadingIndicator color="rgba(255,255,255,0.45)" :height="3"/>
 		<!-- Navigation Bar -->
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
 		<slot/>
-		<NavigationFooter :class="{'sm:hidden':route.meta.isFooterDisabled}"/>
+		<NavigationFooter v-if="!route.meta.isFooterDisabled" />
 		<LazyDialogsToastList v-if="toastStore.hasInit"/>
 		<LazyDialogsModalList v-if="modalStore.hasInit"/>
 	</div>
