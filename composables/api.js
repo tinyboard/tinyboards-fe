@@ -5,7 +5,7 @@ export function useApi(path, options) {
   const config = useRuntimeConfig();
 
   return useFetch(path, {
-    baseURL: `${config.useHTTPS ? "https" : "http"}://${config.domain}/api/v1`,
+    baseURL: `${config.USE_HTTPS ? "https" : "http"}://${config.DOMAIN}/api/v1`,
     headers: {
       Authorization: authCookie ? `Bearer ${authCookie}` : "",
     },
