@@ -7,7 +7,7 @@ export function useApi(path, options) {
   console.log(config);
 
   return useFetch(path, {
-    baseURL: `${config.public.useHTTPS ? "https" : "http"}://${config.public.domain}/api/v1`,
+    baseURL: `${config.public.use_https ? "https" : "http"}://${config.public.domain}/api/v1`,
     headers: {
       Authorization: authCookie ? `Bearer ${authCookie}` : "",
     },

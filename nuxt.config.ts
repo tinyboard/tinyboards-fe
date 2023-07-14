@@ -32,8 +32,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      domain: process.env.TB_DOMAIN,
-      useHTTPS: process.env.USE_HTTPS
+      domain: '',
+      use_https: true
     }
   }
 });
