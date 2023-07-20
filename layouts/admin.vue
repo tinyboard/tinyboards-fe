@@ -14,7 +14,7 @@
 			</div>
 		</section>-->
 		<!-- Navigation -->
-		<section class="hidden md:block col-span-2 bg-white p-4">
+		<section class="hidden md:block col-span-2 min-[2000px]:col-span-1 bg-white p-4">
 			<p class="text-sm text-gray-500 uppercase px-4 font-bold">General</p>
 			<ul class="flex flex-col z-10 text-sm overflow-y-auto pt-1">
 				<li class="relative">
@@ -218,7 +218,7 @@
 			</ul>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto col-span-full md:col-span-10 sm:px-4 sm:py-6 md:px-6">
+		<section class="container mx-auto col-span-full md:col-span-10 min-[2000px]:col-span-11 sm:px-4 sm:py-6 md:px-6 overflow-y-auto">
 			<div class="col-span-full flex flex-col gap-6 md:px-12">
 				<!-- Settings -->
 				<slot />

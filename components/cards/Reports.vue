@@ -8,7 +8,7 @@
 				</svg>
 				User Reports
 			</div>
-			<button @click="toggleOpen" class="flex flex-row">
+			<button @click.prevent="toggleOpen" class="flex flex-row">
 				{{ open ? 'Close' : 'Expand' }}
 				<svg v-if="open" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-diagonal-minimize-2 my-[-3px] ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 				   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
