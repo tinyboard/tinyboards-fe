@@ -81,7 +81,7 @@
     await useApi(`/${type}/report`, {
       method: "post",
       body: {
-        post_id: id,
+        [`${type}_id`]: id,
         reason: reason.value
       }
     })
