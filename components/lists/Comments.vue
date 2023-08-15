@@ -28,6 +28,10 @@
 			return true;
 		}
 
+		if (v && (comment.is_removed && v.id == comment.creator_id)) {
+			return true;
+		}
+
 		return !(comment.is_deleted || comment.is_removed);
 	}
 
