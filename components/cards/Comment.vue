@@ -137,7 +137,7 @@
         </div>
         <!-- Comment Reports -->
         <div v-if="item.report_count" class="mb-2">
-          <CardsReports :id="item.comment.id" />
+          <CardsReports :id="item.comment.id" type="comment" />
         </div>
         <!-- Comment Actions -->
         <ul

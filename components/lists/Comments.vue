@@ -4,7 +4,7 @@
 		<li v-for="item in comments" :key="item.comment.id" class="mt-4 first:mt-0">
 			<div v-if="cards" class="bg-white border border-gray-200 p-4 mb-4">
 				<div class="mb-2 text-gray-700">
-					<NuxtLink :to="`/posts/${item.post.id}`" class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ item.post.title }}</NuxtLink> in <NuxtLink :to="`/+${item.board.name}`" class="text-blue-600 hover:text-blue-700 hover:underline">+{{item.board.name}}</NuxtLink>
+					<NuxtLink :to="`/post/${item.post.id}`" class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ item.post.title }}</NuxtLink> in <NuxtLink :to="`/+${item.board.name}`" class="text-blue-600 hover:text-blue-700 hover:underline">+{{item.board.name}}</NuxtLink>
 				</div>
 				<component v-if="item" :item="item" :offset="offset" :is="canViewComment(item.comment) ? Comment : CommentRemoved"/>	
 			</div>

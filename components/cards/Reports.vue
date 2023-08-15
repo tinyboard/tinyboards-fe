@@ -34,7 +34,7 @@
 				</p>
 			</div>
 		</div>
-		<p v-if="open" class="text-sm text-gray-600 pt-1 px-2">Approving or removing this post will automatically resolve these reports.</p>
+		<p v-if="open" class="text-sm text-gray-600 pt-1 px-2">Approving or removing this {{ type }} will automatically resolve these reports.</p>
 	</div>
 </template>
 
@@ -59,15 +59,15 @@
 	async function toggleOpen() {
 		open.value = !open.value;
 		if (reports.value.length === 0) {
-			await useApi("/post/reports", {
+			await useApi(`${props.type}/reports`, {
 				query: {
-					post_id: props.id,
+					[`${props.type}_id`]: props.id,
 					unresolved_only: true
 				}
 			})
 			.then(({ data, error }) => {
 				if (data.value) {
-					reports.value = data.value.post_reports;
+					reports.value = data.value.reports;
 				} else {
 					console.log(error.value);
 				}
