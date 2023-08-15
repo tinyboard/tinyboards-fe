@@ -70,7 +70,7 @@
 								</svg>
 								<span>"parent author"</span>
 							</NuxtLink>-->
-              <span v-show="!isCollapsed" class="space-x-2">
+              <span v-show="!isCollapsed" class="flex items-center space-x-2">
                 <!-- Timestamp -->
                 <span :title="comment.creation_date">{{
                   formatDate(new Date(comment.creation_date))
@@ -106,6 +106,17 @@
                   {{ item.replies.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
+              <!-- Report count -->
+              <span class="ml-2 text-orange-400 font-bold text-xs" v-if="item.report_count" :title="`${item.report_count} report(s)`">
+                <span class="font-black text-gray-400 dark:text-gray-500"
+                  >·</span
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                   <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
+                </svg>
+                {{ item.report_count }}
+              </span>
             </div>
           </div>
           <!-- Comment Edit Form -->
@@ -123,6 +134,10 @@
             v-show="!isCollapsed && !isEditing"
             v-html="comment.body_html"
           ></div>
+        </div>
+        <!-- Comment Reports -->
+        <div v-if="item.report_count" class="mb-2">
+          <CardsReports :id="item.comment.id" />
         </div>
         <!-- Comment Actions -->
         <ul
@@ -226,12 +241,20 @@
               Report
             </button>
           </li>
-          <li v-if="isAdmin && !isAuthor">
+          <li v-if="isAdmin">
             <button
-              @click="confirmRemove"
+              @click="() => confirmRemoveOrApprove(false)"
               class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400"
             >
               Remove
+            </button>
+          </li>
+          <li v-if="isAdmin && item.report_count">
+            <button
+              @click="() => confirmRemoveOrApprove(true)"
+              class="text-xs font-medium text-green-500 hover:text-red-700 dark:text-red-400"
+            >
+              Approve
             </button>
           </li>
         </ul>
@@ -442,12 +465,15 @@ const confirmReport = () => {
 };
 
 // Remove
-const confirmRemove = () => {
+const confirmRemoveOrApprove = approve => {
   modalStore.setModal({
-    modal: "ModalRemove",
+    modal: "ModalRemoveOrApprove",
     id: comment.value.id,
     contentType: "comment",
     isOpen: true,
+    options: {
+      approve
+    }
   });
 };
 

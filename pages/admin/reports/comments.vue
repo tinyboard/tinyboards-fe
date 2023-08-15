@@ -6,18 +6,16 @@
 			<p class="mt-1 text-sm text-gray-600">Here are the comments that were reported to you by your users. Reported posts can be found <NuxtLink to="/admin/reports/posts">here</NuxtLink>.</p>
 		</div>
 		<!-- Comments -->
-		<div class="border border-gray-200 rounded bg-white p-4">
-			<LazyListsComments v-if="comments?.length" :comments="comments" :hasError="error"/>
-			<!-- Empty State -->
-			<div v-else class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
-			      <p>
-			            <span class="font-medium">
-			                  This place is empty
-			            </span>
-			            <br/>
-			            Looks like there is nothing to moderate. Enjoy your day off...
-			      </p>
-			</div>
+		<LazyListsComments v-if="comments?.length" :comments="comments" :hasError="error" :cards="true" />
+		<!-- Empty State -->
+		<div v-else class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
+		      <p>
+		            <span class="font-medium">
+		                  This place is empty
+		            </span>
+		            <br/>
+		            Looks like there is nothing to moderate. Enjoy your day off...
+		      </p>
 		</div>
 		<!-- Pagination -->
 		<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
