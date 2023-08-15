@@ -2,12 +2,15 @@
 	<!-- List of Comments -->
 	<ul id="comments-list" v-if="comments.length" class="mt-4 first:mt-0 first-of-type:mt-0">
 		<li v-for="item in comments" :key="item.comment.id" class="mt-4 first:mt-0">
-			<component v-if="item" :item="item" :offset="offset" :is="item.comment.is_deleted || item.comment.is_removed ? CommentRemoved : Comment"/>
+			<component v-if="item" :item="item" :offset="offset" :is="canViewComment(item.comment) ? Comment : CommentRemoved"/>
 		</li>
 	</ul>
 </template>
 
 <script setup>
+	import { useLoggedInUser } from '@/stores/StoreAuth';
+	const v = useLoggedInUser().user;
+
 	const props = defineProps({
 		comments: Array,
 		offset: {
@@ -19,6 +22,14 @@
 	// Import comment components.
 	const Comment = defineAsyncComponent(() => import('@/components/cards/Comment'));
 	const CommentRemoved = defineAsyncComponent(() => import('@/components/cards/CommentRemoved'));
+
+	function canViewComment(comment) {
+		if (v && v.is_admin) {
+			return true;
+		}
+
+		return !(comment.is_deleted || comment.is_removed);
+	}
 
 	/*
 	let error = props.commentData.error;
