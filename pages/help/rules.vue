@@ -6,8 +6,8 @@
 			<div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
 				<CardsBanner
-				title="Help"
-				sub-title="Rules, guides, and the like"
+				title="House Rules"
+				sub-title="Please follow these when chilling out here."
 				image-url="/_nuxt/assets/images/artwork/front-page.jpeg"
 				class="col-span-full"/>
 			</div>
@@ -17,14 +17,17 @@
 			<div class="col-span-full flex gap-6">
 				<!-- Main Content -->
 				<div class="w-full">
-					<!-- Content Directory -->
-					<ul>
-						<li class="eading-6 flex-shrink-0" v-for="link in links" :key="link.name">
-							<NuxtLink :to="link.href">
-								{{ link.name }}
-							</NuxtLink>
-						</li>
-					</ul>
+					<!-- Rules -->
+					<div class="prose prose-sm dark:prose-invert">
+						<h2>Rules</h2>
+						<p>
+							Violating any of these rules can result in a ban. The moderators reserve the right to update these rules at anytime. In general, don't be a jerk.
+						</p>
+						<ol>
+							<li>Be nice to each other - do not bully or harass other members.</li>
+							<li>No illegal content - zero tolerance.</li>
+						</ol>
+					</div>
 				</div>
 				<!-- Sidebar -->
 				<ContainersSidebar />
