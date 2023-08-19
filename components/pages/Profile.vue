@@ -82,7 +82,17 @@
 						<!-- Info & Actions -->
 						<div class="relative flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
 							<!-- Name & Role -->
-							<div class="flex items-center">
+							<div v-if="user.display_name !== user.username || user.instance">
+								<h1 class="text-gray-100 text-lg sm:text-3xl leading-5 font-bold">
+									{{ user.display_name }}
+								</h1>
+								<div class="flex items-center text-gray-200">
+									{{ user.username }}
+									<span v-if="user.instance">@{{ user.instance }}</span>
+									<span v-if="user.is_admin" class="ml-2 badge badge-large badge-blue">Admin</span>
+								</div>
+							</div>
+							<div v-else class="flex items-center">
 								<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
 									{{ user.username }}
 								</h1>

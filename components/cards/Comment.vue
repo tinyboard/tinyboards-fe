@@ -53,10 +53,11 @@
             >
               <NuxtLink
                 v-if="item.creator"
-                :to="`/@${item.creator.name}`"
+                :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
                 class="flex items-center text-sm"
               >
                 <strong>{{ item.creator.name }}</strong>
+                <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
                 <!-- Role -->
                 <span v-if="item.creator.is_admin" class="ml-1 badge badge-blue"
                   >Admin</span

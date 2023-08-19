@@ -18,7 +18,7 @@
     >
       <NuxtLink
         v-show="isCompact"
-        :to="`/@${item.creator.name}`"
+        :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
         class="hidden sm:flex flex-shrink-0"
       >
         <img
@@ -40,7 +40,7 @@
               class="flex items-center font-normal text-sm text-gray-400 leading-normal"
             >
               <NuxtLink
-                :to="`/@${item.creator.name}`"
+                :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
                 class="flex items-center"
               >
                 <!-- Avatar (mobile only) -->
@@ -52,6 +52,7 @@
                 />
                 <!-- Username -->
                 <strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
+                <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
                 <!-- Role -->
                 <span v-if="item.creator.is_admin" class="ml-1 badge badge-blue"
                   >Admin</span
@@ -666,7 +667,7 @@
     <!-- Avatar - Desktop Only -->
     <NuxtLink
       v-show="!isCompact"
-      :to="`/@${item.creator.name}`"
+      :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
       class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right"
     >
       <img
