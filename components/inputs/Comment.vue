@@ -89,7 +89,7 @@
 				.then(({ data, error }) => {
 					if (data.value) {
 						data = JSON.parse(JSON.stringify(data.value));
-						emit('commentPublished', data);
+						emit('commentPublished', data.comment_view);
 						// Empty the input.
 						body.value = null;
 						// Show success toast.
