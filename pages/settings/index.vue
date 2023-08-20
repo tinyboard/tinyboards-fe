@@ -177,6 +177,8 @@
 			if (data.value) {
 				// Show success toast.
 				toast.addNotification({header:'Settings saved',message:'Your profile settings were updated!',type:'success'});
+				// refresh page to remove old data from everywhere
+				window.location.reload(true);
 			} else {
 				// Show error toast.
 				toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
