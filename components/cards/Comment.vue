@@ -107,7 +107,7 @@
                   {{ item.replies.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
-              <span class="ml-2 text-red-500 text-xs" v-if="item.comment.is_removed" title="Removed comment">
+              <span class="ml-2 text-red-500 text-xs" v-if="item.comment.is_removed && isAdmin" title="Removed comment">
                 <span class="font-black text-gray-400 dark:text-gray-500"
                   >·</span>
                   <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -117,7 +117,7 @@
                      <path d="M17 22l5 -5"></path>
                   </svg>
               </span>
-              <span class="ml-2 text-yellow-500 text-xs" v-else-if="item.comment.is_deleted" title="Deleted comment">
+              <span class="ml-2 text-yellow-500 text-xs" v-else-if="item.comment.is_deleted && isAdmin" title="Deleted comment">
                 <span class="font-black text-gray-400 dark:text-gray-500"
                   >·</span>
                   <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
