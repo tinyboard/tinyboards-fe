@@ -59,9 +59,9 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" name="company-website" id="display-name" class="mt-1 form-input gray" placeholder="elon" />
+							<input type="text" v-model="settings.display_name" name="company-website" id="display-name" class="mt-1 form-input gray" placeholder="My profile looks horrible" />
 							<p class="mt-2 text-sm text-gray-500">
-								The name next to your posts and comments. Your profile URL will always be /elon.
+								This will take precedence over your @username on your profile page. Your @username won't be changed.
 							</p>
 						</div>
 					</div>
@@ -94,6 +94,7 @@
 	// import { baseURL } from "@/server/constants";
 	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
+	import { useLoggedInUser } from '@/stores/StoreAuth';
 
 	definePageMeta({
 		'hasAuthRequired': true,
@@ -103,6 +104,9 @@
 
 	const toast = useToastStore();
 	const authCookie = useCookie("token").value;
+	const userStore = useLoggedInUser();
+
+	const v = userStore.user;
 
 	// File inputs
 	const onFileChange = (e,type) => {
@@ -120,13 +124,17 @@
 
 		const files = e.target.files || e.dataTransfer.files;
 
+		let data = new FormData();
+		data.append('file', files[0]);
+
 		useApi("/file/upload", {
 			method: "put",
-			body: files[0]
+			body: data
 		})
 		.then(({ data, pending, error, refresh }) => {
-			if (data.files) {
-				const link = data.value.files[0];
+			if (data.value.uploads) {
+				const link = data.value.uploads[0];
+				console.log(data);
 				if (type === 'avatar') {
 					settings.value.avatar = link;
 				} else {
@@ -142,13 +150,14 @@
 	};
 
 	// Fetch user settings
-	const { data, pending, error, refresh } = await useApi("/settings");
+	// const { data, pending, error, refresh } = await useApi("/settings");
 
 	let settings = ref({});
 
-	if (data.value) {
+	/*if (data.value) {
 		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
-	}
+	}*/
+	settings.value = { ...JSON.parse(JSON.stringify(v)) };
 
 	// Submit settings
 	const isLoading = ref(false);
@@ -160,7 +169,8 @@
 			body: {
 				"avatar": settings.value.avatar,
 				"banner": settings.value.banner,
-				"bio": settings.value.bio
+				"bio": settings.value.bio,
+				"display_name": settings.value.display_name,
 			}
 		})
 		.then(({ data, error }) => {
