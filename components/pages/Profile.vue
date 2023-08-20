@@ -89,14 +89,16 @@
 								<div class="flex items-center text-gray-200">
 									{{ user.username }}
 									<span v-if="user.instance">@{{ user.instance }}</span>
-									<span v-if="user.is_admin" class="ml-2 badge badge-large badge-blue">Admin</span>
+									<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">
+										Admin
+									</span>
 								</div>
 							</div>
 							<div v-else class="flex items-center">
 								<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
 									{{ user.username }}
 								</h1>
-								<span v-if="user.is_admin" class="ml-2 badge badge-large badge-blue">Admin</span>
+								<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">Admin</span>
 							</div>
 							<!-- Bio -->
 							<p class="mt-2.5 lg:w-4/5 xl:w-3/5" :class="!user.bio ? 'text-gray-400 italic' : 'text-gray-100'">

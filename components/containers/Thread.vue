@@ -111,7 +111,7 @@
               <strong>{{ item.creator.name }}</strong>
               <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
               <!-- Role -->
-              <span v-if="item.creator.is_admin" class="ml-1 badge badge-blue"
+              <span v-if="item.creator.is_admin" class="ml-1 badge badge-red"
                 >Admin</span
               >
             </NuxtLink>

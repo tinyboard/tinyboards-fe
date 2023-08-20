@@ -132,7 +132,7 @@
 			body: data
 		})
 		.then(({ data, pending, error, refresh }) => {
-			if (data.value.uploads) {
+			if (data.value.uploads.length > 0) {
 				const link = data.value.uploads[0];
 				console.log(data);
 				if (type === 'avatar') {
