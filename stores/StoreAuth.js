@@ -61,7 +61,7 @@ export const useLoggedInUser = defineStore("auth", {
               const token = data.value.jwt;
               this.fetchUserPromise(token)
                 .then(({ data }) => {
-                  this.user = data.value.user;
+                  this.user = data.value.person;
                   this.counts = data.value.counts;
                   this.unread = data.value.unread_notifications;
                   this.token = token;
@@ -83,6 +83,8 @@ export const useLoggedInUser = defineStore("auth", {
     fetchUserPromise(authToken) {
       return useApi("/me", {
         key: `get_user_${authToken}`,
+      }, {
+        Authorization: "Bearer " + authToken
       });
     },
     fetchUser(authToken) {
