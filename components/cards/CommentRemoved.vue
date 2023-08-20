@@ -1,5 +1,6 @@
 <template>
   <div
+    v-show="item.replies.length"
     :id="`comment-${comment.id}`"
     class="group flex relative"
     :class="{
@@ -14,13 +15,21 @@
     ></div>
     <div class="relative flex flex-col flex-shrink-0 items-center mr-2">
       <!-- Deleted User Comment -->
-      <div class="z-10">
-        <img
-          loading="lazy"
-          src=""
-          alt="avatar"
-          class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 rounded"
-        />
+      <div class="z-10 text-gray-500 dark:text-gray-400">
+        <svg v-if="item.comment.is_removed" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-circle-x" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <path d="M13.593 19.855a9.96 9.96 0 0 1 -5.893 -.855l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c2.128 1.816 3.053 4.363 2.693 6.813"></path>
+           <path d="M22 22l-5 -5"></path>
+           <path d="M17 22l5 -5"></path>
+        </svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <path d="M4 7l16 0"></path>
+           <path d="M10 11l0 6"></path>
+           <path d="M14 11l0 6"></path>
+           <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+           <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+        </svg>
       </div>
       <!-- Comment Collapse Bar -->
       <div
@@ -41,7 +50,7 @@
       >
         <div
           class="flex items-center"
-          :class="isCollapsed ? 'h-6' : 'h-6 md:h-9'"
+          :class="isCollapsed ? 'h-8' : 'h-6'"
         >
           <div
             class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400"

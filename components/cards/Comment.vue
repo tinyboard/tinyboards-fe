@@ -25,7 +25,7 @@
         <!-- User Avatar -->
         <NuxtLink
           v-if="item.creator"
-          :to="`/@${item.creator.name}`"
+          :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
           class="z-10"
         >
           <img
@@ -107,15 +107,36 @@
                   {{ item.replies.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
+              <span class="ml-2 text-red-500 text-xs" v-if="item.comment.is_removed" title="Removed comment">
+                <span class="font-black text-gray-400 dark:text-gray-500"
+                  >·</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                     <path d="M13.593 19.855a9.96 9.96 0 0 1 -5.893 -.855l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c2.128 1.816 3.053 4.363 2.693 6.813"></path>
+                     <path d="M22 22l-5 -5"></path>
+                     <path d="M17 22l5 -5"></path>
+                  </svg>
+              </span>
+              <span class="ml-2 text-yellow-500 text-xs" v-else-if="item.comment.is_deleted" title="Deleted comment">
+                <span class="font-black text-gray-400 dark:text-gray-500"
+                  >·</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                     <path d="M4 7l16 0"></path>
+                     <path d="M10 11l0 6"></path>
+                     <path d="M14 11l0 6"></path>
+                     <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                  </svg>
+              </span>
               <!-- Report count -->
               <span class="ml-2 text-orange-400 font-bold text-xs" v-if="item.report_count" :title="`${item.report_count} report(s)`">
                 <span class="font-black text-gray-400 dark:text-gray-500"
-                  >·</span
-                >
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                   <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
-                </svg>
+                  >·</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                     <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
+                  </svg>
                 {{ item.report_count }}
               </span>
             </div>
@@ -132,6 +153,7 @@
           <!-- Comment Text Body -->
           <div
             class="comment-body"
+            :class="isAdmin && item.comment.is_removed ? 'bg-red-400 bg-opacity-40' : 'bg-white dark:bg-gray-800'"
             v-show="!isCollapsed && !isEditing"
             v-html="comment.body_html"
           ></div>
@@ -242,7 +264,7 @@
               Report
             </button>
           </li>
-          <li v-if="isAdmin">
+          <li v-if="isAdmin && !item.comment.is_removed">
             <button
               @click="() => confirmRemoveOrApprove(false)"
               class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400"
@@ -250,10 +272,10 @@
               Remove
             </button>
           </li>
-          <li v-if="isAdmin && item.report_count">
+          <li v-if="isAdmin && (item.report_count || item.comment.is_removed)">
             <button
               @click="() => confirmRemoveOrApprove(true)"
-              class="text-xs font-medium text-green-500 hover:text-red-700 dark:text-red-400"
+              class="text-xs font-medium text-green-500 hover:text-green-700 dark:text-green-400"
             >
               Approve
             </button>
