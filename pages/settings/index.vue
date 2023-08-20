@@ -23,7 +23,7 @@
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
 									{{ settings.avatar ? 'Change avatar' : 'Upload avatar' }}
 								</label>
-								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event,'avatar')"/>
+								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'avatar')" />
 								<small class="block mt-2 text-gray-400">
 									PNG, JPG and GIF up to 1MB.
 								</small>
@@ -106,7 +106,7 @@
 
 	// File inputs
 	const onFileChange = (e,type) => {
-		console.log(type)
+		/*console.log(type)
 		const file = e.target.files[0];
 		const reader = new FileReader();
 		reader.onloadend = () => {
@@ -116,7 +116,29 @@
 				settings.value.banner = reader.result;
 			}
 		};
-		reader.readAsDataURL(file);
+		reader.readAsDataURL(file);*/
+
+		const files = e.target.files || e.dataTransfer.files;
+
+		useApi("/file/upload", {
+			method: "put",
+			body: files[0]
+		})
+		.then(({ data, pending, error, refresh }) => {
+			if (data.files) {
+				const link = data.value.files[0];
+				if (type === 'avatar') {
+					settings.value.avatar = link;
+				} else {
+					settings.value.banner = link;
+				}
+			} else {
+				// Show error toast.
+				toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
+				// Log the error.
+				console.error(error.value);
+			}
+		});
 	};
 
 	// Fetch user settings
