@@ -10,10 +10,6 @@
         <div class="flex min-h-full items-center justify-center p-2.5 sm:p-4 text-center">
           <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]" enter-from="opacity-0 scale-90" enter-to="opacity-100 scale-100" leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-90">
             <DialogPanel class="w-full max-w-xl transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
-              <!-- Header -->
-              <!--<DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
-                {{ options.user.is_admin ? `Remove ${options.user.username} as` : `Make ${options.user.username}` }} admin
-              </DialogTitle>-->
               <!-- Body -->
               <div class="text-center">
                 <h3 class="text-lg text-gray-800 font-bold">Crop your image</h3>
@@ -26,6 +22,7 @@
                   :stencil-props="{
                     aspectRatio: props.type == 'avatar' ? 1/1 : 4/1
                   }"
+                  :check-orientation="false"
                   @change="onChange" />
               </div>
               <!-- Footer -->
@@ -92,9 +89,9 @@
 
   const onChange = ({ canvas }) => {
     if (props.type == "avatar") {
-      imageStore.setAvatar(canvas.toDataURL());
+      imageStore.setAvatar(canvas.toDataURL('image/jpeg'));
     } else {
-      imageStore.setBanner(canvas.toDataURL())
+      imageStore.setBanner(canvas.toDataURL('image/jpeg'));
     }
   };
 

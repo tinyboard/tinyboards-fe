@@ -114,49 +114,22 @@
 
 	// File inputs
 	const onFileChange = (e,type) => {
-		console.log(type);
 		const file = e.target.files[0];
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			console.log("load ended");
-			// Open modal for cropping file
-			modalStore.setModal({
-			  modal: "ModalCrop",
-			  id: 0,
-			  contentType: type,
-			  isOpen: true,
-			  options: {
-			  	image: reader.result
-			  }
-			});
-		};
-		reader.readAsDataURL(file);
 
-		/*const files = e.target.files || e.dataTransfer.files;
+		if (file.size > 1048576) {
+			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 2MB.',type:'error'});
+			return;
+		}
 
-		let data = new FormData();
-		data.append('file', files[0]);
-
-		useApi("/file/upload", {
-			method: "put",
-			body: data
-		})
-		.then(({ data, pending, error, refresh }) => {
-			if (data.value.uploads.length > 0) {
-				const link = data.value.uploads[0];
-				console.log(data);
-				if (type === 'avatar') {
-					settings.value.avatar = link;
-				} else {
-					settings.value.banner = link;
-				}
-			} else {
-				// Show error toast.
-				toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
-				// Log the error.
-				console.error(error.value);
-			}
-		});*/
+		modalStore.setModal({
+		  modal: "ModalCrop",
+		  id: 0,
+		  contentType: type,
+		  isOpen: true,
+		  options: {
+		  	image: URL.createObjectURL(file)
+		  }
+		});
 	};
 
 	// Fetch user settings
@@ -176,9 +149,82 @@
       console.log(coordinates, canvas);
     }
 
-	const submitSettings = () => {
+    const dataURLtoFile = dataURL => {
+    	const arr = dataURL.split(',');
+    	const bstr = atob(arr[arr.length - 1]);
+    	let n = bstr.length;
+    	let u8arr = new Uint8Array(n);
+
+    	while (n--) {
+    		u8arr[n] = bstr.charCodeAt(n);
+    	}
+
+    	return new File([u8arr], "upload.jpeg", {type: "image/jpeg"});
+    }
+
+    const uploadFile = async file => {
+    	if (file.size > 1048576) {
+			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 2MB.',type:'error'});
+			throw new Error("enormous file");
+		}
+
+    	let formData = new FormData();
+    	formData.append('file', file);
+
+    	const { data, pending, error, refresh } = await useApi("/file/upload", {
+    		method: "put",
+    		body: formData
+    	});
+
+    	if (data.value.uploads.length > 0) {
+    		return data.value.uploads[0];
+    	} else if (error.value.statusCode == 413) {
+    		toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 2MB.',type:'error'});
+
+    		throw new Error(error.value);
+    	} else {
+    		// Show error toast.
+    		toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
+    		// Log the error.
+    		console.error(error.value);	
+
+    		throw new Error(error.value);
+    	}
+    }
+
+	const submitSettings = async () => {
 		isLoading.value = true;
-		useApi('/settings', {
+
+		// upload images
+		if (imageStore.avatar) {
+			const avatar = dataURLtoFile(imageStore.avatar);
+			// after converting to file is finished, delete the original b64 url
+			imageStore.purgeAvatar();
+
+			try {
+				settings.value.avatar = await uploadFile(avatar);
+			} catch (e) {
+				console.error(e);
+				isLoading.value = false;
+				return;
+			}
+		}
+
+		if (imageStore.banner) {
+			const banner = dataURLtoFile(imageStore.banner);
+			// after converting to file is finished, delete the original b64 url
+			imageStore.purgeBanner();
+
+			try {
+				settings.value.banner = await uploadFile(banner);
+			} catch (e) {
+				console.error(e);
+				isLoading.value = false;
+				return;
+			}
+		}
+
+		const { data, pending, error, refresh } = await useApi('/settings', {
 			method: "put",
 			body: {
 				"avatar": settings.value.avatar,
@@ -186,22 +232,16 @@
 				"bio": settings.value.bio,
 				"display_name": settings.value.display_name,
 			}
-		})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({header:'Settings saved',message:'Your profile settings were updated!',type:'success'});
-				// refresh page to remove old data from everywhere
-				window.location.reload(true);
-			} else {
-				// Show error toast.
-				toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
 		});
+
+		if (data.value) {
+			// refresh page to remove old data from everywhere
+			window.location.reload(true);	
+		} else {
+			toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
+
+			// Log the error.
+			console.error(error.value);
+		}
 	};
 </script>
