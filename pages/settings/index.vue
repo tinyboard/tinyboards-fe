@@ -117,7 +117,7 @@
 		const file = e.target.files[0];
 
 		if (file.size > 1048576) {
-			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 2MB.',type:'error'});
+			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 1MB.',type:'error'});
 			return;
 		}
 
@@ -164,7 +164,7 @@
 
     const uploadFile = async file => {
     	if (file.size > 1048576) {
-			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 2MB.',type:'error'});
+			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 1MB.',type:'error'});
 			throw new Error("enormous file");
 		}
 
@@ -179,7 +179,7 @@
     	if (data.value.uploads.length > 0) {
     		return data.value.uploads[0];
     	} else if (error.value.statusCode == 413) {
-    		toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 2MB.',type:'error'});
+    		toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 1MB.',type:'error'});
 
     		throw new Error(error.value);
     	} else {
