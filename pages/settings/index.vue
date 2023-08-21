@@ -17,7 +17,7 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
-							<img v-if="settings.avatar" :src="settings.avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
+							<img v-if="imageStore.avatar || settings.avatar" :src="imageStore.avatar ?? settings.avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
@@ -38,13 +38,13 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col">
-								<img v-if="settings.banner" :src="settings.banner" class="w-full h-24 object-cover p-0.5 border bg-white"/>
+								<img v-if="imageStore.banner || settings.banner" :src="imageStore.banner ?? settings.banner" class="w-full h-24 object-cover p-0.5 border bg-white"/>
 								<div v-else class="w-full h-24 rounded-md border border-gray-300 border-dashed"></div>
 								<div class="mt-5">
 									<label for="banner-upload" class="inline-block button gray cursor-pointer">
 										{{ settings.banner ? 'Change banner' : 'Upload banner' }}
 									</label>
-									<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event)"/>
+									<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'banner')"/>
 									<small class="block mt-2 text-gray-400">
 										PNG, JPG and GIF up to 1MB. Recommended 1390x192 pixels.
 									</small>
@@ -95,6 +95,8 @@
 	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
+	import { useModalStore } from "@/stores/StoreModal";
+	import { useImageStore } from '@/stores/StoreImages';
 
 	definePageMeta({
 		'hasAuthRequired': true,
@@ -105,24 +107,32 @@
 	const toast = useToastStore();
 	const authCookie = useCookie("token").value;
 	const userStore = useLoggedInUser();
+	const modalStore = useModalStore();
+	const imageStore = useImageStore();
 
 	const v = userStore.user;
 
 	// File inputs
 	const onFileChange = (e,type) => {
-		/*console.log(type)
+		console.log(type);
 		const file = e.target.files[0];
 		const reader = new FileReader();
 		reader.onloadend = () => {
-			if (type === 'avatar') {
-				settings.value.avatar = reader.result;
-			} else {
-				settings.value.banner = reader.result;
-			}
+			console.log("load ended");
+			// Open modal for cropping file
+			modalStore.setModal({
+			  modal: "ModalCrop",
+			  id: 0,
+			  contentType: type,
+			  isOpen: true,
+			  options: {
+			  	image: reader.result
+			  }
+			});
 		};
-		reader.readAsDataURL(file);*/
+		reader.readAsDataURL(file);
 
-		const files = e.target.files || e.dataTransfer.files;
+		/*const files = e.target.files || e.dataTransfer.files;
 
 		let data = new FormData();
 		data.append('file', files[0]);
@@ -146,7 +156,7 @@
 				// Log the error.
 				console.error(error.value);
 			}
-		});
+		});*/
 	};
 
 	// Fetch user settings
@@ -161,6 +171,10 @@
 
 	// Submit settings
 	const isLoading = ref(false);
+
+	const change = ({ coordinates, canvas }) => {
+      console.log(coordinates, canvas);
+    }
 
 	const submitSettings = () => {
 		isLoading.value = true;

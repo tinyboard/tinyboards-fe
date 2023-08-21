@@ -42,6 +42,7 @@
 	const modalImage = defineAsyncComponent(() => import('@/components/dialogs/ModalImage'));
 	const modalDrop = defineAsyncComponent(() => import('@/components/dialogs/ModalDrop'));
 	const modalThemes = defineAsyncComponent(() => import('@/components/dialogs/ModalThemes'));
+	const modalCrop = defineAsyncComponent(() => import('@/components/dialogs/ModalCrop'));
 
 	// Object lookup to select modal.
 	const components = { 
@@ -55,6 +56,7 @@
 		'ModalPurge': modalPurge,
 		'ModalImage': modalImage,
 		'ModalDrop': modalDrop,
-		'ModalThemes': modalThemes
+		'ModalThemes': modalThemes,
+		'ModalCrop': modalCrop
 	};
 </script>
