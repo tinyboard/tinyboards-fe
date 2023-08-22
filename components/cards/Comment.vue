@@ -398,7 +398,7 @@ const voteType = ref(item.value.my_vote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/comments/${comment.value.id}/vote`, {
+  await useApi(`/comment/${comment.value.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
@@ -453,7 +453,7 @@ const onHasEdited = (payload) => {
 const isSaved = ref(comment.value.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useApi(`/comments/${comment.value.id}/save`, {
+  await useApi(`/comment/${comment.value.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,

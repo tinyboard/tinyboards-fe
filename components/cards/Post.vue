@@ -740,7 +740,7 @@ const status = computed(() => {
 const voteType = ref(props.item.my_vote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
-  await useApi(`/posts/${props.item.post.id}/vote`, {
+  await useApi(`/post/${props.item.post.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
@@ -764,7 +764,7 @@ const vote = async (type = 0) => {
 const isSaved = ref(props.item.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useApi(`/posts/${props.item.post.id}/save`, {
+  await useApi(`/post/${props.item.post.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,
