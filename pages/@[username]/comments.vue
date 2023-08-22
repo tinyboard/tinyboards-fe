@@ -62,7 +62,7 @@
 		sort: sort.value,
 		limit: limit.value,
 		page: page.value,
-		parent_id: user.value.id
+		creator_id: user.value.id
 	}, 'comments');
 
 	commentsStore.comments = items;
