@@ -264,6 +264,16 @@
               Report
             </button>
           </li>
+          <li>
+            <NuxtLink :to="`/post/${item.post.id}/${item.comment.id}`" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+              Permalink
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink :to="`/post/${item.post.id}/${item.comment.id}?context=3`" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+              Context
+            </NuxtLink>
+          </li>
           <li v-if="isAdmin && !item.comment.is_removed">
             <button
               @click="() => confirmRemoveOrApprove(false)"

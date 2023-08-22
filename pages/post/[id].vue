@@ -74,7 +74,7 @@
       })
       const sort = ref(route.query.sort);
 
-      const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, { sort: sort.value }, route.params.id);
+      const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params.id);
 
       if (type.value === 'comment' && commentsError.value && commentsError.value.response) {
             throw createError({
