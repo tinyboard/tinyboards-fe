@@ -1,7 +1,7 @@
-import { useApi } from "@/composables/api";
+import { useApubApi } from "@/composables/api";
 
 export async function useFetchUser(username) {
-  return useApi(`/user/${username}`, {
+  return useApubApi(`/@${username}`, {
     key: `user_${username}`,
   });
 }
