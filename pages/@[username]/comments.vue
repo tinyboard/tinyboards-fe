@@ -1,5 +1,5 @@
 <template>
-	<component v-if="user" :user="user" :comments="comments.comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="user" :user="user" :comments="comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
@@ -62,11 +62,12 @@
 		sort: sort.value,
 		limit: limit.value,
 		page: page.value,
-		creator_id: user.value.id
+		creator_id: user.value.id,
+		format: "list",
 	}, 'comments');
 
-	commentsStore.comments = items;
-	const comments = commentsStore.comments;
+	//commentsStore.setComments(items.value);
+	const comments = items;
 
 	const totalPages = computed(() => {
         return Math.ceil(totalCount.value / limit.value || 1);
