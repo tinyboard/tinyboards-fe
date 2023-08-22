@@ -71,7 +71,7 @@
 
 <script setup>
       import { usePostsStore } from '@/stores/StorePosts';
-      import { getListing } from '@/composables/posts';
+      import { getListing } from '@/composables/listing';
 
       // Import sidebar components
       const Sidebar = defineAsyncComponent(() => import('@/components/containers/Sidebar'));
