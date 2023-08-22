@@ -1,7 +1,7 @@
 <template>
   <div>
     <p v-if="route.meta.hasRepliesDisabled" class="mb-1">
-      <NuxtLink :href="`/post/${item.post.id}/${comment.id}`">
+      <NuxtLink :href="`/post/${item.post.id}/${comment.id}?context=2`">
         {{ item.post.title }}
       </NuxtLink>
     </p>
