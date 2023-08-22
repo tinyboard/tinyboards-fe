@@ -5,6 +5,8 @@
 <script setup>
 	// import { baseURL } from '@/server/constants';
 	import { useFetchUser } from '@/composables/user';
+	import { getListing } from '@/composables/listing';
+	import { useCommentsStore } from '@/stores/StoreComments';
 
 	const route = useRoute();
 
@@ -46,16 +48,27 @@
 	});
 
 	// Comments
-	const sort = ref(route.query.sort);
+	const page = computed(() => route.query.page || 1);
+    const limit = computed(() => route.query.limit || 25);
 
-	// Fetch search results.
-	const { data: comments, commentsPending, commentsError, commentsRefresh } = await useFetch("/comments", {
-		query: {
-			sort: sort.value,
-			creator_id: user.value.id
-		},
-		baseURL
+	const commentsStore = useCommentsStore();
+
+	const sorts = ['hot','top','new','old'];
+	const sort = computed(() => {
+		return sorts.includes(route.query.sort) ? route.query.sort : 'hot';
 	});
 
-	watch(() => route.query, () => commentsRefresh());
+	const { items, totalCount, commentsPaginate, commentsPending, commentsError, commentsRefresh } = await getListing({
+		sort: sort.value,
+		limit: limit.value,
+		page: page.value,
+		parent_id: user.value.id
+	}, 'comments');
+
+	commentsStore.comments = items;
+	const comments = commentsStore.comments;
+
+	const totalPages = computed(() => {
+        return Math.ceil(totalCount.value / limit.value || 1);
+    });
 </script>

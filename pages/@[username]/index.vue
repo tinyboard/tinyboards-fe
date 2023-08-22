@@ -5,7 +5,7 @@
 <script setup>
 	import { useFetchUser } from '@/composables/user';
 	import { usePostsStore } from '@/stores/StorePosts';
-	import { getListing } from '@/composables/posts';
+	import { getListing } from '@/composables/listing';
 
 	const route = useRoute();
 
