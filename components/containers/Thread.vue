@@ -195,12 +195,12 @@
       </div>
       <!-- Post Image -->
       <div
-        v-if="item.post.image"
+        v-if="hasImage"
         class="mt-2.5 md:mt-4"
       >
         <span class="inline-block p-2.5 bg-white border shadow-polaroid">
           <img
-            :src="item.post.image"
+            :src="item.post.url"
             alt="Post image"
             class="sm:max-w-xs object-cover img-expand"
           />
@@ -749,6 +749,7 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
+import { canEmbedImage } from "@/composables/images";
 
 const modalStore = useModalStore();
 const toast = useToastStore();
@@ -828,6 +829,8 @@ const percentUpvoted = computed(() => {
   if (!isFinite(num)) return 0;
   return toPercent(num);
 });
+
+const hasImage = computed(() => props.item.post.url && canEmbedImage(props.item.post.url));
 
 // Author
 const isAuthor = computed(() => {

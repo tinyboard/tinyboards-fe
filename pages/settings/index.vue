@@ -97,6 +97,7 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { useModalStore } from "@/stores/StoreModal";
 	import { useImageStore } from '@/stores/StoreImages';
+	import { dataURLtoFile } from '@/utils/files';
 
 	definePageMeta({
 		'hasAuthRequired': true,
@@ -151,7 +152,7 @@
       console.log(coordinates, canvas);
     }
 
-    const dataURLtoFile = dataURL => {
+    /*const dataURLtoFile = dataURL => {
     	const arr = dataURL.split(',');
     	const bstr = atob(arr[arr.length - 1]);
     	let n = bstr.length;
@@ -162,7 +163,7 @@
     	}
 
     	return new File([u8arr], "upload.jpeg", {type: "image/jpeg"});
-    }
+    }*/
 
     const uploadFile = async (file, type) => {
     	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;

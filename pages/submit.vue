@@ -91,7 +91,7 @@
 											</button>
 											<input id="image-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="onFileChange($event)"/>
 											<small class="block mt-2 text-gray-400">
-												PNG, JPG and GIF up to 1MB.
+												PNG, JPG and GIF up to 25MB.
 											</small>
 										</div>
 									</div>
@@ -149,6 +149,7 @@
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
 	import { useApi } from "@/composables/api";
+	import { dataURLtoFile } from "@/utils/files";
 
 	const site = useSiteStore();
 
@@ -198,7 +199,7 @@
 	const onFileChange = (e) => {
 		const file = e.target.files[0];
 		// Check for valid image file type and size
-		if (/\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 1000000) {
+		if (/\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 25 * 1024 * 1024) {
 			const reader = new FileReader();
 			reader.onloadend = () => {
 				image.value = reader.result;
@@ -238,18 +239,18 @@
 		isLoading.value = true;
 		// Upload image and post otherwise just post
 		if (!!image.value) {
-			useFetch('/image', {
-				method: 'post',
-				body: {
-					"image": image.value
-				},
-				headers: {
-					Authorization: authCookie ? `Bearer ${authCookie}` : '',
-				}
+			const file = dataURLtoFile(image.value);
+
+			let formData = new FormData();
+			formData.append('file', file);
+
+			useApi('/file/upload', {
+				method: 'put',
+				body: formData
 			})
 			.then(({ data, error }) => {
 				if (data.value) {
-					image.value = data.value.url;
+					url.value = data.value.uploads[0];
 					// On success, post
 					post();
 				} else {
@@ -279,7 +280,7 @@
 					"title": title.value,
 					"type_": "text",
 					"url": url.value,
-					"image": image.value,
+					// "image": image.value,
 					"body": body.value,
 					"is_nsfw": isNsfw.value
 				}
