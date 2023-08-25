@@ -73,10 +73,10 @@
 	}, 'comments');*/
 
 	//commentsStore.setComments(items.value);
+	const totalCount = userData.value.comments_count_total;
 	const comments = userData.value.comments;
 
 	const totalPages = computed(() => {
-        //return Math.ceil(totalCount.value / limit.value || 1);
-        return 1;
+        return Math.ceil(totalCount.value / limit.value || 1);
     });
 </script>

@@ -72,9 +72,9 @@
 
 	postsStore.posts = userData.value.posts;
 	const posts = postsStore.posts;
+	const totalCount = userData.value.posts_count_total;
 
 	const totalPages = computed(() => {
-        //return Math.ceil(totalCount.value / limit.value || 1);
-        return 1;
+        return Math.ceil(totalCount.value / limit.value || 1);
     });
 </script>
