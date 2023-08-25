@@ -25,7 +25,7 @@
 								</label>
 								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'avatar')" />
 								<small class="block mt-2 text-gray-400">
-									PNG, JPG and GIF up to 1MB.
+									PNG, JPG <span class="line-through">and GIF</span> up to 1MB.
 								</small>
 							</div>
 						</div>
@@ -46,7 +46,7 @@
 									</label>
 									<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'banner')"/>
 									<small class="block mt-2 text-gray-400">
-										PNG, JPG and GIF up to 1MB. Recommended 1390x192 pixels.
+										PNG, JPG <span class="line-through">and GIF</span> up to 3MB. Recommended 1390x192 pixels.
 									</small>
 								</div>
 						</div>
@@ -116,8 +116,10 @@
 	const onFileChange = (e,type) => {
 		const file = e.target.files[0];
 
-		if (file.size > 1048576) {
-			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 1MB.',type:'error'});
+		const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
+
+		if (file.size > maxFileSize) {
+			toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
 			return;
 		}
 
@@ -162,9 +164,11 @@
     	return new File([u8arr], "upload.jpeg", {type: "image/jpeg"});
     }
 
-    const uploadFile = async file => {
-    	if (file.size > 1048576) {
-			toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 1MB.',type:'error'});
+    const uploadFile = async (file, type) => {
+    	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
+
+    	if (file.size > maxFileSize) {
+    		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
 			throw new Error("enormous file");
 		}
 
@@ -179,7 +183,7 @@
     	if (data.value.uploads.length > 0) {
     		return data.value.uploads[0];
     	} else if (error.value.statusCode == 413) {
-    		toast.addNotification({header:'Your files are too large!',message:'Max size for avatars and banners is 1MB.',type:'error'});
+    		toast.addNotification({header:'Your files are too large!',message:'Your file is over 25MB!! How did you bypass the previous checks?',type:'error'});
 
     		throw new Error(error.value);
     	} else {
@@ -202,7 +206,7 @@
 			imageStore.purgeAvatar();
 
 			try {
-				settings.value.avatar = await uploadFile(avatar);
+				settings.value.avatar = await uploadFile(avatar, 'avatar');
 			} catch (e) {
 				console.error(e);
 				isLoading.value = false;
@@ -216,7 +220,7 @@
 			imageStore.purgeBanner();
 
 			try {
-				settings.value.banner = await uploadFile(banner);
+				settings.value.banner = await uploadFile(banner, 'banner');
 			} catch (e) {
 				console.error(e);
 				isLoading.value = false;
