@@ -190,9 +190,9 @@
 						</p>
 					</div>
 					<!-- Pagination -->
-					<!-- <div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
+					<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
 						<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page"/>
-					</div> -->
+					</div>
 				</div>
 			</div>
 		</section>
@@ -220,11 +220,7 @@
 		},
 		totalPages: {
 			type: Number,
-			default: 0
-		},
-		totalPages: {
-			type: Number,
-			default: 25
+			default: 1
 		},
 		page: {
 			type: Number,

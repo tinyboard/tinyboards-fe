@@ -1,5 +1,5 @@
 <template>
-	<component v-if="personView" :personView="personView" :comments="comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="personView" :personView="personView" :comments="comments" :totalPages="totalPages" :page="page" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
@@ -33,8 +33,8 @@
 	const username = computed(() => route.params.username);
 
 	// Comments
-	const page = computed(() => route.query.page || 1);
-    const limit = computed(() => route.query.limit || 25);
+	const page = computed(() => Number(route.query.page) || 1);
+    const limit = computed(() => Number(route.query.limit) || 25);
 
 	const commentsStore = useCommentsStore();
 
@@ -77,6 +77,6 @@
 	const comments = userData.value.comments;
 
 	const totalPages = computed(() => {
-        return Math.ceil(totalCount.value / limit.value || 1);
+        return Math.ceil(totalCount / limit.value || 1);
     });
 </script>

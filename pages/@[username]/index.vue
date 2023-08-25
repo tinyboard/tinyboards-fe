@@ -75,6 +75,6 @@
 	const totalCount = userData.value.posts_count_total;
 
 	const totalPages = computed(() => {
-        return Math.ceil(totalCount.value / limit.value || 1);
+        return Math.ceil(totalCount / limit.value || 1);
     });
 </script>
