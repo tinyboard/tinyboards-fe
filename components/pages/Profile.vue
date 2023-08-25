@@ -17,12 +17,12 @@
 								</svg>
 								<span>
 									Member since
-									<span :title="user.created_at" class="font-medium text-gray-600">
-										{{ format(parseISO(user.created_at), 'MMM dd, yyyy') }}
+									<span :title="user.creation_date" class="font-medium text-gray-600">
+										{{ format(parseISO(user.creation_date), 'yyyy MMM. dd') }}
 									</span>
 								</span>
 							</li>
-							<li class="ml-6 flex items-center">
+							<!--<li class="ml-6 flex items-center">
 								<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 									<circle cx="12" cy="12" r="9"></circle>
@@ -33,7 +33,7 @@
 									Last seen
 									<span class="font-medium text-gray-600">this week</span>
 								</span>
-							</li>
+							</li>-->
 						</ul>
 						<ul class="ml-auto hidden lg:flex items-center text-sm text-gray-400">
 							<li class="ml-6 flex items-center">
@@ -44,7 +44,7 @@
 								<span>
 									Reputation
 									<span class="font-medium text-gray-600">
-										{{ user.rep.toLocaleString() }}
+										{{ counts.rep }}
 									</span>
 								</span>
 							</li>
@@ -56,7 +56,7 @@
 									<path d="M16 5l3 3"></path>
 								</svg>
 								<span>Posts
-									<span class="font-medium text-gray-600">{{ user.posts_count.toLocaleString() }}</span>
+									<span class="font-medium text-gray-600">{{ counts.post_count }}</span>
 								</span>
 							</li>
 							<li class="ml-6 flex items-center">
@@ -65,29 +65,29 @@
 									<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 								</svg>
 								<span>Comments
-									<span class="font-medium text-gray-600">{{ user.comments_count.toLocaleString() }}</span>
+									<span class="font-medium text-gray-600">{{ counts.comment_count}}</span>
 								</span>
 							</li>
 						</ul>
 					</div>
 					<!-- Details -->
-					<div id="details" class="z-30 relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${user.banner_url})` }">
+					<div id="details" class="z-30 relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${user.banner})` }">
 						<!-- Avatar -->
 						<img
 						loading="lazy"
-						:src="user.avatar_url"
+						:src="user.avatar"
 						alt="avatar"
 						class="relative flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded"
 						/>
 						<!-- Info & Actions -->
 						<div class="relative flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
 							<!-- Name & Role -->
-							<div v-if="user.display_name !== user.username || user.instance">
+							<div v-if="user.display_name !== user.name || user.instance">
 								<h1 class="text-gray-100 text-lg sm:text-3xl leading-5 font-bold">
 									{{ user.display_name }}
 								</h1>
 								<div class="flex items-center text-gray-200">
-									{{ user.username }}
+									{{ user.name }}
 									<span v-if="user.instance">@{{ user.instance }}</span>
 									<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">
 										Admin
@@ -96,7 +96,7 @@
 							</div>
 							<div v-else class="flex items-center">
 								<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
-									{{ user.username }}
+									{{ user.name }}
 								</h1>
 								<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">Admin</span>
 							</div>
@@ -106,7 +106,7 @@
 							</p>
 							<!-- Stats -->
 							<small class="sm:hidden mt-2 text-gray-300">
-								Joined {{ format(parseISO(user.created_at), 'MMM dd, yyyy') }}
+								Joined {{ format(parseISO(user.creation_date), 'MMM dd, yyyy') }}
 							</small>
 							<!-- Actions -->
 							<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
@@ -128,20 +128,20 @@
 							<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-4 pt-2.5 md:pt-0">
 								<li>
 									<span>
-										<strong>{{ user.rep.toLocaleString() }}</strong>
+										<strong>{{ counts.rep }}</strong>
 										Reputation
 									</span>
 								</li>
 								<li class="ml-4">
 									<span>
-										<strong>{{ user.posts_count.toLocaleString() }}</strong>
-										{{ user.posts_count === 1 ? 'Post' : 'Posts' }}
+										<strong>{{ counts.posts_count }}</strong>
+										{{ counts.posts_count === 1 ? 'Post' : 'Posts' }}
 									</span>
 								</li>
 								<li class="ml-4">
 									<span>
-										<strong>{{ user.comments_count.toLocaleString() }}</strong>
-										{{ user.comments_count === 1 ? 'Comment' : 'Comments' }}
+										<strong>{{ counts.comments_count}}</strong>
+										{{ counts.comments_count === 1 ? 'Comment' : 'Comments' }}
 									</span>
 								</li>
 							</ul>
@@ -204,7 +204,7 @@
 	import { format, parseISO } from "date-fns";
 
 	const props = defineProps({
-		user: {
+		personView: {
 			type: Object,
 			required: true
 		},
@@ -235,12 +235,15 @@
 	const route = useRoute();
 	const userStore = useLoggedInUser();
 
+	const user = props.personView.person;
+	const counts = props.personView.counts;
+
 	// Is Authed
 	const isAuthed = userStore.isAuthed;
 
 	// Is Self
 	const isSelf = computed(() => {
-		return !!userStore.user && userStore.user.name === props.user.username
+		return !!userStore.user && userStore.user.name === user.username
 	});
 
 	// Admin

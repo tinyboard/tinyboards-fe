@@ -1,5 +1,5 @@
 <template>
-	<component v-if="user" :user="user" :posts="posts" :totalPages="totalPages" :limit="limit" :page="page" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="personView" :personView="personView" :posts="posts" :totalPages="totalPages" :limit="limit" :page="page" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
@@ -28,25 +28,9 @@
     const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
     const ProfileRemoved = defineAsyncComponent(() => import('@/components/pages/ProfileRemoved'));
 
-	// User
 	const username = computed(() => route.params.username);
 
-	const { data: user, error, pending, refresh } = await useFetchUser(username.value);
-
-	if (error.value && error.value.response) {
-		throw createError({
-			statusCode: 404,
-			statusMessage: 'We could not find the page you were looking for. Try better next time.',
-			fatal: true
-		})
-	};
-
-	const isRemoved = computed(() => {
-		const u = JSON.parse(JSON.stringify(user.value));
-		return u.is_deleted || u.is_banned;
-	});
-
-	// Posts
+	// Query parameters
 	const page = computed(() => route.query.page || 1);
     const limit = computed(() => route.query.limit || 25);
 
@@ -57,17 +41,40 @@
 		return sorts.includes(route.query.sort) ? route.query.sort : 'hot';
 	});
 
-	const { items, totalCount, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({
+	// Fetch user with posts and comments
+	const { data: userData, error, pending, refresh } = await useFetchUser(username.value, {
+		sort: sort.value,
+		limit: limit.value,
+		page: page.value,
+	});
+
+	if (error.value && error.value.response) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'We could not find the page you were looking for. Try better next time.',
+			fatal: true
+		})
+	};
+
+	const personView = userData.value.person_view;
+
+	const isRemoved = computed(() => {
+		const u = personView.person;
+		return u.is_deleted || u.is_banned;
+	});
+
+	/*const { items, totalCount, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({
 		sort: sort.value,
 		limit: limit.value,
 		page: page.value,
 		creator_id: user.value.id
-	}, 'posts');
+	}, 'posts');*/
 
-	postsStore.posts = items;
+	postsStore.posts = userData.value.posts;
 	const posts = postsStore.posts;
 
 	const totalPages = computed(() => {
-        return Math.ceil(totalCount.value / limit.value || 1);
+        //return Math.ceil(totalCount.value / limit.value || 1);
+        return 1;
     });
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<component v-if="user" :user="user" :comments="comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
+	<component v-if="personView" :personView="personView" :comments="comments" type="comment" :is="isRemoved ? ProfileRemoved : Profile"/>
 </template>
 
 <script setup>
@@ -32,21 +32,6 @@
 	// User
 	const username = computed(() => route.params.username);
 
-	const { data: user, error, pending, refresh } = await useFetchUser(username.value);
-
-	if (error.value && error.value.response) {
-		throw createError({
-			statusCode: 404,
-			statusMessage: 'We could not find the page you were looking for. Try better next time.',
-			fatal: true
-		})
-	};
-
-	const isRemoved = computed(() => {
-		const u = JSON.parse(JSON.stringify(user.value));
-		return u.is_deleted || u.is_banned;
-	});
-
 	// Comments
 	const page = computed(() => route.query.page || 1);
     const limit = computed(() => route.query.limit || 25);
@@ -58,18 +43,40 @@
 		return sorts.includes(route.query.sort) ? route.query.sort : 'hot';
 	});
 
-	const { items, totalCount, commentsPaginate, commentsPending, commentsError, commentsRefresh } = await getListing({
+	const { data: userData, error, pending, refresh } = await useFetchUser(username.value, {
+		sort: sort.value,
+		limit: limit.value,
+		page: page.value,
+	});
+
+	const personView = userData.value.person_view;
+
+	if (error.value && error.value.response) {
+		throw createError({
+			statusCode: 404,
+			statusMessage: 'We could not find the page you were looking for. Try better next time.',
+			fatal: true
+		})
+	};
+
+	const isRemoved = computed(() => {
+		const u = personView.person;
+		return u.is_deleted || u.is_banned;
+	});
+
+	/*const { items, totalCount, commentsPaginate, commentsPending, commentsError, commentsRefresh } = await getListing({
 		sort: sort.value,
 		limit: limit.value,
 		page: page.value,
 		creator_id: user.value.id,
 		format: "list",
-	}, 'comments');
+	}, 'comments');*/
 
 	//commentsStore.setComments(items.value);
-	const comments = items;
+	const comments = userData.value.comments;
 
 	const totalPages = computed(() => {
-        return Math.ceil(totalCount.value / limit.value || 1);
+        //return Math.ceil(totalCount.value / limit.value || 1);
+        return 1;
     });
 </script>

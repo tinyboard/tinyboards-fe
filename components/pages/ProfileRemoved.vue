@@ -18,7 +18,7 @@
 					</div>
 					<hr class="my-2"/>
 					<p class="text-gray-600">
-						This user {{ user.is_deleted ? 'deleted their account' : 'was removed by the site admins' }}, and their content is no longer available. Try visiting a different profile.
+						This user {{ user.is_deleted ? 'deleted their account' : 'was banned' }}, and their content is no longer available. Try visiting a different profile.
 					</p>
 					<ul class="mt-2 pl-4 flex flex-col list-disc">
 						<li>
@@ -57,11 +57,13 @@
 	import { format, parseISO } from "date-fns";
 
 	const props = defineProps({
-		user: {
+		personView: {
 			type: Object,
 			required: true
 		}
 	});
+
+	const user = props.personView.user;
 
 	const userStore = useLoggedInUser();
 	const modalStore = useModalStore();
