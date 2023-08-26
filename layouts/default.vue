@@ -15,8 +15,10 @@
 	import { useModalStore } from "@/stores/StoreModal";
 	import { useToastStore } from "@/stores/StoreToast";
 	import { useSiteStore } from "@/stores/StoreSite";
+
 	//import { onMounted } from 'vue;'
 
+	const site = useSiteStore();
 	const route = useRoute();
 	const router = useRouter();
 
@@ -24,13 +26,20 @@
 		bodyAttrs: {
 			class: useCookie("theme") ?? 'dark'
 		},
-		title: `Tinyboards | ${route.meta.title ?? 'feed'}`,
+		title: `${site.name} | ${route.meta.title ?? 'feed'}`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `Tinyboards | ${route.meta.title ?? 'feed'}`
+			content: `${site.name} | ${route.meta.title ?? 'feed'}`
 		}
-		]
+		],
+		style: [
+			`
+			:root {
+				--color-primary: ${site.color} !important;
+			}
+			`,
+		],
 	});
 
 	const userStore = useLoggedInUser();
@@ -38,11 +47,10 @@
 
 	const modalStore = useModalStore();
 	const toastStore = useToastStore();
-	const siteStore = useSiteStore();
 
-	onBeforeMount(() => {
-		window.document.body.style.setProperty('--color-primary', siteStore.color);
-	});
+	/*onBeforeMount(() => {
+		window.document.body.style.setProperty('--color-primary', site.color);
+	});*/
 
 	const Navbar = 	defineAsyncComponent(() => import('@/components/navigation/Navbar'));
 	const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));
