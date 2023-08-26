@@ -113,12 +113,15 @@
 </template>
 
 <script setup>
+import { useSiteStore } from '@/stores/StoreSite';
+const site = useSiteStore();
+
 useHead({
-  title: "Tinyboards | Members",
+  title: `${site.name} | Members`,
   meta: [
     {
       property: "og:title",
-      content: "Tinyboards | Members",
+      content: `${site.name} | Members`,
     },
   ],
 });

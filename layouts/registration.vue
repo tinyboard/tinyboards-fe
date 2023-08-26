@@ -32,20 +32,26 @@
 
 <script setup>
 	import { useSiteStore } from '@/stores/StoreSite.js';
+	const site = useSiteStore();
 
 	const route = useRoute();
 
 	useHead({
 		bodyAttrs: {
-			class: 'dark'
+			class: useCookie("theme") ?? 'dark'
 		},
-		title: `Tinyboards | ${route.meta.title ?? 'Sign Up'}`,
+		title: `${site.name} | ${route.meta.title ?? 'Sign Up'}`,
 		meta: [{ property: 'og:title',
-			content: `Tinyboards | ${route.meta.title}`
-		}]
+			content: `${site.name} | ${route.meta.title}`
+		}],
+		style: [
+			`
+			:root {
+				--color-primary: ${site.color} !important;
+			}
+			`,
+		],
 	});
-
-	const site = useSiteStore();
 
 	const links = [
 	{ name: 'About', href: '/help/about' },

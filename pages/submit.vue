@@ -126,12 +126,15 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
+	const site = useSiteStore();
+
 	useHead({
-		title: 'Tinyboards | create a post',
+		title: `${site.name} | create a post`,
 		meta: [
 		{
 			property: 'og:title',
-			content: 'Tinyboards | create a post'
+			content: `${site.name} | create a post`
 		}
 		]
 	});
@@ -145,13 +148,10 @@
 
 	import { ref } from 'vue';
 	// import { baseURL } from "@/server/constants";
-	import { useSiteStore } from '@/stores/StoreSite.js';
 	import { useModalStore } from '@/stores/StoreModal';
 	import { useToastStore } from '@/stores/StoreToast';
 	import { useApi } from "@/composables/api";
 	import { dataURLtoFile } from "@/utils/files";
-
-	const site = useSiteStore();
 
 	const modal = useModalStore();
 	const toast = useToastStore();

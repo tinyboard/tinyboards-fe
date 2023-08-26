@@ -91,15 +91,17 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
 	const route = useRoute();
+	const site = useSiteStore();
 
 	useHead({
 		bodyAttrs: {
 	      class: 'md:overflow-hidden'
 	    },
-		title: `Tinyboards | ${route.meta.title ?? 'inbox'}`,
+		title: `${site.name} | ${route.meta.title ?? 'inbox'}`,
 		meta: [{ property: 'og:title',
-			content: `Tinyboards | ${route.meta.title}`
+			content: `${site.name} | ${route.meta.title}`
 		}]
 	});
 

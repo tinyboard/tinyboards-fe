@@ -37,12 +37,15 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
+	const site = useSiteStore();
+
 	useHead({
-		title: `TinyBoards | Rules`,
+		title: `${site.name} | Rules`,
 		meta: [
 		{
 			property: 'og:title',
-			content: 'TinyBoards | Rules'
+			content: `${site.name} | Rules`
 		}
 		]
 	});

@@ -228,14 +228,16 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
 	const route = useRoute();
+	const site = useSiteStore();
 
 	useHead({
-		title: `Tinyboards | Admin ${route.meta.title ?? 'overview'}`,
+		title: `${site.name} | Admin ${route.meta.title ?? 'overview'}`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `Tinyboards | Admin ${route.meta.title ?? 'overview'}`
+			content: `${site.name} | Admin ${route.meta.title ?? 'overview'}`
 		}
 		]
 	});

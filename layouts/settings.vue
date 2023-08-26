@@ -24,12 +24,14 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
 	const route = useRoute();
+	const site = useSiteStore();
 
 	useHead({
-		title: `Tinyboards | ${route.meta.title ?? 'profile'}`,
+		title: `${site.name} | ${route.meta.title ?? 'profile'}`,
 		meta: [{ property: 'og:title',
-			content: `Tinyboards | ${route.meta.title}`
+			content: `${site.name} | ${route.meta.title}`
 		}]
 	});
 

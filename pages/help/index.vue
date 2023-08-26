@@ -34,16 +34,19 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
+	const site = useSiteStore();
+
 	definePageMeta({
 		'alias': '/help/faq'
 	});
 
 	useHead({
-		title: `TinyBoards | FAQ`,
+		title: `${site.name} | FAQ`,
 		meta: [
 		{
 			property: 'og:title',
-			content: 'TinyBoards | FAQ'
+			content: `${site.name} | FAQ`
 		}
 		]
 	});

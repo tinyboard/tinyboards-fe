@@ -32,6 +32,7 @@
       import { usePostsStore } from '@/stores/StorePosts';
       import { usePost } from '@/composables/post';
       import { useComments } from '@/composables/comments';
+      import { useSiteStore } from '@/stores/StoreSite';
 
       definePageMeta({
             alias: ['/+:board/p/:id/:comment?','/p/:id/:comment?','/+:board/post/:id/:comment?','/post/:id/:comment?'],
@@ -39,6 +40,7 @@
       });
 
       const route = useRoute();
+      const site = useSiteStore();
 
       // Import thread components.
       const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
@@ -91,11 +93,11 @@
 
       // Document head
       useHead({
-            title: `Tinyboards | ${item.value.post.title}`,
+            title: `${site.name} | ${item.value.post.title}`,
             meta: [
             {
                   property: 'og:title',
-                  content: `Tinyboards | ${item.value.post.title}`
+                  content: `${site.name} | ${item.value.post.title}`
             },
             {
                   name: 'og:description',

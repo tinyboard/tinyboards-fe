@@ -7,7 +7,10 @@
 </template>
 
 <script setup>
+	import { useSiteStore } from '@/stores/StoreSite';
+	const site = useSiteStore();
+
 	useHead({
-		title: `Tinyboards | debug`
+		title: `${site.name} | debug`
 	});
 </script>

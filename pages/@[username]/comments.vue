@@ -7,8 +7,10 @@
 	import { useFetchUser } from '@/composables/user';
 	import { getListing } from '@/composables/listing';
 	import { useCommentsStore } from '@/stores/StoreComments';
+	import { useSiteStore } from '@/stores/StoreSite';
 
 	const route = useRoute();
+	const site = useSiteStore();
 
 	definePageMeta({
 		key: (route) => route.fullPath,
@@ -16,11 +18,11 @@
 	});
 
 	useHead({
-		title: `Tinyboards | ${route.params.username}'s profile`,
+		title: `${site.name} | ${route.params.username}'s profile`,
 		meta: [
 		{
 			property: 'og:title',
-			content: `Tinyboards | ${route.params.username}'s profile`
+			content: `${site.name} | ${route.params.username}'s profile`
 		}
 		]
 	});

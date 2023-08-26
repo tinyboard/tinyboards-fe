@@ -105,10 +105,13 @@
 	import { useApi } from "@/composables/api";
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { useCommentsStore } from '@/stores/StoreComments';
+	import { useSiteStore } from '@/stores/StoreSite';
 
 	// Define route & router.
 	const route = useRoute();
 	const router = useRouter();
+
+	const site = useSiteStore();
 
 	definePageMeta({
 		key: (route) => route.fullPath,
@@ -116,11 +119,11 @@
 	});
 
 	useHead({
-		title: `Tinyboards | ${route.query.query}`,
+		title: `${site.name} | ${route.query.query}`,
 		meta: [
 		{
 			property: 'og:title',
-			content: 'Tinyboards | search'
+			content: `${site.name} | search`
 		}
 		]
 	});
