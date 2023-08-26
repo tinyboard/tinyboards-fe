@@ -11,7 +11,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         if (data.value) {
           siteStore.siteMode = data.value.site_mode;
           siteStore.name = data.value.name;
-          siteStore.color = data.value.color;
+          siteStore.description = data.value.description;
+          siteStore.primaryColor = data.value.primary_color;
+          siteStore.secondaryColor = data.value.secondary_color;
+          siteStore.hoverColor = data.value.hover_color;
           siteStore.enableDownvotes = data.value.enable_downvotes;
           siteStore.enableNSFW = data.value.enable_nsfw;
           siteStore.applicationQuestion = data.value.application_question;

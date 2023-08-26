@@ -47,7 +47,9 @@
 		style: [
 			`
 			:root {
-				--color-primary: ${site.color} !important;
+				--color-primary: ${site.primaryColor} !important;
+				--color-secondary: ${site.secondaryColor} !important;
+				--color-primary-hover: ${site.hoverColor} !important;
 			}
 			`,
 		],

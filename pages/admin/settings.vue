@@ -7,7 +7,7 @@
 				<p class="mt-1 text-sm text-gray-600">Set your site's name and configure how it appears in search results and embeds.</p>
 			</div>
 			<!-- Form -->
-			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
+			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Site Name -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
@@ -33,6 +33,37 @@
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" placeholder="A cozy little corner of the Internet where we discuss the intersection of technology and society." v-model="settings.description"/>
 							<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
+						</div>
+					</div>
+					<!-- Colors -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Colors</label>
+						</div>
+						<!-- Input -->
+						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-4">
+							<div class="flex flex-row justify-between border-2 rounded px-6 py-3 items-center space-x-2 w-full" :style="{ 'border-color': primaryColor }">
+								<div>
+									<h3 class="text-gray-800 font-bold">Primary color</h3>
+									<p class="text-sm text-gray-500">The primary color used almost everywhere.</p>
+								</div>
+								<LazyPopoversColorPicker :color="primaryColor" @color-changed="newValue => primaryColor = newValue" />
+							</div>
+							<div class="flex flex-row justify-between border-2 rounded px-6 py-3 items-center space-x-2 w-full" :style="{ 'border-color': secondaryColor }">
+								<div>
+									<h3 class="text-gray-800 font-bold">Secondary color</h3>
+									<p class="text-sm text-gray-500">The secondary color, used where the primary color isn't.</p>
+								</div>
+								<LazyPopoversColorPicker :color="secondaryColor" @color-changed="newValue => secondaryColor = newValue" />
+							</div>
+							<div class="flex flex-row justify-between border-2 rounded px-6 py-3 items-center space-x-2 w-full" :style="{ 'border-color': hoverColor }">
+								<div>
+									<h3 class="text-gray-800 font-bold">Hover color</h3>
+									<p class="text-sm text-gray-500">Color of things with the primary color when you hover over them.</p>
+								</div>
+								<LazyPopoversColorPicker :color="hoverColor" @color-changed="newValue => hoverColor = newValue" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -66,12 +97,31 @@
 	// Fetch site settings.
 	const { data, pending, error, refresh } = await useApi("/admin/site_settings");
 
+	// Convert colors from rgb to hex
+	const toHexCode = rgb => {
+		const values = rgb.replace(" ", "").split(",").map(x => Number(x));
+
+		return "#" + values.map(x => x.toString(16)).join("");
+	};
+
+	// Convert colors from hex to rgb
+	const toRGB = hex => {
+		const h = hex.slice(1);
+		const values = [h.slice(0, 2), h.slice(2, 4), h.slice(4, 6)];
+
+		return values.map(x => parseInt(x, 16)).join();
+	}
+
 	// Settings.
 	const settings = ref({});
 
 	if (data.value) {
 		settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
 	};
+
+	const primaryColor = ref(toHexCode(settings.value.primary_color));
+	const secondaryColor = ref(toHexCode(settings.value.secondary_color));
+	const hoverColor = ref(toHexCode(settings.value.hover_color));
 
 	// Submit settings.
 	const isLoading = ref(false);
@@ -84,6 +134,9 @@
 			  "name": settings.value.name,
 			  "description": settings.value.description,
 			  "enable_downvotes": settings.value.enable_downvotes,
+			  "primary_color": toRGB(primaryColor.value),
+			  "secondary_color": toRGB(secondaryColor.value),
+			  "hover_color": toRGB(hoverColor.value),
 			  "site_mode": settings.value.site_mode,
 			  "enable_nsfw": settings.value.enable_nsfw,
 			  "application_question": settings.value.application_question,
@@ -95,6 +148,9 @@
 			if (data.value) {
 				// Show success toast.
 				toast.addNotification({header:'Settings saved',message:'Site settings were updated!',type:'success'});
+
+				// refresh to purge outdated stuff
+				window.location.reload(true);
 			} else {
 				// Show error toast.
 				toast.addNotification({header:'Saving failed',message:'Site settings have failed to save.',type:'error'});
