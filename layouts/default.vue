@@ -14,6 +14,8 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { useModalStore } from "@/stores/StoreModal";
 	import { useToastStore } from "@/stores/StoreToast";
+	import { useSiteStore } from "@/stores/StoreSite";
+	//import { onMounted } from 'vue;'
 
 	const route = useRoute();
 	const router = useRouter();
@@ -36,6 +38,11 @@
 
 	const modalStore = useModalStore();
 	const toastStore = useToastStore();
+	const siteStore = useSiteStore();
+
+	onBeforeMount(() => {
+		window.document.body.style.setProperty('--color-primary', siteStore.color);
+	});
 
 	const Navbar = 	defineAsyncComponent(() => import('@/components/navigation/Navbar'));
 	const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));

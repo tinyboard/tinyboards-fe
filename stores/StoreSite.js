@@ -5,8 +5,14 @@ export const useSiteStore = defineStore('site', {
   state: () => {
     return { 
       name: 'tinyboards',
-      description: ''
-    }
+      color: '60, 105, 145',
+      siteMode: 'open',
+      enableDownvotes: true,
+      enableNSFW: true,
+      applicationQuestion: null,
+      isPrivate: false,
+      requireEmailVerification: false
+    };
   },
   // Actions
   actions: {
