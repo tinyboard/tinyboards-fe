@@ -53,6 +53,13 @@
 			}
 			`,
 		],
+		link: [
+		{
+			rel: 'icon',
+			type: `image/png`,
+			href: site.icon
+		},
+		]
 	});
 
 	const links = [

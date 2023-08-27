@@ -35,6 +35,27 @@
 							<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
 						</div>
 					</div>
+					<!-- Site Icon -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Icon</label>
+						</div>
+						<!-- Input -->
+						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
+							<img v-if="icon || settings.icon" :src="icon || settings.icon" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
+							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
+							<div class="ml-5">
+								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
+									{{ icon || settings.icon ? 'Change icon' : 'Upload icon' }}
+								</label>
+								<input id="avatar-upload" type="file" class="hidden" accept="image/png" @change="onIconChange" />
+								<small class="block mt-2 text-gray-400">
+									PNG up to 1MB. Recommended sizes are 16*16, 32*32 and 48*48.
+								</small>
+							</div>
+						</div>
+					</div>
 					<!-- Colors -->
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->
@@ -83,6 +104,7 @@
 	// import { baseURL } from "@/server/constants";
 	import { useApi } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
+	import { dataURLtoFile } from '@/utils/files';
 
 	definePageMeta({
 		'hasAuthRequired': true,
@@ -123,16 +145,67 @@
 	const secondaryColor = ref(toHexCode(settings.value.secondary_color));
 	const hoverColor = ref(toHexCode(settings.value.hover_color));
 
+	const icon = ref('');
+
+	const onIconChange = e => {
+		const file = e.target.files[0];
+
+		if (file) {
+			if (file.size > 1024 * 1024) {
+				toast.addNotification({header:'Your files are too large!',message:`Max size for icons is 1MB.`, type:'error'});
+				return;
+			}
+
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+
+			reader.addEventListener('load', () => {
+				icon.value = reader.result;
+			});
+		}
+	};
+
+	const uploadFile = async (file) => {
+    	let formData = new FormData();
+    	formData.append('file', file);
+
+    	const { data, pending, error, refresh } = await useApi("/file/upload", {
+    		method: "put",
+    		body: formData
+    	});
+
+    	if (data.value.uploads.length > 0) {
+    		return data.value.uploads[0];
+    	} else if (error.value.statusCode == 413) {
+    		toast.addNotification({header:'Your files are too large!',message:'Your file is over 25MB!! How did you bypass the previous checks?',type:'error'});
+
+    		throw new Error(error.value);
+    	} else {
+    		// Show error toast.
+    		toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
+    		// Log the error.
+    		console.error(error.value);	
+
+    		throw new Error(error.value);
+    	}
+    }
+
 	// Submit settings.
 	const isLoading = ref(false);
 
-	const submitSettings = () => {
+	const submitSettings = async () => {
 		isLoading.value = true;
-		useApi('/admin/site_settings', {
+
+		if (icon.value) {
+			settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
+		}
+
+		const { data, error } = await useApi('/admin/site_settings', {
 			method: "put",
 			body: {
 			  "name": settings.value.name,
 			  "description": settings.value.description,
+			  "icon": settings.value.icon,
 			  "enable_downvotes": settings.value.enable_downvotes,
 			  "primary_color": toRGB(primaryColor.value),
 			  "secondary_color": toRGB(secondaryColor.value),
@@ -143,23 +216,21 @@
 			  "private_instance": settings.value.private_instance,
 			  "email_verification_required": settings.value.email_verification_required
 			}
-		})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({header:'Settings saved',message:'Site settings were updated!',type:'success'});
-
-				// refresh to purge outdated stuff
-				window.location.reload(true);
-			} else {
-				// Show error toast.
-				toast.addNotification({header:'Saving failed',message:'Site settings have failed to save.',type:'error'});
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
 		});
+
+		isLoading.value = false;
+
+		if (data.value) {
+			// Show success toast.
+			toast.addNotification({header:'Settings saved',message:'Site settings were updated!',type:'success'});
+
+			// refresh to purge outdated stuff
+			window.location.reload(true);
+		} else {
+			// Show error toast.
+			toast.addNotification({header:'Saving failed',message:'Site settings have failed to save.',type:'error'});
+			// Log the error.
+			console.error(error.value);
+		}
 	};
 </script>

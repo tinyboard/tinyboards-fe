@@ -6,6 +6,7 @@ export const useSiteStore = defineStore('site', {
     return { 
       name: 'tinyboards',
       description: '',
+      icon: '',
       primaryColor: '60, 105, 145',
       secondaryColor: '96, 128, 63',
       hoverColor: '54, 94, 129',
