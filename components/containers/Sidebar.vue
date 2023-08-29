@@ -9,19 +9,10 @@
       </small>
     </div>
     <div class="prose prose-sm dark:prose-invert">
-      <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800">About</h2>
+      <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800">About <span class="text-gray-500">{{ site.name }}</span></h2>
       <div>
         <p>
-          Welcome to tinyboards.net. This is the main instance of tinyboards, the open-source project for cozy communities.
-        </p>
-        <p>
-          <NuxtLink
-            external
-            target="_blank"
-            to="https://discord.gg/zUDYfg6k4N"
-          >
-            Join our Discord
-          </NuxtLink>
+          {{ site.description }}
         </p>
       </div>
     </div>
@@ -76,6 +67,9 @@
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
 import { useApi } from "@/composables/api";
+import { useSiteStore } from '@/stores/StoreSite';
+
+const site = useSiteStore();
 
 // Define spotlight users
 const {

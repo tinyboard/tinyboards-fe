@@ -6,6 +6,7 @@
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
 						<NuxtLink to="/feed" class="header-brand font-bold text-lg text-white">
+							<img id="navbar-icon" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							<span>{{ site.name }}</span>
 						</NuxtLink>
 						<span class="absolute -right-5 -bottom-1 flashing-text font-mono">

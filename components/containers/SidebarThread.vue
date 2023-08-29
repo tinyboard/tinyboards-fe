@@ -23,7 +23,7 @@
           {{ item.creator.name }}
         </strong>
         <!-- Role -->
-        <span v-if="item.creator.is_admin" class="ml-1 badge badge-blue"
+        <span v-if="item.creator.is_admin" class="ml-1 badge badge-red"
           >Admin</span
         >
       </NuxtLink>
@@ -80,7 +80,7 @@
     <div>
       <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">Share</h2>
       <input
-        :value="`https://forum.porpl.net/p/${item.post.id}`"
+        :value="`${config.useHTTPS ? 'https' : 'http'}://${config.domain}/p/${item.post.id}`"
         class="w-full p-1 text-sm mb-4"
         @focus="$event.target.select()"
       />
@@ -90,6 +90,8 @@
 
 <script setup>
   import { format, parseISO } from "date-fns";
+  
+  const config = useRuntimeConfig().public;
 
   // Define author
   const props = defineProps({

@@ -5,6 +5,7 @@
 				<div class="flex flex-grow items-center">
 					<div class="relative flex-shrink-0">
 						<NuxtLink to="/feed" class="font-bold text-lg text-white dark:text-gray-100">
+							<img :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							<span>{{ site.name }}</span>
 						</NuxtLink>
 						<span class="absolute -right-7 bottom-0 flashing-text font-mono">
