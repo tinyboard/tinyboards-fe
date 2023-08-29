@@ -31,8 +31,11 @@
 						</div>
 						<!-- Input -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" placeholder="A cozy little corner of the Internet where we discuss the intersection of technology and society." v-model="settings.description"/>
-							<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
+							<textarea id="description" name="description" maxlength="255" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" placeholder="A cozy little corner of the Internet where we discuss the intersection of technology and society." v-model="settings.description"/>
+							<div class="flex justify-between">
+								<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
+								<p class="mt-2 text-xs" :class="settings.description.length > 230 ? 'text-red-600' : 'text-gray-500'">{{ settings.description.length }} / 255</p>
+							</div>
 						</div>
 					</div>
 					<!-- Site Icon -->

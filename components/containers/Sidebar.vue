@@ -1,15 +1,26 @@
 <template>
-  <div id="sidebar"
+  <div
+    id="sidebar"
     class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
   >
-    <div class="p-2.5 bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-polaroid">
-      <img loading="lazy" class="w-full h-64 aspect-auto object-cover img-expand" :src="selectedImage"/>
+    <div
+      class="p-2.5 bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-polaroid"
+    >
+      <img
+        loading="lazy"
+        class="w-full h-64 aspect-auto object-cover img-expand"
+        :src="selectedImage"
+      />
       <small class="mt-4 block leading-none text-gray-400">
         Art submission by community members
       </small>
     </div>
     <div class="prose prose-sm dark:prose-invert">
-      <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800">About <span class="text-gray-500">{{ site.name }}</span></h2>
+      <h2
+        class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800"
+      >
+        About <span class="text-gray-500">{{ site.name }}</span>
+      </h2>
       <div>
         <p>
           {{ site.description }}
@@ -67,7 +78,7 @@
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
 import { useApi } from "@/composables/api";
-import { useSiteStore } from '@/stores/StoreSite';
+import { useSiteStore } from "@/stores/StoreSite";
 
 const site = useSiteStore();
 
@@ -78,15 +89,13 @@ const {
   error,
   refresh,
 } = await useApi("/members", {
-  query: { sort: "new", limit: 8 }
+  query: { sort: "new", limit: 8 },
 });
 
 // TO-DO
-// Refactor with proper `/assets/images/sidebar-art` folder
+// Refactor with proper `/img/sidebar-art` folder
 // https://nuxtjs.org/docs/directory-structure/assets/#images
-const images = [
-  "/_nuxt/assets/images/artwork/sidebar.jpeg",
-];
+const images = ["/img/artwork/sidebar.jpeg"];
 
-const selectedImage = shuffle(images)[0] ?? `/_nuxt/assets/images/artwork/sidebar.jpeg`;
+const selectedImage = shuffle(images)[0] ?? `/img/artwork/sidebar.jpeg`;
 </script>
