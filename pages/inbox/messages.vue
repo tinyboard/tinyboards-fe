@@ -35,26 +35,35 @@
 						<!--<NuxtLink :to="`/inbox/messages`" custom v-slot="{ href, navigate, isActive }">
 							<a @click="navigate" class="flex p-2.5 hover:bg-gray-100 shadow-inner-white"
 								:class="{ 'bg-gray-100': isActive }">-->
-						<div class="flex p-2.5 hover:bg-gray-100 shadow-inner-white"
+						<div class="p-2.5 hover:bg-gray-100 shadow-inner-white"
 							:class="conversation.notif?.read ? 'bg-gray-100' : 'bg-blue-100'">
+							<p class="mb-1 text-sm text-gray-900 font-bold">
+								<span v-if="conversation.creator.id == 1">
+									{{ site.name }} system notification
+								</span>
+								<span v-else>
+									Message from @{{ conversation.creator.name }}
+								</span>
+							</p>
+							<div class="flex">
+								<img loading="lazy" :src="conversation.creator.avatar" alt="avatar"
+									class="object-cover w-16 h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
+								<span class="ml-2 text-gray-900">
+									<strong class="text-sm"
+										:class="conversation.creator.is_admin ? 'text-red-700' : 'text-gray-900'">
+										{{ userStore.user.name === conversation.creator.name ?
+											conversation.recipient_user.name : conversation.creator.name }}
 
-							<img loading="lazy" :src="conversation.creator.avatar" alt="avatar"
-								class="object-cover w-16 h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
-							<span class="ml-2 text-gray-900">
-								<strong class="text-sm"
-									:class="conversation.creator.is_admin ? 'text-red-700' : 'text-gray-900'">
-									{{ userStore.user.name === conversation.creator.name ?
-										conversation.recipient_user.name : conversation.creator.name }}
-
-									<span v-if="conversation.creator.is_admin" class="ml-1 badge badge-red">
-										{{ conversation.creator.id == 1 ? "System" : "Admin" }}
-									</span>
-								</strong>
-								<!--<p class="text-xs text-gray-600 font-medium">
-										{{ conversation.private_message.subject }}
-									</p>-->
-								<div v-html="conversation.message.body_html"></div>
-							</span>
+										<span v-if="conversation.creator.is_admin" class="ml-1 badge badge-red">
+											{{ conversation.creator.id == 1 ? "System" : "Admin" }}
+										</span>
+									</strong>
+									<!--<p class="text-xs text-gray-600 font-medium">
+											{{ conversation.private_message.subject }}
+										</p>-->
+									<div v-html="conversation.message.body_html"></div>
+								</span>
+							</div>
 						</div>
 						<!--</a>
 						</NuxtLink>-->
@@ -95,6 +104,7 @@
 // import { baseURL } from '@/server/constants';
 import { useApi } from "@/composables/api";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useSiteStore } from "@/stores/StoreSite";
 import { ref } from 'vue';
 
 definePageMeta({
@@ -106,6 +116,7 @@ const route = useRoute();
 const authCookie = useCookie("token").value;
 
 const userStore = useLoggedInUser();
+const site = useSiteStore();
 
 const isLoading = ref(true);
 
