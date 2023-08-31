@@ -61,7 +61,7 @@
 									<!--<p class="text-xs text-gray-600 font-medium">
 											{{ conversation.private_message.subject }}
 										</p>-->
-									<div v-html="conversation.message.body_html"></div>
+									<div class="msg-body" v-html="conversation.message.body_html"></div>
 								</span>
 							</div>
 						</div>
@@ -155,3 +155,24 @@ const markRead = () => {
 		});
 };
 </script>
+
+<style scoped>
+/* Message Body */
+.msg-body {
+	@apply prose prose-sm break-words text-gray-900 max-w-none;
+}
+
+.msg-body :deep(p:first-of-type) {
+	@apply mt-0;
+}
+
+.msg-body :deep(img) {
+	max-width: 100px;
+	aspect-ratio: auto;
+}
+
+@media (min-width: 768px) {
+	.msg-body :deep(img) {
+		max-width: 320px;
+	}
+}</style>
