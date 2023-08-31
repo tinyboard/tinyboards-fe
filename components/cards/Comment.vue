@@ -222,6 +222,17 @@
               <span class="hidden sm:inline">Edit</span>
             </button>
           </li>
+          <li class="sm:hidden">
+            <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
+                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+              </svg>
+            </button>
+          </li>
           <li v-if="isAuthed" class="hidden sm:list-item">
             <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
               {{ isSaved ? "Unsave" : "Save" }}
@@ -458,6 +469,19 @@ const confirmRemoveOrApprove = approve => {
     isOpen: true,
     options: {
       approve
+    }
+  });
+};
+
+// Options
+const openOptions = () => {
+  modalStore.setModal({
+    modal: "ModalOptions",
+    id: comment.value.id,
+    contentType: "comment",
+    isOpen: true,
+    options: {
+      object: item
     }
   });
 };

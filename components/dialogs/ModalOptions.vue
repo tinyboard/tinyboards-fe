@@ -1,0 +1,246 @@
+<template>
+    <TransitionRoot appear :show="isOpen" as="template">
+        <Dialog as="div" @close="modalStore.closeModal" class="modal relative z-50">
+            <!-- Backdrop -->
+            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
+                leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 bg-black/80" />
+            </TransitionChild>
+            <!-- Modal -->
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="fixed min-h-full text-center">
+                    <TransitionChild as="template" enter="duration-300 ease-[cubic-bezier(.2,0,0,1.4)]"
+                        enter-from="opacity-0 bottom-[-300px]" enter-to="opacity-100 bottom-[-20px]"
+                        leave="duration-200 ease-[cubic-bezier(.2,0,0,1.4)]" leave-from="bottom-[-0px]"
+                        leave-to="opacity-0 bottom-[-300px]">
+                        <DialogPanel
+                            class="w-full fixed bottom-0 overflow-hidden rounded-t-md bg-white p-4 text-left align-middle shadow-xl transition-all">
+                            <DialogTitle as="div"
+                                class="relative text-xl font-bold leading-6 text-gray-900 text-center py-2">
+                                Options
+                                <button class="absolute top-0 right-0 text-gray-600" @click="modalStore.closeModal">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+                                        <path d="M10 10l4 4m0 -4l-4 4"></path>
+                                    </svg>
+                                </button>
+                            </DialogTitle>
+                            <div class="modal-body mt-2">
+                                <div class="bg-gray-100 rounded-lg text-lg text-gray-800">
+                                    <ul class="divide-y divide-gray-300 font-semibold">
+                                        <li class="px-5 py-3 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M9 15l6 -6"></path>
+                                                <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
+                                                <path
+                                                    d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
+                                                </path>
+                                            </svg>
+                                            Permalink
+                                        </li>
+                                        <li class="px-5 py-3 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path>
+                                                <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path>
+                                                <path d="M3 6l0 13"></path>
+                                                <path d="M12 6l0 13"></path>
+                                                <path d="M21 6l0 13"></path>
+                                            </svg>
+                                            Context
+                                        </li>
+                                        <li v-if="props.type == 'comment'" class="px-5 py-3 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M18 10h-4v-4"></path>
+                                                <path d="M20 4l-6 6"></path>
+                                                <path d="M6 14h4v4"></path>
+                                                <path d="M10 14l-6 6"></path>
+                                            </svg>
+                                            Collapse
+                                        </li>
+                                        <li v-if="isAuthed" class="px-5 py-3 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
+                                            </svg>
+                                            Save {{ props.type }}
+                                        </li>
+                                        <li v-if="isAuthed && !isAuthor" class="px-5 py-3 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
+                                            </svg>
+                                            Report {{ props.type }}
+                                        </li>
+                                        <li v-if="isAuthor" class="px-5 py-3 text-red-600 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 7l16 0"></path>
+                                                <path d="M10 11l0 6"></path>
+                                                <path d="M14 11l0 6"></path>
+                                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                            Delete {{ props.type }}
+                                        </li>
+                                        <li v-if="isAdmin" class="px-5 py-3 text-red-600 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path
+                                                    d="M13.593 19.855a9.96 9.96 0 0 1 -5.893 -.855l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c2.128 1.816 3.053 4.363 2.693 6.813">
+                                                </path>
+                                                <path d="M22 22l-5 -5"></path>
+                                                <path d="M17 22l5 -5"></path>
+                                            </svg>
+                                            Remove {{ props.type }}
+                                        </li>
+                                        <li v-if="isAdmin && !isAuthor" class="px-5 py-3 text-red-600 flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path
+                                                    d="M13 10l7.383 7.418c.823 .82 .823 2.148 0 2.967a2.11 2.11 0 0 1 -2.976 0l-7.407 -7.385">
+                                                </path>
+                                                <path d="M6 9l4 4"></path>
+                                                <path d="M13 10l-4 -4"></path>
+                                                <path d="M3 21h7"></path>
+                                                <path
+                                                    d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z">
+                                                </path>
+                                            </svg>
+                                            Ban @{{ creator.name }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
+</template>
+  
+<script setup>
+import { ref, computed } from 'vue'
+// import { baseURL } from "@/server/constants";
+import { useToastStore } from '@/stores/StoreToast';
+import { useModalStore } from '@/stores/StoreModal';
+import { useLoggedInUser } from '@/stores/StoreAuth';
+import { usePostsStore } from '@/stores/StorePosts';
+import { useApi } from '@/composables/api';
+import {
+    TransitionRoot,
+    TransitionChild,
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+} from '@headlessui/vue';
+
+const props = defineProps({
+    isOpen: {
+        type: Boolean
+    },
+    id: {
+        type: Number,
+        default: null,
+        required: true
+    },
+    type: {
+        type: String,
+        default: 'post'
+    },
+    options: {
+        type: Object
+    }
+});
+
+const modalStore = useModalStore();
+const userStore = useLoggedInUser();
+
+const creator = computed(() => props.options.object.creator);
+const isAuthed = userStore.isAuthed;
+
+// Author
+const isAuthor = computed(() => {
+    if (userStore.user && creator.value) {
+        return userStore.user.name === creator.value.name;
+    } else {
+        return false;
+    }
+});
+
+// Admin
+const isAdmin = computed(() => {
+    return !!userStore.user && userStore.user.is_admin;
+});
+
+/*const postsStore = usePostsStore();
+ 
+const item = computed(() => postsStore.getPost(props.id));
+ 
+// Lock
+const toast = useToastStore();
+ 
+const removeItem = async () => {
+  const id = item.value.post.id;
+  await useApi(`/${item.value.post.is_locked ? 'unlock' : 'lock'}`, {
+    body: {
+        "target_fullname": `t3_${id}`
+    },
+    method: "post",
+  })
+  .then(({ data }) => {
+    if (data.value) {
+      // Update post state.
+      postsStore.updatePost(id, {
+        is_locked: !props.options.isLocked
+      });
+      // Parse response.
+      data = JSON.parse(JSON.stringify(data.value));
+      // Show success toast.
+      setTimeout(() => {
+        toast.addNotification({
+          header:`Post ${props.options.isLocked ? 'unlocked' : 'locked'}.`,
+          message:`The post ${props.options.isLocked ? 'is unlocked. Replies are allowed' : 'is locked. Replies are not allowed'}.`,
+          type:'success'
+        });
+      }, 400);
+    } else {
+      // Show error toast.
+      setTimeout(() => {
+        toast.addNotification({
+          header:`${props.options.isLocked ? 'Unlocking' : 'Locking'} failed`,
+          message:`Failed to ${props.options.isLocked ? 'unlock' : 'lock'} the post. Please try again.`,
+          type:'error'
+        });
+      }, 400);
+    };
+  })
+  .finally(() => {
+    // Close the modal.
+    modalStore.closeModal();
+  });
+};*/
+</script>
+  
