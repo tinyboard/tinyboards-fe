@@ -44,7 +44,11 @@
 									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 									<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 								</svg>
-								Replies
+								<p>Replies</p>
+								<span v-if="unreadReplies"
+									class="inline-block ml-4 py-0.5 px-2 bg-red-600 text-white text-xs font-bold rounded">
+									{{ unreadReplies }}
+								</span>
 							</a>
 						</NuxtLink>
 					</li>
@@ -60,7 +64,11 @@
 									<circle cx="12" cy="12" r="4"></circle>
 									<path d="M16 12v1.5a2.5 2.5 0 0 0 5 0v-1.5a9 9 0 1 0 -5.5 8.28"></path>
 								</svg>
-								Mentions
+								<p>Mentions</p>
+								<span v-if="unreadMentions"
+									class="inline-block ml-4 py-0.5 px-2 bg-red-600 text-white text-xs font-bold rounded">
+									{{ unreadMentions }}
+								</span>
 							</a>
 						</NuxtLink>
 					</li>
@@ -76,7 +84,11 @@
 									<path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"></path>
 									<path d="M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2"></path>
 								</svg>
-								Messages
+								<p>Messages</p>
+								<span v-if="unreadMessages"
+									class="inline-block ml-4 py-0.5 px-2 bg-red-600 text-white text-xs font-bold rounded">
+									{{ unreadMessages }}
+								</span>
 							</a>
 						</NuxtLink>
 					</li>
@@ -124,6 +136,23 @@ const links = [
 	{ name: 'Mentions', href: '/inbox/mentions' },
 	{ name: 'Messages', href: '/inbox/messages' },
 ];
+
+const { data: counts, error: err } = await useApi("/notifications/unread");
+
+if (err && err.value?.response) {
+	throw createError({
+		statusCode: 500,
+		statusMessage:
+			"You've broken something on the server. Be more careful!",
+		fatal: true,
+	});
+}
+
+const {
+	replies: unreadReplies,
+	mentions: unreadMentions,
+	messages: unreadMessages
+} = counts.value;
 </script>
 
 <style scoped>
@@ -138,4 +167,5 @@ const links = [
 	transform: rotate(45deg);
 	box-sizing: content-box;
 	@apply border-l border-b bg-gray-50;
-}</style>
+}
+</style>
