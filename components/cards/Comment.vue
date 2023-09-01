@@ -234,6 +234,25 @@
               <span class="hidden sm:inline">Edit</span>
             </button>
           </li>
+          <li v-if="isAuthed && !isAuthor">
+            <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
+              <svg v-if="isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M3 3l18 18"></path>
+                <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7">
+                </path>
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
+              </svg>
+              <span class="hidden sm:inline">{{ isSaved ? "Unsave" : "Save" }}</span>
+            </button>
+          </li>
           <li class="sm:hidden">
             <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
@@ -243,11 +262,6 @@
                 <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
                 <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
               </svg>
-            </button>
-          </li>
-          <li v-if="isAuthed" class="hidden sm:list-item">
-            <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
-              {{ isSaved ? "Unsave" : "Save" }}
             </button>
           </li>
           <li v-if="isAuthed && isAuthor" class="hidden sm:list-item">
@@ -431,18 +445,22 @@ const save = async () => {
   await useApi(`/comment/${comment.value.id}/save`, {
     method: "post",
     body: {
-      save: !isSaved.value,
+      save: isSaved.value,
     }
   }).then(({ data, error }) => {
     if (data.value) {
-      data = JSON.parse(JSON.stringify(data.value));
+      toast.addNotification({
+        header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,
+        message: `Comment ${isSaved.value ? 'saved' : 'unsaved'} successfully.`,
+        type: "success",
+      });
     } else {
       // Revert failed save & show error toast.
       setTimeout(() => {
-        isSaved.value = false;
+        isSaved.value = !isSaved.value;
         toast.addNotification({
-          header: "Saving failed",
-          message: "Failed to save the comment. Please try again.",
+          header: "Save failed",
+          message: `Failed to ${isSaved.value ? 'saved' : 'unsaved'} comment. Please try again.`,
           type: "error",
         });
       }, 400);
