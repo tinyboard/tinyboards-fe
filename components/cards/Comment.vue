@@ -48,18 +48,30 @@
               <span v-show="!isCollapsed" class="flex items-center space-x-2">
                 <!-- Timestamp -->
                 <span :title="comment.creation_date">{{
-                  formatDate(new Date(comment.creation_date))
-                }}</span>
+                  formatDate(new Date(comment.creation_date), false)
+                }} <span class="hidden sm:inline">ago</span>
+                </span>
+
                 <!-- Edited Timestamp -->
                 <span v-if="comment.updated">
                   <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                   <span :title="comment.updated" class="pl-1 italic">
-                    Edited {{ formatDate(new Date(comment.updated)) }}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden" width="16" height="16"
+                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                      <path d="M16 5l3 3"></path>
+                    </svg>
+                    <span class="hidden sm:inline">Edited</span> {{ formatDate(new Date(comment.updated), false) }} <span
+                      class="hidden sm:inline">ago</span>
                   </span>
                 </span>
               </span>
               <!-- Score -->
-              <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`" class="flex items-center space-x-2">
+              <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`"
+                class="hidden sm:flex items-center space-x-2">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
                   {{ score }}
