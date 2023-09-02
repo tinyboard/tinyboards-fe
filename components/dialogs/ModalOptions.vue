@@ -32,21 +32,23 @@
                                 <div class="bg-gray-100 rounded-lg text-lg text-gray-800">
                                     <ul class="divide-y divide-gray-300 font-semibold">
                                         <li>
-                                            <NuxtLink :to="permalink" class="text-gray-800 px-5 py-3 flex items-center">
+                                            <button :disabled="!config.public.use_https"
+                                                class="text-gray-800 w-full px-5 py-3 flex items-center" @click="copyLink"
+                                                :class="{ 'line-through': !config.public.use_https }">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                                     stroke-linecap="round" stroke-linejoin="round">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M9 15l6 -6"></path>
-                                                    <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464"></path>
                                                     <path
-                                                        d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463">
+                                                        d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z">
+                                                    </path>
+                                                    <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2">
                                                     </path>
                                                 </svg>
-                                                Permalink
-                                            </NuxtLink>
+                                                Copy link to {{ props.type }}
+                                            </button>
                                         </li>
-                                        <li>
+                                        <li v-if="props.type == 'comment'">
                                             <NuxtLink :to="permalink + '?context=3'"
                                                 class="text-gray-800 px-5 py-3 flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
@@ -63,7 +65,7 @@
                                             </NuxtLink>
                                         </li>
                                         <li v-if="isAuthed && !isAuthor">
-                                            <button class="px-5 py-3 flex items-center" @click="confirmReport">
+                                            <button class="w-full px-5 py-3 flex items-center" @click="confirmReport">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                                     stroke-linecap="round" stroke-linejoin="round">
@@ -74,7 +76,8 @@
                                             </button>
                                         </li>
                                         <li v-if="isAuthor">
-                                            <button class="px-5 py-3 text-red-600 flex items-center" @click="confirmDelete">
+                                            <button class="w-full px-5 py-3 text-red-600 flex items-center"
+                                                @click="confirmDelete">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                                     stroke-linecap="round" stroke-linejoin="round">
@@ -88,8 +91,8 @@
                                                 Delete {{ props.type }}
                                             </button>
                                         </li>
-                                        <li v-if="isAdmin && isRemoved">
-                                            <button class="px-5 py-3 text-green-600 flex items-center"
+                                        <li v-if="isAdmin && (props.options.object.report_count || isRemoved)">
+                                            <button class="w-full px-5 py-3 text-green-600 flex items-center"
                                                 @click="() => confirmRemoveOrApprove(true)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -101,8 +104,8 @@
                                                 Approve {{ props.type }}
                                             </button>
                                         </li>
-                                        <li v-else-if="isAdmin">
-                                            <button class="px-5 py-3 text-red-600 flex items-center"
+                                        <li v-if="isAdmin">
+                                            <button class="w-full px-5 py-3 text-red-600 flex items-center"
                                                 @click="() => confirmRemoveOrApprove(false)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -115,7 +118,8 @@
                                             </button>
                                         </li>
                                         <li v-if="isAdmin && !isAuthor && !creator.is_banned">
-                                            <button class="px-5 py-3 text-red-600 flex items-center" @click="confirmBan">
+                                            <button class="w-full px-5 py-3 text-red-600 flex items-center"
+                                                @click="confirmBan">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                                     stroke-linecap="round" stroke-linejoin="round">
@@ -216,6 +220,22 @@ const permalink = computed(() => {
 
     return props.type == 'post' ? base + `/p/${props.id}` : base + `/post/${postId.value}/${props.id}`;
 })
+
+// Copy link
+const copyLink = async () => {
+    modalStore.closeModal();
+
+    try {
+        await navigator.clipboard.writeText(permalink.value);
+        toast.addNotification({
+            header: "Link copied",
+            message: `Link to ${props.type} was copied to clipboard.`,
+            type: "success",
+        });
+    } catch (err) {
+        console.error("Failed to copy: " + err);
+    }
+}
 
 // Delete
 const confirmDelete = () => {

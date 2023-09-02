@@ -213,7 +213,7 @@
               </svg>
             </NuxtLink>
           </li>
-          <li class="hidden sm:list-item ml-3 sm:ml-6">
+          <li class="ml-3 sm:ml-6">
             <NuxtLink to="#"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -272,7 +272,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAuthed && !isAuthor && !isAdmin" class="ml-3 sm:ml-6">
+          <li v-if="isAuthed && !isAuthor && !isAdmin" class="hidden sm:list-item">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700"
               @click="confirmReport">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24"
@@ -296,7 +296,18 @@
               <span class="hidden sm:inline text-sm font-medium">Edit</span>
             </button>
           </li>
-          <li v-if="isAuthor" class="ml-3 sm:ml-6">
+          <li class="sm:hidden ml-3">
+            <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
+                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+              </svg>
+            </button>
+          </li>
+          <li v-if="isAuthor" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600"
               @click="confirmDelete">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24"
@@ -311,7 +322,7 @@
               <span class="hidden sm:inline text-sm font-medium">Delete</span>
             </button>
           </li>
-          <li v-if="isAdmin" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
               @click="confirmSticky">
               <!-- Pin Icon -->
@@ -340,7 +351,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-yellow-500 leading-none dark:text-gray-400 hover:text-yellow-600"
               @click="confirmLock">
               <!-- Lock Icon -->
@@ -366,7 +377,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin && (item.post.is_removed || item.report_count)" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin && (item.post.is_removed || item.report_count)" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
               @click="confirmApprove">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
@@ -379,7 +390,7 @@
               <span class="hidden sm:inline text-sm font-medium">Approve</span>
             </button>
           </li>
-          <li v-if="isAdmin && !item.post.is_removed" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin && !item.post.is_removed" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600"
               @click="confirmRemove">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
@@ -636,6 +647,19 @@ const confirmApprove = () => {
     isOpen: true,
     options: {
       approve: true
+    }
+  });
+};
+
+// Options
+const openOptions = () => {
+  modalStore.setModal({
+    modal: "ModalOptions",
+    id: props.item.post.id,
+    contentType: "post",
+    isOpen: true,
+    options: {
+      object: props.item
     }
   });
 };

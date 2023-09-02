@@ -258,7 +258,18 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAuthed && !isAuthor" class="ml-3 sm:ml-6">
+          <li class="sm:hidden ml-3">
+            <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
+                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+              </svg>
+            </button>
+          </li>
+          <li v-if="isAuthed && !isAuthor" class="hidden sm:list-item ml-6">
             <button @click="confirmReport"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -269,7 +280,7 @@
               <span class="hidden sm:inline text-sm font-medium">Report</span>
             </button>
           </li>
-          <li v-if="isAuthor" class="ml-3 sm:ml-6">
+          <li v-if="isAuthor" class="hidden sm:list-item ml-6">
             <button @click="confirmDelete"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24"
@@ -286,7 +297,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin" class="hidden sm:list-item ml-6">
             <button @click="confirmSticky"
               class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
               <!-- Pin Icon -->
@@ -315,7 +326,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin && !item.post.is_removed" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin && !item.post.is_removed" class="hidden sm:list-item ml-6">
             <button @click="confirmRemove"
               class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
@@ -328,7 +339,7 @@
               <span class="hidden sm:inline text-sm font-medium">Remove</span>
             </button>
           </li>
-          <li v-if="isAdmin && (item.post.is_removed || item.report_count)" class="ml-3 sm:ml-6">
+          <li v-if="isAdmin && (item.post.is_removed || item.report_count)" class="hidden sm:list-item ml-6">
             <button @click="confirmApprove"
               class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
@@ -374,7 +385,7 @@
       <!-- Last Activity (compact mode only) -->
       <div v-show="isCompact" class="ml-auto w-1/6 hidden sm:flex items-center justify-end"></div>
       <!-- Expand/Collapse button (compact mode only) -->
-      <button v-show="isCompact && !isExpanded" @click="isExpanded = !isExpanded" class="mx-3 text-gray-500">
+      <!--<button v-show="isCompact && !isExpanded" @click="isExpanded = !isExpanded" class="mx-3 text-gray-500">
         <svg xmlns="http://www.w3.org/2000/svg" class="" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
           stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -383,7 +394,7 @@
           <path d="M8 20l-4 0l0 -4"></path>
           <path d="M4 20l6 -6"></path>
         </svg>
-      </button>
+      </button>-->
       <!-- Stretched link (card mode only) -->
       <NuxtLink :to="`/post/${item.post.id}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
@@ -559,6 +570,19 @@ const confirmApprove = () => {
     isOpen: true,
     options: {
       approve: true
+    }
+  });
+};
+
+// Options
+const openOptions = () => {
+  modalStore.setModal({
+    modal: "ModalOptions",
+    id: props.item.post.id,
+    contentType: "post",
+    isOpen: true,
+    options: {
+      object: props.item
     }
   });
 };
