@@ -205,7 +205,11 @@ const submitSettings = () => {
 			"enable_nsfw": settings.value.enable_nsfw,
 			"application_question": settings.value.application_question,
 			"private_instance": settings.value.private_instance,
-			"email_verification_required": settings.value.email_verification_required
+			"email_verification_required": settings.value.email_verification_required,
+			"icon": settings.value.icon,
+			"primary_color": settings.value.primary_color,
+			"secondary_color": settings.value.secondary_color,
+			"hover_color": settings.value.hover_color
 		}
 	})
 		.then(({ data, error }) => {
