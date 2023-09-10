@@ -114,6 +114,15 @@ const permanent = ref(false);
 const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
+// returns the timestamp of the date when the ban expires
+const expiryTimestamp = () => {
+  if (permanent.value) {
+    return null;
+  } else {
+    return Math.floor(Date.now() / 1000) + duration.value * 60 * 60 * 24;
+  }
+}
+
 const ban = async () => {
   const isRemoved = props.options.user.is_banned;
   await useApi('/mod/ban', {
@@ -121,7 +130,7 @@ const ban = async () => {
       "target_person_id": props.id,
       "banned": !isRemoved,
       "reason": reason.value ?? `breaking ${site.name} rules`,
-      "expires": props.options.expires
+      "expires": expiryTimestamp()
     },
     method: "post"
   })
