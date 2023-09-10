@@ -9,7 +9,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const site = useSiteStore();
   // Redirect to login if page requires authenticated session.
   // Redirect to feed if page requires unauthenticated session.
-  console.log(`${to.path}: ${to.meta.isAuthAllowed}`);
   if (
     !userStore.isAuthed &&
     (to.meta.hasAuthRequired ||
