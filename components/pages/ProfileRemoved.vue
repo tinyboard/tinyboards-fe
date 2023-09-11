@@ -16,13 +16,14 @@
 							<line x1="3" y1="3" x2="21" y2="21"></line>
 						</svg>
 						<h1 class="text-lg md:text-xl leading-normal font-bold dark:text-gray-100">
-							@{{ user.name }} {{ user.is_banned ? `is banned from ${site.name}` : "has deleted their account"
+							@{{ user.name }} {{ user.is_banned ? "is banned" : "has deleted their account"
 							}}
 						</h1>
 					</div>
 					<hr class="my-2" />
 					<p v-if="user.is_banned" class="text-gray-600">
-						This user has been banned by the admins for {{ user.ban_reason ?? "breaking the rules" }}.
+						This user has been {{ user.unban_date ? `suspended from ${site.name} for ${unbanDays} day(s). Check
+						back later.` : `permanently banned from ${site.name}.` }}
 					</p>
 					<p v-else class="text-gray-600">
 						Their profile is no longer available.
@@ -81,6 +82,17 @@ const site = useSiteStore();
 // Admin
 const isAdmin = computed(() => {
 	return !!userStore.user && userStore.user.is_admin
+});
+
+// Number of days until unban
+const unbanDays = computed(() => {
+	if (user.unban_date) {
+		const date = new Date(user.unban_date);
+
+		return Math.ceil((Math.floor(date.getTime() / 1000) - Math.floor(Date.now() / 1000)) / (60 * 60 * 24));
+	} else {
+		return null;
+	}
 });
 
 // Unban

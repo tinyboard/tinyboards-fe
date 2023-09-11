@@ -20,9 +20,8 @@
 						</path>
 					</svg>
 					<div>
-						<strong>{{ isSelf ? 'You are banned' : `@${user.name} has been banned for ${user.ban_reason ??
-							'breaking the rules'}`
-						}}</strong>
+						<strong>{{ isSelf ? "Your account" : "This account" }} has been {{ user.unban_date ? `suspended for
+							${unbanDays} days` : "permanently banned" }}</strong>
 						<br />
 						<p class="text-sm text-red-800">
 							This profile cannot be viewed by the community.
@@ -292,6 +291,17 @@ const isSelf = computed(() => {
 // Admin
 const isAdmin = computed(() => {
 	return !!userStore.user && userStore.user.is_admin
+});
+
+// Number of days until unban
+const unbanDays = computed(() => {
+	if (user.unban_date) {
+		const date = new Date(user.unban_date);
+
+		return Math.ceil((Math.floor(date.getTime() / 1000) - Math.floor(Date.now() / 1000)) / (60 * 60 * 24));
+	} else {
+		return null;
+	}
 });
 
 // Display preferences

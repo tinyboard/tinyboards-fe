@@ -116,7 +116,7 @@ const toast = useToastStore();
 
 // returns the timestamp of the date when the ban expires
 const expiryTimestamp = () => {
-  if (permanent.value) {
+  if (permanent.value || props.options.user.is_banned) {
     return null;
   } else {
     return Math.floor(Date.now() / 1000) + duration.value * 60 * 60 * 24;
