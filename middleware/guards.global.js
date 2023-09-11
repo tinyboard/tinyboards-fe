@@ -12,7 +12,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (
     !userStore.isAuthed &&
     (to.meta.hasAuthRequired ||
-      (site.isPrivate && to.meta.isAuthAllowed != false))
+      (site.isPrivate &&
+        !(to.path.startsWith("/login") || to.path.startsWith("/register"))))
   ) {
     return navigateTo(`/login?to=${to.path}`);
   } else if (userStore.isAuthed && to.meta.isAuthAllowed === false) {
