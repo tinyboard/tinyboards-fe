@@ -36,14 +36,14 @@
             <ul v-if="bans?.persons.length" class="flex flex-col">
                 <li v-for="v in bans.persons" :key="v.person.id"
                     class="relative group grid grid-cols-6 px-4 py-2 odd:bg-gray-50 hover:bg-gray-100 border-b last:border-0 shadow-inner-white">
-                    <div class="col-span-3 truncate mr-4">
-                        <NuxtLink external :to="`/@${v.person.name}`" target="_blank">
-                            <div class="w-auto flex items-center px-2 py-1 hover:bg-gray-200 rounded-md space-x-2">
+                    <NuxtLink external :to="`/@${v.person.name}`" target="_blank" class="col-span-3">
+                        <div class="flex grow-0">
+                            <div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2">
                                 <img :src="v.person.avatar" class="w-8 h-8 rounded-sm" />
                                 <p class="text-primary font-semibold">{{ v.person.name }}</p>
                             </div>
-                        </NuxtLink>
-                    </div>
+                        </div>
+                    </NuxtLink>
                     <div class="col-span-1 flex items-center">
                         {{ v.person.unban_date ? `in ${daysUntilUnban(v.person)} day(s)` : "never" }}
                     </div>

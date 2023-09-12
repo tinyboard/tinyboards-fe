@@ -35,6 +35,9 @@ export default defineNuxtConfig({
       domain: '',
       use_https: true
     }
+  },
+  optimizeDeps: {
+    exclude: ['@vueuse/head']
   }
 });
 
