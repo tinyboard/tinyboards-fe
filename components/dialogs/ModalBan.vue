@@ -115,22 +115,22 @@ const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
 // returns the timestamp of the date when the ban expires
-const expiryTimestamp = () => {
+/*const expiryTimestamp = () => {
   if (permanent.value || props.options.user.is_banned) {
     return null;
   } else {
     return Math.floor(Date.now() / 1000) + duration.value * 60 * 60 * 24;
   }
-}
+}*/
 
 const ban = async () => {
-  const isRemoved = props.options.user.is_banned;
+  const isBanned = props.options.user.is_banned;
   await useApi('/mod/ban', {
     body: {
       "target_person_id": props.id,
-      "banned": !isRemoved,
+      "banned": !isBanned,
       "reason": reason.value ?? `breaking ${site.name} rules`,
-      "expires": expiryTimestamp()
+      "duration_days": (permanent.value || isBanned) ? null : duration.value
     },
     method: "post"
   })
@@ -142,7 +142,7 @@ const ban = async () => {
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header: `${props.options.user.name} ${isRemoved ? 'unbanned' : 'banned'}`,
+            header: `${props.options.user.name} ${isBanned ? 'unbanned' : 'banned'}`,
             message: 'Reload the page to see changes.',
             type: 'success'
           });
@@ -151,8 +151,8 @@ const ban = async () => {
         // Show error toast.
         setTimeout(() => {
           toast.addNotification({
-            header: `${isRemoved ? 'Unban' : 'Ban'} failed`,
-            message: `Failed to ${isRemoved ? 'unban' : 'ban'} the user. Please try again.`,
+            header: `${isBanned ? 'Unban' : 'Ban'} failed`,
+            message: `Failed to ${isBanned ? 'unban' : 'ban'} the user. Please try again.`,
             type: 'error'
           });
         }, 400);
