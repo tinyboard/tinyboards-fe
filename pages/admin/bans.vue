@@ -62,6 +62,16 @@
                     </div>
                 </li>
             </ul>
+            <div v-else class="bg-gray-50 text-center flex flex-col items-center p-16">
+                <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 w-20 h-20" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 12h6l-6 8h6"></path>
+                    <path d="M14 4h6l-6 8h6"></path>
+                </svg>
+                <h3 class="text-md font-semibold uppercase text-gray-500">No banned users...</h3>
+                <p class="text-sm text-gray-400">...yet! >:)</p>
+            </div>
         </div>
         <!-- Pagination -->
         <div v-if="totalPages > 1" class="col-span-full mb-4 px-2.5 sm:px-4">
