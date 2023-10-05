@@ -28,7 +28,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
           if (userStore.user.is_banned) {
             // Number of days until unban
-            const unbanDays = () => {
+            const unbanDays = (function () {
               if (userStore.user.unban_date) {
                 const date = new Date(userStore.user.unban_date);
 
@@ -40,10 +40,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
               } else {
                 return null;
               }
-            };
+            })();
 
             const banStr = userStore.user.unban_date
-              ? `suspended for ${unbanDays()} day(s).`
+              ? `suspended for ${unbanDays} day(s).`
               : "permanently banned.";
 
             toast.addNotification({
