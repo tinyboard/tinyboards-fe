@@ -7,6 +7,7 @@ import { useSiteStore } from "~~/stores/StoreSite";
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const userStore = useLoggedInUser();
   const site = useSiteStore();
+  console.log("check if login is required");
   // Redirect to login if page requires authenticated session.
   // Redirect to feed if page requires unauthenticated session.
   if (!userStore.isAuthed && to.meta.hasAuthRequired) {
