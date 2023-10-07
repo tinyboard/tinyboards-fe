@@ -22,6 +22,7 @@ const site = useSiteStore();
 const route = useRoute();
 const router = useRouter();
 
+console.log("setting up head");
 useHead({
 	bodyAttrs: {
 		class: useCookie("theme") ?? 'dark'
@@ -50,6 +51,7 @@ useHead({
 		},
 	]
 });
+console.log("success!");
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
