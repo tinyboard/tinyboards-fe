@@ -74,6 +74,8 @@ import { usePostsStore } from "@/stores/StorePosts";
 import { getListing } from "@/composables/listing";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 
+console.log("hi from the feed page");
+
 // Import sidebar components
 const Sidebar = defineAsyncComponent(() =>
   import("@/components/containers/Sidebar")
@@ -81,6 +83,8 @@ const Sidebar = defineAsyncComponent(() =>
 const SidebarBoard = defineAsyncComponent(() =>
   import("@/components/containers/SidebarBoard")
 );
+
+console.log("and hi again after some imports");
 
 const router = useRouter();
 const route = useRoute();

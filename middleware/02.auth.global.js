@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const toast = useToastStore();
 
   if (process.server) {
-    console.log("auth middleware");
+    //console.log("auth middleware");
 
     const cookieHeader = nuxtApp.ssrContext.event.req.headers["cookie"] || "";
     const cookies = cookie.parse(cookieHeader);

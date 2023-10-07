@@ -4,7 +4,7 @@ import { useApi } from "@/composables/api";
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp();
   const siteStore = useSiteStore();
-  console.log("fetch site...");
+  //console.log("fetch site...");
 
   if (process.server) {
     await useApi("/admin/site_settings").then(({ data, error }) => {
