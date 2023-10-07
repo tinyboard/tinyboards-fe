@@ -91,16 +91,24 @@ const route = useRoute();
 const userStore = useLoggedInUser();
 const v = userStore.user;
 
+console.log("stores have been set up");
+
 definePageMeta({
   alias: ["", "/+:board?/feed/:sort?", "/+:board?/:sort?"],
   key: (route) => route.fullPath,
 });
 
+console.log("page meta is good");
+
 const preferCardView = useCookie("preferCardView") ?? false;
+
+console.log("cookies are alright");
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
+
+console.log("no problems with the query params either");
 
 const dummyBoard = {
   name: route.params.board,
@@ -114,8 +122,12 @@ const dummyBoard = {
   banner_url: "/img/artwork/front-page.jpeg",
 };
 
+console.log("dummy board has been set up");
+
+
 // Posts
 const postsStore = usePostsStore();
+console.log("using posts store");
 
 const sorts = [
   "hot",
@@ -131,6 +143,8 @@ const sort = computed(() => {
   return sorts.includes(route.params.sort) ? route.params.sort : "hot";
 });
 
+console.log("computed sort");
+
 const { items, totalCount, paginate, pending, error, refresh } =
   await getListing(
     {
@@ -141,6 +155,8 @@ const { items, totalCount, paginate, pending, error, refresh } =
     "posts"
   );
 
+console.log("listing awaited");
+
 if (error.value && error.value.response) {
   throw createError({
     statusCode: 404,
@@ -150,6 +166,8 @@ if (error.value && error.value.response) {
   });
 }
 
+console.log("no error with listing request");
+
 postsStore.posts = items;
 const posts = postsStore.posts;
 
@@ -157,9 +175,13 @@ const totalPages = computed(() => {
   return Math.ceil(totalCount.value / limit.value || 1);
 });
 
+console.log("posts saved");
+
 // Links for sub navbar
 const links = [
   { name: "New Thread", href: "/submit" },
   { name: "House Rules", href: "/help/rules", target: "_blank" },
 ];
+
+console.log("links are okay");
 </script>
