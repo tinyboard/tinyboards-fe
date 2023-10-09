@@ -46,15 +46,15 @@
 import { useSiteStore } from "@/stores/StoreSite";
 const site = useSiteStore();
 
-useHead({
-  title: `${site.name} | About`,
-  meta: [
-    {
-      property: "og:title",
-      content: `${site.name} | About`,
-    },
-  ],
-});
+// useHead({
+//   title: `${site.name} | About`,
+//   meta: [
+//     {
+//       property: "og:title",
+//       content: `${site.name} | About`,
+//     },
+//   ],
+// });
 
 const links = [
   { name: "Get Started", href: "/help/get-started" },

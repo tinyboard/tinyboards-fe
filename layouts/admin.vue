@@ -232,15 +232,15 @@
 	const route = useRoute();
 	const site = useSiteStore();
 
-	useHead({
-		title: `${site.name} | Admin ${route.meta.title ?? 'overview'}`,
-		meta: [
-		{
-			property: 'og:title',
-			content: `${site.name} | Admin ${route.meta.title ?? 'overview'}`
-		}
-		]
-	});
+	// useHead({
+	// 	title: `${site.name} | Admin ${route.meta.title ?? 'overview'}`,
+	// 	meta: [
+	// 	{
+	// 		property: 'og:title',
+	// 		content: `${site.name} | Admin ${route.meta.title ?? 'overview'}`
+	// 	}
+	// 	]
+	// });
 
 	const links = [
 		{ name: 'Overview', href: '/admin/overview' },

@@ -93,21 +93,21 @@ watch(() => route.query, () => commentsRefresh());
 const links = [{ name: 'Comments', href: '#comments' }];
 
 // Document head
-useHead({
-      title: `${site.name} | ${item.value.post.title}`,
-      meta: [
-            {
-                  property: 'og:title',
-                  content: `${site.name} | ${item.value.post.title}`
-            },
-            {
-                  name: 'og:description',
-                  content: item.value.post.body.substring(0, 60)
-            },
-            {
-                  name: 'description',
-                  content: item.value.post.body.substring(0, 160)
-            }
-      ]
-});
+// useHead({
+//       title: `${site.name} | ${item.value.post.title}`,
+//       meta: [
+//             {
+//                   property: 'og:title',
+//                   content: `${site.name} | ${item.value.post.title}`
+//             },
+//             {
+//                   name: 'og:description',
+//                   content: item.value.post.body.substring(0, 60)
+//             },
+//             {
+//                   name: 'description',
+//                   content: item.value.post.body.substring(0, 160)
+//             }
+//       ]
+// });
 </script>

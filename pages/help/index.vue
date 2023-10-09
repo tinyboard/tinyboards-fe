@@ -50,15 +50,15 @@ definePageMeta({
   alias: "/help/faq",
 });
 
-useHead({
-  title: `${site.name} | FAQ`,
-  meta: [
-    {
-      property: "og:title",
-      content: `${site.name} | FAQ`,
-    },
-  ],
-});
+// useHead({
+//   title: `${site.name} | FAQ`,
+//   meta: [
+//     {
+//       property: "og:title",
+//       content: `${site.name} | FAQ`,
+//     },
+//   ],
+// });
 
 const links = [
   { name: "Get Started", href: "/help/get-started" },

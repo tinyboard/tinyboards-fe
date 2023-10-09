@@ -66,11 +66,11 @@
     { text: 'Midnight', value: 'dark', description: '#000000' }
   ]);
 
-  watch(picked, (x) => {
-    useHead({
-      bodyAttrs: {
-        class: x
-      }
-    });
-  });
+  // watch(picked, (x) => {
+  //   useHead({
+  //     bodyAttrs: {
+  //       class: x
+  //     }
+  //   });
+  // });
 </script>
