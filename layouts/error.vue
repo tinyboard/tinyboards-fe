@@ -38,12 +38,12 @@
 	const route = useRoute();
 	const site = useSiteStore();
 
-	useHead({
-		title: `${site.name} | ${route.meta.title ?? 'Error'}`,
-		meta: [{ property: 'og:title',
-			content: `${site.name} | ${route.meta.title}`
-		}]
-	});
+	// useHead({
+	// 	title: `${site.name} | ${route.meta.title ?? 'Error'}`,
+	// 	meta: [{ property: 'og:title',
+	// 		content: `${site.name} | ${route.meta.title}`
+	// 	}]
+	// });
 
 	const links = [
 		{ name: 'About', href: '/help/about' },

@@ -36,31 +36,31 @@
 
 	const route = useRoute();
 
-	useHead({
-		bodyAttrs: {
-			class: useCookie("theme") ?? 'dark'
-		},
-		title: `${site.name} | ${route.meta.title ?? 'Sign Up'}`,
-		meta: [{ property: 'og:title',
-			content: `${site.name} | ${route.meta.title}`
-		}],
-		style: [
-			`
-			:root {
-				--color-primary: ${site.primaryColor} !important;
-				--color-secondary: ${site.secondaryColor} !important;
-				--color-primary-hover: ${site.hoverColor} !important;
-			}
-			`,
-		],
-		link: [
-		{
-			rel: 'icon',
-			type: `image/png`,
-			href: site.icon
-		},
-		]
-	});
+	// useHead({
+	// 	bodyAttrs: {
+	// 		class: useCookie("theme") ?? 'dark'
+	// 	},
+	// 	title: `${site.name} | ${route.meta.title ?? 'Sign Up'}`,
+	// 	meta: [{ property: 'og:title',
+	// 		content: `${site.name} | ${route.meta.title}`
+	// 	}],
+	// 	style: [
+	// 		`
+	// 		:root {
+	// 			--color-primary: ${site.primaryColor} !important;
+	// 			--color-secondary: ${site.secondaryColor} !important;
+	// 			--color-primary-hover: ${site.hoverColor} !important;
+	// 		}
+	// 		`,
+	// 	],
+	// 	link: [
+	// 	{
+	// 		rel: 'icon',
+	// 		type: `image/png`,
+	// 		href: site.icon
+	// 	},
+	// 	]
+	// });
 
 	const links = [
 	{ name: 'About', href: '/help/about' },

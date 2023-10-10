@@ -20,15 +20,15 @@ definePageMeta({
 	'hasRepliesDisabled': true
 });
 
-useHead({
-	title: `${site.name} | ${route.params.username}'s profile`,
-	meta: [
-		{
-			property: 'og:title',
-			content: `${site.name} | ${route.params.username}'s profile`
-		}
-	]
-});
+// useHead({
+// 	title: `${site.name} | ${route.params.username}'s profile`,
+// 	meta: [
+// 		{
+// 			property: 'og:title',
+// 			content: `${site.name} | ${route.params.username}'s profile`
+// 		}
+// 	]
+// });
 
 // Import thread components.
 const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));

@@ -10,7 +10,7 @@
 	import { useSiteStore } from '@/stores/StoreSite';
 	const site = useSiteStore();
 
-	useHead({
-		title: `${site.name} | debug`
-	});
+	// useHead({
+	// 	title: `${site.name} | debug`
+	// });
 </script>

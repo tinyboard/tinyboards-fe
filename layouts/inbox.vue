@@ -120,16 +120,16 @@ import { useSiteStore } from '@/stores/StoreSite';
 const route = useRoute();
 const site = useSiteStore();
 
-useHead({
-	bodyAttrs: {
-		class: 'md:overflow-hidden'
-	},
-	title: `${site.name} | ${route.meta.title ?? 'inbox'}`,
-	meta: [{
-		property: 'og:title',
-		content: `${site.name} | ${route.meta.title}`
-	}]
-});
+// useHead({
+// 	bodyAttrs: {
+// 		class: 'md:overflow-hidden'
+// 	},
+// 	title: `${site.name} | ${route.meta.title ?? 'inbox'}`,
+// 	meta: [{
+// 		property: 'og:title',
+// 		content: `${site.name} | ${route.meta.title}`
+// 	}]
+// });
 
 const links = [
 	{ name: 'Replies', href: '/inbox' },

@@ -118,15 +118,15 @@
 		'hasRepliesDisabled': true
 	});
 
-	useHead({
-		title: `${site.name} | ${route.query.query}`,
-		meta: [
-		{
-			property: 'og:title',
-			content: `${site.name} | search`
-		}
-		]
-	});
+	// useHead({
+	// 	title: `${site.name} | ${route.query.query}`,
+	// 	meta: [
+	// 	{
+	// 		property: 'og:title',
+	// 		content: `${site.name} | search`
+	// 	}
+	// 	]
+	// });
 
 	const preferCardView = useCookie('preferCardView') ?? false;
 

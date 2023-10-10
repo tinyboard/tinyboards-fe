@@ -116,15 +116,15 @@
 import { useSiteStore } from '@/stores/StoreSite';
 const site = useSiteStore();
 
-useHead({
-  title: `${site.name} | Members`,
-  meta: [
-    {
-      property: "og:title",
-      content: `${site.name} | Members`,
-    },
-  ],
-});
+// useHead({
+//   title: `${site.name} | Members`,
+//   meta: [
+//     {
+//       property: "og:title",
+//       content: `${site.name} | Members`,
+//     },
+//   ],
+// });
 
 import { useRoute } from "vue-router";
 // import { baseURL } from "@/server/constants";

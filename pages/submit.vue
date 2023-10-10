@@ -129,15 +129,15 @@
 	import { useSiteStore } from '@/stores/StoreSite';
 	const site = useSiteStore();
 
-	useHead({
-		title: `${site.name} | create a post`,
-		meta: [
-		{
-			property: 'og:title',
-			content: `${site.name} | create a post`
-		}
-		]
-	});
+	// useHead({
+	// 	title: `${site.name} | create a post`,
+	// 	meta: [
+	// 	{
+	// 		property: 'og:title',
+	// 		content: `${site.name} | create a post`
+	// 	}
+	// 	]
+	// });
 
 	definePageMeta({
         'alias': ['','/+:board?/submit'],
