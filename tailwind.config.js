@@ -68,9 +68,9 @@ module.exports = {
       },
       fontSize: {
         'xs': '11px',
-        'sm': '12px',
-        'base': '14px',
-        'lg': '16px'
+        'sm': ['12px', '16px'],
+        'base': ['14px', '20px'],
+        'lg': ['16px', '24px']
       },
       maxWidth: {
         '8xl': '90rem'
