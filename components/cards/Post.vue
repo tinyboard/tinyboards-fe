@@ -14,7 +14,7 @@
         :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
         class="hidden sm:flex flex-shrink-0">
         <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-          class="w-9 h-9 object-cover rounded" />
+          class="w-10 h-10 object-cover rounded" />
       </NuxtLink>
       <div class="w-full" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
         <!-- Author & Post Meta -->
