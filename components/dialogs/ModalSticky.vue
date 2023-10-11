@@ -76,10 +76,11 @@
 
   const removeItem = async () => {
     const id = item.value.post.id;
-    await useApi(`/mod/sticky_post`, {
+    await useApi(`/mod/feature_post`, {
       body: {
           "post_id": id,
-          "stickied": !props.options.isStickied
+          "featured": !props.options.isStickied,
+          "feature_type": "Local"
       },
       method: "post"
     })
@@ -87,7 +88,7 @@
       if (data.value) {
         // Update post state.
         postsStore.updatePost(id, {
-          is_stickied: !props.options.isStickied
+          featured_local: !props.options.isStickied
         });
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));

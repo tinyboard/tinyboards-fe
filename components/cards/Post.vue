@@ -108,8 +108,7 @@
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink
-            class="z-10 relative font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
-            :class="{ 'sm:text-lg': !isCompact || (isCompact && isExpanded) }" :to="`/post/${item.post.id}`">
+            class="z-10 relative font-medium sm:text-lg text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`/post/${item.post.id}`">
             {{ item.post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && item.post.body_html" class="mt-2 relative overflow-hidden" :class="{
@@ -301,7 +300,7 @@
             <button @click="confirmSticky"
               class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
               <!-- Pin Icon -->
-              <svg v-show="!item.post.is_stickied" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
+              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -310,7 +309,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-show="item.post.is_stickied" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
+              <svg v-show="item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -322,7 +321,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                item.post.is_stickied ? "Unpin" : "Pin"
+                item.post.featured_local ? "Unpin" : "Pin"
               }}</span>
             </button>
           </li>
@@ -536,7 +535,7 @@ const confirmSticky = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isStickied: props.item.post.is_stickied,
+      isStickied: props.item.post.featured_local,
     },
   });
 };

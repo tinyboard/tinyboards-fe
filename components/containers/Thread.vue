@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full flex flex-col sm:space-y-6">
     <!-- Pinned Banner -->
-    <div v-if="item.post.is_stickied"
+    <div v-if="item.post.featured_local"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
       <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24"
         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -326,7 +326,7 @@
             <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
               @click="confirmSticky">
               <!-- Pin Icon -->
-              <svg v-show="!item.post.is_stickied" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
+              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -335,7 +335,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-show="item.post.is_stickied" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
+              <svg v-show="item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -347,7 +347,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                item.post.is_stickied ? "Unpin" : "Pin"
+                item.post.featured_local ? "Unpin" : "Pin"
               }}</span>
             </button>
           </li>
@@ -610,7 +610,7 @@ const confirmSticky = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isStickied: props.item.post.is_stickied,
+      isStickied: props.item.post.featured_local,
     },
   });
 };
