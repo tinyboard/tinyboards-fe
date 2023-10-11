@@ -69,7 +69,8 @@ module.exports = {
       fontSize: {
         'xs': '11px',
         'sm': '12px',
-        'base': '14px'
+        'base': '14px',
+        'lg': '16px'
       },
       maxWidth: {
         '8xl': '90rem'
