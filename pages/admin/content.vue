@@ -106,6 +106,9 @@ import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
 import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
+import { useImageStore } from '@/stores/StoreImages';
+import { useModalStore } from "@/stores/StoreModal";
+import { dataURLtoFile } from '@/utils/files';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -115,7 +118,63 @@ definePageMeta({
 });
 
 const toast = useToastStore();
+const imageStore = useImageStore();
+const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
+
+// File inputs
+const onFileChange = (e,type) => {
+	const file = e.target.files[0];
+
+	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
+
+	if (file.size > maxFileSize) {
+		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
+		return;
+	}
+
+	modalStore.setModal({
+		modal: "ModalCrop",
+		id: 0,
+		contentType: type,
+		isOpen: true,
+		options: {
+		image: URL.createObjectURL(file)
+		}
+	});
+};
+
+const uploadFile = async (file, type) => {
+	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
+
+	if (file.size > maxFileSize) {
+		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
+		throw new Error("enormous file");
+	}
+
+	let formData = new FormData();
+	formData.append('file', file);
+
+	const { data, pending, error, refresh } = await useApi("/file/upload", {
+		method: "put",
+		body: formData
+	});
+
+	if (data.value.uploads.length > 0) {
+		return data.value.uploads[0];
+	} else if (error.value.statusCode == 413) {
+		toast.addNotification({header:'Your files are too large!',message:'Your file is over 25MB!! How did you bypass the previous checks?',type:'error'});
+
+		throw new Error(error.value);
+	} else {
+		// Show error toast.
+		toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
+		// Log the error.
+		console.error(error.value);	
+
+		throw new Error(error.value);
+	}
+}
 
 // Fetch site settings.
 const { data, pending, error, refresh } = await useApi("/admin/site_settings");
@@ -132,6 +191,22 @@ const isLoading = ref(false);
 
 const submitSettings = () => {
 	isLoading.value = true;
+
+	// upload default avatar
+	if (imageStore.default_avatar) {
+		const default_avatar = dataURLtoFile(imageStore.default_avatar);
+		// after converting to file is finished, delete the original b64 url
+		imageStore.purgeDefaultAvatar();
+
+		try {
+			settings.value.default_avatar = await uploadFile(default_avatar, 'avatar');
+		} catch (e) {
+			console.error(e);
+			isLoading.value = false;
+			return;
+		}
+	}
+
 	useApi('/admin/site_settings', {
 		method: "put",
 		body: {
@@ -142,7 +217,8 @@ const submitSettings = () => {
 			"enable_nsfw": settings.value.enable_nsfw,
 			"application_question": settings.value.application_question,
 			"private_instance": settings.value.private_instance,
-			"email_verification_required": settings.value.email_verification_required
+			"email_verification_required": settings.value.email_verification_required,
+			"default_avatar": settings.value.default_avatar
 		}
 	})
 		.then(({ data, error }) => {
