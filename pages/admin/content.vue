@@ -67,6 +67,27 @@
 							</p>
 						</div>
 					</div>
+					<!-- Default Avatar -->
+					<div class="md:grid md:grid-cols-3 md:gap-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Default Avatar</label>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
+							<img v-if="settings.default_avatar" :src="settings.default_avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
+							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
+							<div class="ml-5">
+								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
+									{{ settings.default_avatar ? 'Change default avatar' : 'Upload default avatar' }}
+								</label>
+								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'avatar')" />
+								<small class="block mt-2 text-gray-400">
+									PNG, JPG <span class="line-through">and GIF</span> up to 1MB. This will be the default avatar for users.
+								</small>
+							</div>
+						</div>
+					</div>
 
 				</div>
 				<!-- Footer -->

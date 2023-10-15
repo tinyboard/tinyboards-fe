@@ -268,7 +268,8 @@ const submitSettings = async () => {
 			"enable_nsfw": settings.value.enable_nsfw,
 			"application_question": settings.value.application_question,
 			"private_instance": settings.value.private_instance,
-			"email_verification_required": settings.value.email_verification_required
+			"email_verification_required": settings.value.email_verification_required,
+			"default_avatar": settings.value.default_avatar,
 		}
 	});
 
