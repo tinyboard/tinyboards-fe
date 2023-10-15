@@ -189,7 +189,7 @@ if (data.value) {
 // Submit settings.
 const isLoading = ref(false);
 
-const submitSettings = () => {
+const submitSettings = async () => {
 	isLoading.value = true;
 
 	// upload default avatar
