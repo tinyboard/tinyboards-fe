@@ -66,7 +66,7 @@
           </div>
           <div class="flex flex-wrap space-x-1" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Pin Icon -->
-            <span v-if="item.post.is_stickied" title="Post pinned by the mods">
+            <span v-if="item.post.featured_local" title="Post pinned by the mods">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
