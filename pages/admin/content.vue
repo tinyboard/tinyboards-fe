@@ -75,7 +75,7 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
-							<img v-if="settings.default_avatar" :src="settings.default_avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
+							<img v-if="imageStore.default_avatar || settings.default_avatar" :src="imageStore.default_avatar ?? settings.default_avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
