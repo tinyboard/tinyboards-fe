@@ -25,7 +25,7 @@ const router = useRouter();
 console.log("setting up head");
 useHead({
 	bodyAttrs: {
-		class: useCookie("theme") ?? 'dark'
+		class: useCookie("theme", { default: () => ({ 'light' }) });
 	},
 	// title: `${site.name} | ${route.meta.title ?? 'feed'}`,
 	// meta: [
