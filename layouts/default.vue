@@ -27,7 +27,7 @@ useHead({
 	bodyAttrs: {
 		class: useCookie("theme") ?? 'dark'
 	},
-	title: `${site.name} | ${route.meta.title ?? 'feed'}`,
+	// title: `${site.name} | ${route.meta.title ?? 'feed'}`,
 	// meta: [
 	// 	{
 	// 		property: 'og:title',
