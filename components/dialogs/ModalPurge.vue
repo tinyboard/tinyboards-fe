@@ -12,7 +12,7 @@
             <DialogPanel class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <!-- Header -->
               <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
-                Purge this {{ type === 'person' && options.user.username ? options.user.username : type }}?
+                Purge this {{ type === 'user' && options.user.username ? options.user.username : type }}?
               </DialogTitle>
               <!-- Body -->
               <div class="modal-body mt-2">
@@ -30,7 +30,7 @@
                   No, cancel
                 </button>
                 <button class="button red" @click="purge">
-                  Yes, purge {{ type === 'person' && options.user.username ? options.user.username : `this ${type}` }}
+                  Yes, purge {{ type === 'user' && options.user.username ? options.user.username : `this ${type}` }}
                 </button>
               </div>
             </DialogPanel>
