@@ -39,21 +39,21 @@
       </div>
       <ul class="flex flex-col space-y-2 divide-y divide-gray-200/50">
         <li
-          v-for="user in users.members"
-          :key="user.id"
+          v-for="person in users.members"
+          :key="person.id"
           class="pt-2 first:pt-0"
         >
-          <NuxtLink :to="`/@${user.user.name}`" class="flex space-x-2">
+          <NuxtLink :to="`/@${person.person.name}`" class="flex space-x-2">
             <img
               loading="lazy"
               class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-              :src="user.user.avatar ?? 'https://placekitten.com/36/36'"
+              :src="person.person.avatar ?? 'https://placekitten.com/36/36'"
             />
             <div class="flex flex-col justify-center leading-normal">
               <div class="flex">
-                <strong class="text-sm">{{ user.user.name }}</strong>
+                <strong class="text-sm">{{ person.person.name }}</strong>
                 <!-- Role -->
-                <span v-if="user.user.is_admin" class="ml-1 badge badge-red"
+                <span v-if="person.person.is_admin" class="ml-1 badge badge-red"
                   >Admin</span
                 >
               </div>
@@ -61,7 +61,7 @@
                 Since
                 <span class="font-medium">
                   {{
-                    format(parseISO(user.user.creation_date), "MMM dd, yyyy")
+                    format(parseISO(person.person.creation_date), "MMM dd, yyyy")
                   }}
                 </span>
               </small>

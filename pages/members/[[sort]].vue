@@ -30,7 +30,7 @@
             class="w-full col-span-full md:col-span-2 lg:col-span-1"
           >
             <NuxtLink
-              :to="`/@${member.user.name}`"
+              :to="`/@${member.person.name}`"
               class="relative flex flex-col p-2.5 sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white"
             >
               <span
@@ -41,15 +41,15 @@
               <div class="flex items-center space-x-2">
                 <img
                   class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-                  :src="member.user.avatar"
+                  :src="member.person.avatar"
                 />
                 <div class="flex flex-col justify-center">
                   <div class="flex">
                     <strong class="text-gray-900 text-sm">{{
-                      member.user.name
+                      member.person.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.is_admin" class="ml-1 badge badge-red"
+                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red"
                       >Admin</span
                     >
                   </div>
@@ -61,7 +61,7 @@
                     Since
                     <span class="font-medium">{{
                       format(
-                        parseISO(member.user.creation_date),
+                        parseISO(member.person.creation_date),
                         "MMM dd, yyyy"
                       )
                     }}</span>

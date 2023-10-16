@@ -57,7 +57,7 @@
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
               <li
                 v-for="(member, i) in members.members.slice(0, 5)"
-                :key="member.user.id"
+                :key="member.person.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0"
               >
                 <div class="flex items-center px-3 py-1">
@@ -65,18 +65,18 @@
                     #{{ i + 1 }}
                   </p>
                   <NuxtLink
-                    :to="`/@${member.user.name}`"
+                    :to="`/@${member.person.name}`"
                     class="ml-3 w-3/4 flex flex-shrink-0 items-center"
                   >
                     <img
                       class="p-0.5 w-7 h-7 object-cover"
-                      :src="member.user.avatar"
+                      :src="member.person.avatar"
                     />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.user.name
+                      member.person.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.is_admin" class="ml-1 badge badge-red"
+                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red"
                       >Admin</span
                     >
                   </NuxtLink>
@@ -101,7 +101,7 @@
             >
               <li
                 v-for="(member, i) in membersPosts.members.slice(0, 5)"
-                :key="member.user.id"
+                :key="member.person.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0"
               >
                 <div class="flex items-center px-3 py-1">
@@ -109,18 +109,18 @@
                     #{{ i + 1 }}
                   </p>
                   <NuxtLink
-                    :to="`/@${member.user.name}`"
+                    :to="`/@${member.person.name}`"
                     class="ml-3 w-3/4 flex flex-shrink-0 items-center"
                   >
                     <img
                       class="p-0.5 w-7 h-7 object-cover"
-                      :src="member.user.avatar"
+                      :src="member.person.avatar"
                     />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.user.name
+                      member.person.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.is_admin" class="ml-1 badge badge-red"
+                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red"
                       >Admin</span
                     >
                   </NuxtLink>
@@ -148,7 +148,7 @@
             >
               <li
                 v-for="(member, i) in members.members.slice(0, 5)"
-                :key="member.user.id"
+                :key="member.person.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0"
               >
                 <div class="flex items-center px-3 py-1">
@@ -156,18 +156,18 @@
                     #{{ i + 1 }}
                   </p>
                   <NuxtLink
-                    :to="`/@${member.user.name}`"
+                    :to="`/@${member.person.name}`"
                     class="ml-3 w-2/4 flex flex-shrink-0 items-center"
                   >
                     <img
                       class="p-0.5 w-7 h-7 object-cover"
-                      :src="member.user.avatar"
+                      :src="member.person.avatar"
                     />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.user.name
+                      member.person.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.user.is_admin" class="ml-1 badge badge-red">
+                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">
                       Admin
                     </span>
                   </NuxtLink>
@@ -175,7 +175,7 @@
                     <p class="text-gray-400 text-sm font-medium uppercase">
                       {{
                         format(
-                          parseISO(member.user.creation_date),
+                          parseISO(member.person.creation_date),
                           "MMM dd, yyyy"
                         )
                       }}
