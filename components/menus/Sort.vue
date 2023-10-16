@@ -29,7 +29,7 @@
   <div class="py-2">
     <!-- Menu Item -->
     <MenuItem v-slot="{ active, close }" v-for="(item, index) in sorts" :key="index">
-      <NuxtLink :to="item.href" :class="[index === selectedSort ? 'font-medium text-gray-200' : 'font-normal text-gray-700 dark:text-gray-400',{ 'bg-gray-100 dark:bg-gray-800':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
+      <NuxtLink :to="item.href" :class="[index === selectedSort ? 'font-medium text-gray-900 dark:text-gray-200' : 'font-normal text-gray-700 dark:text-gray-400',{ 'bg-gray-100 dark:bg-gray-800':active },'block text-sm px-4 py-2 truncate']" @click="sort = item.key; close()">
         {{ item.name }}
       </NuxtLink>
     </MenuItem>
