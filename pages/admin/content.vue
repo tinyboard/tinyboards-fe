@@ -75,15 +75,20 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
-							<img v-if="imageStore.default_avatar || settings.default_avatar" :src="imageStore.default_avatar ?? settings.default_avatar" class="w-20 h-20 object-cover p-0.5 border bg-white"/>
+							<img v-if="imageStore.default_avatar || settings.default_avatar"
+								:src="imageStore.default_avatar ?? settings.default_avatar"
+								class="w-20 h-20 object-cover p-0.5 border bg-white" />
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
 									{{ settings.default_avatar ? 'Change default avatar' : 'Upload default avatar' }}
 								</label>
-								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'avatar')" />
+								<input id="avatar-upload" type="file" class="hidden"
+									accept="image/png, image/jpeg, image/gif"
+									@change="e => onFileChange(e, 'default_avatar')" />
 								<small class="block mt-2 text-gray-400">
-									PNG, JPG <span class="line-through">and GIF</span> up to 1MB. This will be the default avatar for users.
+									PNG, JPG <span class="line-through">and GIF</span> up to 1MB. This will be the default
+									avatar for users.
 								</small>
 							</div>
 						</div>
@@ -123,13 +128,13 @@ const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
 
 // File inputs
-const onFileChange = (e,type) => {
+const onFileChange = (e, type) => {
 	const file = e.target.files[0];
 
 	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
 
 	if (file.size > maxFileSize) {
-		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
+		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
 		return;
 	}
 
@@ -139,7 +144,7 @@ const onFileChange = (e,type) => {
 		contentType: type,
 		isOpen: true,
 		options: {
-		image: URL.createObjectURL(file)
+			image: URL.createObjectURL(file)
 		}
 	});
 };
@@ -148,7 +153,7 @@ const uploadFile = async (file, type) => {
 	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
 
 	if (file.size > maxFileSize) {
-		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
+		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
 		throw new Error("enormous file");
 	}
 
@@ -163,14 +168,14 @@ const uploadFile = async (file, type) => {
 	if (data.value.uploads.length > 0) {
 		return data.value.uploads[0];
 	} else if (error.value.statusCode == 413) {
-		toast.addNotification({header:'Your files are too large!',message:'Your file is over 25MB!! How did you bypass the previous checks?',type:'error'});
+		toast.addNotification({ header: 'Your files are too large!', message: 'Your file is over 25MB!! How did you bypass the previous checks?', type: 'error' });
 
 		throw new Error(error.value);
 	} else {
 		// Show error toast.
-		toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
+		toast.addNotification({ header: 'Upload failed', message: 'Failed to upload image :(', type: 'error' });
 		// Log the error.
-		console.error(error.value);	
+		console.error(error.value);
 
 		throw new Error(error.value);
 	}
