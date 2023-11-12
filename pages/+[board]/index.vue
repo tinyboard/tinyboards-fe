@@ -87,6 +87,9 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useLoggedInUser();
 const v = userStore.user;
+const config = useRuntimeConfig();
+
+let boardApiUrl = `${config.public.use_https ? "https" : "http"}://${config.public.domain}/board`;
 
 console.log("stores have been set up");
 
@@ -102,27 +105,29 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
 
-const {
-    board_view,
-    subscribed,
-    blocked,
-    counts,
-    site,
-    moderators,
-    discussion_languages,
-} = await getBoard(route.params.board);
+// get board info from the board api endpoint
+const {data, _pending, _error, _refresh} = await useFetch(
+    boardApiUrl, {
+        query: {
+            name: route.params.board
+        }
+    }
+);
 
+let board_view = data.value["board_view"];
+let board_data = board_view["board"]
+let counts = data.value["counts"];
 
 const board = {
-  name: board_view.board.name,
-  title: board_view.board.title,
-  description: board_view.board.description,
-  followers_count: counts.subscribers,
-  posts_count: counts.posts,
-  comments_count: counts.comments,
-  created_at: board_view.board.creation_date,
-  icon_url: board_view.board.icon,
-  banner_url: board_view.board.banner,
+  name: board_data["name"],
+  title: board_data["title"],
+  description: board_data["description"],
+  followers_count: counts["subscribers"],
+  posts_count: counts["posts"],
+  comments_count: counts["comments"],
+  created_at: board_data["creation_date"],
+  icon_url: board_data["icon"],
+  banner_url: board_data["banner"],
 };
 
 // Posts
