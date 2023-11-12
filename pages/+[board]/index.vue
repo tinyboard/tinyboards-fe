@@ -117,6 +117,10 @@ const {
     name: route.params.board,
    });
 
+console.log('after the board api call...');
+console.log(board_view);
+console.log(subscribed);
+console.log(blocked);
 console.log(counts);
 
 const board = {
