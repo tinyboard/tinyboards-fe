@@ -10,9 +10,6 @@ export async function getBoard(name) {
         
         if (data.value) {
             let board_view = data.value["board_view"];
-            let subscribed = data.value["subscribed"];
-            let blocked = data.value["blocked"];
-            let counts = data.value["counts"];
             let site = data.value["site"];
             let moderators = data.value["moderators"];
             let discussion_languages = data.value["discussion_languages"];
@@ -22,9 +19,6 @@ export async function getBoard(name) {
                 error,
                 refresh,
                 board_view,
-                subscribed,
-                blocked,
-                counts,
                 site,
                 moderators,
                 discussion_languages,
@@ -38,9 +32,6 @@ export async function getBoard(name) {
         error,
         refresh,
         board_view,
-        subscribed,
-        blocked,
-        counts,
         site,
         moderators,
         discussion_languages
@@ -48,9 +39,6 @@ export async function getBoard(name) {
 
     return {
         board_view,
-        subscribed,
-        blocked,
-        counts,
         site,
         moderators,
         discussion_languages,

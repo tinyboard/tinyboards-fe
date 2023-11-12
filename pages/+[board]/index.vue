@@ -104,9 +104,6 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
 const {
     board_view,
-    subscribed,
-    blocked,
-    counts,
     site,
     moderators,
     discussion_languages,
@@ -117,19 +114,13 @@ const {
     name: route.params.board,
    });
 
-console.log('after the board api call...');
-console.log(board_view);
-console.log(subscribed);
-console.log(blocked);
-console.log(counts);
-
 const board = {
   name: board_view.board.name,
   title: board_view.board.title,
   description: board_view.board.description,
-  followers_count: counts.subscribers,
-  posts_count: counts.posts,
-  comments_count: counts.comments,
+  followers_count: board_view.counts.subscribers,
+  posts_count: board_view.counts.posts,
+  comments_count: board_view.counts.comments,
   created_at: board_view.board.creation_date,
   icon_url: board_view.board.icon,
   banner_url: board_view.board.banner,
