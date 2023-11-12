@@ -1,4 +1,3 @@
-import { ref } from "vue";
 import { useApi } from "@/composables/api";
 
 export async function getBoard(name) {
