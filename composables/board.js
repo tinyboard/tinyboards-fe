@@ -54,5 +54,8 @@ export async function getBoard(name) {
         site,
         moderators,
         discussion_languages,
+        pending,
+        error,
+        refresh
     };
 }

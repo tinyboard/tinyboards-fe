@@ -110,6 +110,9 @@ const {
     site,
     moderators,
     discussion_languages,
+    _pending,
+    _error,
+    _refresh,
 } = await getBoard({
     name: route.params.board,
    });
