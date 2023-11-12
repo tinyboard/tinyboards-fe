@@ -6,7 +6,7 @@
 
       <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
         <!-- Banner -->
-        <LazyCardsBoardBanner v-if="route.params.board" :board="dummyBoard" class="col-span-full" />
+        <LazyCardsBoardBanner v-if="route.params.board" :board="board" class="col-span-full" />
         <LazyCardsBanner v-else title="Feed" sub-title="Welcome to the awesome and exciting front page."
           image-url="/img/artwork/front-page.jpeg" class="col-span-full" />
       </div>
@@ -63,7 +63,7 @@
           </div>
         </div>
         <!-- Sidebar -->
-        <component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? dummyBoard : null" />
+        <component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? board : null" />
       </div>
     </section>
   </main>
@@ -72,9 +72,8 @@
 <script setup>
 import { usePostsStore } from "@/stores/StorePosts";
 import { getListing } from "@/composables/listing";
+import { getBoard } from "@composables/board";
 import { useLoggedInUser } from "@/stores/StoreAuth";
-
-console.log("hi from the feed page");
 
 // Import sidebar components
 const Sidebar = defineAsyncComponent(() =>
@@ -84,8 +83,6 @@ const SidebarBoard = defineAsyncComponent(() =>
   import("@/components/containers/SidebarBoard")
 );
 
-console.log("and hi again after some imports");
-
 const router = useRouter();
 const route = useRoute();
 const userStore = useLoggedInUser();
@@ -94,36 +91,39 @@ const v = userStore.user;
 console.log("stores have been set up");
 
 definePageMeta({
-  alias: ["", "/feed/:sort?"],
+  alias: ["/+:board", "/+:board?/:sort?"],
   key: (route) => route.fullPath,
 });
 
-console.log("page meta is good");
-
 const preferCardView = useCookie("preferCardView") ?? false;
-
-console.log("cookies are alright");
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-console.log("no problems with the query params either");
 
-const dummyBoard = {
-  name: route.params.board,
-  title: "Board title, defaults to board name",
-  description: "Board short description, max 256 chars",
-  followers_count: 304,
-  posts_count: 1902,
-  comments_count: 13929,
-  created_at: "2022-11-27T19:31:27.730335",
-  icon_url: "https://i.ibb.co/r4D7WWs/scott-goodwill-y8-Ngwq34-Ak-unsplash.jpg",
-  banner_url: "/img/artwork/front-page.jpeg",
+const {
+    board_view,
+    subscribed,
+    blocked,
+    counts,
+    site,
+    moderators,
+    discussion_languages,
+} = await getBoard(route.params.board);
+
+
+const board = {
+  name: board_view.board.name,
+  title: board_view.board.title,
+  description: board_view.board.description,
+  followers_count: counts.subscribers,
+  posts_count: counts.posts,
+  comments_count: counts.comments,
+  created_at: board_view.board.creation_date,
+  icon_url: board_view.board.icon,
+  banner_url: board_view.board.banner,
 };
-
-console.log("dummy board has been set up");
-
 
 // Posts
 const postsStore = usePostsStore();
@@ -143,19 +143,16 @@ const sort = computed(() => {
   return sorts.includes(route.params.sort) ? route.params.sort : "hot";
 });
 
-console.log("computed sort");
-
 const { items, totalCount, paginate, pending, error, refresh } =
   await getListing(
     {
+      board_name: route.params.board,
       sort: sort.value,
       limit: limit.value,
       page: page.value,
     },
     "posts"
   );
-
-console.log("listing awaited");
 
 if (error.value && error.value.response) {
   throw createError({
@@ -166,8 +163,6 @@ if (error.value && error.value.response) {
   });
 }
 
-console.log("no error with listing request");
-
 postsStore.posts = items;
 const posts = postsStore.posts;
 
@@ -175,13 +170,9 @@ const totalPages = computed(() => {
   return Math.ceil(totalCount.value / limit.value || 1);
 });
 
-console.log("posts saved");
-
 // Links for sub navbar
 const links = [
   { name: "New Thread", href: "/submit" },
   { name: "House Rules", href: "/help/rules", target: "_blank" },
 ];
-
-console.log("links are okay");
 </script>
