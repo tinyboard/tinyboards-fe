@@ -4,10 +4,10 @@ export async function getBoard(name) {
 
     async function request(name){
         const { data, pending, error, refresh } = await useApi("/board", {
-            query: {...name},
+            query: name,
             key: "name",
         });
-
+        
         if (data.value) {
             let board_view = data.value["board_view"];
             let subscribed = data.value["subscribed"];
