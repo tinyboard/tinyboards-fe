@@ -72,7 +72,7 @@
 <script setup>
 import { usePostsStore } from "@/stores/StorePosts";
 import { getListing } from "@/composables/listing";
-import { getBoard } from "@composables/board";
+import { getBoard } from "@/composables/board";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 
 // Import sidebar components
