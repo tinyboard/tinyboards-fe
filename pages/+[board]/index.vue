@@ -114,6 +114,8 @@ const {
     name: route.params.board,
    });
 
+console.log(counts);
+
 const board = {
   name: board_view.board.name,
   title: board_view.board.title,
