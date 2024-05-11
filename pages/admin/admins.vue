@@ -27,7 +27,7 @@
                 <button v-else class="ml-auto flex items-center button red">
                     Transfer ownership
                 </button>
-                <button v-if="requireFullPerms()" class="ml-auto flex items-center button green">
+                <button v-if="requireFullPerms()" @click="openAdminModal" class="ml-auto flex items-center button green">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-2" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -205,9 +205,20 @@ watch(
     }
 )
 
+// Open admin modal
+const openAdminModal = () => {
+    modalStore.setModal({
+        modal: 'ModalAdmin',
+        id: 0,
+        isOpen: true,
+        options: {
+            'remove': false
+        }
+    });
+};
 
 // Unban
-const confirmUnban = (u) => {
+/*const confirmUnban = (u) => {
     modalStore.setModal({
         modal: 'ModalBan',
         id: u.id,
@@ -230,5 +241,5 @@ const confirmBan = (u) => {
             'user': u
         }
     });
-}
+}*/
 </script>

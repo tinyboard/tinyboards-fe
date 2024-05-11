@@ -1,6 +1,6 @@
 import { useLoggedInUser } from "@/stores/StoreAuth";
 
-const PERMISSIONS = {
+export const PERMISSIONS = {
   appearance: 2,
   config: 4,
   content: 8,

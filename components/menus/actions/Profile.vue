@@ -149,7 +149,7 @@ const props = defineProps({
 const confirmAdmin = () => {
   modalStore.setModal({
     modal: 'ModalAdmin',
-    username: props.user.name,
+    id: 0,
     isOpen: true,
     options: {
       'is_admin': props.user.is_admin,
@@ -162,7 +162,7 @@ const confirmAdmin = () => {
 const confirmBan = () => {
   modalStore.setModal({
     modal: 'ModalBan',
-    username: props.user.name,
+    id: 0,
     isOpen: true,
     options: {
       'is_banned': props.user.is_banned,
