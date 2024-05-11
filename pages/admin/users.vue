@@ -1,6 +1,6 @@
 <template>
 	<NuxtLayout name="admin">
-		<div class="flex pt-4 px-4">
+		<div class="flex pt-4 px-4 justify-between">
 			<!-- Page Heading & Description -->
 			<div>
 				<h3 class="text-lg font-medium leading-6 text-gray-900">Members</h3>
@@ -17,6 +17,10 @@
 				</svg>
 				Create invite
 			</button>-->
+			<form>
+				<input type="text" name="search_term" v-model="searchTerm" class="border-gray-300 rounded px-4 py-2"
+					placeholder="Search members..." />
+			</form>
 		</div>
 
 		<div class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
@@ -106,6 +110,7 @@ import { useModalStore } from '@/stores/StoreModal';
 import { format, parseISO } from "date-fns";
 
 const route = useRoute();
+const router = useRouter();
 
 definePageMeta({
 	isFooterDisabled: true,
@@ -125,6 +130,9 @@ const site = useSiteStore();
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
+
+// Search
+const searchTerm = ref(route.query.search_term || "");
 
 // Fetch users
 const { data: members, pending, error, refresh } = await useApi("/members", {
@@ -152,7 +160,27 @@ watch(
 			method: "get",
 		});
 
-		members.value = newMembers.value();
+		members.value = newMembers.value;
+	}
+)
+
+watch(
+	() => searchTerm.value,
+	async newSearch => {
+		// make copy instead of reference
+		const query = JSON.parse(JSON.stringify(route.query));
+		query.search_term = newSearch;
+		router.replace({ query });
+		const { data: newMembers } = await useApi("/members", {
+			query: {
+				limit: limit.value,
+				page: page.value,
+				search_term: newSearch,
+			},
+			method: "get",
+		});
+
+		members.value = newMembers.value;
 	}
 )
 
