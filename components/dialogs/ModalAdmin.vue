@@ -153,6 +153,11 @@ const permissions = [
 const permissionCode = ref(props.options.user?.admin_level || 0);
 const fullPermsEnabled = computed(() => (permissionCode.value & PERMISSIONS["full"]) > 0);
 
+watch(
+  () => props.options.user?.admin_level,
+  newLevel => permissionCode.value = newLevel || 0
+);
+
 // const remove = computed(() => props.options.user?.is_admin || props.options.remove);
 const remove = computed(() => props.options.remove);
 const target = ref('');
