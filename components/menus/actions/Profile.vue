@@ -53,8 +53,8 @@
         <!-- Mod Actions -->
         <div v-if="isAdmin && !isSelf" class="py-2 text-sm">
           <!-- Manage Admin -->
-          <MenuItem v-slot="{ active, close }">
-          <button @click="confirmAdmin(); close()" class="group flex items-center w-full px-4 py-1.5"
+          <MenuItem v-if="requireFullPerms()" v-slot="{ active, close }">
+          <button @click="confirmAdmin(user.is_admin); close()" class="group flex items-center w-full px-4 py-1.5"
             :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
             <!-- Sheild Slash Icon -->
             <svg v-if="user.is_admin" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24"
@@ -72,6 +72,18 @@
               <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
             </svg>
             <span>{{ user.is_admin ? 'Remove' : 'Make' }} admin</span>
+          </button>
+          </MenuItem>
+          <MenuItem v-if="requireFullPerms() && user.is_admin" v-slot="{ active, close }">
+          <button @click="confirmAdmin(false); close()" class="group flex items-center w-full px-4 py-1.5"
+            :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
+            <!-- Shield Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
+            </svg>
+            <span>Edit admin permissions</span>
           </button>
           </MenuItem>
           <!-- Ban/Unban -->
@@ -121,6 +133,7 @@
 import { computed, ref } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { useModalStore } from '@/stores/StoreModal';
+import { requireFullPerms } from '@/composables/admin';
 
 const modalStore = useModalStore();
 
@@ -146,14 +159,15 @@ const props = defineProps({
 });
 
 // Confirm Admin
-const confirmAdmin = () => {
+const confirmAdmin = (remove) => {
   modalStore.setModal({
     modal: 'ModalAdmin',
     id: 0,
     isOpen: true,
     options: {
       'is_admin': props.user.is_admin,
-      'user': props.user
+      'user': props.user,
+      'remove': remove
     }
   });
 };

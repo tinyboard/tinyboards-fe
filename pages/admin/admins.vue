@@ -16,7 +16,7 @@
 
         <div v-if="user.adminLevel > 0"
             class="flex justify-between items-center align-middle bg-white dark:bg-gray-600 px-4 py-2 rounded">
-            <p class="text-gray-700 text-sm font-semibold">You are currently {{ requireOwnerPerms() ? 'the owner' : `an
+            <p class="text-gray-700 text-sm font-semibold">You are {{ requireOwnerPerms() ? 'the owner' : `an
                 admin` }} of {{
                     site.name
                 }}.</p>
@@ -48,7 +48,7 @@
                 <span class="col-span-1 text-gray-500 text-sm font-medium uppercase">
                     Permissions
                 </span>
-                <span v-if="user.adminLevel > 0" class="col-span-2 text-gray-500 text-sm font-medium uppercase text-right">
+                <span v-if="requireFullPerms()" class="col-span-2 text-gray-500 text-sm font-medium uppercase text-right">
                     Actions
                 </span>
             </div>
@@ -69,29 +69,28 @@
                     <div class="col-span-1 flex items-center">
                         {{ createPermissionString(v.person.admin_level) }}
                     </div>
-                    <div v-if="v.person.is_banned" class="col-span-2 flex justify-end">
-                        <button @click="() => confirmUnban(v.person)" class="px-1 text-gray-500 hover:text-green-600"
-                            :title="`Unban @${v.person.name}`">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
-                                <path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path>
-                                <path d="M15 19l2 2l4 -4"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div v-else-if="!v.person.is_admin" class="col-span-2 flex justify-end">
-                        <button @click="() => confirmBan(v.person)" class="px-1 text-gray-500 hover:text-red-600"
-                            :title="`Ban @${v.person.name}`">
+                    <div v-if="(requireOwnerPerms() && v.person.id != user.user.id) || (requireFullPerms() && v.person.admin_level < user.adminLevel)"
+                        class="col-span-2 flex justify-end space-x-2">
+                        <button @click="() => openManageModal(v.person, false)"
+                            class="px-1 text-gray-500 hover:text-blue-600"
+                            :title="`Edit permissions for @${v.person.name}`">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M8.18 8.189a4.01 4.01 0 0 0 2.616 2.627m3.507 -.545a4 4 0 1 0 -5.59 -5.552" />
+                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                <path d="M16 5l3 3" />
+                            </svg>
+                        </button>
+                        <button @click="() => openManageModal(v.person, true)" class="px-1 text-gray-500 hover:text-red-600"
+                            :title="`Remove @${v.person.name} as admin`">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                 <path
-                                    d="M6 21v-2a4 4 0 0 1 4 -4h4c.412 0 .81 .062 1.183 .178m2.633 2.618c.12 .38 .184 .785 .184 1.204v2" />
+                                    d="M18 18h-13l-1.865 -9.327a.25 .25 0 0 1 .4 -.244l4.465 3.571l1.6 -2.4m1.596 -2.394l.804 -1.206l4 6l4.464 -3.571a.25 .25 0 0 1 .401 .244l-1.363 6.818" />
                                 <path d="M3 3l18 18" />
                             </svg>
                         </button>
@@ -213,6 +212,19 @@ const openAdminModal = () => {
         isOpen: true,
         options: {
             'remove': false
+        }
+    });
+};
+
+// Admin modal for managing specific users
+const openManageModal = (user, remove) => {
+    modalStore.setModal({
+        modal: 'ModalAdmin',
+        id: 0,
+        isOpen: true,
+        options: {
+            'remove': remove,
+            'user': user
         }
     });
 };

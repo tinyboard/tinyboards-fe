@@ -16,17 +16,21 @@
             <DialogPanel
               class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <!-- Header -->
-              <DialogTitle as="h3" class="text-lg font-bold leading-6 text-gray-900">
+              <DialogTitle v-if="options.user && options.user.is_admin && !remove" as="h3"
+                class="text-lg font-bold leading-6 text-gray-900">
+                Edit permissions for {{ options.user.name }}
+              </DialogTitle>
+              <DialogTitle v-else as="h3" class="text-lg font-bold leading-6 text-gray-900">
                 {{ remove ? `Remove ${options.user?.name ?? 'target user'} as` : `Make ${options.user?.name ??
                   'target user'}` }} admin
               </DialogTitle>
               <!-- Body -->
               <div class="mt-2">
-                <p class="text-sm text-gray-500">
-                  {{ options.user?.name ?? 'Target user' }} will {{ remove ? 'have admin privileges revoked' :
-                    'be granted admin privileges. Choose permissions below' }}.
-                  <!--<br />
-                  You can undo this action.-->
+                <p v-if="remove && options.user" class="text-sm text-gray-500">
+                  {{ options.user.name }} will have all their admin privileges revoked.
+                  <br />
+                  <br />
+                  This action can be undone.
                 </p>
                 <div v-if="!options.user" class="mt-2">
                   <label for="target" class="text-sm text-gray-600 font-semibold">Username</label>
@@ -34,8 +38,8 @@
                     class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
                     placeholder="username without the @" maxlength="255" />
                 </div>
-                <h3 class="mt-2 text-lg font-semibold text-gray-700">Permissions</h3>
-                <div class="space-y-2 divide-y-[1px]">
+                <h3 v-if="!remove" class="mt-2 text-lg font-semibold text-gray-700">Permissions</h3>
+                <div v-if="!remove" class="space-y-2 divide-y-[1px]">
                   <div v-for="perm in permissions" :key="perm.code" class="flex justify-between items-center">
                     <div class="my-2 mr-2">
                       <h5 class="text-gray-800 font-semibold" :class="{ 'text-opacity-60': fullPermsEnabled }">{{
@@ -69,9 +73,8 @@
                 </button>
                 <button class="button red" @click="submitAdmin"
                   :disabled="!(options.user || target.length > 0) || (!remove && permissionCode == 0)">
-                  Yes, {{ remove ? `remove ${options.user?.name ?? 'target user'} as` : `make ${options.user?.name ??
-                    'target user'}`
-                  }} admin
+                  {{ remove ? `Indeed, demote @${options.user.name}!` : (options.user?.is_admin ? 'Update permissions' :
+                    `Confirm, promote ${options.user?.name ?? "them"}!`) }}
                 </button>
               </div>
             </DialogPanel>
@@ -147,10 +150,11 @@ const permissions = [
   },
 ]
 
-const permissionCode = ref(0);
+const permissionCode = ref(props.options.user?.admin_level || 0);
 const fullPermsEnabled = computed(() => (permissionCode.value & PERMISSIONS["full"]) > 0);
 
-const remove = computed(() => props.options.user?.is_admin || props.options.remove);
+// const remove = computed(() => props.options.user?.is_admin || props.options.remove);
+const remove = computed(() => props.options.remove);
 const target = ref('');
 
 const modalStore = useModalStore();
@@ -162,6 +166,9 @@ const toast = useToastStore();
 const submitAdmin = async () => {
   //const isAdmin = props.options.user.is_admin;
   const username = props.options.user?.name || target.value;
+  if (remove.value) {
+    permissionCode.value = 0;
+  }
   await useApi('/admin/add_admin', {
     body: {
       "username": username,
@@ -176,14 +183,14 @@ const submitAdmin = async () => {
         console.log(data);
         // Show success toast.
         toast.addNotification({
-          header: `${username} ${remove.value ? 'removed as' : 'was made'} admin`,
+          header: `${username} ${remove.value ? 'removed as admin' : (props.options.user?.is_admin ? '- permissions updated' : 'was made an admin')}`,
           message: 'Reload the page to see changes.',
           type: 'success'
         });
       } else {
         // Show error toast.
         toast.addNotification({
-          header: `${remove.value ? 'Adding' : 'Removing'} admin failed`,
+          header: `${remove.value ? 'Removing' : 'Adding'} admin failed`,
           message: `Failed to ${remove.value ? 'remove' : 'make'} admin. Please try again.`,
           type: 'error'
         });
