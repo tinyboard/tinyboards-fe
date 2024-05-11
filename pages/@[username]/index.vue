@@ -9,6 +9,7 @@ import { usePostsStore } from '@/stores/StorePosts';
 import { getListing } from '@/composables/listing';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useLoggedInUser } from '@/stores/StoreAuth';
+import { requirePermission } from '@/composables/admin';
 
 const route = useRoute();
 const site = useSiteStore();
@@ -19,15 +20,15 @@ definePageMeta({
 	key: (route) => route.fullPath,
 });
 
-// useHead({
-// 	title: `${site.name} | ${route.params.username}'s profile`,
-// 	meta: [
-// 		{
-// 			property: 'og:title',
-// 			content: `${site.name} | ${route.params.username}'s profile`
-// 		}
-// 	]
-// });
+useHead({
+	title: `${site.name} | ${route.params.username}'s profile`,
+	meta: [
+		{
+			property: 'og:title',
+			content: `${site.name} | ${route.params.username}'s profile`
+		}
+	]
+});
 
 // Import thread components.
 const Profile = defineAsyncComponent(() => import('@/components/pages/Profile'));
@@ -69,10 +70,8 @@ const isSelf = computed(() => {
 	return !!userStore.user && userStore.user.name === user.name
 });
 
-// Admin
-const isAdmin = computed(() => {
-	return !!userStore.user && userStore.user.is_admin
-});
+// Admin - can bypass banned page if they have either the content or the users permission
+const isAdmin = requirePermission("content") || requirePermission("users");
 
 const canView = computed(() => {
 	const u = personView.person;
@@ -85,7 +84,7 @@ const canView = computed(() => {
 		return true;
 	}
 
-	return isSelf.value || isAdmin.value;
+	return isSelf.value || isAdmin;
 });
 
 /*const { items, totalCount, postsPaginate, postsPending, postsError, postsRefresh } = await getListing({

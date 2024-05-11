@@ -229,7 +229,7 @@
 						class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								{{ user.username }} has made no {{ posts ? 'posts' : 'comments' }}
+								{{ user.name }} has made no {{ posts ? 'posts' : 'comments' }}
 							</span>
 							<br />
 							They must not be that interesting
@@ -248,6 +248,7 @@
 <script setup>
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { format, parseISO } from "date-fns";
+import { requirePermission } from '@/composables/admin';
 
 const props = defineProps({
 	personView: {
@@ -289,9 +290,10 @@ const isSelf = computed(() => {
 });
 
 // Admin
-const isAdmin = computed(() => {
+/*const isAdmin = computed(() => {
 	return !!userStore.user && userStore.user.is_admin
-});
+});*/
+const isAdmin = requirePermission("users");
 
 // Number of days until unban
 const unbanDays = computed(() => {

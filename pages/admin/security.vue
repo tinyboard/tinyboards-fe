@@ -174,7 +174,8 @@ definePageMeta({
 	'hasAuthRequired': true,
 	'title': 'Settings',
 	isFooterDisabled: true,
-	isScrollDisabled: true
+	isScrollDisabled: true,
+	requirePermission: "config",
 });
 
 const toast = useToastStore();

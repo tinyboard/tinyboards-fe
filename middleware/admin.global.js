@@ -1,11 +1,19 @@
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { requirePermission } from "~~/composables/admin";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const userStore = useLoggedInUser();
   //console.log("admin check");
   // Redirect to login if page requires authenticated session.
   // Redirect to feed if page requires unauthenticated session.
-  if (userStore.user && !userStore.user.is_admin && to.meta.isAdminRequired) {
-    return navigateTo("/feed");
+  if (
+    to.meta.hasOwnProperty("permissionRequired") &&
+    !requirePermission(to.meta.permissionRequired)
+  ) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "You are NOT welcome here. GO AWAY!",
+      fatal: true,
+    });
   }
 });

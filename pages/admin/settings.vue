@@ -161,6 +161,7 @@ import { dataURLtoFile } from '@/utils/files';
 definePageMeta({
 	'hasAuthRequired': true,
 	'title': 'Settings',
+	'permissionRequired': "config",
 	isFooterDisabled: true,
 	isScrollDisabled: true
 });

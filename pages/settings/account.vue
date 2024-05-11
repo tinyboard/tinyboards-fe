@@ -17,7 +17,8 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="email" name="email-address" id="email-address" class="mt-1 form-input gray" placeholder="elon@spacex.com" v-model="settings.email"/>
+							<input type="email" name="email-address" id="email-address" class="mt-1 form-input gray"
+								placeholder="no-email@losers.network" v-model="settings.email" />
 							<p class="mt-2 text-sm text-gray-500">
 								Used for account recovery purposes only.
 							</p>
@@ -34,12 +35,14 @@
 							<!-- Current Password -->
 							<div>
 								<label for="password" class="block text-sm font-bold">Current password</label>
-								<input :required="hasPassword" type="password" name="password" id="password" class="mt-1 form-input gray" v-model="password"/>
+								<input :required="hasPassword" type="password" name="password" id="password"
+									class="mt-1 form-input gray" v-model="password" />
 							</div>
 							<!-- New Password -->
 							<div>
 								<label for="new-password" class="block text-sm font-bold">New password</label>
-								<input :required="hasPassword" type="password" name="new-password" id="new-password" class="mt-1 form-input gray" placeholder="Enter a new password" v-model="newPassword"/>
+								<input :required="hasPassword" type="password" name="new-password" id="new-password"
+									class="mt-1 form-input gray" placeholder="Enter a new password" v-model="newPassword" />
 								<small class="inline-block mt-2 text-gray-500">
 									Must be at least 8 characters.
 								</small>
@@ -47,14 +50,16 @@
 							<!-- Confirm New Password -->
 							<div>
 								<label for="confirm-password" class="block text-sm font-bold">Confirm new password</label>
-								<input :required="hasPassword" type="password" name="confirm-password" id="confirm-password" class="mt-1 form-input gray" placeholder="Retype your new password" minlength="8" v-model="confirmPassword"/>
+								<input :required="hasPassword" type="password" name="confirm-password" id="confirm-password"
+									class="mt-1 form-input gray" placeholder="Retype your new password" minlength="8"
+									v-model="confirmPassword" />
 							</div>
 						</div>
 					</div>
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
-					<button type="submit" class="button primary" :class="{ 'loading':isLoading }" :disabled="isLoading">
+					<button type="submit" class="button primary" :class="{ 'loading': isLoading }" :disabled="isLoading">
 						Save
 					</button>
 				</div>
@@ -64,55 +69,55 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue';
-	// import { baseURL } from "@/server/constants";
-	import { useApi } from "@/composables/api";
-	import { useToastStore } from '@/stores/StoreToast';
+import { ref } from 'vue';
+// import { baseURL } from "@/server/constants";
+import { useApi } from "@/composables/api";
+import { useToastStore } from '@/stores/StoreToast';
 
-	definePageMeta({
-		'hasAuthRequired': true,
-		'title': 'Account'
-	});
+definePageMeta({
+	'hasAuthRequired': true,
+	'title': 'Account'
+});
 
-	const toast = useToastStore();
-	const authCookie = useCookie("token").value;
+const toast = useToastStore();
+const authCookie = useCookie("token").value;
 
-	// Fetch user settings.
-	const { data, pending, error, refresh } = await useApi("/settings");
+// Fetch user settings.
+const { data, pending, error, refresh } = await useApi("/settings");
 
-	// Settings.
-	let settings = ref({});
+// Settings.
+let settings = ref({});
 
-	if (data.value) {
-		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
-	}
+if (data.value) {
+	settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
+}
 
-	const isLoading = ref(false);
+const isLoading = ref(false);
 
-	const password = ref(null);
-	const newPassword = ref(null);
-	const confirmPassword = ref(null);
+const password = ref(null);
+const newPassword = ref(null);
+const confirmPassword = ref(null);
 
-	const hasPassword = computed(() => {
-		return !!password.value || !!newPassword.value || !!confirmPassword.value;
+const hasPassword = computed(() => {
+	return !!password.value || !!newPassword.value || !!confirmPassword.value;
+})
+
+// Submit settings.
+const submitSettings = () => {
+	isLoading.value = true;
+	useApi('/settings', {
+		method: "put",
+		body: {
+			"email": settings.value.email
+		}
 	})
-
-	// Submit settings.
-	const submitSettings = () => {
-		isLoading.value = true;
-		useApi('/settings', {
-			method: "put",
-			body: {
-				"email": settings.value.email
-			}
-		})
 		.then(({ data, error }) => {
 			if (data.value) {
 				// Show success toast.
-				toast.addNotification({header:'Settings saved',message:'Your account settings were updated!',type:'success'});
+				toast.addNotification({ header: 'Settings saved', message: 'Your account settings were updated!', type: 'success' });
 			} else {
 				// Show error toast.
-				toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
+				toast.addNotification({ header: 'Saving failed', message: 'Your settings have failed to save.', type: 'error' });
 				// Log the error.
 				console.error(error.value);
 			}
@@ -120,5 +125,5 @@
 		.finally(() => {
 			isLoading.value = false;
 		});
-	};
+};
 </script>

@@ -27,6 +27,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
           userStore.unread = data.value.unread_notifications;
           userStore.token = jwt;
           userStore.isAuthed = true;
+          userStore.adminLevel = data.value.admin_level;
 
           if (userStore.user.is_banned) {
             // Number of days until unban

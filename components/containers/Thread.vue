@@ -326,9 +326,9 @@
             <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
               @click="confirmSticky">
               <!-- Pin Icon -->
-              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
@@ -484,6 +484,7 @@ import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
 import { canEmbedImage } from "@/composables/images";
+import { requirePermission } from "@/composables/admin";
 
 const modalStore = useModalStore();
 const toast = useToastStore();
@@ -576,9 +577,7 @@ const isAuthor = computed(() => {
 });
 
 // Admin
-const isAdmin = computed(() => {
-  return !!userStore.user && userStore.user.is_admin;
-});
+const isAdmin = requirePermission("content");
 
 // Edit
 const isEditing = ref(false);

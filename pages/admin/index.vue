@@ -55,30 +55,19 @@
               Top Scoring Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li
-                v-for="(member, i) in members.members.slice(0, 5)"
-                :key="member.person.id"
-                class="bg-white odd:bg-gray-50 border-b last:border-0"
-              >
+              <li v-for="(member, i) in members.members.slice(0, 5)" :key="member.person.id"
+                class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink
-                    :to="`/@${member.person.name}`"
-                    class="ml-3 w-3/4 flex flex-shrink-0 items-center"
-                  >
-                    <img
-                      class="p-0.5 w-7 h-7 object-cover"
-                      :src="member.person.avatar"
-                    />
+                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
                       member.person.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red"
-                      >Admin</span
-                    >
+                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
@@ -96,33 +85,20 @@
             <h3 class="mb-2 text-gray-500 text-sm font-medium uppercase">
               Top Posting Members
             </h3>
-            <ul
-              class="flex flex-col border rounded-md overflow-hidden shadow-inner-white"
-            >
-              <li
-                v-for="(member, i) in membersPosts.members.slice(0, 5)"
-                :key="member.person.id"
-                class="bg-white odd:bg-gray-50 border-b last:border-0"
-              >
+            <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
+              <li v-for="(member, i) in membersPosts.members.slice(0, 5)" :key="member.person.id"
+                class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink
-                    :to="`/@${member.person.name}`"
-                    class="ml-3 w-3/4 flex flex-shrink-0 items-center"
-                  >
-                    <img
-                      class="p-0.5 w-7 h-7 object-cover"
-                      :src="member.person.avatar"
-                    />
+                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
                       member.person.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red"
-                      >Admin</span
-                    >
+                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
@@ -143,26 +119,15 @@
             <h3 class="mb-2 text-gray-500 text-sm font-medium uppercase">
               Newest Members
             </h3>
-            <ul
-              class="flex flex-col border rounded-md overflow-hidden shadow-inner-white"
-            >
-              <li
-                v-for="(member, i) in members.members.slice(0, 5)"
-                :key="member.person.id"
-                class="bg-white odd:bg-gray-50 border-b last:border-0"
-              >
+            <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
+              <li v-for="(member, i) in members.members.slice(0, 5)" :key="member.person.id"
+                class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink
-                    :to="`/@${member.person.name}`"
-                    class="ml-3 w-2/4 flex flex-shrink-0 items-center"
-                  >
-                    <img
-                      class="p-0.5 w-7 h-7 object-cover"
-                      :src="member.person.avatar"
-                    />
+                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-2/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
                       member.person.name
                     }}</strong>
@@ -198,7 +163,7 @@ import { useApi } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 definePageMeta({
-  middleware: ["admin"],
+  //middleware: ["admin"],
   hasAuthRequired: true,
   isAdminRequired: true,
   isFooterDisabled: true,

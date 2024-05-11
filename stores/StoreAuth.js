@@ -9,6 +9,16 @@ export const useLoggedInUser = defineStore("auth", {
       counts: null,
       unread: null,
       token: null,
+      /*permissions: {
+        appearance: false,
+        config: false,
+        content: false,
+        users: false,
+        boards: false,
+        full: false,
+        owner: false,
+      },*/
+      adminLevel: null,
       isAuthed: false,
     };
   },
@@ -28,6 +38,25 @@ export const useLoggedInUser = defineStore("auth", {
               this.user = data.value.user.person;
               this.counts = data.value.user.counts;
               this.unread = data.value.user.unread_notifications;
+              this.adminLevel = data.value.user.admin_level;
+
+              /*let adminLevel = data.value.user.admin_level;
+
+              let keys = [];
+              for (let key in this.permissions) {
+                if (this.permissions.hasOwnProperty(key)) {
+                  keys.push(key);
+                }
+              }
+
+              console.log("hi from store");
+
+              for (let i = 1; i < keys.length; i++) {
+                console.log(2 ** i);
+                console.log(keys[i - 1]);
+                this.permissions[keys[i - 1]] = (adminLevel & (2 ** i)) > 0;
+              }*/
+
               this.token = data.value.jwt;
               this.isAuthed = true;
 
@@ -66,6 +95,7 @@ export const useLoggedInUser = defineStore("auth", {
                   this.unread = data.value.unread_notifications;
                   this.token = token;
                   this.isAuthed = true;
+                  this.adminLevel = data.value.admin_level;
                   resolve(token);
                 })
                 .catch(({ error }) => {
@@ -81,11 +111,15 @@ export const useLoggedInUser = defineStore("auth", {
       });
     },
     fetchUserPromise(authToken) {
-      return useApi("/me", {
-        key: `get_user_${authToken}`,
-      }, {
-        Authorization: "Bearer " + authToken
-      });
+      return useApi(
+        "/me",
+        {
+          key: `get_user_${authToken}`,
+        },
+        {
+          Authorization: "Bearer " + authToken,
+        }
+      );
     },
     fetchUser(authToken) {
       useApi("/me", {
@@ -97,6 +131,23 @@ export const useLoggedInUser = defineStore("auth", {
           this.unread = data.value.unread_notifications;
           this.token = authToken;
           this.isAuthed = true;
+          this.adminLevel = data.value.admin_level;
+
+          /*let adminLevel = data.value.user.admin_level;
+
+          let keys = [];
+          for (let key in this.permissions) {
+            if (this.permissions.hasOwnProperty(key)) {
+              keys.push(key);
+            }
+          }
+
+          console.log("hi from store");
+
+          for (let i = 1; i < keys.length; i++) {
+            console.log(2 ** i);
+            this.permissions[keys[i]] = (adminLevel & (2 ** i)) > 0;
+          }*/
         })
         .catch(({ error }) => console.error(error));
     },
@@ -104,6 +155,7 @@ export const useLoggedInUser = defineStore("auth", {
       this.user = null;
       this.token = null;
       this.isAuthed = false;
+      this.adminLevel = null;
     },
   },
 });

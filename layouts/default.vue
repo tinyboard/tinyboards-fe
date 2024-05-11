@@ -27,29 +27,29 @@ useHead({
 	bodyAttrs: {
 		class: useCookie("theme", { default: () => '' })
 	},
-	// title: `${site.name} | ${route.meta.title ?? 'feed'}`,
-	// meta: [
-	// 	{
-	// 		property: 'og:title',
-	// 		content: `${site.name} | ${route.meta.title ?? 'feed'}`
-	// 	}
-	// ],
-	// style: [
-	// 	`
-	// 		:root {
-	// 			--color-primary: ${site.primaryColor} !important;
-	// 			--color-secondary: ${site.secondaryColor} !important;
-	// 			--color-primary-hover: ${site.hoverColor} !important;
-	// 		}
-	// 		`,
-	// ],
-	// link: [
-	// 	{
-	// 		rel: 'icon',
-	// 		type: `image/png`,
-	// 		href: site.icon
-	// 	},
-	// ]
+	title: `${site.name} | ${route.meta.title ?? 'feed'}`,
+	meta: [
+		{
+			property: 'og:title',
+			content: `${site.name} | ${route.meta.title ?? 'feed'}`
+		}
+	],
+	style: [
+		`
+			:root {
+				--color-primary: ${site.primaryColor} !important;
+				--color-secondary: ${site.secondaryColor} !important;
+				--color-primary-hover: ${site.hoverColor} !important;
+			}
+			`,
+	],
+	link: [
+		{
+			rel: 'icon',
+			type: `image/png`,
+			href: site.icon
+		},
+	]
 });
 console.log("success!");
 

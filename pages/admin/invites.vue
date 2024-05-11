@@ -82,7 +82,8 @@ const route = useRoute();
 
 definePageMeta({
 	isFooterDisabled: true,
-	isScrollDisabled: true
+	isScrollDisabled: true,
+	requirePermission: "users",
 });
 
 const authCookie = useCookie("token").value;
