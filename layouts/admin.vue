@@ -14,7 +14,7 @@
 			</div>
 		</section>-->
 		<!-- Navigation -->
-		<section class="hidden md:block col-span-2 min-[2000px]:col-span-1 bg-white p-4">
+		<section class="bg-white p-4" :class="showSidebar ? 'hidden md:block col-span-2 min-[2000px]:col-span-1' : 'hidden'">
 			<p class="text-sm text-gray-500 uppercase px-4 font-bold">General</p>
 			<ul class="flex flex-col z-10 text-sm overflow-y-auto pt-1">
 				<li class="relative">
@@ -275,8 +275,8 @@
 			</ul>
 		</section>
 		<!-- Main Content -->
-		<section
-			class="container mx-auto col-span-full md:col-span-10 min-[2000px]:col-span-11 sm:px-4 sm:py-6 md:px-6 overflow-y-auto">
+		<section class="container mx-auto sm:px-4 sm:py-6 md:px-6 overflow-y-auto"
+			:class="showSidebar ? 'col-span-full md:col-span-10 min-[2000px]:col-span-11' : 'col-span-full'">
 			<div class="col-span-full flex flex-col gap-6 md:px-12">
 				<!-- Settings -->
 				<slot />
@@ -290,6 +290,10 @@ import { useSiteStore } from '@/stores/StoreSite';
 const route = useRoute();
 const site = useSiteStore();
 import { requirePermission } from '@/composables/admin';
+import { useLoggedInUser } from '~~/stores/StoreAuth';
+
+const user = useLoggedInUser();
+const showSidebar = user.adminLevel > 0;
 
 // useHead({
 // 	title: `${site.name} | Admin ${route.meta.title ?? 'overview'}`,

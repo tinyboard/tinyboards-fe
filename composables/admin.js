@@ -8,6 +8,7 @@ const PERMISSIONS = {
   boards: 32,
   full: 64,
   owner: 128,
+  system: 256,
 };
 
 export const requirePermission = (permission) => {
@@ -30,4 +31,27 @@ export const requireOwnerPerms = () => {
   const u = useLoggedInUser();
 
   return (u.adminLevel & PERMISSIONS["owner"]) > 0;
+};
+
+export const createPermissionString = (adminLevel) => {
+  if (adminLevel & PERMISSIONS["system"]) {
+    return "system";
+  }
+
+  if (adminLevel & PERMISSIONS["owner"]) {
+    return "owner";
+  }
+
+  if (adminLevel & PERMISSIONS["full"]) {
+    return "full permissions";
+  }
+
+  let perms = [];
+  for (const [permission, code] of Object.entries(PERMISSIONS)) {
+    if (adminLevel & code) {
+      perms.push(permission);
+    }
+  }
+
+  return perms.join(",");
 };

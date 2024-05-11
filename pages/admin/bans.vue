@@ -1,6 +1,6 @@
 <template>
     <NuxtLayout name="admin">
-        <div class="flex pt-4 px-4">
+        <div class="flex pt-4">
             <!-- Page Heading & Description -->
             <div>
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Banned users</h3>
@@ -93,7 +93,7 @@ const route = useRoute();
 definePageMeta({
     isFooterDisabled: true,
     isScrollDisabled: true,
-    requirePermission: "users",
+    permissionRequired: "users",
 });
 
 const authCookie = useCookie("token").value;

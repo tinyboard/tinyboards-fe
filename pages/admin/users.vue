@@ -1,6 +1,6 @@
 <template>
 	<NuxtLayout name="admin">
-		<div class="flex pt-4 px-4 justify-between">
+		<div class="flex pt-4 justify-between">
 			<!-- Page Heading & Description -->
 			<div>
 				<h3 class="text-lg font-medium leading-6 text-gray-900">Members</h3>
@@ -115,7 +115,7 @@ const router = useRouter();
 definePageMeta({
 	isFooterDisabled: true,
 	isScrollDisabled: true,
-	requirePermission: "users",
+	permissionRequired: "users",
 	title: 'Users'
 });
 
