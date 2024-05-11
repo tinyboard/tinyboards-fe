@@ -332,6 +332,7 @@ import { useToastStore } from "@/stores/StoreToast";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { formatDate } from "@/utils/formatDate";
 import { useApi } from "@/composables/api";
+import { requirePermission } from "@/composables/admin";
 
 const route = useRoute();
 
@@ -427,9 +428,7 @@ const isAuthor = computed(() => {
 });
 
 // Admin
-const isAdmin = computed(() => {
-  return !!userStore.user && userStore.user.is_admin;
-});
+const isAdmin = requirePermission("content");
 
 // Edit
 const isEditing = ref(false);
