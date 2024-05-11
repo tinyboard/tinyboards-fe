@@ -17,20 +17,30 @@
               class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <!-- Header -->
               <DialogTitle as="h3" class="modal-title text-lg font-bold leading-6 text-gray-900">
-                {{ options.user.is_banned ? 'Unban' : 'Ban' }} {{ options.user.name ?? 'this user' }}?
+                {{ options.hasOwnProperty('user') ? `${isBanned ? 'Unban' : 'Ban'} ${options.user.name}` : `${isBanned ?
+                  'Unban' : 'Ban'} user` }}
               </DialogTitle>
               <!-- Body -->
-              <div v-if="options.user.is_banned" class="modal-body mt-2">
+              <div v-if="isBanned" class="modal-body mt-2">
                 <p class="text-sm text-gray-500">
-                  {{ options.user.name ?? 'user' }} will be unbanned, thus able to participate in {{ site.name }} once
+                  {{ options.user?.name ?? 'The target user' }} will be unbanned, thus able to participate in {{ site.name
+                  }} once
                   again.
                   <br />
                   You can undo this action.
                 </p>
               </div>
               <div v-else class="modal-body mt-2">
-                <p class="text-sm text-gray-500">{{ options.user.name ?? 'This user' }} will be banned from {{ site.name
+                <p class="text-sm text-gray-500">{{ options.user?.name ?? 'The target user' }} will be banned from {{
+                  site.name
                 }}.</p>
+                <!-- Username - if not specified -->
+                <div v-if="!options.user" class="mt-2">
+                  <label for="target" class="text-sm text-gray-600 font-semibold">Username</label>
+                  <input type="text" name="target" id="target" v-model="target"
+                    class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
+                    placeholder="username without the @" maxlength="255" />
+                </div>
                 <!-- Reason -->
                 <div class="mt-2">
                   <label for="reason" class="text-sm text-gray-600 font-semibold">Ban reason</label>
@@ -63,7 +73,7 @@
                   No, cancel
                 </button>
                 <button class="button red" @click="ban">
-                  Yes, {{ options.user.is_banned ? 'unban' : 'ban' }} {{ options.user.name ?? 'this user' }}
+                  Yes, {{ isBanned ? 'unban' : 'ban' }} {{ options.user?.name ?? 'user' }}
                 </button>
               </div>
             </DialogPanel>
@@ -94,21 +104,26 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  id: {
-    type: Number,
+  /*username: {
+    type: String,
     default: null,
     required: true
-  },
+  },*/
   options: {
     type: Object
   }
 });
 
+//console.log(`banned: ${props.options.user.is_banned}`);
+
 const site = useSiteStore();
 const modalStore = useModalStore();
+const target = ref('');
 const reason = ref('');
 const duration = ref(3);
 const permanent = ref(false);
+
+const isBanned = computed(() => props.options.user?.is_banned || props.options.unban);
 
 // Removal
 const authCookie = useCookie("token").value;
@@ -124,13 +139,14 @@ const toast = useToastStore();
 }*/
 
 const ban = async () => {
-  const isBanned = props.options.user.is_banned;
+  //const isBanned = props.options.user.is_banned;
+  const username = props.options.user?.name || target.value;
   await useApi('/mod/ban', {
     body: {
-      "target_person_id": props.id,
-      "banned": !isBanned,
+      "username": username,
+      "banned": !isBanned.value,
       "reason": reason.value ?? `breaking ${site.name} rules`,
-      "duration_days": (permanent.value || isBanned) ? null : duration.value
+      "duration_days": (permanent.value || isBanned.value) ? null : duration.value
     },
     method: "post"
   })
@@ -142,7 +158,7 @@ const ban = async () => {
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({
-            header: `${props.options.user.name} ${isBanned ? 'unbanned' : 'banned'}`,
+            header: `${username} ${isBanned.value ? 'unbanned' : 'banned'}`,
             message: 'Reload the page to see changes.',
             type: 'success'
           });
@@ -151,8 +167,8 @@ const ban = async () => {
         // Show error toast.
         setTimeout(() => {
           toast.addNotification({
-            header: `${isBanned ? 'Unban' : 'Ban'} failed`,
-            message: `Failed to ${isBanned ? 'unban' : 'ban'} the user. Please try again.`,
+            header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
+            message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
             type: 'error'
           });
         }, 400);
