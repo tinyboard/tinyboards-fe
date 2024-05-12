@@ -17,8 +17,8 @@
                 </svg>
             </div>
             <h3 class="text-gray-500 text-[15px] font-semibold">@</h3>
-            <ComboboxInput class="border-0 px-0 font-semibold text-gray-800" style="font-size: 15px !important;"
-                placeholder="Enter username..." @change="query = $event.target.value"
+            <ComboboxInput class="border-0 px-0 font-semibold text-gray-800 flex-grow mr-2"
+                style="font-size: 15px !important;" placeholder="Enter username..." @change="query = $event.target.value"
                 :display-value="(v) => v.person?.name ?? ''" />
         </div>
         <ComboboxOptions>
