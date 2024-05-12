@@ -33,10 +33,11 @@
                   This action can be undone.
                 </p>
                 <div v-if="!options.user" class="mt-2">
-                  <label for="target" class="text-sm text-gray-600 font-semibold">Username</label>
-                  <input type="text" name="target" id="target" v-model="target"
+                  <label for="target" class="text-sm text-gray-600 font-semibold">User</label>
+                  <!--<input type="text" name="target" id="target" v-model="target"
                     class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
-                    placeholder="username without the @" maxlength="255" />
+                    placeholder="username without the @" maxlength="255" />-->
+                  <InputsUser v-model="target" :allow-banned="true" :limit="5" />
                 </div>
                 <h3 v-if="!remove" class="mt-2 text-lg font-semibold text-gray-700">Permissions</h3>
                 <div v-if="!remove" class="space-y-2 divide-y-[1px]">
@@ -68,7 +69,7 @@
               <!-- <input v-if="!options.user.is_admin" type="date" name="expiration" value=""> -->
               <!-- Footer -->
               <div class="mt-6 flex space-x-2 justify-end">
-                <button type="button" class="button gray" @click="target = ''; modalStore.closeModal">
+                <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
                 <button class="button red" @click="submitAdmin"

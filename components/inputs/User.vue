@@ -85,6 +85,7 @@ watch(
         const { data, pending, error, refresh } = await useApi("/members", {
             query: params,
             method: "get",
+            key: `user_fetch_${params.search_term}_${params.limit}_`
         });
 
         users.value = data.value.members;

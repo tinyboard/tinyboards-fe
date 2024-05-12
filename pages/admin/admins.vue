@@ -160,6 +160,7 @@ const { data: members, pending, error, refresh } = await useApi("/members", {
         ...route.query
     },
     method: "get",
+    key: `admin_fetch_${page.value}_${limit.value}`
 });
 
 const totalPages = computed(() => {
@@ -177,6 +178,7 @@ watch(
                 ...route.query
             },
             method: "get",
+            key: `admin_fetch_next_page_${page.value}_${limit.value}`
         });
 
         members.value = newMembers.value;
@@ -198,6 +200,7 @@ watch(
                 search_term: newSearch,
             },
             method: "get",
+            key: `admin_search_${newSearch}_${limit.value}_${page.value}`
         });
 
         members.value = newMembers.value;
