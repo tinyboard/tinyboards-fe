@@ -36,10 +36,11 @@
                 }}.</p>
                 <!-- Username - if not specified -->
                 <div v-if="!options.user" class="mt-2">
-                  <label for="target" class="text-sm text-gray-600 font-semibold">Username</label>
-                  <input type="text" name="target" id="target" v-model="target"
+                  <label for="target" class="text-sm text-gray-600 font-semibold">User</label>
+                  <!--<input type="text" name="target" id="target" v-model="target"
                     class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
-                    placeholder="username without the @" maxlength="255" />
+                    placeholder="username without the @" maxlength="255" />-->
+                  <InputsUser v-model="target" />
                 </div>
                 <!-- Reason -->
                 <div class="mt-2">
@@ -72,7 +73,7 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="ban">
+                <button class="button red" @click="ban" :disabled="!options.user && target == ''">
                   Yes, {{ isBanned ? 'unban' : 'ban' }} {{ options.user?.name ?? 'user' }}
                 </button>
               </div>
@@ -128,6 +129,12 @@ const isBanned = computed(() => props.options.user?.is_banned || props.options.u
 // Removal
 const authCookie = useCookie("token").value;
 const toast = useToastStore();
+
+// debugging
+watch(
+  () => target.value,
+  newValue => console.log(newValue)
+);
 
 // returns the timestamp of the date when the ban expires
 /*const expiryTimestamp = () => {

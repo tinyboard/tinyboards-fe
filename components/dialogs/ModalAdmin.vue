@@ -68,7 +68,7 @@
               <!-- <input v-if="!options.user.is_admin" type="date" name="expiration" value=""> -->
               <!-- Footer -->
               <div class="mt-6 flex space-x-2 justify-end">
-                <button type="button" class="button gray" @click="modalStore.closeModal">
+                <button type="button" class="button gray" @click="target = ''; modalStore.closeModal">
                   No, cancel
                 </button>
                 <button class="button red" @click="submitAdmin"
