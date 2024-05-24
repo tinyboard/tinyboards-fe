@@ -27,7 +27,10 @@
                 })">
                     Resign
                 </button>
-                <button v-else class="ml-auto flex items-center button red">
+                <button v-else class="ml-auto flex items-center button red" @click="() => modalStore.setModal({
+                    modal: 'ModalTransferOwnership',
+                    isOpen: true
+                })">
                     Transfer ownership
                 </button>
                 <button v-if="requireFullPerms()" @click="openAdminModal" class="ml-auto flex items-center button green">

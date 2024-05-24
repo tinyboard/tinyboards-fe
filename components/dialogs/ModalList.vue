@@ -38,6 +38,7 @@ const modalLock = defineAsyncComponent(() => import('@/components/dialogs/ModalL
 const modalRemoveOrApprove = defineAsyncComponent(() => import('@/components/dialogs/ModalRemoveOrApprove'));
 const modalAdmin = defineAsyncComponent(() => import('@/components/dialogs/ModalAdmin'));
 const modalLeaveAdmin = defineAsyncComponent(() => import('@/components/dialogs/ModalLeaveAdmin'));
+const modalTransferOwnership = defineAsyncComponent(() => import('@/components/dialogs/ModalTransferOwnership'));
 const modalBan = defineAsyncComponent(() => import('@/components/dialogs/ModalBan'));
 const modalPurge = defineAsyncComponent(() => import('@/components/dialogs/ModalPurge'));
 const modalImage = defineAsyncComponent(() => import('@/components/dialogs/ModalImage'));
@@ -55,6 +56,7 @@ const components = {
 	'ModalRemoveOrApprove': modalRemoveOrApprove,
 	'ModalAdmin': modalAdmin,
 	'ModalLeaveAdmin': modalLeaveAdmin,
+	'ModalTransferOwnership': modalTransferOwnership,
 	'ModalBan': modalBan,
 	'ModalPurge': modalPurge,
 	'ModalImage': modalImage,
