@@ -8,7 +8,8 @@
 					</NuxtLink>
 				</li>
 				<li class="menu-item px-1 flex-shrink-0">
-					<button @click="pickTheme" class="text-xs text-gray-500 dark:text-gray-400 hover:text-primary font-bold">
+					<button @click="pickTheme"
+						class="text-xs text-gray-500 dark:text-gray-400 hover:text-primary font-bold">
 						Pick Theme
 					</button>
 				</li>
@@ -33,31 +34,32 @@
 </template>
 
 <script setup>
-	import { useModalStore } from "@/stores/StoreModal";
-	import { useLoggedInUser } from '@/stores/StoreAuth';
+import { useModalStore } from "@/stores/StoreModal";
+import { useLoggedInUser } from '@/stores/StoreAuth';
 
-	const userStore = useLoggedInUser();
+const userStore = useLoggedInUser();
 
-	// Modal
-	const modalStore = useModalStore();
+// Modal
+const modalStore = useModalStore();
 
-	// Theme selection
-	const pickTheme = () => {
-	  modalStore.setModal({
-	    modal: "ModalThemes",
-	    isOpen: true
-	  });
-	};
-
-	// Admin
-	const isAdmin = computed(() => {
-	  return !!userStore.user && userStore.user.is_admin;
+// Theme selection
+const pickTheme = () => {
+	modalStore.setModal({
+		modal: "ModalThemes",
+		isOpen: true
 	});
+};
 
-	// Define footer links
-	const links = [
-		{ name: 'About', href: '/help/about' },
-		{ name: 'Members', href: '/members' },
-		{ name: 'Rules', href: '/help/rules' },
-		]
+// Admin
+const isAdmin = computed(() => {
+	return !!userStore.user && userStore.user.is_admin;
+});
+
+// Define footer links
+const links = [
+	{ name: 'About', href: '/help/about' },
+	{ name: 'Members', href: '/members' },
+	{ name: 'Admins', href: '/admin/admins' },
+	{ name: 'Rules', href: '/help/rules' },
+]
 </script>
