@@ -21,7 +21,10 @@
                     site.name
                 }}.</p>
             <div class="flex space-x-2">
-                <button v-if="!requireOwnerPerms()" class="ml-auto flex items-center button red">
+                <button v-if="!requireOwnerPerms()" class="ml-auto flex items-center button red" @click="() => modalStore.setModal({
+                    modal: 'ModalLeaveAdmin',
+                    isOpen: true
+                })">
                     Resign
                 </button>
                 <button v-else class="ml-auto flex items-center button red">
