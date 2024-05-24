@@ -33,13 +33,13 @@
                   This action can be undone.
                 </p>
                 <div v-if="!options.user" class="mt-2">
-                  <label for="target" class="text-sm text-gray-600 font-semibold">User</label>
+                  <label for="target" class="text-md text-gray-600 font-semibold">User</label>
                   <!--<input type="text" name="target" id="target" v-model="target"
                     class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
                     placeholder="username without the @" maxlength="255" />-->
                   <InputsUser v-model="target" :allow-banned="true" :limit="5" />
                 </div>
-                <h3 v-if="!remove" class="mt-2 text-lg font-semibold text-gray-700">Permissions</h3>
+                <h3 v-if="!remove" class="mt-2 text-md text-gray-600 font-semibold">Permissions</h3>
                 <div v-if="!remove" class="space-y-2 divide-y-[1px]">
                   <div v-for="perm in permissions" :key="perm.code" class="flex justify-between items-center">
                     <div class="my-2 mr-2">
@@ -55,7 +55,7 @@
                   <div v-if="requireOwnerPerms()"
                     class="flex justify-between items-center mt-2 border-t-[1px] border-red-500">
                     <div class="my-2 mr-2">
-                      <h5 class="text-red-500 font-semibold">Full permissions</h5>
+                      <h5 class="text-red-500 font-semibold">Full Permissions</h5>
                       <p class="text-sm text-gray-600">All of the above permissions. Can also add, manage and remove
                         admins who do not have full permissions. Careful with this one.</p>
                     </div>
@@ -63,7 +63,7 @@
                       permissionCode = PERMISSIONS.full" />
                   </div>
                 </div>
-                <p class="text-xs text-gray-400">permission code: {{ permissionCode }}</p>
+                <!--<p class="text-xs text-gray-400">permission code: {{ permissionCode }}</p>-->
               </div>
               <!-- Date Input -->
               <!-- <input v-if="!options.user.is_admin" type="date" name="expiration" value=""> -->

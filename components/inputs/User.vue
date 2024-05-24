@@ -1,7 +1,7 @@
 <!-- User input with autocomplete -->
 <template>
     <Combobox as="div" v-model="selectedUser">
-        <div class="flex items-center w-full p-1 border-[1px] border-gray-300 rounded">
+        <div class="flex items-center w-full p-1 border-[1px] border-gray-300 rounded focus-within:ring-2">
             <div v-if="selectedUser.hasOwnProperty('person')" class="p-[2px] border-[0.5px] border-gray-400 mr-2">
                 <img loading="lazy" :src="selectedUser.person.avatar" alt="avatar"
                     class="flex-shrink-0 object-cover w-8 h-8 md:w-10 md:h-10" />
@@ -17,7 +17,7 @@
                 </svg>
             </div>
             <h3 class="text-gray-500 text-[15px] font-semibold">@</h3>
-            <ComboboxInput class="border-0 px-0 font-semibold text-gray-800 flex-grow mr-2"
+            <ComboboxInput class="border-0 px-0 font-semibold text-gray-800 flex-grow mr-2 focus:ring-0"
                 style="font-size: 15px !important;" placeholder="Enter username..." @change="query = $event.target.value"
                 :display-value="(v) => v.person?.name ?? ''" />
         </div>
