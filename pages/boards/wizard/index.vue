@@ -25,7 +25,7 @@ const router = useRouter();
 const site = useSiteStore();
 const wizard = useWizardStore();
 
-const page = ref(parseInt(route.params.page) || 1);
+const page = ref(1);
 const MAX_PAGE = 4;
 
 /*if (page.value > MAX_PAGE) {
@@ -37,11 +37,11 @@ const MAX_PAGE = 4;
 }*/
 
 definePageMeta({
-    alias: ['/boards/create/:page?', '/create_board/:page?', '/+!wizard/:page?', '/+!new/:page?', '/abracadabra/:page?'],
+    alias: ['/boards/create', '/create_board', '/+!wizard', '/+!new', '/abracadabra'],
     layout: false,
     isScrollDisabled: true,
     'hasAuthRequired': true,
-    middleware: [
+    /*middleware: [
         function (to, from) {
             const MAX_PAGE = 4;
             const page = to.params.page;
@@ -62,7 +62,7 @@ definePageMeta({
                 })
             }
         }
-    ]
+    ]*/
 })
 
 // Import pages
@@ -83,20 +83,20 @@ const back = () => {
         router.go(-1);
     } else {
         page.value -= 1;
-        router.replace({
+        /*router.replace({
             params: {
                 page: page.value
             }
-        });
+        });*/
     }
 }
 
 const next = () => {
     page.value += 1;
-    router.replace({
+    /*router.replace({
         params: {
             page: page.value
         }
-    });
+    });*/
 }
 </script>
