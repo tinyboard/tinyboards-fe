@@ -1,7 +1,8 @@
 <template>
     <div class="w-4/5 h-3/4 rounded-lg shadow-xl overflow-auto" style="background-color: rgb(244 244 245);">
         <nav id="header"
-            class="sticky top-0 z-50 bg-primary sm:border-b border-black/30 dark:bg-gray-900 dark:border-gray-800 px-8 py-2 rounded-t-lg flex items-center">
+            class="sticky top-0 z-50 sm:border-b border-black/30 dark:bg-gray-900 dark:border-gray-800 px-8 py-2 rounded-t-lg flex items-center"
+            :style="{ 'background-color': board.primaryColor }">
             <img :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
             <span class="text-lg text-white font-bold">
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline w-5 h-5 text-opacity-60" width="24" height="24"
@@ -96,9 +97,9 @@
                 </div>
                 <div id="details"
                     class="relative flex flex-col sm:flex-row sm:items-center w-full p-4 bg-cover bg-center sm:rounded-b-md"
-                    :style="{ backgroundImage: `url(https://placebacon.net/600/200)` }">
+                    :style="{ backgroundImage: `url(${bannerImage})` }">
                     <!-- Icon -->
-                    <img loading="lazy" src="https://placebacon.net/100/100" alt="icon"
+                    <img loading="lazy" :src="icon" alt="icon"
                         class="flex-shrink-0 w-24 h-24 object-cover rounded-none p-0.5 border bg-white" />
                     <!-- Info & Actions -->
                     <div class="flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
@@ -112,14 +113,15 @@
                             </p>
                         </div>
                         <!-- Bio -->
-                        <p class="mt-2.5 lg:w-4/5 xl:w-3/5" :class="!true ? 'text-gray-400 italic' : 'text-gray-100'">
-                            'Lorem ipsum dolor sit amet'
+                        <p class="mt-2.5 lg:w-4/5 xl:w-3/5"
+                            :class="board.description.length == 0 ? 'text-gray-400 italic' : 'text-gray-100'">
+                            {{ board.description.length > 0 ? board.description : 'No description...' }}
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="mt-4 grid grid-cols-12">
-                <div class="col-span-8">
+            <div class="mt-4 flex flex-row">
+                <div class="flex-grow">
                     <div class="border px-2 py-1 mb-2 rounded">
                         <p class="text-xs text-gray-600 font-semibold">Hot posts</p>
                     </div>
@@ -127,35 +129,49 @@
                         <img src="https://placebacon.net/120/120" class="w-10 h-10 rounded-sm" />
                         <div class="bg-white rounded border hover:bg-gray-50 cursor-pointer flex flex-grow flex-col p-2">
                             <div class="rounded-t pb-2">
-                                <span class="font-bold text-xs text-primary">{{ post.user }}</span>
+                                <span class="font-bold text-xs" :style="{ 'color': board.primaryColor }">{{ post.user
+                                }}</span>
                             </div>
                             <div class="pb-2">
-                                <h3 class="text-md text-gray-600 hover:text-primary-hover font-semibold">{{ post.title }}
+                                <h3 class="text-md text-gray-600 font-semibold hover-primary"
+                                    :style="`--color-custom-hover: ${board.hoverColor}`">
+                                    {{ post.title }}
                                 </h3>
                             </div>
                             <li class="ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
-                                <button class="upvote" :class="post.vote === 1 ? 'upvoted text-primary' : 'text-gray-500'">
+                                <button class="upvote"
+                                    :style="{ 'color': post.vote === 1 ? board.primaryColor : 'rgb(113 113 122)' }">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
-                                        stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                        class="w-6 h-6 sm:w-4 sm:h-4">
+                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        class="w-6 h-6 sm:w-4 sm:h-4"
+                                        :style="{ 'fill': post.vote === 1 ? board.primaryColor : 'none' }">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path
                                             d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z">
                                         </path>
                                     </svg>
                                 </button>
-                                <span :class="{
-                                    'text-primary': post.vote === 1,
-                                    'text-secondary': post.vote === -1,
-                                    'text-gray-900 dark:text-gray-300': post.vote === 0,
+                                <span :style="{
+                                    'color': (
+                                        function () {
+                                            if (post.vote === 1) {
+                                                return board.primaryColor;
+                                            } else if (post.vote === -1) {
+                                                return board.secondaryColor;
+                                            } else {
+                                                return 'rgb(24 24 27)';
+                                            }
+                                        }
+                                    )()
                                 }">
                                     {{ post.score }}
                                 </span>
-                                <button class="downvote" :class="post.vote === -1 ? 'downvoted text-secondary' : 'text-gray-500'
-                                    ">
+                                <button class="downvote"
+                                    :style="{ 'color': post.vote === -1 ? board.secondaryColor : 'rgb(113 113 122)' }">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
-                                        stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                        class="w-6 h-6 sm:w-4 sm:h-4">
+                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        class="w-6 h-6 sm:w-4 sm:h-4"
+                                        :style="{ 'fill': post.vote === -1 ? board.secondaryColor : 'none' }">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <path
                                             d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z">
@@ -172,13 +188,23 @@
                             coincidental.</p>
                     </div>
                 </div>
-                <div class="col-span-4 ml-8">
+                <div class="flex-grow-0 w-[290px] ml-8">
+                    <button class="flex items-center button primary mb-4 w-full"
+                        :style="{ 'background-color': board.primaryColor }">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
+                            <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+                        </svg>
+                        Create post
+                    </button>
                     <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                         About
                         <span class="text-gray-700 text-opacity-70">+{{ board.name ?? 'CoolBoard' }}</span>
                     </h2>
                     <div class="prose prose-sm text-gray-900">
-                        <p>Lorem ipsum dolor sit amet</p>
+                        <p>{{ board.description.length > 0 ? board.description : 'No description...' }}</p>
                     </div>
                 </div>
             </div>
@@ -189,10 +215,12 @@
 <script setup>
 import { useSiteStore } from '@/stores/StoreSite.js';
 import { useWizardStore } from '@/stores/StoreWizard';
+import { useImageStore } from '@/stores/StoreImages';
 import { computed } from 'vue';
 
 const site = useSiteStore();
 const board = useWizardStore();
+const imageStore = useImageStore();
 
 const displayName = computed(() => {
     if (board.name === null) {
@@ -206,6 +234,22 @@ const displayName = computed(() => {
     return board.displayName;
 });
 
+const icon = computed(() => {
+    if (imageStore.avatar) {
+        return imageStore.avatar;
+    }
+
+    return "https://placebacon.net/100/100";
+})
+
+const bannerImage = computed(() => {
+    if (imageStore.banner) {
+        return imageStore.banner;
+    }
+
+    return "https://placebacon.net/600/200";
+})
+
 const posts = [
     {
         user: "spez",
@@ -215,9 +259,9 @@ const posts = [
     },
     {
         user: "JoshRoehlBeats",
-        title: "Please check out this song I wrote. The song is called \"Endless Summer\".",
+        title: "Please listen to this song I wrote. The song is called \"Endless Summer\".",
         score: 32,
-        vote: 0
+        vote: -1
     },
     {
         user: "ww1_911truth_info",
@@ -227,7 +271,7 @@ const posts = [
     },
     {
         user: "CrystallineVulptex",
-        title: "I have a feeling this board's moderators are in cahoots with the Silicon Valley elite",
+        title: "I have a feeling this board's moderators are in cahoots with the Silicone Valley elite",
         score: 4,
         vote: -1
     },
@@ -251,3 +295,9 @@ const posts = [
     }
 ];
 </script>
+
+<style>
+.hover-primary:hover {
+    color: var(--color-custom-hover);
+}
+</style>
