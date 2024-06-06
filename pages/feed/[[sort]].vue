@@ -101,9 +101,6 @@ definePageMeta({
 console.log("page meta is good");
 
 const preferCardView = useCookie("preferCardView") ?? false;
-
-console.log("cookies are alright");
-
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);

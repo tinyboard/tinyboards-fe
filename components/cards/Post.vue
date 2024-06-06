@@ -9,23 +9,18 @@
         : 'border-y sm:border-x sm:rounded',
       status ? `${status}` : 'bg-white',
       isCompact && isExpanded ? 'items-start' : 'items-center'
-    ]">
-      <NuxtLink v-show="isCompact"
-        :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
-        class="hidden sm:flex flex-shrink-0">
-        <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-          class="w-10 h-10 object-cover rounded" />
+      ]" :style="site.enableBoards && !boardPage && !isCompact ? `background: linear-gradient(15deg, rgba(${darkTheme ? '25,25,25' : '255,255,255'},1) 75%, rgba(${item.board.primary_color},${darkTheme ? '1' : '0.5'}) 100%) !important` : ''">
+      <NuxtLink v-show="isCompact" :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="hidden sm:flex flex-shrink-0">
+        <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="w-10 h-10 object-cover rounded" />
       </NuxtLink>
       <div class="w-full" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
         <!-- Author & Post Meta -->
         <div v-if="item.creator" scope="row" class="z-10 relative flex items-center text-gray-900 dark:text-white">
           <div class="flex flex-col flex-shrink-0 sm:truncate">
             <p class="flex items-center font-normal text-sm text-gray-400 leading-normal">
-              <NuxtLink :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
-                class="flex items-center">
+              <NuxtLink :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="flex items-center">
                 <!-- Avatar (mobile only) -->
-                <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/24/24'" alt="avatar"
-                  class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded" />
+                <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/24/24'" alt="avatar" class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded" />
                 <!-- Username -->
                 <strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
                 <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
@@ -33,8 +28,7 @@
                 <span v-if="item.creator.is_admin" class="ml-1 badge badge-red">Admin</span>
               </NuxtLink>
               <!-- User Title -->
-              <span v-if="item.creator && item.creator.title"
-                class="ml-2 px-1 inline-flex leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
+              <span v-if="item.creator && item.creator.title" class="ml-2 px-1 inline-flex leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
                 {{ item.creator.title }}
               </span>
               <!-- Post Timestamps -->
@@ -52,11 +46,9 @@
                 <span class="badge badge-red">18+</span>
               </span>
               <!-- Report count -->
-              <span class="ml-2 text-orange-400 font-bold text-xs" v-if="item.report_count"
-                :title="`${item.report_count} report(s)`">
+              <span class="ml-2 text-orange-400 font-bold text-xs" v-if="item.report_count" :title="`${item.report_count} report(s)`">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="24" height="24" viewBox="0 0 24 24"
-                  stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
                 </svg>
@@ -64,11 +56,20 @@
               </span>
             </p>
           </div>
-          <div class="flex flex-wrap space-x-1" :class="isCompact ? 'ml-2' : 'ml-auto'">
+          <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
+            <!-- Board -->
+            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="`color: rgb(${darkTheme ? '255, 255, 255' : item.board.primary_color}, 0.7)`">
+              <div class="hidden md:flex space-x-2 items-center">
+                <img :src="item.board.icon" class="bg-white border p-[0.5px]" :class="isCompact ? 'w-5 h-5' : 'w-8 h-8'" />
+                <p>{{ item.board.title }}</p>
+              </div>
+              <div class="block md:hidden">
+                <p>+{{ item.board.name }}</p>
+              </div>
+            </NuxtLink>
             <!-- Pin Icon -->
             <span v-if="item.post.featured_local" title="Post pinned by the mods">
-              <svg xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
@@ -77,8 +78,7 @@
             </span>
             <!-- Lock Icon -->
             <span v-if="item.post.is_locked" title="Post locked by the mods">
-              <svg xmlns="http://www.w3.org/2000/svg" class="text-yellow-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="text-yellow-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <rect x="5" y="11" width="14" height="10" rx="2"></rect>
                 <circle cx="12" cy="16" r="1"></circle>
@@ -87,8 +87,7 @@
             </span>
             <!-- Link Icon -->
             <span v-if="!!item.post.url" title="Post contains a link">
-              <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
                 <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
@@ -96,8 +95,7 @@
             </span>
             <!-- Text Icon -->
             <span v-else title="Post contains text">
-              <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5"></path>
                 <path d="M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5"></path>
@@ -107,9 +105,7 @@
         </div>
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <NuxtLink
-            class="z-10 relative font-medium sm:text-lg text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
-            :to="`/post/${item.post.id}`">
+          <NuxtLink class="z-10 relative font-medium sm:text-lg text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`">
             {{ item.post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && item.post.body_html" class="mt-2 relative overflow-hidden" :class="{
@@ -133,23 +129,18 @@
         <ul class="z-10 relative mt-4 flex flex-grow items-center" :class="{ 'sm:hidden': isCompact && !isExpanded }">
           <li class="ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
             <!-- If logged in, allow upvoting -->
-            <button v-if="isAuthed" @click="vote(1)" class="upvote"
-              :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
+            <button v-if="isAuthed" @click="vote(1)" class="upvote" :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z">
+                <path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z">
                 </path>
               </svg>
             </button>
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login" class="text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z">
+                <path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z">
                 </path>
               </svg>
             </NuxtLink>
@@ -163,33 +154,25 @@
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'
               ">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z">
+                <path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z">
                 </path>
               </svg>
             </button>
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login" class="text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                  d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z">
+                <path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z">
                 </path>
               </svg>
             </NuxtLink>
           </li>
-          <li v-if="(item.post.body.length > 800 || item.post.body.includes('![](http')) && item.post.body_html"
-            class="ml-6 hidden sm:list-item">
-            <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700"
-              @click="isExpanded = !isExpanded">
+          <li v-if="(item.post.body.length > 800 || item.post.body.includes('![](http')) && item.post.body_html" class="ml-6 hidden sm:list-item">
+            <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="isExpanded = !isExpanded">
               <!-- Arrows In Icon -->
-              <svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+              <svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M18 10h-4v-4"></path>
                 <path d="M20 4l-6 6"></path>
@@ -197,9 +180,7 @@
                 <path d="M10 14l-6 6"></path>
               </svg>
               <!-- Arrows Out Icon -->
-              <svg v-show="!isExpanded" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+              <svg v-show="!isExpanded" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <polyline points="16 4 20 4 20 8"></polyline>
                 <line x1="14" y1="10" x2="20" y2="4"></line>
@@ -212,16 +193,14 @@
             </button>
           </li>
           <li class="ml-3 sm:ml-6 list-item">
-            <NuxtLink :to="`/post/${item.post.id}`"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
               </svg>
               <span class="text-sm font-medium">{{
                 item.counts.comments
-              }}</span>
+                }}</span>
             </NuxtLink>
           </li>
           <!--<li class="ml-3 sm:ml-6">
@@ -236,32 +215,26 @@
             </button>
           </li>-->
           <li v-if="isAuthed" class="ml-3 sm:ml-6">
-            <button @click="save"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+            <button @click="save" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <!-- Bookmark Icon -->
-              <svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
+              <svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
               </svg>
               <!-- Bookmark Slash Icon -->
-              <svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
+              <svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
                 <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
                 isSaved ? "Unsave" : "Save"
-              }}</span>
+                }}</span>
             </button>
           </li>
           <li class="sm:hidden ml-3">
             <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
                 <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
@@ -270,10 +243,8 @@
             </button>
           </li>
           <li v-if="isAuthed && !isAuthor" class="hidden sm:list-item ml-6">
-            <button @click="confirmReport"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
+            <button @click="confirmReport" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
               </svg>
@@ -281,10 +252,8 @@
             </button>
           </li>
           <li v-if="isAuthor" class="hidden sm:list-item ml-6">
-            <button @click="confirmDelete"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <button @click="confirmDelete" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="4" y1="7" x2="20" y2="7"></line>
                 <line x1="10" y1="11" x2="10" y2="17"></line>
@@ -294,44 +263,35 @@
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
                 item.post.is_deleted ? "Deleted" : "Delete"
-              }}</span>
+                }}</span>
             </button>
           </li>
           <li v-if="canMod" class="hidden sm:list-item ml-6">
-            <button @click="confirmSticky"
-              class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
+            <button @click="confirmSticky" class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
               <!-- Pin Icon -->
-              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                stroke-linecap="round" stroke-linejoin="round">
+              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-show="item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+              <svg v-show="item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
-                <path
-                  d="M15 4.5l-3.249 3.249m-2.57 1.433l-2.181 .818l-1.5 1.5l7 7l1.5 -1.5l.82 -2.186m1.43 -2.563l3.25 -3.251">
+                <path d="M15 4.5l-3.249 3.249m-2.57 1.433l-2.181 .818l-1.5 1.5l7 7l1.5 -1.5l.82 -2.186m1.43 -2.563l3.25 -3.251">
                 </path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
                 item.post.featured_local ? "Unpin" : "Pin"
-              }}</span>
+                }}</span>
             </button>
           </li>
           <li v-if="canMod && !item.post.is_removed" class="hidden sm:list-item ml-6">
-            <button @click="confirmRemove"
-              class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+            <button @click="confirmRemove" class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
                 <path d="M5.7 5.7l12.6 12.6"></path>
@@ -340,11 +300,8 @@
             </button>
           </li>
           <li v-if="canMod && (item.post.is_removed || item.report_count)" class="hidden sm:list-item ml-6">
-            <button @click="confirmApprove"
-              class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+            <button @click="confirmApprove" class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
                 <path d="M9 12l2 2l4 -4"></path>
@@ -353,11 +310,8 @@
             </button>
           </li>
           <li v-if="isCompact && isExpanded" class="ml-3 sm:ml-6">
-            <button @click="isExpanded = !isExpanded"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+            <button @click="isExpanded = !isExpanded" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M18 10h-4v-4"></path>
                 <path d="M20 4l-6 6"></path>
@@ -396,18 +350,14 @@
         </svg>
       </button>-->
       <!-- Stretched link (card mode only) -->
-      <NuxtLink :to="`/post/${item.post.id}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
+      <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
     <!-- Avatar - Desktop Only -->
-    <NuxtLink v-show="!isCompact"
-      :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
-      class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
-      <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/64/64'" alt="avatar"
-        class="w-16 h-16 object-cover rounded" />
+    <NuxtLink v-show="!isCompact" :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
+      <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/64/64'" alt="avatar" class="w-16 h-16 object-cover rounded" />
     </NuxtLink>
   </div>
 </template>
-
 <script setup>
 // Props
 const props = defineProps({
@@ -418,6 +368,9 @@ const props = defineProps({
   isCompact: {
     type: Boolean,
   },
+  boardPage: {
+    type: Boolean
+  }
 });
 
 import { computed } from "vue";
@@ -430,6 +383,8 @@ import { toPercent } from "@/utils/percent";
 import { useApi } from "@/composables/api";
 import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
+import { useSiteStore } from "@/stores/StoreSite";
+//import { toHexCode } from "@/composables/colors";
 
 // Modals & Toasts
 const modalStore = useModalStore();
@@ -438,7 +393,11 @@ const toast = useToastStore();
 // Authentication
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
-const authCookie = useCookie("token").value;
+// const authCookie = useCookie("token").value;
+const theme = useCookie("theme") || "light";
+const site = useSiteStore();
+
+const darkTheme = computed(() => theme.value === 'dark');
 
 // Expand & Collapse
 const isExpanded = ref(false);
@@ -598,7 +557,6 @@ const percentUpvoted = computed(() => {
   return toPercent(num);
 });
 </script>
-
 <style scoped>
 .border-inherit {
   border-radius: inherit;

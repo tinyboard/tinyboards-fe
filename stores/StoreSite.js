@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useSiteStore = defineStore('site', {
   // State
   state: () => {
-    return { 
+    return {
       name: 'tinyboards',
       description: '',
       icon: '',
@@ -15,7 +15,8 @@ export const useSiteStore = defineStore('site', {
       enableNSFW: true,
       applicationQuestion: null,
       isPrivate: false,
-      requireEmailVerification: false
+      requireEmailVerification: false,
+      enableBoards: false,
     };
   },
   // Actions

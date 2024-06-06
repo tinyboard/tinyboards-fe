@@ -20,6 +20,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         siteStore.enableNSFW = data.value.enable_nsfw;
         siteStore.applicationQuestion = data.value.application_question;
         siteStore.isPrivate = data.value.private_instance;
+        siteStore.enableBoards = data.value.boards_enabled;
         siteStore.requireEmailVerification =
           data.value.require_email_verification;
       } else {

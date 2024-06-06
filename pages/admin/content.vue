@@ -18,8 +18,7 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.enable_federation"
-									@enabled="settings.enable_federation = !settings.enable_federation" />
+								<InputsSwitch id="nsfw" :isEnabled="settings.enable_federation" @enabled="settings.enable_federation = !settings.enable_federation" />
 								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable
 									federation</label>
 							</div>
@@ -29,7 +28,7 @@
 						</div>
 					</div>
 					<!-- Boards -->
-					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+					<div id="boards" class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6 target:bg-blue-300 target:bg-opacity-20">
 						<!-- Label -->
 						<div class="md:col-span-1">
 							<p class="text-base font-bold leading-6 text-gray-900">Boards</p>
@@ -37,9 +36,8 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.enable_boards"
-									@enabled="settings.enable_boards = !settings.enable_boards" />
-								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable
+								<InputsSwitch id="boards" :isEnabled="settings.boards_enabled" @enabled="settings.boards_enabled = !settings.boards_enabled" />
+								<label for="boards" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable
 									boards</label>
 							</div>
 							<p class="mt-2 text-sm text-gray-500">
@@ -57,8 +55,7 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.enable_nsfw"
-									@enabled="settings.enable_nsfw = !settings.enable_nsfw" />
+								<InputsSwitch id="nsfw" :isEnabled="settings.enable_nsfw" @enabled="settings.enable_nsfw = !settings.enable_nsfw" />
 								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Allow NSFW
 									content</label>
 							</div>
@@ -75,17 +72,13 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
-							<img v-if="imageStore.default_avatar || settings.default_avatar"
-								:src="imageStore.default_avatar ?? settings.default_avatar"
-								class="w-20 h-20 object-cover p-0.5 border bg-white" />
+							<img v-if="imageStore.default_avatar || settings.default_avatar" :src="imageStore.default_avatar ?? settings.default_avatar" class="w-20 h-20 object-cover p-0.5 border bg-white" />
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
 									{{ settings.default_avatar ? 'Change default avatar' : 'Upload default avatar' }}
 								</label>
-								<input id="avatar-upload" type="file" class="hidden"
-									accept="image/png, image/jpeg, image/gif"
-									@change="e => onFileChange(e, 'default_avatar')" />
+								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'default_avatar')" />
 								<small class="block mt-2 text-gray-400">
 									PNG, JPG <span class="line-through">and GIF</span> up to 1MB. This will be the default
 									avatar for users.
@@ -93,7 +86,6 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
@@ -105,7 +97,6 @@
 		</div>
 	</NuxtLayout>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
@@ -214,23 +205,26 @@ const submitSettings = async () => {
 	}
 
 	useApi('/admin/site_settings', {
-		method: "put",
-		body: {
-			"name": settings.value.name,
-			"description": settings.value.description,
-			"enable_downvotes": settings.value.enable_downvotes,
-			"site_mode": settings.value.site_mode,
-			"enable_nsfw": settings.value.enable_nsfw,
-			"application_question": settings.value.application_question,
-			"private_instance": settings.value.private_instance,
-			"email_verification_required": settings.value.email_verification_required,
-			"default_avatar": settings.value.default_avatar
-		}
-	})
+			method: "put",
+			body: {
+				//"name": settings.value.name,
+				//"description": settings.value.description,
+				"enable_downvotes": settings.value.enable_downvotes,
+				"site_mode": settings.value.site_mode,
+				"enable_nsfw": settings.value.enable_nsfw,
+				"application_question": settings.value.application_question,
+				"private_instance": settings.value.private_instance,
+				"email_verification_required": settings.value.email_verification_required,
+				"default_avatar": settings.value.default_avatar,
+				"boards_enabled": settings.value.boards_enabled
+			}
+		})
 		.then(({ data, error }) => {
 			if (data.value) {
 				// Show success toast.
 				toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
+
+				window.location.reload(true);
 			} else {
 				// Show error toast.
 				toast.addNotification({ header: 'Saving failed', message: 'Site settings have failed to save.', type: 'error' });
