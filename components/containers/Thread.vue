@@ -426,7 +426,7 @@
         class="flex items-center justify-center sm:justify-start mb-2.5 sm:mb-4 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
         <p class="text-sm text-yellow-800">
           You are viewing a single conversation.
-          <NuxtLink :to="`/post/${item.post.id}`" class="text-yellow-800">
+          <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`" class="text-yellow-800">
             <strong>View the entire thread &#8594;</strong>
           </NuxtLink>
         </p>
@@ -485,12 +485,14 @@ import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
 import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
+import { useSiteStore } from "@/stores/StoreSite";
 
 const modalStore = useModalStore();
 const toast = useToastStore();
 
 const route = useRoute();
 const userStore = useLoggedInUser();
+const site = useSiteStore();
 
 const isAuthed = userStore.isAuthed;
 const authCookie = useCookie("token").value;

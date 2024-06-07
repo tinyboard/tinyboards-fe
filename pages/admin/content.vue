@@ -27,25 +27,6 @@
 							</p>
 						</div>
 					</div>
-					<!-- Boards -->
-					<div id="boards" class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6 target:bg-blue-300 target:bg-opacity-20">
-						<!-- Label -->
-						<div class="md:col-span-1">
-							<p class="text-base font-bold leading-6 text-gray-900">Boards</p>
-						</div>
-						<!-- Inputs -->
-						<div class="mt-4 md:col-span-2 md:mt-0">
-							<div class="flex items-center text-sm">
-								<InputsSwitch id="boards" :isEnabled="settings.boards_enabled" @enabled="settings.boards_enabled = !settings.boards_enabled" />
-								<label for="boards" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable
-									boards</label>
-							</div>
-							<p class="mt-2 text-sm text-gray-500">
-								Boards are user-created communities on your site where content is moderated by your users.
-								The default board will always belong to the admins.
-							</p>
-						</div>
-					</div>
 					<!-- NSFW -->
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->
@@ -215,8 +196,8 @@ const submitSettings = async () => {
 				"application_question": settings.value.application_question,
 				"private_instance": settings.value.private_instance,
 				"email_verification_required": settings.value.email_verification_required,
-				"default_avatar": settings.value.default_avatar,
-				"boards_enabled": settings.value.boards_enabled
+				"default_avatar": settings.value.default_avatar
+				//"boards_enabled": settings.value.boards_enabled
 			}
 		})
 		.then(({ data, error }) => {

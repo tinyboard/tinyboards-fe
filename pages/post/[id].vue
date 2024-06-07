@@ -34,6 +34,7 @@ import { usePostsStore } from '@/stores/StorePosts';
 import { usePost } from '@/composables/post';
 import { useComments } from '@/composables/comments';
 import { useSiteStore } from '@/stores/StoreSite';
+import { useBoardStore } from '@/stores/StoreBoard';
 
 definePageMeta({
       alias: ['/+:board?/p/:id/:comment?', '/p/:id/:comment?', '/+:board?/post/:id/:comment?', '/post/:id/:comment?'],
@@ -41,7 +42,9 @@ definePageMeta({
 });
 
 const route = useRoute();
+const router = useRouter();
 const site = useSiteStore();
+const boardStore = useBoardStore();
 
 // Import thread components.
 const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
@@ -60,6 +63,31 @@ if (error.value && error.value.response) {
             fatal: true
       })
 };
+
+// if boards are enabled...
+if (site.enableBoards) {
+      const boardName = item.value.board_view.board.name;
+      const params = route.params;
+      const hasBoard = params.hasOwnProperty("board");
+      console.log(boardName);
+      // ...and the `+board` is not present, or is incorrect, redirect correctly
+      if (!hasBoard ||
+            (hasBoard && params.board.toLowerCase() !== boardName.toLowerCase())) {
+            router.push(`/+${boardName}/post/${item.value.post_view.post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+      }
+
+      /*if(!hasBoard) {
+            router.push(`/+${boardName}/post/${item.value.post_view.post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+      }
+
+      if(hasBoard && params.board.toLowerCase() !== boardName.toLowerCase()) {
+            router.push(`/+${boardName}/post/${item.value.post_view.post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+      }*/
+} else if (route.params.hasOwnProperty("board")) {
+      // if it's there but shouldn't, also redirect
+      router.push(`/post/${item.value.post_view.post.id}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+}
+
 
 // Author stats
 const stats = ref(null);

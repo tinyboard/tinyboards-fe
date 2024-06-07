@@ -24,6 +24,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         siteStore.applicationQuestion = data.value.application_question;
         siteStore.isPrivate = data.value.private_instance;
         siteStore.enableBoards = data.value.boards_enabled;
+        siteStore.boardCreationAdminOnly = data.value.board_creation_admin_only;
         siteStore.requireEmailVerification =
           data.value.require_email_verification;
       } else {

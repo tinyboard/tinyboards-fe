@@ -1,8 +1,12 @@
 <template>
   <div>
-    <p v-if="route.meta.hasRepliesDisabled" class="mb-1">
-      <NuxtLink :href="`/post/${item.post.id}/${comment.id}?context=2`">
+    <p v-if="route.meta.hasRepliesDisabled" class="mb-1 flex space-x-[4px]">
+      <NuxtLink class="font-semibold" :href="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${comment.id}?context=2`">
         {{ item.post.title }}
+      </NuxtLink>
+      <p class="text-gray-600" v-if="site.enableBoards">in</p>
+      <NuxtLink v-if="site.enableBoards" :href="`/+${item.board.name}`">
+        +{{ item.board.name }}
       </NuxtLink>
     </p>
     <div :id="comment.id" class="comment group flex relative" :class="{
@@ -277,13 +281,13 @@
             </button>
           </li>
           <li class="hidden sm:list-item">
-            <NuxtLink :to="`/post/${item.post.id}/${item.comment.id}`"
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:list-item">
-            <NuxtLink :to="`/post/${item.post.id}/${item.comment.id}?context=3`"
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.comment.id}?context=3`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -330,6 +334,7 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { useCommentsStore } from "@/stores/StoreComments";
+import { useSiteStore } from "@/stores/StoreSite";
 import { formatDate } from "@/utils/formatDate";
 import { useApi } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
@@ -338,6 +343,7 @@ const route = useRoute();
 
 const modalStore = useModalStore();
 const toast = useToastStore();
+const site = useSiteStore();
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;

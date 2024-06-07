@@ -17,6 +17,7 @@ export const useSiteStore = defineStore('site', {
       isPrivate: false,
       requireEmailVerification: false,
       enableBoards: false,
+      boardCreationAdminOnly: true
     };
   },
   // Actions

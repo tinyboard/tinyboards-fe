@@ -156,14 +156,14 @@
 			</ul>
 			<p v-if="boardPerms" class="text-sm text-gray-500 uppercase px-4 pt-4 font-bold">Boards <span v-if="!site.enableBoards" class="font-bold text-red-500 text-sm"> (disabled)</span></p>
 			<ul class="flex flex-col z-10 text-sm overflow-y-auto pt-1">
-				<li v-if="!site.enableBoards" class="relative">
-					<NuxtLink to="/admin/content#boards" custom v-slot="{ href, navigate }">
-						<a :href="href" @click="navigate" class="flex items-center px-4 py-2.5 rounded-md font-bold text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-transparent">
+				<li class="relative">
+					<NuxtLink to="/admin/board_settings" custom v-slot="{ href, navigate, isActive }">
+						<a :href="href" @click="navigate" class="flex items-center px-4 py-2.5 rounded-md font-bold" :class="isActive ? 'text-primary bg-primary bg-opacity-20 shadow-inner-white' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-transparent'">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 								<path d="M5 3h1a1 1 0 0 1 1 1v2h3v-2a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1v2h3v-2a1 1 0 0 1 1 -1h1a1 1 0 0 1 1 1v4.394a2 2 0 0 1 -.336 1.11l-1.328 1.992a2 2 0 0 0 -.336 1.11v7.394a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1v-7.394a2 2 0 0 0 -.336 -1.11l-1.328 -1.992a2 2 0 0 1 -.336 -1.11v-4.394a1 1 0 0 1 1 -1z" />
 								<path d="M10 21v-5a2 2 0 1 1 4 0v5" /></svg>
-							Enable Boards
+							Board Settings
 						</a>
 					</NuxtLink>
 				</li>
