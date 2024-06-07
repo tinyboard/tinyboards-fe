@@ -9,7 +9,7 @@
         : 'border-y sm:border-x sm:rounded',
       status ? `${status}` : 'bg-white',
       isCompact && isExpanded ? 'items-start' : 'items-center'
-      ]" :style="site.enableBoards && !boardPage && !isCompact ? `background: linear-gradient(15deg, rgba(${darkTheme ? '25,25,25' : '255,255,255'},1) 75%, rgba(${item.board.primary_color},${darkTheme ? '1' : '0.5'}) 100%) !important` : ''">
+      ]" :style="site.enableBoards && !(boardPage || isCompact || status) ? `background: linear-gradient(15deg, rgba(${darkTheme ? '25,25,25' : '255,255,255'},1) 75%, rgba(${item.board.primary_color},${darkTheme ? '1' : '0.5'}) 100%) !important` : ''">
       <NuxtLink v-show="isCompact" :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="hidden sm:flex flex-shrink-0">
         <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="w-10 h-10 object-cover rounded" />
       </NuxtLink>
@@ -58,7 +58,7 @@
           </div>
           <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
-            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="`color: rgb(${darkTheme ? '255, 255, 255' : item.board.primary_color}, 0.7)`">
+            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="`color: rgb(${darkTheme ? '255, 255, 255' : item.board.primary_color})`">
               <div class="hidden md:flex space-x-2 items-center">
                 <img :src="item.board.icon" class="bg-white border p-[0.5px]" :class="isCompact ? 'w-5 h-5' : 'w-8 h-8'" />
                 <p>{{ item.board.title }}</p>

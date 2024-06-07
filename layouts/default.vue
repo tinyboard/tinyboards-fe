@@ -15,12 +15,19 @@ import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { useSiteStore } from "@/stores/StoreSite";
+import { useBoardStore } from "@/stores/StoreBoard";
+// import { ref } from "vue";
 
 //import { onMounted } from 'vue;'
 
 const site = useSiteStore();
 const route = useRoute();
 const router = useRouter();
+const boardStore = useBoardStore();
+
+const primaryColor = boardStore.boardActive ? boardStore.boardView.board["primary_color"] : site.primaryColor;
+const secondaryColor = boardStore.boardActive ? boardStore.boardView.board["secondary_color"] : site.secondaryColor;
+const hoverColor = boardStore.boardActive ? boardStore.boardView.board["hover_color"] : site.hoverColor;
 
 console.log("setting up head");
 useHead({
@@ -37,9 +44,9 @@ useHead({
 	style: [
 		`
 			:root {
-				--color-primary: ${site.primaryColor} !important;
-				--color-secondary: ${site.secondaryColor} !important;
-				--color-primary-hover: ${site.hoverColor} !important;
+				--color-primary: ${primaryColor} !important;
+				--color-secondary: ${secondaryColor} !important;
+				--color-primary-hover: ${hoverColor} !important;
 			}
 			`,
 	],
@@ -52,6 +59,23 @@ useHead({
 	]
 });
 console.log("success!");
+
+watch(
+	() => boardStore.boardActive,
+	isBoardActive => {
+		// this can't happen server-side, so we can use `document` to manipulate colors
+		let r = document.querySelector(':root');
+		if (isBoardActive) {
+			r.style.setProperty('--color-primary', boardStore.boardView.board["primary_color"], "important");
+			r.style.setProperty('--color-secondary', boardStore.boardView.board["secondary_color"], "important");
+			r.style.setProperty('--color-primary-hover', boardStore.boardView.board["hover_color"], "important");
+		} else {
+			r.style.setProperty('--color-primary', site.primaryColor, "important");
+			r.style.setProperty('--color-secondary', site.secondaryColor, "important");
+			r.style.setProperty('--color-primary-hover', site.hoverColor, "important");
+		}
+	}
+)
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;

@@ -5,8 +5,18 @@
 				<div class="flex flex-grow items-center">
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
-						<NuxtLink to="/feed" class="header-brand font-bold text-lg text-white">
-							<img id="navbar-icon" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
+						<div v-if="boardStore.boardActive" class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
+							<NuxtLink to="feed">
+								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
+							</NuxtLink>
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+								<path d="M9 6l6 6l-6 6" />
+							</svg>
+							<NuxtLink :to="`/+${boardStore.boardView.board.name}`" class="font-bold text-lg text-white">+{{ boardStore.boardView.board.name }}</NuxtLink>
+						</div>
+						<NuxtLink v-else to="/feed" class="header-brand font-bold text-lg text-white">
+							<img id="navbar-icon" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
 							<span>{{ site.name }}</span>
 						</NuxtLink>
 						<span class="absolute -right-5 -bottom-1 flashing-text font-mono">
@@ -327,6 +337,7 @@
 import { useApi } from "@/composables/api";
 import { useSiteStore } from '@/stores/StoreSite.js';
 import { useLoggedInUser } from '@/stores/StoreAuth';
+import { useBoardStore } from '@/stores/StoreBoard.js';
 import { shuffle } from "@/utils/shuffleArray";
 import Cookies from 'js-cookie';
 
@@ -335,6 +346,7 @@ const router = useRouter();
 const userStore = useLoggedInUser();
 
 const site = useSiteStore();
+const boardStore = useBoardStore();
 
 const text = ref(route.query.q);
 
@@ -382,7 +394,7 @@ const yellowText = [
 	'It\'s jQuery!',
 	'It\'s Rails!',
 	'It\'s SSR!',
-	'est. 2023'
+	'est. 2024'
 ];
 
 const selectedText = ref(null);

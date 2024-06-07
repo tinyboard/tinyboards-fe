@@ -1,9 +1,12 @@
 import { useSiteStore } from "@/stores/StoreSite";
+import { useBoardStore } from "@/stores/StoreBoard";
 import { useApi } from "@/composables/api";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp();
   const siteStore = useSiteStore();
+  const boardStore = useBoardStore();
+  const route = useRoute();
   //console.log("fetch site...");
 
   if (process.server) {
@@ -27,5 +30,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         console.log(error.value);
       }
     });
+  }
+
+  console.log(`middleware, route changed to ${to.fullPath}`);
+  if (siteStore.enableBoards && to.params.hasOwnProperty("board")) {
+    await boardStore.load({ name: to.params.board });
+  } else if (boardStore.boardActive) {
+    boardStore.clear();
   }
 });
