@@ -105,7 +105,7 @@
         </div>
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <NuxtLink class="z-10 relative font-medium sm:text-lg text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`">
+          <NuxtLink class="z-10 relative font-medium sm:text-lg text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`">
             {{ item.post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && item.post.body_html" class="mt-2 relative overflow-hidden" :class="{
@@ -193,7 +193,7 @@
             </button>
           </li>
           <li class="ml-3 sm:ml-6 list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
@@ -350,7 +350,7 @@
         </svg>
       </button>-->
       <!-- Stretched link (card mode only) -->
-      <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
+      <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
     <!-- Avatar - Desktop Only -->
     <NuxtLink v-show="!isCompact" :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">

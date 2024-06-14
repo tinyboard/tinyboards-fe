@@ -1,7 +1,7 @@
 <template>
   <div>
     <p v-if="route.meta.hasRepliesDisabled" class="mb-1 flex space-x-[4px]">
-      <NuxtLink class="font-semibold" :href="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${comment.id}?context=2`">
+      <NuxtLink class="font-semibold" :href="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}/${comment.id}?context=2`">
         {{ item.post.title }}
       </NuxtLink>
       <p class="text-gray-600" v-if="site.enableBoards">in</p>
@@ -281,13 +281,13 @@
             </button>
           </li>
           <li class="hidden sm:list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.comment.id}`"
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}/${item.comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.comment.id}?context=3`"
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}/${item.comment.id}?context=3`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -319,7 +319,7 @@
           " v-show="!isCollapsed" :comments="item.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
         <NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed"
-          :to="`/post/${item.post.id}/${comment.id}`"
+          :to="`/post/${item.post.id}/${item.post.title_chunk}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>

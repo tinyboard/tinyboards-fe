@@ -36,9 +36,15 @@ import { useComments } from '@/composables/comments';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useBoardStore } from '@/stores/StoreBoard';
 
+const title = ref("Post");
+
 definePageMeta({
-      alias: ['/+:board?/p/:id/:comment?', '/p/:id/:comment?', '/+:board?/post/:id/:comment?', '/post/:id/:comment?'],
+      alias: ['/post/:id/:chunk?', '/+:board?/post/:id/:chunk?', '/+:board?/p/:id/:chunk/:comment?', '/p/:id/:chunk/:comment?', '/+:board?/post/:id/:chunk/:comment?', '/post/:id/:chunk/:comment?'],
       key: (route) => route.fullPath
+});
+
+useHead({
+      title: title
 });
 
 const route = useRoute();
@@ -64,6 +70,8 @@ if (error.value && error.value.response) {
       })
 };
 
+title.value = `${item.value.post_view.post.title} ${site.enableBoards ? '| +' + item.value.board_view.board.name : ''}`;
+
 // if boards are enabled...
 if (site.enableBoards) {
       const boardName = item.value.board_view.board.name;
@@ -73,7 +81,7 @@ if (site.enableBoards) {
       // ...and the `+board` is not present, or is incorrect, redirect correctly
       if (!hasBoard ||
             (hasBoard && params.board.toLowerCase() !== boardName.toLowerCase())) {
-            router.push(`/+${boardName}/post/${item.value.post_view.post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+            router.push(`/+${boardName}/post/${item.value.post_view.post.id}/${item.value.post_view.post.title_chunk}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
       }
 
       /*if(!hasBoard) {
@@ -85,7 +93,7 @@ if (site.enableBoards) {
       }*/
 } else if (route.params.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      router.push(`/post/${item.value.post_view.post.id}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+      router.push(`/post/${item.value.post_view.post.id}/${item.value.post_view.post.title_chunk}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
 }
 
 

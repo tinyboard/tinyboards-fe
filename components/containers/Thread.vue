@@ -126,7 +126,7 @@
       <!-- Post Content -->
       <div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
         <!-- Title -->
-        <NuxtLink :external="!!item.post.url" :to="!!item.post.url ? item.post.url : `/post/${item.post.id}`"
+        <NuxtLink :external="!!item.post.url" :to="!!item.post.url ? item.post.url : `${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`"
           :target="item.post.url ? '_blank' : null" class="text-lg md:text-xl font-medium dark:text-gray-100">
           {{ item.post.title }}
         </NuxtLink>
@@ -426,7 +426,7 @@
         class="flex items-center justify-center sm:justify-start mb-2.5 sm:mb-4 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
         <p class="text-sm text-yellow-800">
           You are viewing a single conversation.
-          <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}`" class="text-yellow-800">
+          <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`" class="text-yellow-800">
             <strong>View the entire thread &#8594;</strong>
           </NuxtLink>
         </p>

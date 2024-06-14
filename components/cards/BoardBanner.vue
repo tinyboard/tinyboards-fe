@@ -11,8 +11,8 @@
 					</svg>
 					<span>
 						Board since
-						<span :title="board.created_at" class="font-medium text-gray-600">
-							{{ format(parseISO(board.created_at), 'MMM dd, yyyy') }}
+						<span :title="board.creation_date" class="font-medium text-gray-600">
+							{{ format(parseISO(board.creation_date), 'MMM dd, yyyy') }}
 						</span>
 					</span>
 				</li>
@@ -41,7 +41,7 @@
 					<span>
 						Followers
 						<span class="font-medium text-gray-600">
-							{{ board.followers_count.toLocaleString() }}
+							{{ boardCounts.subscribers.toLocaleString() }}
 						</span>
 					</span>
 				</li>
@@ -53,7 +53,7 @@
 						<path d="M16 5l3 3"></path>
 					</svg>
 					<span>Posts
-						<span class="font-medium text-gray-600">{{ board.posts_count.toLocaleString() }}</span>
+						<span class="font-medium text-gray-600">{{ boardCounts.posts.toLocaleString() }}</span>
 					</span>
 				</li>
 				<li class="ml-6 flex items-center">
@@ -62,17 +62,17 @@
 						<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 					</svg>
 					<span>Comments
-						<span class="font-medium text-gray-600">{{ board.comments_count.toLocaleString() }}</span>
+						<span class="font-medium text-gray-600">{{ boardCounts.comments.toLocaleString() }}</span>
 					</span>
 				</li>
 			</ul>
 		</div>
 		<!-- Details -->
-		<div id="details" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${board.banner_url})` }">
+		<div id="details" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${board.banner})` }">
 			<!-- Icon -->
 			<img
 			loading="lazy"
-			:src="board.icon_url"
+			:src="board.icon"
 			alt="icon"
 			class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
 			/>
@@ -93,7 +93,7 @@
 				</p>
 				<!-- Stats -->
 				<small class="sm:hidden mt-2 text-gray-300">
-					Joined {{ format(parseISO(board.created_at), 'MMM dd, yyyy') }}
+					Joined {{ format(parseISO(board.creation_date), 'MMM dd, yyyy') }}
 				</small>
 				<!-- Actions -->
 				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
@@ -112,19 +112,19 @@
 				<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-4 pt-2.5 md:pt-0">
 					<li>
 						<span>
-							<strong>{{ board.followers_count }}</strong>
+							<strong>{{ boardCounts.subscribers }}</strong>
 							Followers
 						</span>
 					</li>
 					<li class="ml-4">
 						<span>
-							<strong>{{ board.posts_count }}</strong>
+							<strong>{{ boardCounts.posts }}</strong>
 							{{ board.posts_count === 1 ? 'Post' : 'Posts' }}
 						</span>
 					</li>
 					<li class="ml-4">
 						<span>
-							<strong>{{ board.comments_count }}</strong>
+							<strong>{{ boardCounts.comments }}</strong>
 							{{ board.comments_count === 1 ? 'Comment' : 'Comments' }}
 						</span>
 					</li>
@@ -138,7 +138,9 @@
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { format, parseISO } from "date-fns";
 
-	const props = defineProps(['board']);
+	const props = defineProps(['boardView']);
+	const board = props.boardView.board;
+	const boardCounts = props.boardView.counts;
 
 	const userStore = useLoggedInUser();
 

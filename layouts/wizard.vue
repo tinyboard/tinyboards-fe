@@ -13,7 +13,7 @@
         </section>
         <section class="hidden md:block md:col-span-8 bg-primary bg-opacity-20">
             <div class="h-[99vh] flex min-[2000px]:col-span-9 min-[3000px]:col-span-10 justify-center items-center">
-                <CardsBoardPreview />
+                <CardsBoardPreview v-if="site.enableBoards && !(isBanned || adminRequired)" />
             </div>
         </section>
         <LazyDialogsToastList v-if="toastStore.hasInit" />
@@ -26,6 +26,7 @@ import { useSiteStore } from '@/stores/StoreSite';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
+import { requirePermission } from '@/composables/admin';
 
 const site = useSiteStore();
 const userStore = useLoggedInUser();
@@ -33,9 +34,11 @@ const toastStore = useToastStore();
 const modalStore = useModalStore();
 
 const v = userStore.user;
+const isBanned = v.is_banned;
+const adminRequired = site.boardCreationAdminOnly && !requirePermission("boards");
 
 useHead({
-    title: `${site.name} | Board Creator Wizard 🧙`,
+    title: `Board Creator Wizard 🧙`,
     meta: [
         {
             property: 'og:title',

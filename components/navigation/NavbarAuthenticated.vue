@@ -6,7 +6,7 @@
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
 						<div v-if="boardStore.boardActive" class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
-							<NuxtLink to="feed">
+							<NuxtLink to="/feed">
 								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
 							</NuxtLink>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

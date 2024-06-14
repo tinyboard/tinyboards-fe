@@ -34,7 +34,10 @@ useHead({
 	bodyAttrs: {
 		class: useCookie("theme", { default: () => '' })
 	},
-	title: `${site.name} | ${route.meta.title ?? 'feed'}`,
+	//title: `${site.name} | ${route.meta.title ?? 'feed'}`,
+	titleTemplate: (titleChunk) => {
+		return titleChunk ? `${titleChunk} | ${site.name}` : site.name
+	},
 	meta: [
 		{
 			property: 'og:title',

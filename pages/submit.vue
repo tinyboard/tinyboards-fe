@@ -276,7 +276,7 @@
 				method: "post",
 				body: {
 					// "creatorId": 0,
-					"board_id": 1,
+					"board_name": boardName.value,
 					"title": title.value,
 					"type_": "text",
 					"url": url.value,
@@ -287,11 +287,12 @@
 			})
 			.then(({ data, error }) => {
 				if (data.value) {
-					const post = JSON.parse(JSON.stringify(data.value.post_view.post));
+					const post_view = JSON.parse(JSON.stringify(data.value.post_view));
+					const post = post_view.post;
 					// Show success toast.
 					toast.addNotification({header:'Post created',message:'Your post was published!',type:'success',isVisibleOnRouteChange:true});
 					// Navigate to thread page.
-					navigateTo(`/post/${post.id}`);
+					navigateTo(`${site.enableBoards ? '/+' + post_view.board.name : ''}/post/${post.id}/${post.title_chunk}`);
 				} else {
 					// Show error toast.
 					toast.addNotification({

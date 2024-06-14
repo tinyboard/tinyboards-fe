@@ -10,6 +10,7 @@ import { getListing } from '@/composables/listing';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { requirePermission } from '@/composables/admin';
+import { ref } from "vue";
 
 const route = useRoute();
 const site = useSiteStore();
@@ -20,12 +21,14 @@ definePageMeta({
 	key: (route) => route.fullPath,
 });
 
+const title = ref(route.params.username);
+
 useHead({
-	title: `${site.name} | ${route.params.username}'s profile`,
+	title: title,
 	meta: [
 		{
 			property: 'og:title',
-			content: `${site.name} | ${route.params.username}'s profile`
+			content: title
 		}
 	]
 });
@@ -64,6 +67,14 @@ if (error.value && error.value.response) {
 
 const personView = userData.value.person_view;
 const user = personView.person;
+
+if (user.is_deleted) {
+	title.value = "Deleted Account";
+} else if (user.is_banned) {
+	title.value = `@${user.name}: Suspended`;
+} else {
+	title.value = `${user.display_name ?? user.name} (@${user.name})`;
+}
 
 // Is Self
 const isSelf = computed(() => {

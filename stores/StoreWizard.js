@@ -34,4 +34,16 @@ export const useWizardStore = defineStore("wizard", {
       },
     };
   },
+  actions: {
+    clear() {
+      this.name = null;
+      this.displayName = "";
+      this.description = "";
+      this.primaryColor = toHexCode(site.primaryColor);
+      this.secondaryColor = toHexCode(site.secondaryColor);
+      this.hoverColor = toHexCode(this.hoverColor);
+      this.privacy = 0;
+      this.boarding.canProceed = false;
+    }
+  }
 });
