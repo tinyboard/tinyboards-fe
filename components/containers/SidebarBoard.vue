@@ -16,12 +16,12 @@
                 <span class="text-gray-700 text-opacity-70">+{{ board.name }}</span>
             </h2>
             <div class="prose prose-sm text-gray-900">
-                <p v-if="board.sidebar_html">{{ board.sidebar_html }}</p>
+                <p v-if="board.sidebar_html" v-html="board.sidebar_html" />
                 <p v-else>{{ board.description }}</p>
             </div>
         </div>
         <!-- Board Moderation -->
-        <div>
+        <div v-if="isMod">
             <h2 class="font-bold leading-5 text-base mb-1 pb-1 border-b">
                 <span>Moderation</span>
             </h2>
@@ -85,7 +85,7 @@
             </ul>
         </div>
         <!-- Board Admin Actions -->
-        <div>
+        <div v-if="isAdmin">
             <h2 class="font-bold leading-5 text-base pb-1 border-b">
                 <span>Admin Tools</span>
             </h2>
@@ -126,6 +126,40 @@
                 </li>
             </ul>
         </div>
+        <!-- List mods -->
+        <div>
+            <h2 class="font-bold leading-5 text-base pb-1 border-b">
+                <span>Moderators</span>
+            </h2>
+            <ul class="flex flex-col mt-4 space-y-2 divide-y divide-gray-200/50">
+              <li
+                v-for="mod in mods.slice(0, 6)"
+                :key="mod.moderator.id"
+                class="pt-2 first:pt-0"
+              >
+                <NuxtLink :to="`/@${mod.moderator.name}`" class="flex space-x-2">
+                  <img
+                    loading="lazy"
+                    class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
+                    :src="mod.moderator.avatar ?? 'https://placekitten.com/36/36'"
+                  />
+                  <div class="flex flex-col justify-center leading-normal">
+                    <div class="flex">
+                      <strong class="text-sm">{{ mod.moderator.display_name ?? mod.moderator.name }}</strong>
+                      <!-- Role -->
+                      <span v-if="mod.moderator.is_admin" class="ml-1 badge badge-red"
+                        >Admin</span
+                      >
+                    </div>
+                    <small class="text-gray-400 block">
+                      {{ mod.moderator.name }}
+                    </small>
+                  </div>
+                </NuxtLink>
+              </li>
+            </ul>
+            <NuxtLink v-if="mods.length > 7" :to="`/+${board.name}/mod/mods`">View {{ mods.length - 7 }} more</NuxtLink>
+        </div>
     </div>
 </template>
   
@@ -134,15 +168,27 @@
   import { format, parseISO } from "date-fns";
   import { shuffle } from "@/utils/shuffleArray";
   import { useApi } from "@/composables/api";
+  import { requirePermission } from "@/composables/admin";
+  import { useBoardStore } from "@/stores/StoreBoard";
+  //import { useLoggedInUser } from "@/stores/StoreAuth";
+
+  //const userStore = useLoggedInUser();
+  //const user = userStore.user;
+  const boardStore = useBoardStore();
+  const isAdmin = requirePermission("boards");
 
   const props = defineProps({
-        board: {
+        /*boardView: {
             type: Object,
             required: true
-        },
+        },*/
         submitPage: {
             type: Boolean,
             default: false
         }
     });
+
+  const board = boardStore.boardView.board;
+  const isMod = boardStore.boardView.moderator !== null;
+  const mods = boardStore.mods;
 </script>

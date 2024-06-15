@@ -19,7 +19,7 @@
             <div class="text-center flex flex-col items-center">
               <img :src="board.icon" class="bg-white p-[2px] border border-gray-300 w-32 h-32" />
               <h1 class="text-3xl text-gray-700 font-bold mt-4">Welcome to +{{ board.name }}</h1>
-              <p class="text-md text-gray-500">Right now it's empty here. Let's get started with making the first post!</p>
+              <p class="text-md text-gray-500">Right now it's empty here. Let's get started by making the first post!</p>
               <!-- Create Post -->
               <NuxtLink v-if="!submitPage" :to="`/+${board.name}/submit`" class="flex items-center button primary mt-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -73,7 +73,7 @@
           </div>
         </div>
         <!-- Sidebar -->
-        <component :is="route.params.board ? SidebarBoard : Sidebar" :board="route.params.board ? board : null" />
+        <component :is="route.params.board ? SidebarBoard : Sidebar" />
       </div>
     </section>
   </main>
