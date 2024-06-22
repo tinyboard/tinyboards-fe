@@ -6,10 +6,10 @@
     <div class="relative flex-grow p-2.5 sm:p-4 shadow-inner-white hover:bg-gray-50 card" :class="[
       isCompact
         ? 'flex border-inherit'
-        : 'border-y sm:border-x sm:rounded',
-      status ? `${status}` : 'bg-white',
+        : 'border-y sm:border-x sm:rounded dark:border-gray-800',
+      status ? `${status}` : 'bg-white dark:bg-gray-800',
       isCompact && isExpanded ? 'items-start' : 'items-center'
-      ]" :style="site.enableBoards && !(boardPage || isCompact || status) ? `background: linear-gradient(15deg, rgba(${darkTheme ? '25,25,25' : '255,255,255'},1) 75%, rgba(${item.board.primary_color},${darkTheme ? '1' : '0.5'}) 100%) !important` : ''">
+      ]">
       <NuxtLink v-show="isCompact" :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="hidden sm:flex flex-shrink-0">
         <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar" class="w-10 h-10 object-cover rounded" />
       </NuxtLink>
@@ -58,7 +58,7 @@
           </div>
           <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
-            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="`color: rgb(${darkTheme ? '255, 255, 255' : item.board.primary_color})`">
+            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="{'color': 'rgb(' + item.board.primary_color + ')'}">
               <div class="hidden md:flex space-x-2 items-center">
                 <img :src="item.board.icon" class="bg-white border p-[0.5px]" :class="isCompact ? 'w-5 h-5' : 'w-8 h-8'" />
                 <p>{{ item.board.title }}</p>
@@ -105,7 +105,7 @@
         </div>
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <NuxtLink class="z-10 relative font-medium sm:text-lg text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`">
+          <NuxtLink class="z-10 relative font-medium sm:text-lg text-gray-900 dark:text-gray-200 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`">
             {{ item.post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && item.post.body_html" class="mt-2 relative overflow-hidden" :class="{
@@ -118,7 +118,7 @@
               </span>
             </div>
             <!-- Post Body -->
-            <div class="prose prose-sm max-w-none" v-html="item.post.body_html"></div>
+            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="item.post.body_html"></div>
           </div>
         </div>
         <!-- Reports -->

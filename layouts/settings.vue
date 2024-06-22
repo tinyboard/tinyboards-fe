@@ -2,14 +2,15 @@
 	<main id="layout-settings" class="flex flex-col pt-12 sm:pt-14">
 		<!-- Sub Navigation & Banner -->
 		<section class="flex flex-col">
-			<NavigationNavbarSub :links="links" class="sm:order-first"/>
+			<NavigationNavbarSub :links="isBoardActive ? boardLinks : profileLinks" class="sm:order-first"/>
 			<div class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
 				<CardsBanner
+				v-if="!isBoardActive"
 				class="col-span-full"
 				title="Settings"
 				sub-title="Manage your public profile and more."
-				image-url="https://forum.porpl.net/image/51bc2d71-6c70-4add-a7b0-03fed9024fb6.webp"
+				image-url="''"
 				/>
 			</div>
 		</section>
@@ -25,8 +26,14 @@
 
 <script setup>
 	import { useSiteStore } from '@/stores/StoreSite';
+	import { useBoardStore } from '@/stores/StoreBoard';
 	const route = useRoute();
 	const site = useSiteStore();
+	const boardStore = useBoardStore();
+
+	const isBoardActive = boardStore.boardActive;
+	const board = isBoardActive ? boardStore.boardView.board : null;
+	const boardName = isBoardActive ? board.name : '';
 
 	// useHead({
 	// 	title: `${site.name} | ${route.meta.title ?? 'profile'}`,
@@ -35,9 +42,16 @@
 	// 	}]
 	// });
 
-	const links = [
+	const profileLinks = [
 	{ name: 'Profile', href: '/settings/profile' },
 	{ name: 'Account', href: '/settings/account' },
 	{ name: 'Content', href: '/settings/content' },
+	];
+
+	const boardLinks = [
+	{ name: 'General', href: `/+${boardName}/mod/settings` },
+	{ name: 'Appearance', href: `/+${boardName}/mod/appearance` },
+	{ name: 'Sidebar', href: `/+${boardName}/mod/sidebar` },
+	{ name: 'Banned Users', href: `/+${boardName}/mod/bans` },
 	];
 </script>

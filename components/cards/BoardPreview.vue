@@ -95,7 +95,7 @@
                         </li>
                     </ul>
                 </div>
-                <div id="details"
+                <div id="banner"
                     class="relative flex flex-col sm:flex-row sm:items-center w-full p-4 bg-cover bg-center sm:rounded-b-md"
                     :style="{ backgroundImage: `url(${bannerImage})` }">
                     <!-- Icon -->
@@ -299,5 +299,25 @@ const posts = [
 <style>
 .hover-primary:hover {
     color: var(--color-custom-hover);
+}
+
+#banner {
+    position: relative;
+}
+#banner > * {
+    z-index: 10;
+}
+#banner::before {
+    content: '';
+    background: rgba(0,0,0,0.9);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0,0,0,0.8) 70%);
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    @apply sm:rounded-b-lg;
 }
 </style>

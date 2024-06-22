@@ -68,7 +68,7 @@
 			</ul>
 		</div>
 		<!-- Details -->
-		<div id="details" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${board.banner})` }">
+		<div id="banner" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${board.banner})` }">
 			<!-- Icon -->
 			<img
 			loading="lazy"
