@@ -62,7 +62,8 @@ definePageMeta({
 	'title': 'Queue',
 	isFooterDisabled: true,
 	isScrollDisabled: true,
-	requirePermission: "content"
+	requirePermission: "content",
+    'isLeftNavbarDisabled': true
 });
 
 const preferCardView = useCookie('preferCardView') ?? false;

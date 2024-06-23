@@ -189,6 +189,6 @@
     });
 
   const board = boardStore.boardView.board;
-  const isMod = boardStore.boardView.moderator !== null;
+  const isMod = boardStore.modPermissions !== null;
   const mods = boardStore.mods;
 </script>

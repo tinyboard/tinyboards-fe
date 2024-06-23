@@ -35,6 +35,10 @@
 	const board = isBoardActive ? boardStore.boardView.board : null;
 	const boardName = isBoardActive ? board.name : '';
 
+	definePageMeta({
+		isLeftNavbarDisabled: true
+	})
+
 	// useHead({
 	// 	title: `${site.name} | ${route.meta.title ?? 'profile'}`,
 	// 	meta: [{ property: 'og:title',

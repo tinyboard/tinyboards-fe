@@ -76,7 +76,8 @@ import { useToastStore } from '@/stores/StoreToast';
 
 definePageMeta({
 	'hasAuthRequired': true,
-	'title': 'Account'
+	'title': 'Account',
+	'isLeftNavbarDisabled': true
 });
 
 const toast = useToastStore();

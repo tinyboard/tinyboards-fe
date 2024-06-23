@@ -138,7 +138,8 @@ definePageMeta({
     isFooterDisabled: true,
     isScrollDisabled: true,
     requirePermission: "users",
-    title: 'Users'
+    title: 'Users',
+    'isLeftNavbarDisabled': true
 });
 
 const authCookie = useCookie("token").value;

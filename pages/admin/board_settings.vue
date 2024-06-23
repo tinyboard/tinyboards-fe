@@ -67,7 +67,8 @@ definePageMeta({
 	'title': 'Settings',
 	isFooterDisabled: true,
 	isScrollDisabled: true,
-	permissionRequired: "boards"
+	permissionRequired: "boards",
+    'isLeftNavbarDisabled': true
 });
 
 const toast = useToastStore();

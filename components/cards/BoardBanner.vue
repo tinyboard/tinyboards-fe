@@ -143,7 +143,7 @@
 
 	const props = defineProps(['boardView']);
 	const board = props.boardView.board;
-	const isMod = props.boardView.moderator !== null;
+	const isMod = props.boardView.mod_permissions !== null;
 	const boardCounts = props.boardView.counts;
 
 	const userStore = useLoggedInUser();

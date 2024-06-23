@@ -3,6 +3,8 @@
 		<NuxtLoadingIndicator color="rgba(255,255,255,0.45)" :height="3" />
 		<!-- Navigation Bar -->
 		<component :is="isAuthed ? NavbarAuthenticated : Navbar" />
+		<!-- Side Navigation -->
+		<NavbarLeft v-if="site.enableBoards && !route.meta.isLeftNavbarDisabled" />
 		<slot />
 		<NavigationFooter v-if="!route.meta.isFooterDisabled" />
 		<LazyDialogsToastList v-if="toastStore.hasInit" />
@@ -92,6 +94,7 @@ const toastStore = useToastStore();
 
 const Navbar = defineAsyncComponent(() => import('@/components/navigation/Navbar'));
 const NavbarAuthenticated = defineAsyncComponent(() => import('@/components/navigation/NavbarAuthenticated'));
+const NavbarLeft = defineAsyncComponent(() => import('@/components/navigation/NavbarLeft'));
 
 // Expand image
 const getImages = () => {

@@ -176,6 +176,7 @@ definePageMeta({
 	isFooterDisabled: true,
 	isScrollDisabled: true,
 	permissionRequired: "config",
+    'isLeftNavbarDisabled': true
 });
 
 const toast = useToastStore();

@@ -255,7 +255,7 @@
   const mods = showBoardInfo ? boardStore.mods : [];
 
   const isAdmin = requirePermission("boards");
-  const isMod = showBoardInfo ? boardStore.boardView.moderator !== null : false;
+  const isMod = showBoardInfo ? boardStore.modPermissions !== null : false;
 
   // Define author
   const props = defineProps({

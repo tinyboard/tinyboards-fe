@@ -6,6 +6,7 @@ export const useBoardStore = defineStore("board", {
 		return {
 			boardView: {},
 			mods: [],
+			modPermissions: 0,
 			boardActive: false
 		}
 	},
@@ -21,6 +22,7 @@ export const useBoardStore = defineStore("board", {
 			if (data.value) {
 				this.boardView = data.value["board_view"];
 				this.mods = data.value["moderators"];
+				this.modPermissions = this.boardView.mod_permissions;
 				this.boardActive = true;
 			} else {
 				console.log(`getting board +${name} failed: ${error.value}`);
@@ -31,6 +33,7 @@ export const useBoardStore = defineStore("board", {
 			this.boardView = {};
 			this.mods = [];
 			this.boardActive = false;
+			this.modPermissions = null;
 		}
 	}
 });

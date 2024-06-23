@@ -46,7 +46,8 @@
 
 	definePageMeta({
 		'hasAuthRequired': true,
-		'title': 'Content'
+		'title': 'Content',
+		'isLeftNavbarDisabled': true
 	});
 
 	const toast = useToastStore();

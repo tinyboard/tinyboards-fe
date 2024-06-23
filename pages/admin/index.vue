@@ -170,6 +170,7 @@ definePageMeta({
   isScrollDisabled: true,
   alias: "/admin/overview",
   title: "Overview",
+    'isLeftNavbarDisabled': true
 });
 
 // Settings

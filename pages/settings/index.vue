@@ -102,7 +102,8 @@
 	definePageMeta({
 		'hasAuthRequired': true,
 		'alias': '/settings/profile',
-		'title': 'Profile'
+		'title': 'Profile',
+		'isLeftNavbarDisabled': true
 	});
 
 	const toast = useToastStore();
