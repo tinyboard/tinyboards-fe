@@ -1,8 +1,8 @@
 <template>
-  <main id="page-feed" class="flex flex-col pt-12 sm:pt-14">
+  <main id="page-feed" class="flex flex-col pt-12 sm:pt-10">
     <!-- Sub Navigation & Banner -->
     <section class="flex-col" :class="route.params.board ? 'flex' : 'hidden md:flex'">
-      <NavigationNavbarSub :links="links" class="sm:order-first" />
+      <NavigationNavbarSub :links="links" class="sm:order-first sm:hidden" />
       <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
         <!-- Banner -->
         <LazyCardsBoardBanner v-if="route.params.board" :board-view="boardView" class="col-span-full" />
@@ -195,7 +195,7 @@ const totalPages = computed(() => {
 
 // Links for sub navbar
 const links = [
-  { name: "New Thread", href: "/submit" },
-  { name: "House Rules", href: "/help/rules", target: "_blank" },
+  { name: "Feed", href: `/+${board.name}` },
+  { name: "Sidebar", href: `/+${board.name}/sidebar` },
 ];
 </script>

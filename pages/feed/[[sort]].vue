@@ -1,5 +1,5 @@
 <template>
-  <main id="page-feed" class="flex flex-col pt-12 sm:pt-14">
+  <main id="page-feed" class="flex flex-col pt-12 sm:pt-10">
     <!-- Sub Navigation & Banner -->
     <section class="flex-col" :class="route.params.board ? 'flex' : 'hidden md:flex'">
       <!--<NavigationNavbarSub :links="links" class="sm:order-first" />-->
@@ -49,6 +49,16 @@
           <LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending"
             :hasError="error" />
           <!-- Empty State -->
+          <div v-else-if="site.enableBoards && userStore.isAuthed"
+            class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
+            <p>
+              <span class="font-medium"> Your home feed is currently empty </span>
+              <br />
+              You can change that by subscribing to some boards!
+              <br />
+              <a href="/all">Browse posts</a>
+            </p>
+          </div>
           <div v-else
             class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
             <p>

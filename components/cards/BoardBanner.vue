@@ -85,6 +85,7 @@
 					</h1>
 					<p class="text-sm text-gray-200">
 						+{{ board.name }}
+						<span v-if="isSubscribed" class="ml-1 badge badge-blue">Subscribed</span>
 					</p>
 				</div>
 				<!-- Bio -->
@@ -97,8 +98,8 @@
 				</small>
 				<!-- Actions -->
 				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
-					<li>
-						<NuxtLink v-if="isMod" :to="`/+${board.name}/mod/settings`" class="button button-sm white">
+					<li v-if="isMod">
+						<NuxtLink :to="`/+${board.name}/mod/settings`" class="button button-sm white">
 							Settings
 						</NuxtLink>
 					</li>

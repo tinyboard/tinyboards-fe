@@ -16,7 +16,7 @@
                 <span class="text-gray-700 text-opacity-70">+{{ board.name }}</span>
             </h2>
             <div class="prose prose-sm text-gray-900">
-                <p v-if="board.sidebar_html" v-html="board.sidebar_html" />
+                <div v-if="board.sidebar_html" v-html="board.sidebar_html" />
                 <p v-else>{{ board.description }}</p>
             </div>
         </div>
