@@ -5,8 +5,7 @@
       <!--<NavigationNavbarSub :links="links" class="sm:order-first" />-->
 
       <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
-        <!-- Banner -->
-        <LazyCardsBanner :title="isHomeFeed ? 'Home' : 'Feed'" :sub-title="`Welcome to ${isHomeFeed ? 'your own, personalized home feed' : 'the awesome and exciting front page'}.`"
+        <LazyCardsBanner title="Feed" sub-title="This is the feed where everything ends up. All content from all boards."
           image-url="/img/artwork/front-page.jpeg" class="col-span-full" />
       </div>
 
@@ -47,23 +46,12 @@
           <!-- Posts -->
           <LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending"
             :hasError="error" />
-          <!-- Empty State -->
-          <div v-else-if="isHomeFeed"
-            class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
-            <p>
-              <span class="font-medium"> Your home feed is currently empty </span>
-              <br />
-              You can change that by subscribing to some boards!
-              <br />
-              <NuxtLink to="/all">Browse posts</NuxtLink>
-            </p>
-          </div>
           <div v-else
             class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
             <p>
-              <span class="font-medium"> There are no posts </span>
+              <span class="font-medium"> Awkward silence... </span>
               <br />
-              but you can be the first...
+              {{ site.name }} has no posts yet. At all.
             </p>
           </div>
           <!-- Pagination -->
@@ -84,8 +72,6 @@ import { getListing } from "@/composables/listing";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
 
-console.log("hi from the feed page");
-
 // Import sidebar components
 const Sidebar = defineAsyncComponent(() =>
   import("@/components/containers/Sidebar")
@@ -105,17 +91,14 @@ const v = userStore.user;
 console.log("stores have been set up");
 
 definePageMeta({
-  alias: ["", "/feed/:sort?"],
+  alias: ["/all/:sort?"],
   key: (route) => route.fullPath,
 });
-
-console.log("page meta is good");
 
 const preferCardView = useCookie("preferCardView") ?? false;
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
-
 
 // Posts
 const postsStore = usePostsStore();
@@ -137,15 +120,13 @@ const sort = computed(() => {
 
 console.log("computed sort");
 
-const isHomeFeed = computed(() => userStore.isAuthed && site.enableBoards);
-
 const { items, totalCount, paginate, pending, error, refresh } =
   await getListing(
     {
       sort: sort.value,
       limit: limit.value,
       page: page.value,
-      "type_": isHomeFeed.value ? "Subscribed" : "Local"
+      "type_": "All"
     },
     "posts"
   );
@@ -169,8 +150,6 @@ const posts = postsStore.posts;
 const totalPages = computed(() => {
   return Math.ceil(totalCount.value / limit.value || 1);
 });
-
-console.log("posts saved");
 
 console.log("links are okay");
 </script>

@@ -16,7 +16,7 @@
 						</span>
 					</span>
 				</li>
-				<li class="ml-6 flex items-center">
+				<!--<li class="ml-6 flex items-center">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 						<circle cx="12" cy="12" r="9"></circle>
@@ -27,7 +27,7 @@
 						Last active
 						<span class="font-medium text-gray-600">this week</span>
 					</span>
-				</li>
+				</li>-->
 			</ul>
 			<ul class="ml-auto hidden lg:flex items-center text-sm text-gray-400">
 				<li class="ml-6 flex items-center">
@@ -39,7 +39,7 @@
 					   <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
 					</svg>
 					<span>
-						Followers
+						Members
 						<span class="font-medium text-gray-600">
 							{{ boardCounts.subscribers.toLocaleString() }}
 						</span>
@@ -85,7 +85,7 @@
 					</h1>
 					<p class="text-sm text-gray-200">
 						+{{ board.name }}
-						<span v-if="isSubscribed" class="ml-1 badge badge-blue">Subscribed</span>
+						<span v-if="isSubscribed" class="ml-1 badge badge-blue">Joined</span>
 					</p>
 				</div>
 				<!-- Bio -->
@@ -94,7 +94,7 @@
 				</p>
 				<!-- Stats -->
 				<small class="sm:hidden mt-2 text-gray-300">
-					Joined {{ format(parseISO(board.creation_date), 'MMM dd, yyyy') }}
+					Created {{ format(parseISO(board.creation_date), 'MMM dd, yyyy') }}
 				</small>
 				<!-- Actions -->
 				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
@@ -104,8 +104,8 @@
 						</NuxtLink>
 					</li>
 					<li>
-						<button class="button button-sm white" @click="toggleSubscribe">
-							{{ isSubscribed ? "Unsubscribe" : "Subscribe" }}
+						<button class="button button-sm border-[1px]" :class="[isSubscribed ? 'red' : 'green']" @click="toggleSubscribe">
+							{{ isSubscribed ? "Leave" : "Join" }}
 						</button>
 					</li>
 				</ul>
@@ -114,7 +114,7 @@
 					<li>
 						<span>
 							<strong>{{ boardCounts.subscribers }}</strong>
-							Followers
+							Members
 						</span>
 					</li>
 					<li class="ml-4">
@@ -166,13 +166,13 @@
 
 		if (data.value) {
 			toast.addNotification({
-				header: `${isSubscribed.value ? "Subscribed to" : "Unsubscribed from"} +${board.name}!`,
-				message: `You are ${isSubscribed.value ? "now subscribed" : "no longer subscribed"} to +${board.name}.`,
+				header: `${isSubscribed.value ? "Joined" : "Left"} +${board.name}!`,
+				message: `You are ${isSubscribed.value ? "now a member" : "no longer a member"} of +${board.name}.`,
 				type: "success"
 			});
 		} else {
 			toast.addNotification({
-				header: `${isSubscribed.value ? "Subscribing" : "Unsubscribing"} failed.`,
+				header: `${isSubscribed.value ? "Joining" : "Leaving"} failed.`,
 				message: "Something went wrong. Try again sometime later.",
 				type: "error"
 			});
