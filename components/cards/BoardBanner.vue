@@ -98,13 +98,13 @@
 				<!-- Actions -->
 				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
 					<li>
-						<NuxtLink to="/settings/profile" class="button button-sm white">
+						<NuxtLink v-if="isMod" :to="`/+${board.name}/mod/settings`" class="button button-sm white">
 							Settings
 						</NuxtLink>
 					</li>
 					<li>
-						<button class="button button-sm white" disabled>
-							Follow
+						<button class="button button-sm white" @click="toggleSubscribe">
+							{{ isSubscribed ? "Unsubscribe" : "Subscribe" }}
 						</button>
 					</li>
 				</ul>
@@ -136,16 +136,50 @@
 
 <script setup>
 	import { useLoggedInUser } from '@/stores/StoreAuth';
+	import { useApi } from '@/composables/api';
 	import { format, parseISO } from "date-fns";
+	import { useToastStore } from "@/stores/StoreToast";
 
 	const props = defineProps(['boardView']);
 	const board = props.boardView.board;
+	const isMod = props.boardView.moderator !== null;
 	const boardCounts = props.boardView.counts;
 
 	const userStore = useLoggedInUser();
+	const toast = useToastStore();
 
 	// Is Authed
 	const isAuthed = userStore.isAuthed;
+
+	const isSubscribed = ref(props.boardView.subscribed == "Subscribed");
+
+	const toggleSubscribe = async () => {
+		isSubscribed.value = !isSubscribed.value;
+		const { data, error } = await useApi("/board/subscribe", {
+			method: "post",
+			body: {
+				"board_id": board.id,
+				"subscribe": isSubscribed.value
+			}
+		});
+
+		if (data.value) {
+			toast.addNotification({
+				header: `${isSubscribed.value ? "Subscribed to" : "Unsubscribed from"} +${board.name}!`,
+				message: `You are ${isSubscribed.value ? "now subscribed" : "no longer subscribed"} to +${board.name}.`,
+				type: "success"
+			});
+		} else {
+			toast.addNotification({
+				header: `${isSubscribed.value ? "Subscribing" : "Unsubscribing"} failed.`,
+				message: "Something went wrong. Try again sometime later.",
+				type: "error"
+			});
+
+			isSubscribed.value = !isSubscribed.value;
+			console.error(error.value);
+		}
+	}
 </script>
 
 <style scoped>

@@ -28,9 +28,9 @@
 						<ul class="flex">
 							<li class="header-menu-item flex items-center text-sm leading-5" v-for="link in links"
 								:key="link.name">
-								<NuxtLink :to="link.href" custom v-slot="{ isActive, href, navigate }">
-									<a :href="link.href" @click="navigate"
-										:class="[isActive ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
+								<NuxtLink :to="link.href" custom v-slot="{ href, navigate }">
+									<a :href="link.href" @click="router.push(link.href)"
+										:class="[route.path.startsWith(link.href) ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 										{{ link.name }}
 									</a>
 								</NuxtLink>
@@ -383,7 +383,7 @@ watch(route, (to) => {
 // Define sub-navigation menu links
 const links = [
 	{ name: 'Home', href: '/feed' },
-	{ name: 'Global', href: '/all' },
+	{ name: 'All', href: '/all' },
 	{ name: 'Members', href: '/members' },
 ]
 

@@ -110,6 +110,12 @@ definePageMeta({
   key: (route) => route.fullPath,
 });
 
+const title = board.is_removed ? `+${board.name}: Banned` : `${board.title ?? board.name} (+${board.name})`;
+
+useHead({
+  title
+});
+
 const preferCardView = useCookie("preferCardView") ?? false;
 
 // Pagination

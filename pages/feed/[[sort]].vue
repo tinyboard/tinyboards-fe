@@ -2,12 +2,12 @@
   <main id="page-feed" class="flex flex-col pt-12 sm:pt-14">
     <!-- Sub Navigation & Banner -->
     <section class="flex-col" :class="route.params.board ? 'flex' : 'hidden md:flex'">
-      <NavigationNavbarSub :links="links" class="sm:order-first" />
+      <!--<NavigationNavbarSub :links="links" class="sm:order-first" />-->
 
       <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
         <!-- Banner -->
         <LazyCardsBoardBanner v-if="route.params.board" :board="dummyBoard" class="col-span-full" />
-        <LazyCardsBanner v-else title="Feed" sub-title="Welcome to the awesome and exciting front page."
+        <LazyCardsBanner v-else title="Feed" :sub-title="`Welcome to ${userStore.isAuthed && site.enableBoards && !listAll ? 'your own home feed' : 'the awesome and exciting front page'}.`"
           image-url="/img/artwork/front-page.jpeg" class="col-span-full" />
       </div>
 
@@ -73,6 +73,7 @@
 import { usePostsStore } from "@/stores/StorePosts";
 import { getListing } from "@/composables/listing";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useSiteStore } from "@/stores/StoreSite";
 
 console.log("hi from the feed page");
 
@@ -88,13 +89,14 @@ console.log("and hi again after some imports");
 
 const router = useRouter();
 const route = useRoute();
+const site = useSiteStore();
 const userStore = useLoggedInUser();
 const v = userStore.user;
 
 console.log("stores have been set up");
 
 definePageMeta({
-  alias: ["", "/feed/:sort?"],
+  alias: ["", "/feed/:sort?", "/all/:sort?"],
   key: (route) => route.fullPath,
 });
 
@@ -142,12 +144,24 @@ const sort = computed(() => {
 
 console.log("computed sort");
 
+const listAll = route.path.startsWith("/all");
+const listingType = computed(() => {
+  if (listAll) {
+    return "All"
+  } else if (userStore.isAuthed && site.enableBoards) {
+    return "Subscribed"
+  } else {
+    return "Local"
+  }
+});
+
 const { items, totalCount, paginate, pending, error, refresh } =
   await getListing(
     {
       sort: sort.value,
       limit: limit.value,
       page: page.value,
+      "type_": listingType.value
     },
     "posts"
   );
