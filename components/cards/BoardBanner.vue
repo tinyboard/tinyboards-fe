@@ -170,6 +170,13 @@
 				message: `You are ${isSubscribed.value ? "now a member" : "no longer a member"} of +${board.name}.`,
 				type: "success"
 			});
+
+			if (isSubscribed.value) {
+				//console.log(JSON.stringify(data.value["board_view"]));
+				userStore.addJoinedBoard(data.value["board_view"]);
+			} else {
+				userStore.removeJoinedBoard(data.value["board_view"].board.id);
+			}
 		} else {
 			toast.addNotification({
 				header: `${isSubscribed.value ? "Joining" : "Leaving"} failed.`,

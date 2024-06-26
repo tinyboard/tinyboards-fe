@@ -1,5 +1,5 @@
 <template>
-	<nav id="header" class="fixed w-full bg-primary sm:border-b border-black/30 dark:bg-gray-900 dark:border-gray-800 z-50">
+	<nav id="header" class="fixed w-full bg-primary dark:bg-gray-900 dark:border-gray-800 z-50">
 		<div class="mx-auto max-w-8xl px-2.5 sm:px-6">
 			<div class="flex items-center justify-between h-12 sm:h-14">
 				<div class="flex flex-grow items-center">

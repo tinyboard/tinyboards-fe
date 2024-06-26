@@ -19,6 +19,8 @@ export const useLoggedInUser = defineStore("auth", {
         owner: false,
       },*/
       adminLevel: null,
+      joinedBoards: [],
+      moddedBoards: [],
       isAuthed: false,
     };
   },
@@ -35,9 +37,13 @@ export const useLoggedInUser = defineStore("auth", {
         })
           .then(({ data, error }) => {
             if (data.value) {
+              //console.log(JSON.stringify(data.value.user, null, 4));
               this.user = data.value.user.person;
               this.counts = data.value.user.counts;
               this.unread = data.value.user.unread_notifications;
+              console.log(data.value.user.subscribed_boards);
+              this.joinedBoards = data.value.user.subscribed_boards;
+              this.moddedBoards = data.value.user.moderated_boards;
               this.adminLevel = data.value.user.admin_level;
 
               /*let adminLevel = data.value.user.admin_level;
@@ -132,6 +138,9 @@ export const useLoggedInUser = defineStore("auth", {
           this.token = authToken;
           this.isAuthed = true;
           this.adminLevel = data.value.admin_level;
+          console.log(data.value.subscribed_boards);
+          this.joinedBoards = data.value.subscribed_boards;
+          this.moddedBoards = data.value.moderated_boards;
 
           /*let adminLevel = data.value.user.admin_level;
 
@@ -151,11 +160,19 @@ export const useLoggedInUser = defineStore("auth", {
         })
         .catch(({ error }) => console.error(error));
     },
+    addJoinedBoard(boardView) {
+      this.joinedBoards.push(boardView);
+    },
+    removeJoinedBoard(id) {
+      this.joinedBoards = this.joinedBoards.filter((boardView) => boardView.board.id !== id);
+    },
     logout() {
       this.user = null;
       this.token = null;
       this.isAuthed = false;
       this.adminLevel = null;
+      this.joinedBoards = [];
+      this.moddedBoards = [];
     },
   },
 });

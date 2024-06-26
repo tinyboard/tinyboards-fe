@@ -66,11 +66,11 @@ useHead({
 console.log("success!");
 
 watch(
-	() => boardStore.boardActive,
-	isBoardActive => {
+	() => boardStore.boardView,
+	newBoardView => {
 		// this can't happen server-side, so we can use `document` to manipulate colors
 		let r = document.querySelector(':root');
-		if (isBoardActive) {
+		if (boardStore.boardActive) {
 			r.style.setProperty('--color-primary', boardStore.boardView.board["primary_color"], "important");
 			r.style.setProperty('--color-secondary', boardStore.boardView.board["secondary_color"], "important");
 			r.style.setProperty('--color-primary-hover', boardStore.boardView.board["hover_color"], "important");
