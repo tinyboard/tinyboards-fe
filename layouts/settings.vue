@@ -15,7 +15,7 @@
 			</div>
 		</section>
 		<!-- Main Content -->
-		<section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
+		<section class="container mx-auto grid grid-cols-12 sm:px-4 sm:py-6 md:px-6" :class="[route.meta.maxWidth ? `max-w-${route.meta.maxWidth}`: 'max-w-4xl']">
 			<div class="col-span-full flex flex-col gap-6">
 				<!-- Settings -->
 				<slot />
@@ -56,6 +56,7 @@
 	{ name: 'General', href: `/+${boardName}/mod/settings` },
 	{ name: 'Appearance', href: `/+${boardName}/mod/appearance` },
 	{ name: 'Sidebar', href: `/+${boardName}/mod/sidebar` },
+	{ name: 'Mods', href: `/+${boardName}/mod/mods` },
 	{ name: 'Banned Users', href: `/+${boardName}/mod/bans` },
 	];
 </script>

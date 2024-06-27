@@ -126,7 +126,8 @@ const hoverColor = ref(toHexCode(settings.value.hover_color));
 
 definePageMeta({
 	'hasAuthRequired': true,
-	alias: ['/+:board/mod/a', '/+:board/mod/appearance']
+	alias: ['/+:board/mod/a', '/+:board/mod/appearance'],
+	isLeftNavbarDisabled: true
 });
 
 useHead({

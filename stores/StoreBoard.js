@@ -27,6 +27,12 @@ export const useBoardStore = defineStore("board", {
 			} else {
 				console.log(`getting board +${name} failed: ${error.value}`);
 				this.clear();
+
+				throw createError({
+				  statusCode: 404,
+				  statusMessage: `It appears that +${name} doesn't exist. Awkward...`,
+				  fatal: true,
+				});
 			}
 		},
 		clear() {
