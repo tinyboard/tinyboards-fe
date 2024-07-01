@@ -68,30 +68,30 @@
   const modalStore = useModalStore();
   const postsStore = usePostsStore();
 
-  const item = computed(() => postsStore.getPost(props.id));
+  //const item = computed(() => postsStore.getPost(props.id));
 
   // Sticky
   const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
   const removeItem = async () => {
-    const id = item.value.post.id;
-    await useApi(`/mod/feature_post`, {
+    const id = props.id;
+    await useApi(`/posts/${id}/featured`, {
       body: {
-          "post_id": id,
-          "featured": !props.options.isStickied,
+          //"post_id": id,
+          "value": !props.options.isStickied,
           "feature_type": "Local"
       },
-      method: "post"
+      method: "PATCH"
     })
     .then(({ data }) => {
       if (data.value) {
         // Update post state.
-        postsStore.updatePost(id, {
+        /*postsStore.updatePost(id, {
           featured_local: !props.options.isStickied
         });
         // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
+        data = JSON.parse(JSON.stringify(data.value));*/
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({

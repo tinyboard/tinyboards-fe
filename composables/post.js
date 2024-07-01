@@ -6,7 +6,7 @@ export async function usePost(id) {
     pending,
     error,
     refresh,
-  } = await useApi(`/post/${id}`, {
+  } = await useApi(`/posts/${id}`, {
     key: `post_${id}`,
   });
 
@@ -24,9 +24,9 @@ export async function usePostReports(id) {
     pending,
     error,
     refresh
-  } = await useApi('/post/reports', {
+  } = await useApi(`/posts/${id}/reports`, {
     query: {
-      post_id: id,
+      //post_id: id,
       unresolved_only: true
     }
   });

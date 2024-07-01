@@ -166,6 +166,12 @@ export const useLoggedInUser = defineStore("auth", {
     removeJoinedBoard(id) {
       this.joinedBoards = this.joinedBoards.filter((boardView) => boardView.board.id !== id);
     },
+    addModdedBoard(boardView) {
+      this.moddedBoards.push(boardView);
+    },
+    removeModdedBoard(id) {
+      this.moddedBoards = this.moddedBoards.filter((boardView) => boardView.board.id !== id);
+    },
     logout() {
       this.user = null;
       this.token = null;

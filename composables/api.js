@@ -1,6 +1,6 @@
 // import { baseURL } from "@/server/constants";
 
-export function useApi(path, options, headers = {}) {
+export function useApi(path, options = {}, headers = {}) {
   const authCookie = useCookie("token").value;
   const config = useRuntimeConfig();
   

@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   //console.log("fetch site...");
 
   if (process.server) {
-    await useApi("/admin/site_settings").then(({ data, error }) => {
+    await useApi("/admin/site").then(({ data, error }) => {
       if (data.value) {
         siteStore.siteMode = data.value.site_mode;
         siteStore.name = data.value.name;

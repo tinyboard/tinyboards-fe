@@ -87,7 +87,7 @@
   const deleteItem = async () => {
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useApi(`/${type}/${id}`, {
+    await useApi(`/${type}s/${id}`, {
       body: {
         "deleted": true
       },

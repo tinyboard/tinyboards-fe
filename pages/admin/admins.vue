@@ -148,7 +148,7 @@ const modalStore = useModalStore();
 const user = useLoggedInUser();
 
 // Fetch site settings
-//const { data: site, pending, error, refresh } = await useApi("/admin/site_settings");
+//const { data: site, pending, error, refresh } = await useApi("/admin/site");
 const site = useSiteStore();
 
 // Pagination

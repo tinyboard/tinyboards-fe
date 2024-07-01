@@ -1,7 +1,7 @@
 <template>
     <NuxtLayout name="settings">
             <!-- Page Heading & Description -->
-            <div class="pt-4">
+            <div>
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Moderators</h3>
                 <p class="mt-1 text-sm text-gray-600">These individuals work tirelessly to keep +{{board.name}} clean. For free.
                 </p>
@@ -21,7 +21,7 @@
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    Add mod
+                    Invite mod
                 </button>
             </div>
         </div>
@@ -29,7 +29,7 @@
         <div class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
             <!-- Header -->
             <div class="grid grid-cols-6 p-4">
-                <span class="col-span-3 text-gray-500 text-sm font-medium uppercase">
+                <span class="col-span-2 text-gray-500 text-sm font-medium uppercase">
                     User
                 </span>
                 <span class="col-span-1 text-gray-500 text-sm font-medium uppercase">
@@ -47,7 +47,7 @@
                 <li v-for="modView in mods" :key="modView.moderator.id"
                     class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
                     :class="modView.moderator.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
-                    <NuxtLink external :to="`/@${modView.moderator.name}`" target="_blank" class="col-span-3">
+                    <NuxtLink external :to="`/@${modView.moderator.name}`" target="_blank" class="col-span-2">
                         <div class="flex grow-0">
                             <div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
                                 :class="modView.moderator.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
@@ -60,7 +60,7 @@
                         {{ createModPermissionString(modView.mod_meta.permissions) }}
                     </div>
                     <div class="col-span-1 flex items-center">
-                        {{ format(parseISO(modView.mod_meta.creation_date), 'yyyy MMM. dd') }}
+                        {{ format(parseISO(modView.mod_meta.invite_accepted_date), 'yyyy MMM. dd') }}
                     </div>
                     <!--<div v-if="(requireOwnerPerms() && v.person.id != user.user.id) || (requireFullPerms() && v.person.admin_level < user.adminLevel)"
                         class="col-span-2 flex justify-end space-x-2">
@@ -112,7 +112,7 @@
             <div class="flex flex-col bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
                 <!-- Header -->
                 <div class="grid grid-cols-6 p-4">
-                    <span class="col-span-3 text-gray-500 text-sm font-medium uppercase">
+                    <span class="col-span-2 text-gray-500 text-sm font-medium uppercase">
                         User
                     </span>
                     <span class="col-span-1 text-gray-500 text-sm font-medium uppercase">
@@ -130,7 +130,7 @@
                     <li v-for="modView in mods" :key="modView.moderator.id"
                         class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
                         :class="modView.moderator.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
-                        <NuxtLink external :to="`/@${modView.moderator.name}`" target="_blank" class="col-span-3">
+                        <NuxtLink external :to="`/@${modView.moderator.name}`" target="_blank" class="col-span-2">
                             <div class="flex grow-0">
                                 <div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
                                     :class="modView.moderator.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
@@ -200,10 +200,10 @@ const route = useRoute();
 const router = useRouter();
 
 definePageMeta({
-    hasAuthRequired: true,
+    //hasAuthRequired: true,
     alias: ['/+:board/mod/m', '/+:board/mod/mods'],
     'isLeftNavbarDisabled': true,
-    maxWidth: '5xl'
+    //maxWidth: '5xl'
 });
 
 useHead({

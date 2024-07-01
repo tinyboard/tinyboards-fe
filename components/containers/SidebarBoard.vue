@@ -1,7 +1,7 @@
 <template>
     <div id="sidebar-board" class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base">
         <!-- Create Post -->
-        <NuxtLink v-if="!submitPage" :to="`/+${board.name}/submit`" class="flex items-center button primary">
+        <NuxtLink v-if="!postPage" :to="`/+${board.name}/submit`" class="flex items-center button primary">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
@@ -90,8 +90,8 @@
                 <span>Admin Tools</span>
             </h2>
             <ul class="flex flex-col space-y-2 mt-4">
-                <li>
-                    <button class="flex items-center button green w-full">
+                <li v-if="!isMod">
+                    <button class="flex items-center button green w-full" @click="modSelf" :disabled="modSelfPending">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                             <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
@@ -128,9 +128,12 @@
         </div>
         <!-- List mods -->
         <div>
-            <h2 class="font-bold leading-5 text-base pb-1 border-b">
-                <span>Moderators</span>
-            </h2>
+            <div class="flex flex-row justify-between pb-1 border-b">
+                <h2 class="font-bold leading-5 text-base">
+                    <span>Moderators</span>
+                </h2>
+                <NuxtLink :to="`/+${board.name}/mod/mods`" class="text-sm">View all</NuxtLink>
+            </div>
             <ul class="flex flex-col mt-4 space-y-2 divide-y divide-gray-200/50">
               <li
                 v-for="mod in mods.slice(0, 6)"
@@ -165,30 +168,57 @@
   
 <script setup>
   // import { baseURL } from "@/server/constants";
+  import { ref } from 'vue';
   import { format, parseISO } from "date-fns";
   import { shuffle } from "@/utils/shuffleArray";
   import { useApi } from "@/composables/api";
   import { requirePermission } from "@/composables/admin";
   import { useBoardStore } from "@/stores/StoreBoard";
-  //import { useLoggedInUser } from "@/stores/StoreAuth";
+  import { useLoggedInUser } from "@/stores/StoreAuth";
 
   //const userStore = useLoggedInUser();
   //const user = userStore.user;
   const boardStore = useBoardStore();
   const isAdmin = requirePermission("boards");
+  const router = useRouter();
+  const modSelfPending = ref(false);
+  const userStore = useLoggedInUser();
 
   const props = defineProps({
         /*boardView: {
             type: Object,
             required: true
-        },*/
+        },
         submitPage: {
             type: Boolean,
             default: false
+        }*/
+        postPage: {
+            type: Boolean,
+            default:false
         }
     });
 
   const board = boardStore.boardView.board;
   const isMod = boardStore.modPermissions !== null;
   const mods = boardStore.mods;
+
+  const modSelf = async () => {
+    modSelfPending.value = true;
+    const { data, error } = await useApi("/mod", {
+        method: "post",
+        body: {
+            "board_id": board.id
+        }
+    });
+
+    modSelfPending.value = false;
+
+    if (data.value) {
+        userStore.addModdedBoard(boardStore.boardView);
+        router.push(`/+${board.name}/mod/mods`);
+    } else {
+        console.error(error.value);
+    }
+  }
 </script>

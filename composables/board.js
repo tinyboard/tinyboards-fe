@@ -3,7 +3,7 @@ import { useApi } from "@/composables/api";
 export async function getBoard(name) {
 
     async function request(name){
-        const { data, pending, error, refresh } = await useApi("/board", {
+        const { data, pending, error, refresh } = await useApi("/boards/get", {
             query: name,
             key: "name",
         });

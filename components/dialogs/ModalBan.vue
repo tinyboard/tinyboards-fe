@@ -148,7 +148,7 @@ watch(
 const ban = async () => {
   //const isBanned = props.options.user.is_banned;
   const username = props.options.user?.name || target.value;
-  await useApi('/mod/ban', {
+  await useApi('/admin/ban', {
     body: {
       "username": username,
       "banned": !isBanned.value,

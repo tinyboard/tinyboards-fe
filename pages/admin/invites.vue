@@ -91,7 +91,7 @@ const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
 // Fetch site settings
-const { data: site, pending, error, refresh } = await useApi("/admin/site_settings");
+const { data: site, pending, error, refresh } = await useApi("/admin/site");
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);

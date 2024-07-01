@@ -6,8 +6,8 @@ export async function getListing(query, type_) {
     let items = ref([]);
     let totalCount = ref(0);
     let endpoints = {
-      posts: "/post/list",
-      comments: "/comment/list",
+      posts: "/posts",
+      comments: "/comments",
       postsModQueue: "/mod/queue/posts",
     };
     async function request(query) {

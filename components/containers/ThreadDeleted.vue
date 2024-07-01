@@ -202,7 +202,7 @@ const { isSubscribed, subscribe } = useSubscribe();
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/post/${props.item.post.id}/vote`, {
+  await useApi(`/posts/${props.item.post.id}/vote`, {
     method: "post",
     body: {
       score: voteType,

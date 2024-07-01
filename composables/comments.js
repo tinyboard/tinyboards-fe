@@ -8,7 +8,7 @@ export async function usePostComments(id, query = {}) {
     pending,
     error,
     refresh,
-  } = await useApi("/comment/list", {
+  } = await useApi("/comments", {
     query: { ...query, post_id: id },
     key: `post_${id}_comments`,
   });
@@ -27,7 +27,7 @@ export async function usePostComments(id, query = {}) {
 }
 
 export async function useComments(id, type = "post", query = {}, post_id) {
-  const url = type === "post" ? "/comment/list" : `/comment/${id}`;
+  const url = type === "post" ? "/comments" : `/comments/${id}`;
 
   const {
     data: listing,

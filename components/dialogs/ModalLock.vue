@@ -24,7 +24,7 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button" :class="props.options.isLocked ? 'green' : 'red'" @click="removeItem">
+                <button class="button" :class="props.options.isLocked ? 'green' : 'red'" @click="lockItem">
                   Yes, {{ props.options.isLocked ? 'unlock' : 'lock' }} this post.
                 </button>
               </div>
@@ -66,30 +66,22 @@
   });
 
   const modalStore = useModalStore();
-  const postsStore = usePostsStore();
-
-  const item = computed(() => postsStore.getPost(props.id));
 
   // Lock
-  const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
-  const removeItem = async () => {
-    const id = item.value.post.id;
-    await useApi(`/${item.value.post.is_locked ? 'unlock' : 'lock'}`, {
-      body: {
-          "target_fullname": `t3_${id}`
-      },
-      method: "post",
-    })
+  const lockItem = async () => {
+    const id = props.id;
+    await useApi(`/posts/${id}/locked`,
+      {
+        method: "PATCH",
+        body: {
+          value: !props.options.isLocked
+        }
+      }
+    )
     .then(({ data }) => {
       if (data.value) {
-        // Update post state.
-        postsStore.updatePost(id, {
-          is_locked: !props.options.isLocked
-        });
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({

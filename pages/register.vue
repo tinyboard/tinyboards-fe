@@ -99,7 +99,7 @@
 	// Site
 	// const site = useSiteStore();
 	// fetch site
-	const { data: site, pending, error, refresh } = await useApi("/admin/site_settings");
+	const { data: site, pending, error, refresh } = await useApi("/admin/site");
 
 	// Invite
 	const invite = ref(route.query.invite);

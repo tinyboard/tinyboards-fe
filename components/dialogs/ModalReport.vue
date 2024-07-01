@@ -78,10 +78,10 @@
     const type = props.type;
     const id = props.id;
 
-    await useApi(`/${type}/report`, {
+    await useApi(`/${type}/${id}/reports`, {
       method: "post",
       body: {
-        [`${type}_id`]: id,
+        //[`${type}_id`]: id,
         reason: reason.value
       }
     })

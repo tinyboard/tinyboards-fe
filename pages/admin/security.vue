@@ -183,7 +183,7 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useApi("/admin/site_settings");
+const { data, pending, error, refresh } = await useApi("/admin/site");
 
 // Settings.
 const settings = ref({});
@@ -197,7 +197,7 @@ const isLoading = ref(false);
 
 const submitSettings = () => {
 	isLoading.value = true;
-	useApi('/admin/site_settings', {
+	useApi('/admin/site', {
 		method: "put",
 		body: {
 			"name": settings.value.name,

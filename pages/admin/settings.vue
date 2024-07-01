@@ -171,7 +171,7 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useApi("/admin/site_settings");
+const { data, pending, error, refresh } = await useApi("/admin/site");
 
 // Convert colors from rgb to hex
 const toHexCode = rgb => {
@@ -255,7 +255,7 @@ const submitSettings = async () => {
 		settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
 	}
 
-	const { data, error } = await useApi('/admin/site_settings', {
+	const { data, error } = await useApi('/admin/site', {
 		method: "put",
 		body: {
 			"name": settings.value.name,

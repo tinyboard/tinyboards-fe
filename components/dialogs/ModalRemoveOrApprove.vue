@@ -92,27 +92,27 @@
 
   const toggleItemRemove = async () => {
     const type = props.type;
-    const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useApi(`/${type === 'post' ? 'post' : 'comment'}/toggle_remove`, {
+    const id = props.id;
+    await useApi(`/${type === 'post' ? 'post' : 'comment'}s/${id}/removed`, {
       body: {
-          "target_id": id,
+          //"target_id": id,
           "reason": "Violating community rules.",
-          "removed": !props.options.approve
+          "value": !props.options.approve
       },
-      method: "post",
+      method: "PATCH",
     })
     .then(({ data }) => {
       if (data.value) {
         // Update state.
-        if (type === 'post') {
+        /*if (type === 'post') {
           postsStore.updatePost(id, {
             is_removed: !props.options.approve
           });
         } else {
           commentsStore.updateComment(id, {
             is_removed: !props.options.approve
-          });
-        };
+          }); 
+        };*/
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
         console.log(data);

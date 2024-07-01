@@ -78,12 +78,12 @@
 		if (body.value) {
 			isLoading.value = true;
 			return new Promise((resolve, reject) => {
-				useApi('/comment', {
+				useApi(`/posts/${props.postId}/comments`, {
 					method: "post",
 					body: {
 						"body": body.value,
 						"parent_id": props.parentId,
-						"post_id": props.postId
+						//"post_id": props.postId
 					}
 				})
 				.then(({ data, error }) => {

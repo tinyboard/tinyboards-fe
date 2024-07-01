@@ -12,7 +12,7 @@ export const useBoardStore = defineStore("board", {
 	},
 	actions :{
 		async load({ name }) {
-			const { data, pending, error, refresh } = await useApi("/board", {
+			const { data, pending, error, refresh } = await useApi("/boards/get", {
 			    query: {
 			    	name
 			    },

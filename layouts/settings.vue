@@ -2,7 +2,7 @@
 	<main id="layout-settings" class="flex flex-col pt-12 sm:pt-14">
 		<!-- Sub Navigation & Banner -->
 		<section class="flex flex-col">
-			<NavigationNavbarSub :links="isBoardActive ? boardLinks : profileLinks" class="sm:order-first"/>
+			<NavigationNavbarSub v-if="(isBoardActive && isMod) || !isBoardActive" :links="isBoardActive ? boardLinks : profileLinks" class="sm:order-first"/>
 			<div class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
 				<CardsBanner
@@ -34,6 +34,7 @@
 	const isBoardActive = boardStore.boardActive;
 	const board = isBoardActive ? boardStore.boardView.board : null;
 	const boardName = isBoardActive ? board.name : '';
+	const isMod = isBoardActive ? boardStore.modPermissions !== null : false;
 
 	definePageMeta({
 		isLeftNavbarDisabled: true

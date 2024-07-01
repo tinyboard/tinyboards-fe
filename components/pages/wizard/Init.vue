@@ -80,7 +80,7 @@ watch(
             timeoutID = setTimeout(
                 async () => {
 
-                    let { data, error } = await useApi("/board/exists", {
+                    let { data, error } = await useApi("/boards/exists", {
                         key: `check_${name.value}`,
                         query: {
                             board_name: name.value

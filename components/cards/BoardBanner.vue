@@ -156,11 +156,11 @@
 
 	const toggleSubscribe = async () => {
 		isSubscribed.value = !isSubscribed.value;
-		const { data, error } = await useApi("/board/subscribe", {
-			method: "post",
+		const { data, error } = await useApi("/subscriptions/boards" + (isSubscribed.value ? "" : `/${board.id}`), {
+			method: isSubscribed.value ? "post" : "delete",
 			body: {
-				"board_id": board.id,
-				"subscribe": isSubscribed.value
+				"board_name": board.name,
+				//"subscribe": isSubscribed.value
 			}
 		});
 

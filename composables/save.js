@@ -10,8 +10,8 @@ export function useSave(hasSaved) {
 	const save = (id,type) => {
 		isSaved.value = !isSaved.value;
 		// Make the request.
-		useApi(`/${type}s/${id}/save`, {
-			method: "post",
+		useApi(`/${type}s/${id}/saved`, {
+			method: "PATCH",
 		})
 		.then(({ data, error }) => {
 			if (data.value) {

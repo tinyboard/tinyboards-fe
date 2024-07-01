@@ -394,7 +394,7 @@ const voteType = ref(item.value.my_vote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/comment/${comment.value.id}/vote`, {
+  await useApi(`/comments/${comment.value.id}/vote`, {
     method: "post",
     body: {
       score: voteType,

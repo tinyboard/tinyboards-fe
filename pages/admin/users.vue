@@ -125,7 +125,7 @@ const toast = useToastStore();
 const modalStore = useModalStore();
 
 // Fetch site settings
-//const { data: site, pending, error, refresh } = await useApi("/admin/site_settings");
+//const { data: site, pending, error, refresh } = await useApi("/admin/site");
 const site = useSiteStore();
 
 // Pagination
