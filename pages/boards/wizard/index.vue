@@ -204,7 +204,7 @@ const uploadFile = async (file, type) => {
             }
         }
 
-        const { data, pending, error, refresh } = await useApi('/board', {
+        const { data, pending, error, refresh } = await useApi('/boards', {
             method: "post",
             body: {
                 "name": board.name,

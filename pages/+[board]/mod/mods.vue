@@ -216,7 +216,7 @@ const modalStore = useModalStore();
 const user = useLoggedInUser();
 
 // Fetch users
-const { data, pending, error, refresh } = await useApi(`/board/${board.id}/mods`, {
+const { data, pending, error, refresh } = await useApi(`/boards/${board.id}/mods`, {
     method: "get",
     key: `mod_fetch_${board.id}`
 });

@@ -86,7 +86,7 @@
       />
     </div>
     <!-- Board sidebar -->
-    <ContainersSidebarBoard :post-page="true" />
+    <ContainersSidebarBoard v-if="site.enableBoards" :post-page="true" />
   </div>
 </template>
 

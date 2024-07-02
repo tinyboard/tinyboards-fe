@@ -90,7 +90,7 @@ const isLoading = ref(false);
 
 const submitSettings = () => {
 	isLoading.value = true;
-	useApi(`/board/${board.id}`, {
+	useApi(`/boards/${board.id}`, {
 		method: "put",
 		body: {
 			"name": settings.value.name,

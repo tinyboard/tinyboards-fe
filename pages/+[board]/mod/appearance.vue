@@ -241,7 +241,7 @@ const submitSettings = async () => {
 		}
 	}
 
-	useApi(`/board/${board.id}`, {
+	useApi(`/boards/${board.id}`, {
 			method: "put",
 			body: {
 				"icon": settings.value.icon,

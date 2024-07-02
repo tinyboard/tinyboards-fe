@@ -1,8 +1,36 @@
 <template>
-	<div id="board-banner" class="col-span-full bg-white sm:rounded-md border-b sm:border sm:shadow-inner-white">
-		<div class="w-full bg-primary sm:rounded-t-md relative" :class="[board.banner ? 'h-28 sm:h-56' : 'h-14 sm:h-28']" :style="{ backgroundImage: `url(${board.banner?? ''})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}">
-			<div class="absolute top-4 right-4 hidden sm:flex flex-row space-x-2 text-gray-500 text-sm">
-				<div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
+	<div id="board-banner" class="col-span-full bg-gray-200/50 sm:rounded-md sm:border sm:shadow-inner-white">
+		<div class="hidden sm:flex items-center space-x-4 p-2.5 sm:p-4 text-sm text-gray-500 leading-normal">
+			<ul class="hidden sm:flex flex-grow items-center text-sm text-gray-400">
+				<li class="flex items-center">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						<path d="M3 20h18v-8a3 3 0 0 0 -3 -3h-12a3 3 0 0 0 -3 3v8z"></path>
+						<path d="M2.996 14.803c.312 .135 .654 .204 1.004 .197a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1c.35 .007 .692 -.062 1.004 -.197"></path>
+						<path d="M12 4l1.465 1.638a2 2 0 1 1 -3.015 .099l1.55 -1.737z"></path>
+					</svg>
+					<span>
+						Board since
+						<span :title="board.creation_date" class="font-medium text-gray-600">
+							{{ format(parseISO(board.creation_date), 'MMM dd, yyyy') }}
+						</span>
+					</span>
+				</li>
+				<!--<li class="ml-6 flex items-center">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+						<circle cx="12" cy="12" r="9"></circle>
+						<path d="M12 12h3.5"></path>
+						<path d="M12 7v5"></path>
+					</svg>
+					<span>
+						Last active
+						<span class="font-medium text-gray-600">this week</span>
+					</span>
+				</li>-->
+			</ul>
+			<ul class="ml-auto hidden lg:flex items-center text-sm text-gray-400">
+				<li class="ml-6 flex items-center">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 					   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 					   <circle cx="9" cy="7" r="4"></circle>
@@ -11,81 +39,97 @@
 					   <path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path>
 					</svg>
 					<span>
+						Members
 						<span class="font-medium text-gray-600">
 							{{ boardCounts.subscribers.toLocaleString() }}
 						</span>
-						{{ boardCounts.subscribers === 1 ? "Member" : "Members" }}
 					</span>
-				</div>
-				<div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
+				</li>
+				<li class="ml-6 flex items-center">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 						<path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
 						<path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
 						<path d="M16 5l3 3"></path>
 					</svg>
-					<span>
+					<span>Posts
 						<span class="font-medium text-gray-600">{{ boardCounts.posts.toLocaleString() }}</span>
-						{{ boardCounts.posts === 1 ? "Post" : "Posts" }}
 					</span>
-				</div>
-				<div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
+				</li>
+				<li class="ml-6 flex items-center">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 						<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 					</svg>
-					<span>
+					<span>Comments
 						<span class="font-medium text-gray-600">{{ boardCounts.comments.toLocaleString() }}</span>
-						{{ boardCounts.comments === 1 ? "Comment" : "Comments" }}
 					</span>
-				</div>
-			</div>
+				</li>
+			</ul>
 		</div>
-		<div class="pt-2 sm:pt-4 px-2 sm:px-12 pb-6 sm:rounded-b-md">
-			<div class="flex flex-row space-x-2 sm:space-x-4">
-				<img
-				v-if="board.icon"
-				loading="lazy"
-				:src="board.icon"
-				alt="icon"
-				class="z-10 flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white mt-[-50px] sm:mt-[-60px]"
-				/>
+		<!-- Details -->
+		<div id="banner" class="relative flex flex-col sm:flex-row sm:items-center w-full p-2.5 sm:p-6 bg-cover bg-center sm:rounded-b-md" :style="{ backgroundImage: `url(${board.banner})` }">
+			<!-- Icon -->
+			<img
+			loading="lazy"
+			:src="board.icon"
+			alt="icon"
+			class="flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white"
+			/>
+			<!-- Info & Actions -->
+			<div class="flex flex-col w-full sm:ml-4 mt-4 sm:mt-0">
+				<!-- Name & Role -->
 				<div class="flex flex-col">
-					<div class="flex flex-row space-x-4">
-						<h1 class="text-gray-700 text-xl md:text-4xl leading-5 font-bold">
-							{{ board.title ?? board.name }}
-						</h1>
-						<button v-if="isAuthed" class="hidden sm:block button w-24 group" :class="[isSubscribed ? 'gray hover:red' : 'primary']" @click="toggleSubscribe">
-							<span :class="{'inline group-hover:hidden' : isSubscribed}">{{ isSubscribed ? "Joined" : "Join" }}</span>
-							<span :class="[isSubscribed ? 'hidden group-hover:inline' : 'hidden']">Leave</span>
-						</button>
-						<NuxtLink v-if="isMod" :to="`/+${board.name}/mod/settings`" class="hidden sm:block button w-24 gray text-center">
-							Settings
-						</NuxtLink>
-						<LazyMenusActionsBoard class="hidden sm:block" v-if="isAuthed" />
-					</div>
-					<p class="text-sm sm:text-md text-gray-500">
+					<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
+						{{ board.title ?? board.name }}
+					</h1>
+					<p class="text-sm text-gray-200">
 						+{{ board.name }}
-						<span class="inline sm:hidden"> · {{ boardCounts.subscribers }} {{ boardCounts.subscribers === 1 ? "member" : "members" }}</span>
+						<span v-if="isSubscribed" class="ml-1 badge badge-blue">Joined</span>
 					</p>
 				</div>
-			</div>
-			<div v-if="isAuthed" class="block sm:hidden mt-2">
-				<p class="text-md text-gray-700">{{ board.description }}</p>
-				<div class="mt-4 flex flex-row space-x-2">
-					<NuxtLink v-if="isMod" :to="`/+${board.name}/mod/settings`" class="button flex-grow gray text-center">
-						Settings
-					</NuxtLink>					
-					<button class="button flex-grow group" :class="[isSubscribed ? 'gray hover:red' : 'primary']" @click="toggleSubscribe">
-						<span :class="{'inline group-hover:hidden' : isSubscribed}">{{ isSubscribed ? "Joined" : "Join" }}</span>
-						<span :class="[isSubscribed ? 'hidden group-hover:inline' : 'hidden']">Leave</span>
-					</button>
-					<!--<NuxtLink :to="`/+${board.name}/submit`" class="button primary flex-grow text-center">
-						Create Post
-					</NuxtLink>-->
-					<LazyMenusActionsBoard />
-				</div>
-				
+				<!-- Bio -->
+				<p class="mt-2.5 lg:w-4/5 xl:w-3/5" :class="!board.description ? 'text-gray-400 italic' : 'text-gray-100'">
+					{{ board.description ?? 'No description...' }}
+				</p>
+				<!-- Stats -->
+				<small class="sm:hidden mt-2 text-gray-300">
+					Created {{ format(parseISO(board.creation_date), 'MMM dd, yyyy') }}
+				</small>
+				<!-- Actions -->
+				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
+					<li v-if="isMod">
+						<NuxtLink :to="`/+${board.name}/mod/settings`" class="button button-sm white">
+							Settings
+						</NuxtLink>
+					</li>
+					<li>
+						<button class="button button-sm border-[1px]" :class="[isSubscribed ? 'red' : 'green']" @click="toggleSubscribe">
+							{{ isSubscribed ? "Leave" : "Join" }}
+						</button>
+					</li>
+				</ul>
+				<!-- Mobile Stats -->
+				<ul class="flex lg:hidden items-center text-sm text-gray-300 border-t sm:border-0 border-white/10 mt-4 pt-2.5 md:pt-0">
+					<li>
+						<span>
+							<strong>{{ boardCounts.subscribers }}</strong>
+							Members
+						</span>
+					</li>
+					<li class="ml-4">
+						<span>
+							<strong>{{ boardCounts.posts }}</strong>
+							{{ board.posts_count === 1 ? 'Post' : 'Posts' }}
+						</span>
+					</li>
+					<li class="ml-4">
+						<span>
+							<strong>{{ boardCounts.comments }}</strong>
+							{{ board.comments_count === 1 ? 'Comment' : 'Comments' }}
+						</span>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>

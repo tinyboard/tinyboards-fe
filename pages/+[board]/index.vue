@@ -195,7 +195,7 @@ const totalPages = computed(() => {
 
 // Links for sub navbar
 const links = [
-  { name: "Feed", href: `/+${board.name}` },
-  { name: "Sidebar", href: `/+${board.name}/sidebar` },
+  { name: "Posts", href: `/+${board.name}` },
+  { name: "About", href: `/+${board.name}/sidebar` },
 ];
 </script>

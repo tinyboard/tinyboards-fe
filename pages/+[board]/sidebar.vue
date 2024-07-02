@@ -11,7 +11,26 @@
     </section>
     <!-- Main Content -->
     <section class="container mx-auto max-w-8xl sm:my-6 px-4">
-      <div class="prose prose-sm text-gray-900">
+      <div class="bg-white rounded p-2 my-4">
+        <div class="flex flex-row justify-around divide-x border-b pb-2">
+          <div class="flex flex-grow flex-col text-center">
+            <p class="text-lg text-gray-900 font-bold">{{ boardCounts.subscribers }}</p>
+            <p class="text-sm text-gray-400">Members</p>
+          </div>
+          <div class="flex flex-grow flex-col text-center">
+            <p class="text-lg text-gray-900 font-bold">{{ boardCounts.posts }}</p>
+            <p class="text-sm text-gray-400">Posts</p>
+          </div>
+          <div class="flex flex-grow flex-col text-center">
+            <p class="text-lg text-gray-900 font-bold">{{ boardCounts.comments }}</p>
+            <p class="text-sm text-gray-400">Comments</p>
+          </div>
+        </div>
+        <div class="text-gray-400 pt-2 text-center">
+            Board since <span class="text-gray-900">{{ format(parseISO(board.creation_date), 'yyyy MMM. dd') }}</span>
+        </div>
+      </div>
+            <div class="prose prose-sm text-gray-900">
           <div v-if="board.sidebar_html" v-html="board.sidebar_html" />
           <p v-else>{{ board.description }}</p>
       </div>
@@ -58,6 +77,7 @@ import { getListing } from "@/composables/listing";
 // import { getBoard } from "@/composables/board";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { format, parseISO } from "date-fns";
 
 // Import sidebar components
 const Sidebar = defineAsyncComponent(() =>
@@ -92,7 +112,7 @@ useHead({
 
 // Links for sub navbar
 const links = [
-  { name: "Feed", href: `/+${board.name}` },
-  { name: "Sidebar", href: `/+${board.name}/sidebar` },
+  { name: "Posts", href: `/+${board.name}` },
+  { name: "About", href: `/+${board.name}/sidebar` },
 ];
 </script>
