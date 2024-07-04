@@ -15,7 +15,7 @@
 			</div>
 			<div class="mt-2 flex flex-col">
 				<h1 class="font-bold text-xl sm:text-3xl text-white drop-shadow-md">{{ user.display_name ?? user.name }}</h1>
-				<p class="text-md text-gray-200 drop-shadow-xl">
+				<p class="text-md text-white drop-shadow-xl">
 					{{ user.name }}
 					<span v-if="user.instance">@{{ user.instance }}</span>
 					<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">
@@ -53,7 +53,7 @@
 				</div>
 			</div>
 			<!-- Actions -->
-			<ul class="flex flex-row space-x-2 w-full text-center">
+			<ul v-if="isAuthed" class="flex flex-row space-x-2 w-full text-center">
 				<li class="flex-grow" v-if="isSelf">
 					<NuxtLink to="/settings/profile" class="button primary w-full">
 						Edit my profile

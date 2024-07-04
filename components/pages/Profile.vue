@@ -85,7 +85,9 @@
 					<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
 						<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page" />
 					</div>
+				
 				</div>
+				<LazyContainersSidebarProfile :u="user" />
 			</div>
 		</section>
 	</main>
