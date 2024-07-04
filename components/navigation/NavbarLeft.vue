@@ -1,5 +1,5 @@
 <template>
-	<div id="nav-left" class="fixed top-14 left-0 bg-white border-r border-gray-200 h-screen hidden xl:flex flex-col items-center w-20 py-4 md:z-50 overflow-none">
+	<div id="nav-left" class="fixed top-14 left-0 bg-white border-r border-gray-200 h-screen hidden 2xl:flex flex-col items-center w-20 py-4 md:z-50 overflow-none">
 		<div id="nav-left-buttons" class="flex flex-col space-y-2 h-screen pb-32 overflow-scroll">
 			<div class="flex flex-col space-y-2">
 				<NuxtLink to="/feed" custom v-slot="{isActive, navigate}">

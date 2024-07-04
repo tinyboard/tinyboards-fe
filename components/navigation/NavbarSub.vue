@@ -1,5 +1,5 @@
 <template>
-	<div id="sub-header" class="sm:fixed w-full h-11 bg-gray-100 border-b dark:bg-gray-950 dark:border-gray-800 sm:z-40">
+	<div id="sub-header" class="sm:fixed w-full h-11 bg-white border-b dark:bg-gray-950 dark:border-gray-800 sm:z-40">
 		<div class="mx-auto max-w-8xl h-full flex items-center justify-between px-2.5 sm:px-6">
 			<ul class="menu flex items-center h-full overflow-x-auto scrollbar-hidden box-content p-[1px] m-[-1px]">
 				<li class="menu-item flex-shrink-0 h-full text-sm leading-6" v-for="link in links" :key="link.name">

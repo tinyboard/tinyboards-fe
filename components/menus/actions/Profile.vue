@@ -1,7 +1,7 @@
 <template>
   <Menu as="div" class="relative z-20">
     <div>
-      <MenuButton :class="buttonClass ? buttonClass : 'button button-sm white'">
+      <MenuButton :class="buttonClass ? buttonClass : 'button flex items-center white'">
         <slot name="button">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
             stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
