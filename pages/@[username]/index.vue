@@ -1,7 +1,7 @@
 <template>
 	<component v-if="personView" :personView="personView" :is="canView ? Profile : ProfileRemoved">
 		<template v-slot:content>
-			<div class="flex flex-row justify-between bg-white border p-4 rounded-md mb-2">
+			<div class="flex flex-row justify-between bg-white border-y sm:border p-4 sm:rounded-md mb-2">
 				<h3 class="text-lg text-gray-800 font-semibold">Recent Posts</h3>
 				<NuxtLink :to="`/@${username}/posts`">View All</NuxtLink>
 			</div>
@@ -10,7 +10,7 @@
 			<div v-else class="bg-white rounded-md border p-4 text-gray-400">
 				@{{ username }} hasn't made any posts. At all.
 			</div>
-			<div class="flex flex-row justify-between bg-white border p-4 rounded-md mt-4 mb-2">
+			<div class="flex flex-row justify-between bg-white border-y sm:border p-4 sm:rounded-md mt-4 mb-2">
 				<h3 class="text-lg text-gray-800 font-semibold">Recent Comments</h3>
 				<NuxtLink :to="`/@${username}/comments`">View All</NuxtLink>
 			</div>
