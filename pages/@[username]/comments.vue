@@ -37,6 +37,18 @@ const ProfileRemoved = defineAsyncComponent(() => import('@/components/pages/Pro
 // User
 const username = computed(() => route.params.username);
 
+const title = ref(route.params.username);
+
+useHead({
+	title: title,
+	meta: [
+		{
+			property: 'og:title',
+			content: title
+		}
+	]
+});
+
 // Comments
 const page = computed(() => Number(route.query.page) || 1);
 const limit = computed(() => Number(route.query.limit) || 25);
@@ -56,6 +68,14 @@ const { data: userData, error, pending, refresh } = await useFetchUser(username.
 
 const personView = userData.value.person_view;
 const user = personView.person;
+
+if (user.is_deleted) {
+	title.value = "Deleted Account";
+} else if (user.is_banned) {
+	title.value = `@${user.name}: Suspended`;
+} else {
+	title.value = `${user.display_name ?? user.name} (@${user.name})`;
+}
 
 if (error.value && error.value.response) {
 	throw createError({

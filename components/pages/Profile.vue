@@ -36,56 +36,58 @@
 		<section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
 			<div class="col-span-full flex gap-6">
 				<div class="w-full">
-					<!-- Sorts & View Options -->
-					<div
-						class="flex items-center mb-4 p-2.5 sm:p-4 bg-white border-y sm:border sm:shadow-inner-white sm:rounded-md">
-						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts" />
-						<div v-if="type === 'post'" class="ml-auto flex space-x-2">
-							<button class="ml-auto" @click="preferCardView = true">
-								<!-- Rows Icon -->
-								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
-									:class="preferCardView ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24"
-									stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-									stroke-linejoin="round">
-									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-									<rect x="4" y="4" width="16" height="6" rx="2"></rect>
-									<rect x="4" y="14" width="16" height="6" rx="2"></rect>
-								</svg>
-							</button>
-							<button class="ml-auto" @click="preferCardView = false">
-								<!-- Cards Icon -->
-								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
-									:class="preferCardView ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24"
-									stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-									stroke-linejoin="round">
-									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-									<rect x="4" y="4" width="16" height="16" rx="2"></rect>
-									<line x1="4" y1="12" x2="20" y2="12"></line>
-								</svg>
-							</button>
+					<!-- Content slot -->
+					<slot name="content">
+						<!-- Sorts & View Options -->
+						<div
+							class="flex items-center mb-4 p-2.5 sm:p-4 bg-white border-y sm:border sm:shadow-inner-white sm:rounded-md">
+							<MenusSort :sorts="type === 'post' ? postSorts : commentSorts" />
+							<div v-if="type === 'post'" class="ml-auto flex space-x-2">
+								<button class="ml-auto" @click="preferCardView = true">
+									<!-- Rows Icon -->
+									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+										:class="preferCardView ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24"
+										stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+										stroke-linejoin="round">
+										<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+										<rect x="4" y="4" width="16" height="6" rx="2"></rect>
+										<rect x="4" y="14" width="16" height="6" rx="2"></rect>
+									</svg>
+								</button>
+								<button class="ml-auto" @click="preferCardView = false">
+									<!-- Cards Icon -->
+									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
+										:class="preferCardView ? 'text-gray-500' : 'text-red-500'" viewBox="0 0 24 24"
+										stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+										stroke-linejoin="round">
+										<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+										<rect x="4" y="4" width="16" height="16" rx="2"></rect>
+										<line x1="4" y1="12" x2="20" y2="12"></line>
+									</svg>
+								</button>
+							</div>
 						</div>
-					</div>
-					<!-- Posts -->
-					<LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending"
-						:hasError="error" />
-					<!-- Comments -->
-					<LazyListsComments v-else-if="comments?.length" :comments="comments"
-						class="p-4 bg-white border-y sm:border md:rounded-md md:shadow-inner-white" />
-					<div v-else
-						class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
-						<p>
-							<span class="font-medium">
-								{{ user.name }} has made no {{ posts ? 'posts' : 'comments' }}
-							</span>
-							<br />
-							They must not be that interesting
-						</p>
-					</div>
-					<!-- Pagination -->
-					<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
-						<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page" />
-					</div>
-				
+						<!-- Posts -->
+						<LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending"
+							:hasError="error" />
+						<!-- Comments -->
+						<LazyListsComments v-else-if="comments?.length" :comments="comments"
+							class="p-4 bg-white border-y sm:border md:rounded-md md:shadow-inner-white" />
+						<div v-else
+							class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+							<p>
+								<span class="font-medium">
+									{{ user.name }} has made no {{ posts ? 'posts' : 'comments' }}
+								</span>
+								<br />
+								They must not be that interesting
+							</p>
+						</div>
+						<!-- Pagination -->
+						<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
+							<NavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page" />
+						</div>
+					</slot>
 				</div>
 				<LazyContainersSidebarProfile :u="user" />
 			</div>
@@ -224,7 +226,8 @@ const commentSorts = [
 
 // Sub navbar links
 const links = [
-	{ name: `Posts (${counts.post_count})`, href: `/@${route.params.username}` },
+	{ name: 'Overview', href: `/@${route.params.username}` },
+	{ name: `Posts (${counts.post_count})`, href: `/@${route.params.username}/posts` },
 	{ name: `Comments (${counts.comment_count})`, href: `/@${route.params.username}/comments` }
 ]
 </script>
