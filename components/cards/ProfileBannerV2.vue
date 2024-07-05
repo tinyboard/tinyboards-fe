@@ -55,17 +55,17 @@
 			<!-- Actions -->
 			<ul v-if="isAuthed" class="flex flex-row space-x-2 w-full text-center">
 				<li class="flex-grow" v-if="isSelf">
-					<NuxtLink to="/settings/profile" class="button primary w-full">
+					<NuxtLink to="/settings/profile" class="button white w-full">
 						Edit my profile
 					</NuxtLink>
 				</li>
 				<li class="flex-grow" v-if="!isSelf">
-					<button class="button primary w-full" disabled>
+					<button class="button white w-full" disabled>
 						Follow
 					</button>
 				</li>
 				<li class="flex-grow" v-if="!isSelf">
-					<button class="button primary w-full" disabled>
+					<button class="button white w-full" disabled>
 						Send message
 					</button>
 				</li>

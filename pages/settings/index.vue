@@ -25,7 +25,7 @@
 								</label>
 								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'avatar')" />
 								<small class="block mt-2 text-gray-400">
-									PNG, JPG <span class="line-through">and GIF</span> up to 1MB.
+									PNG, JPG and GIF up to 2MB.
 								</small>
 							</div>
 						</div>
@@ -39,14 +39,14 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col">
 								<img v-if="imageStore.banner || settings.banner" :src="imageStore.banner ?? settings.banner" class="w-full h-24 object-cover p-0.5 border bg-white"/>
-								<div v-else class="w-full h-24 rounded-md border border-gray-300 border-dashed"></div>
+								<div v-else class="w-full h-32 rounded-md border border-gray-300 border-dashed"></div>
 								<div class="mt-5">
 									<label for="banner-upload" class="inline-block button gray cursor-pointer">
 										{{ settings.banner ? 'Change banner' : 'Upload banner' }}
 									</label>
 									<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'banner')"/>
 									<small class="block mt-2 text-gray-400">
-										PNG, JPG <span class="line-through">and GIF</span> up to 3MB. Recommended 1390x192 pixels.
+										PNG, JPG and GIF up to 3MB. Recommended 1390x192 pixels.
 									</small>
 								</div>
 						</div>
@@ -118,10 +118,29 @@
 	const onFileChange = (e,type) => {
 		const file = e.target.files[0];
 
-		const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
+		const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 3 * 1024 * 1024;
 
 		if (file.size > maxFileSize) {
-			toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
+			toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 2 : 3}MB.`, type:'error'});
+			return;
+		}
+
+		// cropping modal butchers the gif, so we skip it
+		if (file.name.toLowerCase().split('.').pop() === "gif") {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.addEventListener(
+				"load",
+				() => {
+					if (type === "avatar") {
+						imageStore.setAvatar(reader.result);
+					} else {
+						imageStore.setBanner(reader.result);
+					}
+				},
+				false
+			);
+
 			return;
 		}
 
@@ -167,10 +186,10 @@
     }*/
 
     const uploadFile = async (file, type) => {
-    	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
+    	const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 3 * 1024 * 1024;
 
     	if (file.size > maxFileSize) {
-    		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
+    		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 2 : 3}MB.`, type:'error'});
 			throw new Error("enormous file");
 		}
 
