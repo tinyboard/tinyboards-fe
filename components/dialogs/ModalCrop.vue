@@ -22,7 +22,7 @@
               </div>
               <div class="flex flex-col justify-center mt-4">
                 <Cropper class="w-full h-[500px] bg-gray-400" :src="options.image" :stencil-props="{
-                  aspectRatio: props.type == 'banner' ? 5 / 2 : 1 / 1
+                  aspectRatio: props.type == 'banner' ? 5 / 1 : 1 / 1
                 }" :check-orientation="false" @change="onChange" />
               </div>
               <!-- Footer -->

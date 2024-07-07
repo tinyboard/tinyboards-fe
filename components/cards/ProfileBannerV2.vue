@@ -24,10 +24,10 @@
 					</span>
 				</p>
 				<!-- Bio (desktop) -->
-				<div id="bio" v-if="isEditing || user.bio" class="hidden sm:block relative mt-2 rounded w-full sm:w-72 bg-white p-2 pl-4">
+				<div id="bio" v-if="isEditing || user.bio" class="hidden sm:block relative mt-2 rounded w-full sm:w-72 bg-white/70 px-4 py-2">
 					<h6 class="font-semibold text-xs text-gray-900">About me</h6>
 					<div v-if="isEditing">
-						<textarea id="biography" name="biography" maxlength="255" rows="2" class="block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="settings.bio" placeholder="Brief description about yourself. Max 255 characters." />
+						<textarea id="biography" name="biography" maxlength="255" rows="2" class="block w-full rounded-md border-gray-200 bg-gray-100/70 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="settings.bio" placeholder="Brief description about yourself. Max 255 characters." />
 						<div class="flex justify-end">
 							<p class="text-xs" :class="[settings.bio?.length > 240 ? 'text-red-600' : 'text-gray-400']">{{ settings.bio?.length || 0 }} / 255</p>
 						</div>
@@ -39,7 +39,7 @@
 		</div>
 		<div class="flex flex-col space-y-2 flex-grow-0 w-full sm:w-72">
 			<!-- Bio (mobile) -->
-			<div id="bio" v-if="user.bio" class="mb-2 block sm:hidden relative mt:mt-2 rounded w-full sm:w-72 bg-white p-2 pl-4">
+			<div id="bio" v-if="user.bio" class="mb-2 block sm:hidden relative mt:mt-2 rounded w-full sm:w-72 bg-white/70 p-2 pl-4">
 				<h6 class="font-semibold text-xs text-gray-900">About me</h6>
 				<div v-if="isEditing">
 					<textarea id="biography" name="biography" maxlength="255" rows="2" class="block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="settings.bio" placeholder="Brief description about yourself. Max 255 characters." />
@@ -310,7 +310,7 @@
     		line-height: 1.75rem !important;
 		}
 
-		#bio::before {
+		/*#bio::before {
 			content: "";
 		    position: absolute;
 		    z-index: 0;
@@ -319,10 +319,10 @@
 		    display: block;
 		    width: 12px;
 		    height: 12px;
-		    background-color: rgb(255, 255, 255, 1);
+		    background-color: rgb(255, 255, 255, 0.6);
 		    background-opacity: 0.7;
 		    transform: rotate(45deg);
-		}
+		}*/
 	}
 
 	/* Tailwind breakpoint: sm */
@@ -332,7 +332,7 @@
 			line-height: 2.25rem !important;
 		}
 
-		#bio::before {
+		/*#bio::before {
 			content: "";
 		    position: absolute;
 		    z-index: 0;
@@ -341,10 +341,10 @@
 		    display: block;
 		    width: 12px;
 		    height: 12px;
-		    background-color: rgb(255, 255, 255, 1);
+		    background-color: rgb(255, 255, 255, 0.5);
 		    background-opacity: 0.7;
 		    transform: rotate(45deg);
-		}
+		}*/
 	}
 	
 </style>
