@@ -1,5 +1,5 @@
 <template>
-	<component v-if="personView" :personView="personView" :is="canView ? Profile : ProfileRemoved">
+	<component v-if="personView" :personView="personView" :moderates="moderates" :is="canView ? Profile : ProfileRemoved">
 		<template v-slot:content>
 			<div class="flex flex-row justify-between bg-white border-y sm:border p-4 sm:rounded-md mb-2">
 				<h3 class="text-lg text-gray-800 font-semibold">Recent Posts</h3>
@@ -79,6 +79,7 @@ if (error.value && error.value.response) {
 
 const personView = userData.value.person_view;
 const user = personView.person;
+const moderates = userData.value.moderates;
 
 if (user.is_deleted) {
 	title.value = "Deleted Account";

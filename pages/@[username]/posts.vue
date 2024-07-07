@@ -1,5 +1,5 @@
 <template>
-	<component v-if="personView" :personView="personView" :posts="posts" :totalPages="totalPages" :limit="limit"
+	<component v-if="personView" :personView="personView" :moderates="moderates" :posts="posts" :totalPages="totalPages" :limit="limit"
 		:page="page" :is="canView ? Profile : ProfileRemoved" />
 </template>
 
@@ -69,6 +69,7 @@ if (error.value && error.value.response) {
 
 const personView = userData.value.person_view;
 const user = personView.person;
+const moderates = userData.value.moderates;
 
 if (user.is_deleted) {
 	title.value = "Deleted Account";

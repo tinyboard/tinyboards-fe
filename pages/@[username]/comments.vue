@@ -1,5 +1,5 @@
 <template>
-	<component v-if="personView" :personView="personView" :comments="comments" :totalPages="totalPages" :page="page"
+	<component v-if="personView" :personView="personView" :moderates="moderates" :comments="comments" :totalPages="totalPages" :page="page"
 		type="comment" :is="canView ? Profile : ProfileRemoved" />
 </template>
 
@@ -70,6 +70,7 @@ const { data: userData, error, pending, refresh } = await useFetchUser(username.
 
 const personView = userData.value.person_view;
 const user = personView.person;
+const moderates = userData.value.moderates;
 
 if (user.is_deleted) {
 	title.value = "Deleted Account";

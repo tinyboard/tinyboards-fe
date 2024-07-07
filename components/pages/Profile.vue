@@ -1,5 +1,5 @@
 <template>
-	<main class="h-full w-full flex flex-col pt-12 sm:pt-14"
+	<main class="flex flex-col pt-12 sm:pt-14"
 		:style="{
 			backgroundImage: `url(${imageStore.background || user.profile_background})`,
 		}">
@@ -92,7 +92,7 @@
 						</div>
 					</slot>
 				</div>
-				<LazyContainersSidebarProfile :u="user" />
+				<LazyContainersSidebarProfile :u="user" :moderates="moderates" />
 			</div>
 		</section>
 	</main>
@@ -116,6 +116,10 @@ const props = defineProps({
 	},
 	comments: {
 		type: Array,
+	},
+	moderates: {
+		type: Array,
+		default: [],
 	},
 	type: {
 		type: String,
