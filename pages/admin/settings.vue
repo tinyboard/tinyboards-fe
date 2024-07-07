@@ -41,8 +41,8 @@
 							<div class="flex justify-between">
 								<p class="mt-2 text-sm text-gray-500">Brief description about your tinyboard.</p>
 								<p class="mt-2 text-xs"
-									:class="settings.description.length > 230 ? 'text-red-600' : 'text-gray-500'">{{
-										settings.description.length }} / 255</p>
+									:class="settings.description?.length ?? 0 > 230 ? 'text-red-600' : 'text-gray-500'">{{
+										settings.description?.length ?? 0 }} / 255</p>
 							</div>
 						</div>
 					</div>
@@ -134,8 +134,8 @@
 									Short message users receive after signing up. Markdown supported.
 								</p>
 								<p class="mt-2 text-xs"
-									:class="settings.welcome_message.length > 230 ? 'text-red-600' : 'text-gray-500'">{{
-										settings.welcome_message.length }} / 255</p>
+									:class="settings.welcome_message?.length ?? 0 > 230 ? 'text-red-600' : 'text-gray-500'">{{
+										settings.welcome_message?.length ?? 0 }} / 255</p>
 							</div>
 						</div>
 					</div>
