@@ -1,5 +1,5 @@
 <template>
-	<main class="flex flex-col pt-12 sm:pt-14"
+	<main class="h-full w-full flex flex-col pt-12 sm:pt-14"
 		:style="{
 			backgroundImage: `url(${imageStore.background || user.profile_background})`,
 		}">
