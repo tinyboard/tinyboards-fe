@@ -2,7 +2,7 @@
   <div id="sidebar-profile"
     class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
   >
-    <div>
+    <div :class="{ 'bg-white rounded border border-gray-200 p-4': (imageStore.background || u.profile_background) }">
         <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
             About
             <span class="text-gray-700 text-opacity-70">@{{ u.name }}</span>
@@ -17,7 +17,7 @@
         </div>
     </div>
     <!-- Admin Actions -->
-    <div v-if="isAdmin && !isSelf">
+    <div v-if="isAdmin && !isSelf" :class="{ 'bg-white rounded border border-gray-200 p-4': (imageStore.background || u.profile_background) }">
         <h2 class="font-bold leading-5 text-base pb-1 border-b">
             <span>Admin Tools</span>
         </h2>
@@ -56,6 +56,7 @@
   import { computed } from 'vue';
   import { format, parseISO } from "date-fns";
   import { useSiteStore } from "@/stores/StoreSite";
+  import { useImageStore } from '@/stores/StoreImages';
   import { requirePermission, requireFullPerms, createPermissionString } from "@/composables/admin";
   import { useLoggedInUser } from "@/stores/StoreAuth";
   import { useModalStore } from '@/stores/StoreModal';
@@ -63,6 +64,7 @@
   const modalStore = useModalStore();
   const userStore = useLoggedInUser();
   const site = useSiteStore();
+  const imageStore = useImageStore();
 
   const isAdmin = requirePermission("users");
   const hasFullPerms = requireFullPerms();

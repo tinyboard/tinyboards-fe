@@ -17,7 +17,9 @@ const userStore = useLoggedInUser();
 
 definePageMeta({
 	key: (route) => route.fullPath,
-	'hasRepliesDisabled': true
+	'hasRepliesDisabled': true,
+	isFooterDisabled: true,
+	isLeftNavbarDisabled: true
 });
 
 // useHead({

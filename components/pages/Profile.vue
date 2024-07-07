@@ -1,5 +1,8 @@
 <template>
-	<main class="flex flex-col pt-12 sm:pt-14">
+	<main class="flex flex-col pt-12 sm:pt-14"
+		:style="{
+			backgroundImage: `url(${imageStore.background || user.profile_background})`,
+		}">
 		<!-- Sub Navigation & Profile Details -->
 		<section class="flex flex-col mb-4 sm:mb-0">
 			<NavigationNavbarSub :links="links" class="sm:order-first" />
@@ -99,6 +102,9 @@
 import { useLoggedInUser } from '@/stores/StoreAuth';
 //import { format, parseISO } from "date-fns";
 import { requirePermission } from '@/composables/admin';
+import { useImageStore } from '@/stores/StoreImages';
+
+const imageStore = useImageStore();
 
 const props = defineProps({
 	personView: {

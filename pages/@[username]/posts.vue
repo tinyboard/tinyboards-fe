@@ -19,6 +19,8 @@ const userStore = useLoggedInUser();
 definePageMeta({
 	'alias': ['/@:username/posts'],
 	key: (route) => route.fullPath,
+	isFooterDisabled: true,
+	isLeftNavbarDisabled: true,
 });
 
 const title = ref(route.params.username);

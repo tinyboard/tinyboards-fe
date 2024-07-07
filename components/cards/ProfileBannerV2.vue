@@ -1,6 +1,6 @@
 <template>
-	<div class="flex flex-col space-y-4 md:flex-row space-y-0 col-span-full p-4 md:px-8 border-b border-gray-200 sm:border sm:rounded"
-		:class="[user.banner ? '' : 'bg-primary bg-opacity-20']"
+	<div class="flex flex-col space-y-4 md:flex-row space-y-0 col-span-full p-4 md:px-8 border-b sm:rounded border-gray-200"
+		:class="[user.banner ? '' : 'bg-primary bg-opacity-20', user.profile_background ? 'sm:border-0 shadow-md' : 'sm:border']"
 		:style="{
 			backgroundImage: `url(${isEditing ? (imageStore.banner ?? settings.banner) : user.banner})`,
 			backgroundSize: 'cover',
@@ -63,7 +63,13 @@
 						Change banner
 					</label>
 					<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'banner')"/>
-				</div>			
+				</div>
+				<div>
+					<label for="bg-upload" class="button white w-full cursor-pointer">
+						Change background
+					</label>
+					<input id="bg-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'background')"/>
+				</div>		
 			</div>
 			<!-- Else: Counts -->
 			<div v-else class="w-full rounded bg-white bg-opacity-70 px-4 py-2 flex flex-row justify-around divide-x divide-gray-300">
@@ -149,6 +155,7 @@
 	const settings = ref({
 		displayName: props.user.display_name ?? props.user.name,
 		avatar: props.user.avatar,
+		background: props.user.profile_background,
 		banner: props.user.banner,
 		bio: props.user.bio
 	});
@@ -207,11 +214,26 @@
 			}
 		}
 
+		if (imageStore.background) {
+			const background = dataURLtoFile(imageStore.background);
+				// after converting to file is finished, delete the original b64 url
+			imageStore.purgeBackground();
+
+			try {
+				settings.value.background = await uploadFile(background, 'background');
+			} catch (e) {
+				console.error(e);
+				isLoading.value = false;
+				return;
+			}
+		}
+
 		const { data, pending, error, refresh } = await useApi('/settings', {
 			method: "put",
 			body: {
 				"avatar": settings.value.avatar,
 				"banner": settings.value.banner,
+				"profile_background": settings.value.background,
 				"bio": settings.value.bio,
 				"display_name": settings.value.displayName,
 			}

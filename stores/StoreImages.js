@@ -6,6 +6,7 @@ export const useImageStore = defineStore('image', {
 		return {
 			avatar: null,
 			banner: null,
+			background: null,
 			default_avatar: null
 		};
 	},
@@ -16,6 +17,9 @@ export const useImageStore = defineStore('image', {
 		setBanner(banner) {
 			this.banner = banner;
 		},
+		setBackground(bg) {
+			this.background = bg;
+		},
 		setDefaultAvatar(default_avatar) {
 			this.default_avatar = default_avatar;
 		},
@@ -25,12 +29,16 @@ export const useImageStore = defineStore('image', {
 		purgeBanner() {
 			this.banner = null;
 		},
+		purgeBackground() {
+			this.background = null;
+		},
 		purgeDefaultAvatar() {
 			this.default_avatar = null;
 		},
 		purge() {
 			this.purgeAvatar();
 			this.purgeBanner();
+			this.purgeBackground();
 			this.purgeDefaultAvatar();
 		}
 	}

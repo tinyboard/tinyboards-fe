@@ -28,7 +28,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         siteStore.requireEmailVerification =
           data.value.require_email_verification;
       } else {
-        console.log(error.value);
+        //console.log(JSON.stringify(error.value, null, 4));
+        if (error.value.statusCode === 502) {
+          throw createError({
+            statusCode: 502,
+            statusMessage: "Couldn't fetch data from the server. If you're the owner of this instance, please make sure that your server is running.",
+            fatal: true,
+          });
+        } else {
+          console.log(error.value);
+        }
       }
     });
   }

@@ -31,27 +31,45 @@ export const canEmbedImage = link => {
 export const onFileChange = (e,type) => {
 	const file = e.target.files[0];
 
-	const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 3 * 1024 * 1024;
+	const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
 
 	if (file.size > maxFileSize) {
-		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 2 : 3}MB.`, type:'error'});
+		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 2 : 5}MB.`, type:'error'});
 		return;
 	}
 
 	// cropping modal butchers the gif, so we skip it
-	if (file.name.toLowerCase().split('.').pop() === "gif") {
+	// also skip cropper for profile background
+	if (type === "background" ||(file.name.toLowerCase().split('.').pop() === "gif")) {
 		const reader = new FileReader();
 		reader.readAsDataURL(file);
 		reader.addEventListener(
 			"load",
 			() => {
-				if (type === "avatar") {
+				switch (type) {
+					case 'avatar':
+						imageStore.setAvatar(reader.result);
+						break;
+					case 'default_avatar':
+						imageStore.setDefaultAvatar(reader.result);
+						break;
+					case 'background':
+						imageStore.setBackground(reader.result);
+						break;
+					case 'banner':
+						imageStore.setBanner(reader.result);
+						break;
+					default:
+						console.error(`unexpected file type ${type}`);
+				}
+				/*if (type === "avatar") {
 					imageStore.setAvatar(reader.result);
 				} else if (type === "default_avatar") {
 					imageStore.setDefaultAvatar(reader.result);
-				} else {
+				} else if (type )
+				 else {
 					imageStore.setBanner(reader.result);
-				}
+				}*/
 			},
 			false
 			);
@@ -73,10 +91,10 @@ export const onFileChange = (e,type) => {
 
 /// Upload a file to the server, and return the link to the file.
 export const uploadFile = async (file, type) => {
-	const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 3 * 1024 * 1024;
+	const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
 
 	if (file.size > maxFileSize) {
-		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 2 : 3}MB.`, type:'error'});
+		toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 2 : 5}MB.`, type:'error'});
 		throw new Error("enormous file");
 	}
 
