@@ -46,7 +46,7 @@
 						</div>
 					</div>
 					<!-- Default Avatar -->
-					<div class="md:grid md:grid-cols-3 md:gap-6">
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
 							<label class="text-base font-bold leading-6 text-gray-900">Default Avatar</label>
@@ -61,7 +61,7 @@
 								</label>
 								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'default_avatar')" />
 								<small class="block mt-2 text-gray-400">
-									PNG, JPG <span class="line-through">and GIF</span> up to 1MB. This will be the default
+									PNG, JPG and GIF up to 1MB. This will be the default
 									avatar for users.
 								</small>
 							</div>
@@ -86,6 +86,7 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useImageStore } from '@/stores/StoreImages';
 import { useModalStore } from "@/stores/StoreModal";
 import { dataURLtoFile } from '@/utils/files';
+import { onFileChange, uploadFile } from '@/composables/images';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -100,60 +101,6 @@ const toast = useToastStore();
 const imageStore = useImageStore();
 const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
-
-// File inputs
-const onFileChange = (e, type) => {
-	const file = e.target.files[0];
-
-	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
-
-	if (file.size > maxFileSize) {
-		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
-		return;
-	}
-
-	modalStore.setModal({
-		modal: "ModalCrop",
-		id: 0,
-		contentType: type,
-		isOpen: true,
-		options: {
-			image: URL.createObjectURL(file)
-		}
-	});
-};
-
-const uploadFile = async (file, type) => {
-	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
-
-	if (file.size > maxFileSize) {
-		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
-		throw new Error("enormous file");
-	}
-
-	let formData = new FormData();
-	formData.append('file', file);
-
-	const { data, pending, error, refresh } = await useApi("/file/upload", {
-		method: "put",
-		body: formData
-	});
-
-	if (data.value.uploads.length > 0) {
-		return data.value.uploads[0];
-	} else if (error.value.statusCode == 413) {
-		toast.addNotification({ header: 'Your files are too large!', message: 'Your file is over 25MB!! How did you bypass the previous checks?', type: 'error' });
-
-		throw new Error(error.value);
-	} else {
-		// Show error toast.
-		toast.addNotification({ header: 'Upload failed', message: 'Failed to upload image :(', type: 'error' });
-		// Log the error.
-		console.error(error.value);
-
-		throw new Error(error.value);
-	}
-}
 
 // Fetch site settings.
 const { data, pending, error, refresh } = await useApi("/admin/site");

@@ -45,6 +45,7 @@ import { requirePermission } from '@/composables/admin';
 import { useImageStore } from '@/stores/StoreImages';
 import { useToastStore } from '@/stores/StoreToast';
 import { toRGB } from '@/composables/colors';
+import { uploadFile } from '@/composables/images';
 
 const route = useRoute();
 const router = useRouter();
@@ -138,37 +139,7 @@ const next = () => {
     });*/
 }
 
-const uploadFile = async (file, type) => {
-        const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
 
-        if (file.size > maxFileSize) {
-            toast.addNotification({header:'Your files are too large!',message:`Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type:'error'});
-            throw new Error("enormous file");
-        }
-
-        let formData = new FormData();
-        formData.append('file', file);
-
-        const { data, pending, error, refresh } = await useApi("/file/upload", {
-            method: "put",
-            body: formData
-        });
-
-        if (data.value.uploads.length > 0) {
-            return data.value.uploads[0];
-        } else if (error.value.statusCode == 413) {
-            toast.addNotification({header:'Your files are too large!',message:'Your file is over 25MB!! How did you bypass the previous checks?',type:'error'});
-
-            throw new Error(error.value);
-        } else {
-            // Show error toast.
-            toast.addNotification({header:'Upload failed',message:'Failed to upload image :(',type:'error'});
-            // Log the error.
-            console.error(error.value); 
-
-            throw new Error(error.value);
-        }
-    }
 
     const createBoard = async () => {
         isLoading.value = true;
@@ -221,6 +192,8 @@ const uploadFile = async (file, type) => {
         if (data.value) {
             const name = board.name;
             board.clear();
+            userStore.addJoinedBoard(data.value["board_view"]);
+            userStore.addModdedBoard(data.value["board_view"]);
             // go to the newly created board
             router.push(`/+${name}?welcome=true`);
         } else {

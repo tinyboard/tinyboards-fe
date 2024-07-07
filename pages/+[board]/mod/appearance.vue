@@ -111,6 +111,7 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useImageStore } from '@/stores/StoreImages';
 import { dataURLtoFile } from '@/utils/files';
 import { toHexCode, toRGB } from '@/composables/colors';
+import { onFileChange, uploadFile } from '@/composables/images';
 
 const boardStore = useBoardStore();
 const board = boardStore.boardView.board;
@@ -137,77 +138,6 @@ useHead({
 const toast = useToastStore();
 
 const isLoading = ref(false);
-
-// File inputs
-const onFileChange = (e, type) => {
-	const file = e.target.files[0];
-
-	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
-
-	if (file.size > maxFileSize) {
-		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
-		return;
-	}
-
-	modalStore.setModal({
-		modal: "ModalCrop",
-		id: 0,
-		contentType: type,
-		isOpen: true,
-		options: {
-			image: URL.createObjectURL(file)
-		}
-	});
-};
-
-const change = ({ coordinates, canvas }) => {
-	console.log(coordinates, canvas);
-}
-
-/*const dataURLtoFile = dataURL => {
-	const arr = dataURL.split(',');
-	const bstr = atob(arr[arr.length - 1]);
-	let n = bstr.length;
-	let u8arr = new Uint8Array(n);
-
-	while (n--) {
-		u8arr[n] = bstr.charCodeAt(n);
-	}
-
-	return new File([u8arr], "upload.jpeg", {type: "image/jpeg"});
-}*/
-
-const uploadFile = async (file, type) => {
-	const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
-
-	if (file.size > maxFileSize) {
-		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
-		throw new Error("enormous file");
-	}
-
-	let formData = new FormData();
-	formData.append('file', file);
-
-	const { data, pending, error, refresh } = await useApi("/file/upload", {
-		method: "put",
-		body: formData
-	});
-
-	if (data.value.uploads.length > 0) {
-		return data.value.uploads[0];
-	} else if (error.value.statusCode == 413) {
-		toast.addNotification({ header: 'Your files are too large!', message: 'Your file is over 25MB!! How did you bypass the previous checks?', type: 'error' });
-
-		throw new Error(error.value);
-	} else {
-		// Show error toast.
-		toast.addNotification({ header: 'Upload failed', message: 'Failed to upload image :(', type: 'error' });
-		// Log the error.
-		console.error(error.value);
-
-		throw new Error(error.value);
-	}
-}
 
 const submitSettings = async () => {
 	isLoading.value = true;

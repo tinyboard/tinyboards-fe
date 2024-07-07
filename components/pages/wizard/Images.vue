@@ -17,7 +17,7 @@
                     <input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif"
                         @change="e => onFileChange(e, 'avatar')" />
                     <small class="block mt-2 text-gray-400">
-                        PNG, JPG <span class="line-through">and GIF</span> up to 1MB.
+                        PNG, JPG and GIF up to 2MB.
                     </small>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                     <input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif"
                         @change="e => onFileChange(e, 'banner')" />
                     <small class="block mt-2 text-gray-400">
-                        PNG, JPG <span class="line-through">and GIF</span> up to 3MB. Recommended 1390x192 pixels.
+                        PNG, JPG and GIF up to 3MB. Recommended 1390x192 pixels.
                     </small>
                 </div>
             </div>
@@ -48,36 +48,9 @@
 <script setup>
 import { useWizardStore } from '@/stores/StoreWizard';
 import { useImageStore } from '@/stores/StoreImages';
-import { useModalStore } from '@/stores/StoreModal';
-import { useToastStore } from '@/stores/StoreToast';
+import { onFileChange } from '@/composables/images';
 import { ref } from 'vue';
 
 const board = useWizardStore();
 const imageStore = useImageStore();
-const modalStore = useModalStore();
-const toast = useToastStore();
-
-// File inputs
-const onFileChange = (e, type) => {
-    console.log("file change");
-    const file = e.target.files[0];
-
-    const maxFileSize = type == "avatar" ? 1024 * 1024 : 3 * 1024 * 1024;
-
-    if (file.size > maxFileSize) {
-        toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 1 : 3}MB.`, type: 'error' });
-        console.error("Image too large");
-        return;
-    }
-
-    modalStore.setModal({
-        modal: "ModalCrop",
-        id: 0,
-        contentType: type,
-        isOpen: true,
-        options: {
-            image: URL.createObjectURL(file)
-        }
-    });
-};
 </script>
