@@ -286,6 +286,8 @@
 				}
 			});
 
+			isLoading.value = false;
+
 			if (data.value) {
 				// refresh page to remove old data from everywhere
 				window.location.reload(true);	

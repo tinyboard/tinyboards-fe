@@ -272,7 +272,7 @@
 	// Post
 	const post = () => {
 		return new Promise((resolve, reject) => {
-			useApi('/post', {
+			useApi('/posts', {
 				method: "post",
 				body: {
 					// "creatorId": 0,
