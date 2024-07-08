@@ -24,7 +24,7 @@
 					</svg>
 					<div>
 						<strong>{{ isSelf ? "Your account" : "This account" }} has been {{ user.unban_date ? `suspended for
-							${unbanDays} day(s)` : "permanently banned" }}</strong>
+							${unbanDays} day(s)` : "terminated" }}</strong>
 						<br />
 						<p class="text-sm text-red-800">
 							This profile cannot be viewed by the community.

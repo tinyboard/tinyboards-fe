@@ -32,14 +32,14 @@
 							<p class="text-xs" :class="[settings.bio?.length > 240 ? 'text-red-600' : 'text-gray-400']">{{ settings.bio?.length || 0 }} / 255</p>
 						</div>
 					</div>
-					<p v-else class="text-md text-gray-700">{{ user.bio }}</p>
+					<div v-else class="text-md text-gray-700 user-bio" v-html="user.bio_html" />
 				</div>
 				<p v-else class="hidden sm:block mt-2 font-italic text-gray-400 text-md">This user has no bio. How boring.</p>
 			</div>
 		</div>
 		<div class="flex flex-col space-y-2 flex-grow-0 w-full sm:w-72">
 			<!-- Bio (mobile) -->
-			<div id="bio" v-if="user.bio" class="mb-2 block sm:hidden relative mt:mt-2 rounded w-full sm:w-72 bg-white/70 p-2 pl-4">
+			<div id="bio-mobile" v-if="user.bio" class="mb-2 block sm:hidden relative mt:mt-2 rounded w-full sm:w-72 bg-white/70 p-2 pl-4">
 				<h6 class="font-semibold text-xs text-gray-900">About me</h6>
 				<div v-if="isEditing">
 					<textarea id="biography" name="biography" maxlength="255" rows="2" class="block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="settings.bio" placeholder="Brief description about yourself. Max 255 characters." />
@@ -47,7 +47,7 @@
 						<p class="text-xs" :class="[settings.bio?.length > 240 ? 'text-red-600' : 'text-gray-400']">{{ settings.bio?.length || 0 }} / 255</p>
 					</div>
 				</div>
-				<p v-else class="text-md text-gray-700">{{ user.bio }}</p>
+				<div v-else class="text-md text-gray-700 user-bio" v-html="user.bio_html" />
 			</div>
 			<p v-else class="block sm:hidden mt-2 font-italic text-gray-400 text-md">This user has no bio. How boring.</p>
 			<!-- Editing: Change avatar and banner -->
@@ -253,9 +253,27 @@
 	};
 </script>
 
-<style scoped>
+<style>
 	#frame {
 		transform: scale(1.20);
+	}
+
+	/* restrict usable html tags for bio */
+	.user-bio ul {
+		margin-left: 0.5rem;
+		list-style-type: disc;
+	}
+
+	.user-bio ol {
+		list-style-type: decimal;
+	}
+
+	.user-bio strong {
+		font-weight: bold;
+	}
+
+	.user-bio h1, .user-bio h2, .user-bio h3, .user-bio h4, .user-bio h5, .user-bio h6 {
+		font-weight: bold;
 	}
 
 	/* mobile */

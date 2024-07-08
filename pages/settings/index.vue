@@ -46,7 +46,28 @@
 									</label>
 									<input id="banner-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'banner')"/>
 									<small class="block mt-2 text-gray-400">
-										PNG, JPG and GIF up to 3MB. Recommended 1390x192 pixels.
+										PNG, JPG and GIF up to 5MB. Recommended approximate ratio: 5:1.
+									</small>
+								</div>
+						</div>
+					</div>
+					<!-- Background -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Profile background</label>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col">
+								<img v-if="imageStore.background || settings.profile_background" :src="imageStore.background ?? settings.profile_background" class="w-full h-56 object-cover p-0.5 border bg-white"/>
+								<div v-else class="w-full h-24 rounded-md border border-gray-300 border-dashed"></div>
+								<div class="mt-5">
+									<label for="background-upload" class="inline-block button gray cursor-pointer">
+										{{ settings.profile_background ? 'Change background' : 'Upload background' }}
+									</label>
+									<input id="background-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'background')"/>
+									<small class="block mt-2 text-gray-400">
+										PNG, JPG and GIF up to 5MB.
 									</small>
 								</div>
 						</div>
@@ -59,7 +80,7 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" v-model="settings.display_name" name="company-website" id="display-name" class="mt-1 form-input gray" placeholder="My profile looks horrible" />
+							<input type="text" v-model="settings.display_name" name="displayname" id="displayname" class="mt-1 form-input gray" placeholder="My profile looks horrible" />
 							<p class="mt-2 text-sm text-gray-500">
 								This will take precedence over your @username on your profile page. Your @username won't be changed.
 							</p>
@@ -177,11 +198,26 @@
 			}
 		}
 
+		if (imageStore.background) {
+			const background = dataURLtoFile(imageStore.background);
+			// after converting to file is finished, delete the original b64 url
+			imageStore.purgeBackground();
+
+			try {
+				settings.value.profile_background = await uploadFile(background, 'background');
+			} catch (e) {
+				console.error(e);
+				isLoading.value = false;
+				return;
+			}
+		}
+
 		const { data, pending, error, refresh } = await useApi('/settings', {
 			method: "put",
 			body: {
 				"avatar": settings.value.avatar,
 				"banner": settings.value.banner,
+				"profile_background": settings.value.profile_background,
 				"bio": settings.value.bio,
 				"display_name": settings.value.display_name,
 			}
