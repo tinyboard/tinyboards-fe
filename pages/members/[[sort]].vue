@@ -33,68 +33,43 @@
               :to="`/@${member.person.name}`"
               class="relative flex flex-col p-2.5 sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white"
             >
-              <span
-                class="absolute top-1 right-3 font-bold text-lg text-gray-300"
-              >
-                #{{ i + 1 }}
-              </span>
-              <div class="flex items-center space-x-2">
-                <img
-                  class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-                  :src="member.person.avatar"
-                />
-                <div class="flex flex-col justify-center">
-                  <div class="flex">
-                    <strong class="text-gray-900 text-sm">{{
-                      member.person.name
-                    }}</strong>
-                    <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red"
-                      >Admin</span
-                    >
+              <div class="w-full flex flex-col">
+                <!-- Banner -->
+                <div class="h-24 w-full rounded-t-md bg-primary/20"
+                  :style="{
+                    backgroundImage: `url(${member.person.banner})`,
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat'
+                  }" />
+                <!-- Pfp and username -->
+                <div class="flex flex-row p-2 space-x-2">
+                  <img :src="member.person.avatar" class="w-16 h-16 rounded-md bg-white p-0.5 mt-[-20px]" />
+                  <div class="flex flex-col">
+                    <h3 class="text-lg font-semibold text-gray-800">{{ member.person.display_name ?? member.person.name }}</h3>
+                    <p class="text-sm text-gray-600">{{ member.person.name }}</p>
                   </div>
-                  <!-- New or Old -->
-                  <small
-                    v-if="sort === 'new' || sort === 'old'"
-                    class="text-gray-400 block"
-                  >
-                    Since
-                    <span class="font-medium">{{
-                      format(
-                        parseISO(member.person.creation_date),
-                        "MMM dd, yyyy"
-                      )
-                    }}</span>
-                  </small>
-                  <!-- Post Count -->
-                  <small
-                    v-else-if="sort === 'mostposts'"
-                    class="text-gray-400 block"
-                  >
-                    <span class="font-medium">
-                      {{ member.counts.post_count }}
-                    </span>
-                    {{ member.counts.post_count === 1 ? "post" : "posts" }}
-                  </small>
-                  <!-- Commnent Count -->
-                  <small
-                    v-else-if="sort === 'mostcomments'"
-                    class="text-gray-400 block"
-                  >
-                    <span class="font-medium">
-                      {{ member.counts.comment_count }}
-                    </span>
-                    {{
-                      member.counts.comment_count === 1 ? "comment" : "comments"
-                    }}
-                  </small>
-                  <!-- Reputation -->
-                  <small v-else class="text-gray-400 block">
-                    <span class="font-medium">
-                      {{ member.counts.rep }}
-                    </span>
-                    reputation
-                  </small>
+                </div>
+                <!-- Counts -->
+                <div class="mt-2 p-2 bg-gray-100 rounded-md flex flex-col text-center divide-y space-y-2">
+                  <!-- Rep, posts and comments -->
+                  <div class="flex flex-row justify-around divide-x">
+                    <div class="flex flex-col flex-grow text-center">
+                      <p class="text-md text-gray-700 font-semibold">{{ member.counts.rep }}</p>
+                      <p class="text-xs text-gray-600 font-semibold">Rep</p>
+                    </div>
+                    <div class="flex flex-col flex-grow text-center">
+                      <p class="text-md text-gray-700 font-semibold">{{ member.counts.post_count }}</p>
+                      <p class="text-xs text-gray-600 font-semibold">Posts</p>
+                    </div>
+                    <div class="flex flex-col flex-grow text-center">
+                      <p class="text-md text-gray-700 font-semibold">{{ member.counts.comment_count }}</p>
+                      <p class="text-xs text-gray-600 font-semibold">Comments</p>
+                    </div>
+                  </div>
+                  <!-- Registration date -->
+                  <div class="text-xs text-gray-400 pt-2 text-center">
+                      Registered <span class="text-gray-900">{{ format(parseISO(member.person.creation_date), 'yyyy MMM. dd') }}</span>
+                  </div>
                 </div>
               </div>
             </NuxtLink>
