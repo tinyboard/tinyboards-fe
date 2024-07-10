@@ -31,11 +31,11 @@
           >
             <NuxtLink
               :to="`/@${member.person.name}`"
-              class="relative flex flex-col p-2.5 sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white"
+              class="relative flex flex-col sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white"
             >
               <div class="w-full flex flex-col">
                 <!-- Banner -->
-                <div class="h-24 w-full rounded-t-md bg-primary/20"
+                <div class="h-24 w-full sm:rounded-t-md bg-primary/20"
                   :style="{
                     backgroundImage: `url(${member.person.banner})`,
                     backgroundSize: 'cover',
@@ -46,11 +46,16 @@
                   <img :src="member.person.avatar" class="w-16 h-16 rounded-md bg-white p-0.5 mt-[-20px]" />
                   <div class="flex flex-col">
                     <h3 class="text-lg font-semibold text-gray-800">{{ member.person.display_name ?? member.person.name }}</h3>
-                    <p class="text-sm text-gray-600">{{ member.person.name }}</p>
+                    <p class="text-sm text-gray-600">
+                      {{ member.person.name }}
+                      <span v-if="member.person.is_admin" class="ml-2 badge badge-large badge-red">
+                        Admin
+                      </span>
+                    </p>
                   </div>
                 </div>
                 <!-- Counts -->
-                <div class="mt-2 p-2 bg-gray-100 rounded-md flex flex-col text-center divide-y space-y-2">
+                <div class="m-2 p-2 bg-gray-100 rounded-md flex flex-col text-center divide-y space-y-2">
                   <!-- Rep, posts and comments -->
                   <div class="flex flex-row justify-around divide-x">
                     <div class="flex flex-col flex-grow text-center">
