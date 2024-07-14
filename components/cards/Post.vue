@@ -67,8 +67,17 @@
                 <p>+{{ item.board.name }}</p>
               </div>
             </NuxtLink>
-            <!-- Pin Icon -->
-            <span v-if="item.post.featured_local" title="Post pinned by the mods">
+            <!-- Admin Pin Icon -->
+            <span v-if="item.post.featured_local" title="Post pinned by the admins">
+              <svg xmlns="http://www.w3.org/2000/svg" class="text-red-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
+                <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
+                <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
+              </svg>
+            </span>
+            <!-- Mod Pin Icon -->
+            <span v-if="item.post.featured_board" title="Post pinned by the mods">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
@@ -105,7 +114,7 @@
         </div>
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <NuxtLink class="z-10 relative font-medium sm:text-lg text-gray-900 dark:text-gray-200 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`">
+          <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`">
             {{ item.post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && item.post.body_html" class="mt-2 relative overflow-hidden" :class="{
@@ -266,17 +275,17 @@
                 }}</span>
             </button>
           </li>
-          <li v-if="canMod" class="hidden sm:list-item ml-6">
-            <button @click="confirmSticky" class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
+          <li v-if="(isMod && !item.post.featured_local) || isAdmin" class="hidden sm:list-item ml-6">
+            <button @click="confirmSticky" class="group flex items-center leading-none" :class="[isMod ? 'text-green-500 dark:text-green-400 hover:text-green-600': 'text-red-500 dark:text-red-400 hover:text-red-600']">
               <!-- Pin Icon -->
-              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg v-if="!(item.post.featured_local || item.post.featured_board)" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-show="item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg v-else-if="item.post.featured_local || item.post.featured_board" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
                 <path d="M15 4.5l-3.249 3.249m-2.57 1.433l-2.181 .818l-1.5 1.5l7 7l1.5 -1.5l.82 -2.186m1.43 -2.563l3.25 -3.251">
@@ -285,7 +294,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                item.post.featured_local ? "Unpin" : "Pin"
+                item.post.featured_local || item.post.featured_board ? "Unpin" : "Pin"
                 }}</span>
             </button>
           </li>
@@ -403,6 +412,24 @@ const darkTheme = computed(() => theme.value === 'dark');
 // Expand & Collapse
 const isExpanded = ref(false);
 
+// Title style
+const TITLE_STYLE = {
+  default: "font-medium text-gray-900 dark:text-gray-200 visited:text-gray-400 hover:text-secondary",
+  pinnedSite: "font-bold text-red-700 dark:text-red-800 visited:text-red-500 hover:text-red-900",
+  pinnedBoard: "font-semibold text-green-600 dark:text-green-800 visited:text-green-500 hover:text-green-900"
+};
+
+const titleStyle = computed(() => {
+  const p = props.item.post;
+  if (p.featured_local) {
+    return TITLE_STYLE.pinnedSite;
+  } else if (p.featured_board) {
+    return TITLE_STYLE.pinnedBoard;
+  } else {
+    return TITLE_STYLE.default;
+  }
+});
+
 // Author
 const isAuthor = computed(() => {
   if (!!userStore.user && props.item.creator) {
@@ -418,7 +445,9 @@ const isAuthor = computed(() => {
 });*/
 
 // Can moderate posts
-const canMod = requirePermission("content") || requireModPermission(props.item.mod_permissions, "content");
+const isMod = requireModPermission(props.item.mod_permissions, "content");
+const isAdmin = requirePermission("content");
+const canMod = isAdmin || isMod;
 
 // Status
 const status = computed(() => {
@@ -500,7 +529,10 @@ const confirmSticky = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isStickied: props.item.post.featured_local,
+      isSitePinned: props.item.post.featured_local,
+      isBoardPinned: props.item.post.featured_board,
+      board: props.item.board,
+      isMod
     },
   });
 };

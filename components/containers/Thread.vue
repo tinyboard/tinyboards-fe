@@ -1,7 +1,25 @@
 <template>
   <div class="relative w-full flex flex-col sm:space-y-6">
-    <!-- Pinned Banner -->
+    <!-- Pinned Banner: Site-wide admin pin -->
     <div v-if="item.post.featured_local"
+      class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-red-900 bg-red-100 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24"
+        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
+        <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
+        <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
+      </svg>
+      <div>
+        <strong>Pinned to {{ site.name }}</strong>
+        <br />
+        <p class="text-sm text-red-800">
+          This post was pinned to {{ site.name }} by the admins. It might be of importance.
+        </p>
+      </div>
+    </div>
+    <!-- Pinned Banner: Board pin -->
+    <div v-if="item.post.featured_board"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
       <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24"
         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -11,10 +29,10 @@
         <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
       </svg>
       <div>
-        <strong>Pinned post</strong>
+        <strong>Pinned to +{{ board.name }}</strong>
         <br />
         <p class="text-sm text-green-800">
-          This post was pinned by the mods. It is probably important.
+          This post was pinned to +{{ board.name }} by the board mods. Maybe you should read it.
         </p>
       </div>
     </div>
@@ -322,11 +340,12 @@
               <span class="hidden sm:inline text-sm font-medium">Delete</span>
             </button>
           </li>
-          <li v-if="canMod" class="hidden sm:list-item ml-6">
-            <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
+          <li v-if="(isMod && !item.post.featured_local) || isAdmin" class="hidden sm:list-item ml-6">
+            <button class="group flex items-center leading-none"
+            :class="[isMod ? 'text-green-500 dark:text-green-400 hover:text-green-600': 'text-red-500 dark:text-red-400 hover:text-red-600']"
               @click="confirmSticky">
               <!-- Pin Icon -->
-              <svg v-show="!item.post.featured_local" xmlns="http://www.w3.org/2000/svg"
+              <svg v-show="!(item.post.featured_local || item.post.featured_board)" xmlns="http://www.w3.org/2000/svg"
                 class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -335,7 +354,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-show="item.post.featured_local" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
+              <svg v-show="item.post.featured_local || item.post.featured_board" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -347,7 +366,7 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                item.post.featured_local ? "Unpin" : "Pin"
+                item.post.featured_local || item.post.featured_board ? "Unpin" : "Pin"
               }}</span>
             </button>
           </li>
@@ -496,6 +515,7 @@ const route = useRoute();
 const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
 const site = useSiteStore();
+const board = boardStore.boardView.board;
 const modPermissions = boardStore.modPermissions;
 
 const isAuthed = userStore.isAuthed;
@@ -583,7 +603,9 @@ const isAuthor = computed(() => {
 });
 
 // Admin
-const canMod = requirePermission("content") || requireModPermission(modPermissions, "content");
+const isMod = requireModPermission(modPermissions, "content");
+const isAdmin = requirePermission("content");
+const canMod = isAdmin || isMod;
 
 // Edit
 const isEditing = ref(false);
@@ -615,7 +637,10 @@ const confirmSticky = () => {
     id: props.item.post.id,
     isOpen: true,
     options: {
-      isStickied: props.item.post.featured_local,
+      isSitePinned: props.item.post.featured_local,
+      isBoardPinned: props.item.post.featured_board,
+      board: props.item.board,
+      isMod
     },
   });
 };
