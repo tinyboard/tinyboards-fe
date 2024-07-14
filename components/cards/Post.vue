@@ -383,6 +383,7 @@ import { toPercent } from "@/utils/percent";
 import { useApi } from "@/composables/api";
 import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
+import { requireModPermission } from "@/composables/mod";
 import { useSiteStore } from "@/stores/StoreSite";
 //import { toHexCode } from "@/composables/colors";
 
@@ -417,7 +418,7 @@ const isAuthor = computed(() => {
 });*/
 
 // Can moderate posts
-const canMod = requirePermission("content");
+const canMod = requirePermission("content") || requireModPermission(props.item.mod_permissions, "content");
 
 // Status
 const status = computed(() => {

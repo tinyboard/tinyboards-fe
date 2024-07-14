@@ -55,13 +55,13 @@
         <strong>Post locked</strong>
         <br />
         <p class="text-sm text-yellow-800">
-          This post was locked by the admins. Voting and replying are disabled.
+          This post was locked by the mods. Voting and replying are disabled.
         </p>
       </div>
     </div>
     <!-- Post -->
     <div class="sm:order-2 w-full sm:p-4 border-b sm:border sm:shadow-inner-xs sm:rounded-md"
-      :class="isAdmin && item.post.is_removed ? 'bg-red-500 bg-opacity-20' : 'bg-white'">
+      :class="canMod && item.post.is_removed ? 'bg-red-500 bg-opacity-20' : 'bg-white'">
       <!-- Post Meta Information & Content -->
       <div
         class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
@@ -272,7 +272,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAuthed && !isAuthor && !isAdmin" class="hidden sm:list-item">
+          <li v-if="isAuthed && !isAuthor && !canMod" class="hidden sm:list-item">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700"
               @click="confirmReport">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24"
@@ -322,7 +322,7 @@
               <span class="hidden sm:inline text-sm font-medium">Delete</span>
             </button>
           </li>
-          <li v-if="isAdmin" class="hidden sm:list-item ml-6">
+          <li v-if="canMod" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
               @click="confirmSticky">
               <!-- Pin Icon -->
@@ -351,7 +351,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin" class="hidden sm:list-item ml-6">
+          <li v-if="canMod" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-yellow-500 leading-none dark:text-gray-400 hover:text-yellow-600"
               @click="confirmLock">
               <!-- Lock Icon -->
@@ -377,7 +377,7 @@
               }}</span>
             </button>
           </li>
-          <li v-if="isAdmin && (item.post.is_removed || item.report_count)" class="hidden sm:list-item ml-6">
+          <li v-if="canMod && (item.post.is_removed || item.report_count)" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-green-500 leading-none dark:text-gray-400 hover:text-green-600"
               @click="confirmApprove">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
@@ -390,7 +390,7 @@
               <span class="hidden sm:inline text-sm font-medium">Approve</span>
             </button>
           </li>
-          <li v-if="isAdmin && !item.post.is_removed" class="hidden sm:list-item ml-6">
+          <li v-if="canMod && !item.post.is_removed" class="hidden sm:list-item ml-6">
             <button class="group flex items-center text-red-500 leading-none dark:text-gray-400 hover:text-red-600"
               @click="confirmRemove">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24"
@@ -479,12 +479,14 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 import { usePost } from "@/composables/post";
 import { usePostComments } from "@/composables/comments";
 import { useApi } from "@/composables/api";
+import { useBoardStore } from "@/stores/StoreBoard";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
 import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
+import { requireModPermission } from "@/composables/mod";
 import { useSiteStore } from "@/stores/StoreSite";
 
 const modalStore = useModalStore();
@@ -492,7 +494,9 @@ const toast = useToastStore();
 
 const route = useRoute();
 const userStore = useLoggedInUser();
+const boardStore = useBoardStore();
 const site = useSiteStore();
+const modPermissions = boardStore.modPermissions;
 
 const isAuthed = userStore.isAuthed;
 const authCookie = useCookie("token").value;
@@ -579,7 +583,7 @@ const isAuthor = computed(() => {
 });
 
 // Admin
-const isAdmin = requirePermission("content");
+const canMod = requirePermission("content") || requireModPermission(modPermissions, "content");
 
 // Edit
 const isEditing = ref(false);
