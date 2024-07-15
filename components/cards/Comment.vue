@@ -90,7 +90,7 @@
                   {{ item.replies.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
-              <span class="ml-2 text-red-500 text-xs" v-if="item.comment.is_removed && isAdmin" title="Removed comment">
+              <span class="ml-2 text-red-500 text-xs" v-if="item.comment.is_removed && canMod" title="Removed comment">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -102,7 +102,7 @@
                   <path d="M17 22l5 -5"></path>
                 </svg>
               </span>
-              <span class="ml-2 text-yellow-500 text-xs" v-else-if="item.comment.is_deleted && isAdmin"
+              <span class="ml-2 text-yellow-500 text-xs" v-else-if="item.comment.is_deleted && canMod"
                 title="Deleted comment">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
@@ -133,7 +133,7 @@
             @closed="isEditing = false" />
           <!-- Comment Text Body -->
           <div class="comment-body"
-            :class="isAdmin && item.comment.is_removed ? 'bg-red-400 bg-opacity-40' : 'bg-white dark:bg-gray-800'"
+            :class="canMod && item.comment.is_removed ? 'bg-red-400 bg-opacity-40' : 'bg-white dark:bg-gray-800'"
             v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
         </div>
         <!-- Comment Reports -->
@@ -292,13 +292,13 @@
               Context
             </NuxtLink>
           </li>
-          <li v-if="isAdmin && !item.comment.is_removed" class="hidden sm:list-item">
+          <li v-if="canMod && !item.comment.is_removed" class="hidden sm:list-item">
             <button @click="() => confirmRemoveOrApprove(false)"
               class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
               Remove
             </button>
           </li>
-          <li v-if="isAdmin && (item.report_count || item.comment.is_removed)" class="hidden sm:list-item">
+          <li v-if="canMod && (item.report_count || item.comment.is_removed)" class="hidden sm:list-item">
             <button @click="() => confirmRemoveOrApprove(true)"
               class="text-xs font-medium text-green-500 hover:text-green-700 dark:text-green-400">
               Approve
@@ -338,12 +338,16 @@ import { useSiteStore } from "@/stores/StoreSite";
 import { formatDate } from "@/utils/formatDate";
 import { useApi } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
+import { requireModPermission } from "@/composables/mod";
+import { useBoardStore } from "@/stores/StoreBoard";
 
 const route = useRoute();
 
 const modalStore = useModalStore();
 const toast = useToastStore();
 const site = useSiteStore();
+const boardStore = useBoardStore();
+const modPermissions = boardStore.modPermissions;
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
@@ -433,8 +437,8 @@ const isAuthor = computed(() => {
   }
 });
 
-// Admin
-const isAdmin = requirePermission("content");
+// Mod
+const canMod = requirePermission("content") || requireModPermission(modPermissions, "content");
 
 // Edit
 const isEditing = ref(false);
