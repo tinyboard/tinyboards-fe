@@ -211,7 +211,7 @@ import { toHexCode, toRGB } from "@/composables/colors";
 import { onFileChange, uploadFile } from "@/composables/images";
 
 const boardStore = useBoardStore();
-const board = boardStore.boardView.board;
+const board = boardStore.board;
 const modalStore = useModalStore();
 const imageStore = useImageStore();
 

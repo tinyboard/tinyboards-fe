@@ -70,7 +70,7 @@ import { useBoardStore } from '@/stores/StoreBoard';
 import { useApi } from "@/composables/api";
 
 const boardStore = useBoardStore();
-const board = boardStore.boardView.board;
+const board = boardStore.board;
 
 const settings = ref(JSON.parse(JSON.stringify(board)));
 

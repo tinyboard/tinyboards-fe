@@ -15,7 +15,7 @@
                 <!-- Banner -->
                 <LazyCardsBoardBanner
                     v-if="route.params.board"
-                    :board-view="boardView"
+                    :board="board"
                     class="col-span-full"
                 />
                 <LazyCardsBanner
@@ -243,10 +243,10 @@ const route = useRoute();
 const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
 const v = userStore.user;
-const boardView = boardStore.boardView;
-const board = boardView.board;
-const boardCounts = boardView.counts;
-const moderators = boardStore.mods;
+//const boardView = boardStore.boardView;
+const board = boardStore.board;
+//const boardCounts = boardView.counts;
+const moderators = board.moderators;
 
 console.log("stores have been set up");
 

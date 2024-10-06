@@ -12,7 +12,7 @@
 								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 								<path d="M9 6l6 6l-6 6" />
 							</svg>
-							<NuxtLink :to="`/+${boardStore.boardView.board.name}`" class="font-bold text-lg text-white">+{{ boardStore.boardView.board.name }}</NuxtLink>
+							<NuxtLink :to="`/+${boardStore.board.name}`" class="font-bold text-lg text-white">+{{ boardStore.boardView.board.name }}</NuxtLink>
 						</div>
 						<NuxtLink v-else to="/feed" class="font-bold text-lg text-white dark:text-gray-100">
 							<img :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]" />

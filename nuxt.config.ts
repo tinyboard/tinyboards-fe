@@ -2,6 +2,9 @@
 import { defineNuxtConfig } from "nuxt/config";
 
 const tls = require("tls");
+
+// this is to read env vars to set the base url for graphql requests
+const process = require("process");
 tls.DEFAULT_ECDH_CURVE = "auto";
 
 export default defineNuxtConfig({
@@ -48,18 +51,18 @@ export default defineNuxtConfig({
     "/user/**": { ssr: true },
   },
 
-  apollo: {
-    clients: {
-      default: {
-        httpEndpoint: "http://localhost/api/v2/graphql",
-      },
-    },
-  },
-
   runtimeConfig: {
     public: {
       domain: "",
       use_https: true,
+    },
+  },
+
+  apollo: {
+    clients: {
+      default: {
+        httpEndpoint: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
+      },
     },
   },
 

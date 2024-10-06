@@ -298,7 +298,7 @@ const toast = useToastStore();
 
 // Board
 const boardStore = useBoardStore();
-const board = boardStore.boardView.board;
+const board = boardStore.board;
 
 // Mode
 const mode = computed(() => {

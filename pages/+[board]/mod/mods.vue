@@ -440,9 +440,9 @@ import { format, parseISO } from "date-fns";
 import { useBoardStore } from "@/stores/StoreBoard";
 
 const boardStore = useBoardStore();
-const board = boardStore.boardView.board;
-const modPermissions = boardStore.modPermissions;
-const isMod = modPermissions !== null;
+const board = boardStore.board;
+const modPermissions = board.myModPermissions;
+const isMod = modPermissions !== 0;
 const hasFullPermissions = isMod && requireFullModPerms(modPermissions);
 
 const route = useRoute();

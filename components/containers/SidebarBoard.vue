@@ -64,9 +64,9 @@
                     />
                 </svg>
                 Board since
-                <span class="text-gray-900">{{
-                    format(parseISO(board.creation_date), "yyyy MMM. dd")
-                }}</span>
+                <!--<span class="text-gray-900">{{
+                    format(parseISO(board.creationDate), "yyyy MMM. dd")
+                }}</span>-->
             </div>
         </div>
         <!-- Board Moderation -->
@@ -317,18 +317,18 @@
             >
                 <li
                     v-for="mod in mods.slice(0, 6)"
-                    :key="mod.moderator.id"
+                    :key="mod.person.id"
                     class="pt-2 first:pt-0"
                 >
                     <NuxtLink
-                        :to="`/@${mod.moderator.name}`"
+                        :to="`/@${mod.person.name}`"
                         class="flex space-x-2"
                     >
                         <img
                             loading="lazy"
                             class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
                             :src="
-                                mod.moderator.avatar ??
+                                mod.person.avatar ??
                                 'https://placekitten.com/36/36'
                             "
                         />
@@ -337,18 +337,16 @@
                         >
                             <div class="flex">
                                 <strong class="text-sm">{{
-                                    mod.moderator.display_name ??
-                                    mod.moderator.name
+                                    mod.person.displayName ?? mod.person.name
                                 }}</strong>
-                                <!-- Role -->
                                 <span
-                                    v-if="mod.moderator.is_admin"
+                                    v-if="mod.person.is_admin"
                                     class="ml-1 badge badge-red"
                                     >Admin</span
                                 >
                             </div>
                             <small class="text-gray-400 block">
-                                {{ mod.moderator.name }}
+                                {{ mod.person.name }}
                             </small>
                         </div>
                     </NuxtLink>
@@ -394,9 +392,9 @@ const props = defineProps({
     },
 });
 
-const board = boardStore.boardView.board;
-const isMod = boardStore.modPermissions !== null;
-const mods = boardStore.mods;
+const board = boardStore.board;
+const isMod = board.myModPermissions !== 0;
+const mods = board.moderators;
 
 const modSelf = async () => {
     modSelfPending.value = true;
@@ -408,7 +406,7 @@ const modSelf = async () => {
     modSelfPending.value = false;
 
     if (data.value) {
-        userStore.addModdedBoard(boardStore.boardView);
+        //userStore.addModdedBoard(boardStore.boardView);
         router.push(`/+${board.name}/mod/mods`);
     } else {
         console.error(error.value);

@@ -515,8 +515,8 @@ const route = useRoute();
 const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
 const site = useSiteStore();
-const board = boardStore.boardView.board;
-const modPermissions = boardStore.modPermissions;
+const board = boardStore.board;
+const modPermissions = board.myModPermissions;
 
 const isAuthed = userStore.isAuthed;
 const authCookie = useCookie("token").value;

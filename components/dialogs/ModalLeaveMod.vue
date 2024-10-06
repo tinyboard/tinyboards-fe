@@ -131,7 +131,7 @@ const boardStore = useBoardStore();
 const userStore = useLoggedInUser();
 const toast = useToastStore();
 
-const board = boardStore.boardView.board;
+const board = boardStore.board;
 const u = userStore.user;
 
 const leave = async () => {
