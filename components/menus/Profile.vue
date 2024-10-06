@@ -161,7 +161,7 @@
 
   const links = [
   { name: 'About', href: '/help/about' },
-  { name: 'House Rules', href: '/help/rules' },
+  { name: 'Rules', href: '/help/rules' },
   { name: 'Terms', href: '/help/terms' },
   { name: 'Privacy', href: '/help/privacy' },
   ];
