@@ -138,23 +138,23 @@
                     />
                 </svg>
                 <NuxtLink
-                    v-for="boardView in joinedBoards"
-                    :key="boardView.board.id"
-                    :to="`/+${boardView.board.name}`"
+                    v-for="board in joinedBoards"
+                    :key="board.name"
+                    :to="`/+${board.name}`"
                     custom
                     v-slot="{ isActive, navigate }"
                 >
                     <button
-                        :title="`+${boardView.board.name} · ${boardView.counts.subscribers} members`"
+                        :title="`+${board.name} · ${board.subscribers} members`"
                         class="relative flex group border p-[1px] transition-all duration-100"
                         :class="[
                             isActive
                                 ? 'bg-primary border-primary text-primary'
                                 : 'bg-white border-gray-300 dark:bg-gray-900 dark:border-gray-800 text-gray-300 hover:bg-primary/70 hover:text-primary/70',
                         ]"
-                        @click="() => navigate(`/+${boardView.board.name}`)"
+                        @click="() => navigate(`/+${board.name}`)"
                     >
-                        <img :src="boardView.board.icon" class="w-12 h-12" />
+                        <img :src="board.icon" class="w-12 h-12" />
                         <!--<div class="absolute mx-2 p-2 w-auto min-w-max left-16 rounded-md shadow-md bg-white transition-all duration-100 scale-0 group-hover:scale-100 origin-left">
 							<div class="flex flex-row space-x-2 items-center">
 								<img :src="boardView.board.icon" class="w-12 h-12" />
@@ -189,23 +189,23 @@
                     />
                 </svg>
                 <NuxtLink
-                    v-for="boardView in moddedBoards"
-                    :key="boardView.board.id"
-                    :to="`/+${boardView.board.name}`"
+                    v-for="board in moddedBoards"
+                    :key="board.name"
+                    :to="`/+${board.name}`"
                     custom
                     v-slot="{ isActive, navigate }"
                 >
                     <button
-                        :title="`+${boardView.board.name} · ${boardView.counts.subscribers} members`"
+                        :title="`+${board.name} · ${board.subscribers} members`"
                         class="relative flex group border p-[1px] transition-all duration-100"
                         :class="[
                             isActive
                                 ? 'bg-primary border-primary text-primary'
                                 : 'bg-white border-gray-300 dark:bg-gray-900 dark:border-gray-800 text-gray-300 hover:bg-primary/70 hover:text-primary/70',
                         ]"
-                        @click="() => navigate(`/+${boardView.board.name}`)"
+                        @click="() => navigate(`/+${board.name}`)"
                     >
-                        <img :src="boardView.board.icon" class="w-12 h-12" />
+                        <img :src="board.icon" class="w-12 h-12" />
                         <!--<div class="absolute mx-2 p-2 w-auto min-w-max left-16 rounded-md shadow-md bg-white transition-all duration-100 scale-0 group-hover:scale-100 origin-left">
 							<div class="flex flex-row space-x-2 items-center">
 								<img :src="boardView.board.icon" class="w-12 h-12" />

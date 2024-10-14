@@ -62,6 +62,7 @@ export default defineNuxtConfig({
     clients: {
       default: {
         httpEndpoint: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
+        tokenName: "token",
       },
     },
   },

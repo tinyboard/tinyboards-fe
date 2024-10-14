@@ -64,9 +64,9 @@
                     />
                 </svg>
                 Board since
-                <!--<span class="text-gray-900">{{
+                <span class="text-gray-900">{{
                     format(parseISO(board.creationDate), "yyyy MMM. dd")
-                }}</span>-->
+                }}</span>
             </div>
         </div>
         <!-- Board Moderation -->

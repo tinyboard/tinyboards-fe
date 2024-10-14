@@ -5,7 +5,7 @@ import { useApi } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const nuxtApp = useNuxtApp();
+  /*const nuxtApp = useNuxtApp();
   const userStore = useLoggedInUser();
   const toast = useToastStore();
 
@@ -62,5 +62,5 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         }
       });
     }
-  }
+    }*/
 });
