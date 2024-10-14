@@ -137,7 +137,38 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }*/
 
   if (data.value.board) {
+    const recentBoards = useCookie("recentBoards");
     boardStore.setBoard(data.value.board);
+
+    if (!recentBoards.value) {
+      recentBoards.value = [];
+    }
+
+    // new board
+    if (
+      recentBoards.value.filter((board) => board.name == data.value.board.name)
+        .length == 0
+    ) {
+      recentBoards.value.unshift({
+        name: data.value.board.name,
+        title: data.value.board.title,
+        icon: data.value.board.icon,
+      });
+
+      // only the 5 most recently viewed boards are stored
+      recentBoards.value = recentBoards.value.slice(0, 5);
+    } else {
+      // board already listed: move it to the top
+      recentBoards.value = recentBoards.value.filter(
+        (board) => board.name != data.value.board.name,
+      );
+
+      recentBoards.value.unshift({
+        name: data.value.board.name,
+        title: data.value.board.title,
+        icon: data.value.board.icon,
+      });
+    }
   } else {
     boardStore.clear();
   }

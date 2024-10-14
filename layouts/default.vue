@@ -7,9 +7,9 @@
         <!-- Navigation Bar -->
         <component :is="isAuthed ? NavbarAuthenticated : Navbar" />
         <!-- Side Navigation -->
-        <NavbarLeft
+        <!--<NavbarLeft
             v-if="site.enableBoards && !route.meta.isLeftNavbarDisabled"
-        />
+        />-->
         <slot />
         <NavigationFooter v-if="!route.meta.isFooterDisabled" />
         <LazyDialogsToastList v-if="toastStore.hasInit" />

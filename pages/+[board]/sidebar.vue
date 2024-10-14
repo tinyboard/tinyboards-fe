@@ -152,7 +152,7 @@ definePageMeta({
     key: (route) => route.fullPath,
 });
 
-const title = board.is_removed
+const title = board.isBanned
     ? `+${board.name}: Banned`
     : `${board.title ?? board.name} (+${board.name})`;
 

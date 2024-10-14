@@ -24,7 +24,8 @@
 						</span>
 					</div>
 					<!-- Main Navigation Links -->
-					<div v-if="!site.enableBoards" class="header-menu-main hidden md:block w-1/3 ml-8">
+					<MenusBoardNavigator v-if="site.enableBoards" class="ml-8 hidden md:block" />
+					<div v-else class="header-menu-main hidden md:block w-1/3 ml-8">
 						<ul class="flex">
 							<li class="header-menu-item flex items-center text-sm leading-5" v-for="link in links"
 								:key="link.name">
