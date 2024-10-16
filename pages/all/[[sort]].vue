@@ -175,6 +175,7 @@ console.log("stores have been set up");
 definePageMeta({
     alias: ["/all/:sort?"],
     key: (route) => route.fullPath,
+    title: "All",
 });
 
 const preferCardView = useCookie("preferCardView") ?? false;

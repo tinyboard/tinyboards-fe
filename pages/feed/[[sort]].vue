@@ -193,6 +193,7 @@ console.log("stores have been set up");
 definePageMeta({
     alias: ["", "/feed/:sort?"],
     key: (route) => route.fullPath,
+    title: "Home",
 });
 
 console.log("page meta is good");

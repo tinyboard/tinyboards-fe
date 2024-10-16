@@ -16,7 +16,7 @@
     "nuxt": "^3.0.0"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.7.3",
+    "@headlessui/vue": "^1.7.18",
     "@justinribeiro/lite-youtube": "^1.4.0",
     "@nuxtjs/dotenv": "^1.4.2",
     "@nuxtjs/i18n": "^9.0.0-rc.1",
