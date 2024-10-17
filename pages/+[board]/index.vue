@@ -253,6 +253,7 @@ console.log("stores have been set up");
 definePageMeta({
     alias: ["/+:board", "/+:board?/:sort?"],
     key: (route) => route.fullPath,
+    title: "Board Listing"
 });
 
 const title = board.is_removed

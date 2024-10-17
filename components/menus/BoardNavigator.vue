@@ -359,7 +359,7 @@ const icon = computed(() => boardStore.board.icon);
 
 const recentBoards = computed(() => {
     return searchQuery.value === ""
-        ? recentBoardsUnfiltered.value.slice(0, 10)
+        ? (recentBoardsUnfiltered.value ?? [])
         : recentBoardsUnfiltered.value.filter((board) =>
               board.name
                   .toLowerCase()

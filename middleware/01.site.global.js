@@ -1,6 +1,7 @@
 import cookie from "cookie";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { usePostsStore } from "@/stores/StorePosts";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useApi } from "@/composables/api";
 import gql from "graphql-tag";
@@ -9,7 +10,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const nuxtApp = useNuxtApp();
   const siteStore = useSiteStore();
   const boardStore = useBoardStore();
-  const route = useRoute();
   const userStore = useLoggedInUser();
   //console.log("fetch site...");
 
@@ -17,6 +17,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const cookies = cookie.parse(cookieHeader);
 
   const jwt = cookies["token"];
+
+  // clear posts
+  usePostsStore().clear();
 
   const { data, error } = await useAsyncQuery(
     gql`
@@ -72,6 +75,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
           unreadMentionsCount
         }
         board(name: $boardName) @include(if: $shouldLoadBoard) {
+          id
           name
           title
           description

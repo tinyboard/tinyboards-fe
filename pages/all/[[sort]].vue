@@ -114,7 +114,7 @@
                         v-if="posts?.length"
                         :posts="posts"
                         :isCompact="!preferCardView"
-                        :isLoading="pending"
+                        :isLoading="false"
                         :hasError="error"
                     />
                     <div
@@ -130,16 +130,10 @@
                         </p>
                     </div>
                     <!-- Pagination -->
-                    <div
-                        v-if="totalPages > 1"
-                        class="w-full mt-4 px-2.5 sm:px-0"
-                    >
-                        <LazyNavigationPaginate
-                            :total-pages="totalPages"
-                            :per-page="limit"
-                            :current-page="page"
-                        />
-                    </div>
+                    <LazyNavigationPaginate2
+                        @paginate="loadMore"
+                        :is-loading="loading"
+                    />
                 </div>
                 <!-- Sidebar -->
                 <LazyContainersSidebar />
@@ -149,10 +143,9 @@
 </template>
 
 <script setup>
-import { usePostsStore } from "@/stores/StorePosts";
-import { getListing } from "@/composables/listing";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
+import { usePosts } from "@/composables/posts";
 
 // Import sidebar components
 const Sidebar = defineAsyncComponent(
@@ -179,60 +172,9 @@ definePageMeta({
 });
 
 const preferCardView = useCookie("preferCardView") ?? false;
-// Pagination
-const page = computed(() => Number.parseInt(route.query.page) || 1);
-const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Posts
-const postsStore = usePostsStore();
-console.log("using posts store");
-
-const sorts = [
-    "hot",
-    "new",
-    "topall",
-    "topmonth",
-    "topweek",
-    "topday",
-    "mostcomments",
-    "newcomments",
-];
-const sort = computed(() => {
-    return sorts.includes(route.params.sort) ? route.params.sort : "hot";
-});
-
-console.log("computed sort");
-
-const { items, totalCount, paginate, pending, error, refresh } =
-    await getListing(
-        {
-            sort: sort.value,
-            limit: limit.value,
-            page: page.value,
-            type_: "All",
-        },
-        "posts",
-    );
-
-console.log("listing awaited");
-
-if (error.value && error.value.response) {
-    throw createError({
-        statusCode: 404,
-        statusMessage:
-            "We could not find the page you were looking for. Try better next time.",
-        fatal: true,
-    });
-}
-
-console.log("no error with listing request");
-
-postsStore.posts = items;
-const posts = postsStore.posts;
-
-const totalPages = computed(() => {
-    return Math.ceil(totalCount.value / limit.value || 1);
-});
-
-console.log("links are okay");
+const { posts, error, queryParams, loadMore, loading } = await usePosts(
+    route,
+    "all",
+);
 </script>

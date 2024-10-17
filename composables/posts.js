@@ -1,6 +1,49 @@
 import { ref } from "vue";
 import { useApi } from "@/composables/api";
+import { usePostsStore } from "@/stores/StorePosts";
 
+export async function usePosts(route, listingType) {
+  const postsStore = usePostsStore();
+
+  const { data, error } = await postsStore.fetchPosts({
+    route,
+    listingType,
+  });
+
+  postsStore.setPosts(data.value?.listPosts);
+  const posts = ref(postsStore.posts);
+  const loading = ref(false);
+
+  const queryParams = {
+    page: ref(postsStore.options.page),
+    limit: postsStore.options.limit,
+  };
+
+  const loadMore = async () => {
+    loading.value = true;
+    postsStore
+      .paginate()
+      .then((result) => {
+        queryParams.page.value = postsStore.options.page;
+        postsStore.posts = postsStore.posts.concat(result.data.listPosts);
+        posts.value = postsStore.posts;
+      })
+      .catch(console.error)
+      .finally(() => (loading.value = false));
+    /*const result = await postsStore.paginate();
+
+    postsStore.posts = postsStore.posts.concat(result.data.listPosts);
+    posts.value = postsStore.posts;*/
+  };
+
+  return {
+    posts,
+    error,
+    queryParams,
+    loadMore,
+    loading,
+  };
+}
 
 // I moved this into listing.js (same folder as this one)
 

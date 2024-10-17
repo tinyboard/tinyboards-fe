@@ -115,7 +115,7 @@
                         v-if="posts?.length"
                         :posts="posts"
                         :isCompact="!preferCardView"
-                        :isLoading="pending"
+                        :isLoading="false"
                         :hasError="error"
                     />
                     <!-- Empty State -->
@@ -146,7 +146,11 @@
                         </p>
                     </div>
                     <!-- Pagination -->
-                    <div
+                    <LazyNavigationPaginate2
+                        :is-loading="loading"
+                        @paginate="loadMore"
+                    />
+                    <!--<div
                         v-if="totalPages > 1"
                         class="w-full mt-4 px-2.5 sm:px-0"
                     >
@@ -155,7 +159,7 @@
                             :per-page="limit"
                             :current-page="page"
                         />
-                    </div>
+                    </div>-->
                 </div>
                 <!-- Sidebar -->
                 <LazyContainersSidebar />
@@ -165,10 +169,9 @@
 </template>
 
 <script setup>
-import { usePostsStore } from "@/stores/StorePosts";
-import { getListing } from "@/composables/listing";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
+import { usePosts } from "@/composables/posts";
 
 console.log("hi from the feed page");
 
@@ -197,64 +200,16 @@ definePageMeta({
 });
 
 console.log("page meta is good");
-
 const preferCardView = useCookie("preferCardView") ?? false;
-// Pagination
-const page = computed(() => Number.parseInt(route.query.page) || 1);
-const limit = computed(() => Number.parseInt(route.query.limit) || 25);
-
-// Posts
-const postsStore = usePostsStore();
-console.log("using posts store");
-
-const sorts = [
-    "hot",
-    "new",
-    "topall",
-    "topmonth",
-    "topweek",
-    "topday",
-    "mostcomments",
-    "newcomments",
-];
-const sort = computed(() => {
-    return sorts.includes(route.params.sort) ? route.params.sort : "hot";
-});
-
-console.log("computed sort");
 
 const isHomeFeed = computed(() => userStore.isAuthed && site.enableBoards);
 
-const { items, totalCount, paginate, pending, error, refresh } =
-    await getListing(
-        {
-            sort: sort.value,
-            limit: limit.value,
-            page: page.value,
-            type_: isHomeFeed.value ? "Subscribed" : "Local",
-        },
-        "posts",
-    );
+console.log("before fetch");
 
-console.log("listing awaited");
-
-if (error.value && error.value.response) {
-    throw createError({
-        statusCode: 404,
-        statusMessage:
-            "We could not find the page you were looking for. Try better next time.",
-        fatal: true,
-    });
-}
-
-console.log("no error with listing request");
-
-postsStore.posts = items;
-const posts = postsStore.posts;
-
-const totalPages = computed(() => {
-    return Math.ceil(totalCount.value / limit.value || 1);
-});
+const { posts, error, loadMore, loading } = await usePosts(
+    route,
+    isHomeFeed.value ? "subscribed" : "local",
+);
 
 console.log("posts saved");
 

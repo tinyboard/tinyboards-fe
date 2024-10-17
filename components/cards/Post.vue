@@ -25,23 +25,23 @@
                 <strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
                 <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
                 <!-- Role -->
-                <span v-if="item.creator.is_admin" class="ml-1 badge badge-red">Admin</span>
+                <span v-if="creatorIsAdmin" class="ml-1 badge badge-red">Admin</span>
               </NuxtLink>
               <!-- User Title -->
               <span v-if="item.creator && item.creator.title" class="ml-2 px-1 inline-flex leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
                 {{ item.creator.title }}
               </span>
               <!-- Post Timestamps -->
-              <span :title="item.post.creation_date" class="ml-2">
-                <span>{{ formatDate(new Date(item.post.creation_date)) }}</span>
+              <span :title="item.creationDate" class="ml-2">
+                <span>{{ formatDate(new Date(item.creationDate)) }}</span>
               </span>
-              <span class="ml-2" v-if="item.post.edited_date">
+              <span class="ml-2" v-if="item.edited_date">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span class="italic pl-1">
-                  Edited {{ formatDate(new Date(item.post.edited_date)) }}</span>
+                  Edited {{ formatDate(new Date(item.edited_date)) }}</span>
               </span>
               <!-- Tags -->
-              <span class="ml-2" v-if="item.post.is_nsfw" title="This post is marked 18+">
+              <span class="ml-2" v-if="item.isNSFW" title="This post is marked 18+">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span class="badge badge-red">18+</span>
               </span>
@@ -58,7 +58,7 @@
           </div>
           <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
-            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="{'color': 'rgb(' + item.board.primary_color + ')'}">
+            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${item.board.name}`" class="font-bold" :style="{'color': 'rgb(' + item.board.primaryColor + ')'}">
               <div class="hidden md:flex space-x-2 items-center">
                 <img :src="item.board.icon" class="bg-white border p-[0.5px]" :class="isCompact ? 'w-5 h-5' : 'w-8 h-8'" />
                 <p>{{ item.board.title }}</p>
@@ -68,7 +68,7 @@
               </div>
             </NuxtLink>
             <!-- Admin Pin Icon -->
-            <span v-if="item.post.featured_local" title="Post pinned by the admins">
+            <span v-if="item.featuredLocal" title="Post pinned by the admins">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-red-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
@@ -77,7 +77,7 @@
               </svg>
             </span>
             <!-- Mod Pin Icon -->
-            <span v-if="item.post.featured_board" title="Post pinned by the mods">
+            <span v-if="item.featuredBoard" title="Post pinned by the mods">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-green-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
@@ -86,7 +86,7 @@
               </svg>
             </span>
             <!-- Lock Icon -->
-            <span v-if="item.post.is_locked" title="Post locked by the mods">
+            <span v-if="item.isLocked" title="Post locked by the mods">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-yellow-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <rect x="5" y="11" width="14" height="10" rx="2"></rect>
@@ -95,7 +95,7 @@
               </svg>
             </span>
             <!-- Link Icon -->
-            <span v-if="!!item.post.url" title="Post contains a link">
+            <span v-if="!!item.url" title="Post contains a link">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
@@ -114,25 +114,25 @@
         </div>
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`">
-            {{ item.post.title }}
+          <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.id}/${item.titleChunk}`">
+            {{ item.title }}
           </NuxtLink>
-          <div v-if="(!isCompact || isExpanded) && item.post.body_html" class="mt-2 relative overflow-hidden" :class="{
-            'max-h-56 overlay': !isExpanded && (item.post.body.length > 800 || item.post.body.includes('![](http'))
+          <div v-if="(!isCompact || isExpanded) && item.bodyHtml" class="mt-2 relative overflow-hidden" :class="{
+            'max-h-56 overlay': !isExpanded && (item.bodyHtml > 800 || item.bodyHtml.includes('<img'))
           }">
             <!-- Post Image -->
             <div v-if="hasImage" class="mt-2.5 md:mt-4">
               <span class="inline-block p-2.5 bg-white border shadow-polaroid">
-                <img loading="lazy" :src="item.post.url" alt="Post image" class="sm:max-w-xs object-cover img-expand" />
+                <img loading="lazy" :src="item.url" alt="Post image" class="sm:max-w-xs object-cover img-expand" />
               </span>
             </div>
             <!-- Post Body -->
-            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="item.post.body_html"></div>
+            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="item.bodyHtml"></div>
           </div>
         </div>
         <!-- Reports -->
         <div v-if="item.report_count && !isCompact" class="z-10 relative mt-3">
-          <CardsReports :id="item.post.id" />
+          <CardsReports :id="item.id" />
         </div>
         <!-- Actions -->
         <ul class="z-10 relative mt-4 flex flex-grow items-center" :class="{ 'sm:hidden': isCompact && !isExpanded }">
@@ -158,7 +158,7 @@
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ item.counts.score + voteType }}
+              {{ item.score + voteType }}
             </span>
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'
@@ -178,7 +178,7 @@
               </svg>
             </NuxtLink>
           </li>
-          <li v-if="(item.post.body.length > 800 || item.post.body.includes('![](http')) && item.post.body_html" class="ml-6 hidden sm:list-item">
+          <li v-if="(item.bodyHtml.length > 800 || item.bodyHtml.includes('<img')) && item.bodyHtml" class="ml-6 hidden sm:list-item">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="isExpanded = !isExpanded">
               <!-- Arrows In Icon -->
               <svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -202,13 +202,13 @@
             </button>
           </li>
           <li class="ml-3 sm:ml-6 list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.id}/${item.titleChunk}`" class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
               </svg>
               <span class="text-sm font-medium">{{
-                item.counts.comments
+                item.commentCount
                 }}</span>
             </NuxtLink>
           </li>
@@ -271,21 +271,21 @@
                 <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                item.post.is_deleted ? "Deleted" : "Delete"
+                item.isDeleted ? "Deleted" : "Delete"
                 }}</span>
             </button>
           </li>
-          <li v-if="(isMod && !item.post.featured_local) || isAdmin" class="hidden sm:list-item ml-6">
+          <li v-if="(isMod && !item.featuredLocal) || isAdmin" class="hidden sm:list-item ml-6">
             <button @click="confirmSticky" class="group flex items-center leading-none" :class="[isMod ? 'text-green-500 dark:text-green-400 hover:text-green-600': 'text-red-500 dark:text-red-400 hover:text-red-600']">
               <!-- Pin Icon -->
-              <svg v-if="!(item.post.featured_local || item.post.featured_board)" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg v-if="!(item.featuredLocal || item.featuredBoard)" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-else-if="item.post.featured_local || item.post.featured_board" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg v-else-if="item.featuredLocal || item.featuredBoard" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
                 <path d="M15 4.5l-3.249 3.249m-2.57 1.433l-2.181 .818l-1.5 1.5l7 7l1.5 -1.5l.82 -2.186m1.43 -2.563l3.25 -3.251">
@@ -294,11 +294,11 @@
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                item.post.featured_local || item.post.featured_board ? "Unpin" : "Pin"
+                item.featuredLocal || item.featuredBoard ? "Unpin" : "Pin"
                 }}</span>
             </button>
           </li>
-          <li v-if="canMod && !item.post.is_removed" class="hidden sm:list-item ml-6">
+          <li v-if="canMod && !item.isRemoved" class="hidden sm:list-item ml-6">
             <button @click="confirmRemove" class="group flex items-center text-red-500 leading-none dark:text-red-400 hover:text-red-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -308,7 +308,7 @@
               <span class="hidden sm:inline text-sm font-medium">Remove</span>
             </button>
           </li>
-          <li v-if="canMod && (item.post.is_removed || item.report_count)" class="hidden sm:list-item ml-6">
+          <li v-if="canMod && (item.isRemoved || item.report_count)" class="hidden sm:list-item ml-6">
             <button @click="confirmApprove" class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -337,11 +337,11 @@
         <div class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
           <dl class="flex justify-between">
             <dt>Score&nbsp;</dt>
-            <dd class="font-medium">{{ item.counts.score + voteType }}</dd>
+            <dd class="font-medium">{{ item.score + voteType }}</dd>
           </dl>
           <dl class="flex justify-between">
             <dt>Replies&nbsp;</dt>
-            <dd class="font-medium">{{ item.counts.comments }}</dd>
+            <dd class="font-medium">{{ item.commentCount }}</dd>
           </dl>
         </div>
       </div>
@@ -359,7 +359,7 @@
         </svg>
       </button>-->
       <!-- Stretched link (card mode only) -->
-      <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
+      <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.id}/${item.titleChunk}`" class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
     <!-- Avatar - Desktop Only -->
     <NuxtLink v-show="!isCompact" :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
@@ -420,10 +420,10 @@ const TITLE_STYLE = {
 };
 
 const titleStyle = computed(() => {
-  const p = props.item.post;
-  if (p.featured_local) {
+  const p = props.item;
+  if (p.featuredLocal) {
     return TITLE_STYLE.pinnedSite;
-  } else if (p.featured_board) {
+  } else if (p.featuredBoard) {
     return TITLE_STYLE.pinnedBoard;
   } else {
     return TITLE_STYLE.default;
@@ -439,33 +439,36 @@ const isAuthor = computed(() => {
   }
 });
 
+const creatorIsAdmin = props.item.creator.adminLevel > 0;
+
 // Admin
 /*const isAdmin = computed(() => {
-  return !!userStore.user && userStore.user.is_admin;
+  return !!userStore.user && userStore.user.isAdmin;
 });*/
 
 // Can moderate posts
-const isMod = requireModPermission(props.item.mod_permissions, "content");
+//const isMod = requireModPermission(props.item.myModPermissions, "content");
+const isMod = false;
 const isAdmin = requirePermission("content");
 const canMod = isAdmin || isMod;
 
 // Status
 const status = computed(() => {
-  if (props.item.post.is_removed) {
+  if (props.item.isRemoved) {
     return "removed";
-  } else if (props.item.post.is_deleted) {
+  } else if (props.item.isDeleted) {
     return "deleted";
   }
 });
 
 // Image
-const hasImage = computed(() => props.item.post.url && canEmbedImage(props.item.post.url));
+const hasImage = computed(() => props.item.url && canEmbedImage(props.item.url));
 
 // Vote
-const voteType = ref(props.item.my_vote);
+const voteType = ref(props.item.myVote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
-  await useApi(`/posts/${props.item.post.id}/vote`, {
+  await useApi(`/posts/${props.item.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
@@ -489,7 +492,7 @@ const vote = async (type = 0) => {
 const isSaved = ref(props.item.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useApi(`/post/${props.item.post.id}/save`, {
+  await useApi(`/post/${props.item.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,
@@ -517,7 +520,7 @@ const save = async () => {
 const confirmDelete = () => {
   modalStore.setModal({
     modal: "ModalDelete",
-    id: props.item.post.id,
+    id: props.item.id,
     isOpen: true,
   });
 };
@@ -526,11 +529,11 @@ const confirmDelete = () => {
 const confirmSticky = () => {
   modalStore.setModal({
     modal: "ModalSticky",
-    id: props.item.post.id,
+    id: props.item.id,
     isOpen: true,
     options: {
-      isSitePinned: props.item.post.featured_local,
-      isBoardPinned: props.item.post.featured_board,
+      isSitePinned: props.item.featuredLocal,
+      isBoardPinned: props.item.featuredBoard,
       board: props.item.board,
       isMod
     },
@@ -541,7 +544,7 @@ const confirmSticky = () => {
 const confirmReport = () => {
   modalStore.setModal({
     modal: "ModalReport",
-    id: props.item.post.id,
+    id: props.item.id,
     isOpen: true,
   });
 };
@@ -550,7 +553,7 @@ const confirmReport = () => {
 const confirmRemove = () => {
   modalStore.setModal({
     modal: "ModalRemoveOrApprove",
-    id: props.item.post.id,
+    id: props.item.id,
     isOpen: true,
     options: {
       approve: false
@@ -562,7 +565,7 @@ const confirmRemove = () => {
 const confirmApprove = () => {
   modalStore.setModal({
     modal: "ModalRemoveOrApprove",
-    id: props.item.post.id,
+    id: props.item.id,
     isOpen: true,
     options: {
       approve: true
@@ -574,7 +577,7 @@ const confirmApprove = () => {
 const openOptions = () => {
   modalStore.setModal({
     modal: "ModalOptions",
-    id: props.item.post.id,
+    id: props.item.id,
     contentType: "post",
     isOpen: true,
     options: {
@@ -585,7 +588,7 @@ const openOptions = () => {
 
 // Utils
 const percentUpvoted = computed(() => {
-  const num = 1 - props.item.counts.downvotes / props.item.counts.upvotes;
+  const num = 1 - props.item.downvotes / props.item.upvotes;
   if (!isFinite(num)) return 0;
   return toPercent(num);
 });
