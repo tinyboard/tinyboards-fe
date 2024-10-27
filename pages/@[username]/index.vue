@@ -1,7 +1,7 @@
 <template>
     <component
-        v-if="personView"
-        :personView="personView"
+        v-if="user"
+        :user="user"
         :moderates="moderates"
         :is="canView ? Profile : ProfileRemoved"
     >
@@ -35,7 +35,7 @@
             <LazyListsComments
                 v-if="comments?.length"
                 :comments="comments"
-                class="p-4 bg-white border-y sm:border md:rounded-md md:shadow-inner-white"
+                :cards="true"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
                 @{{ username }} hasn't made any comments.
@@ -89,12 +89,9 @@ const ProfileRemoved = defineAsyncComponent(
 const username = computed(() => route.params.username);
 
 // Fetch user with posts and comments
-const {
-    data: userData,
-    error,
-    pending,
-    refresh,
-} = await useFetchUser(username.value, {
+const { data: userData, error } = await useFetchUser(username.value, {
+    withPosts: true,
+    withComments: true,
     sort: "new",
     limit: 5,
     page: 1,
@@ -109,16 +106,24 @@ if (error.value && error.value.response) {
     });
 }
 
-const personView = userData.value.person_view;
-const user = personView.person;
-const moderates = userData.value.moderates;
+/*if (error) {
+    throw createError({
+        statusCode: 500,
+        statusMessage: "Well shit.",
+        fatal: true,
+    });
+}*/
 
-if (user.is_deleted) {
+//const personView = userData.value.person_view;
+const user = userData.value?.user;
+const moderates = user.moderates;
+
+if (user.isDeleted) {
     title.value = "Deleted Account";
-} else if (user.is_banned) {
+} else if (user.isBanned) {
     title.value = `@${user.name}: Suspended`;
 } else {
-    title.value = `${user.display_name ?? user.name} (@${user.name})`;
+    title.value = `${user.displayName ?? user.name} (@${user.name})`;
 }
 
 // Display preferences
@@ -136,13 +141,11 @@ const isSelf = computed(() => {
 const isAdmin = requirePermission("content") || requirePermission("users");
 
 const canView = computed(() => {
-    const u = personView.person;
-
-    if (u.is_deleted) {
+    if (user.isDeleted) {
         return false;
     }
 
-    if (!u.is_banned) {
+    if (!user.isBanned) {
         return true;
     }
 
@@ -156,10 +159,6 @@ const canView = computed(() => {
 	creator_id: user.value.id
 }, 'posts');*/
 
-const posts = userData.value.posts;
-const comments = userData.value.comments;
-
-const totalPages = computed(() => {
-    return Math.ceil(totalCount / limit.value || 1);
-});
+const posts = user.posts;
+const comments = user.comments;
 </script>

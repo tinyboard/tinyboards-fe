@@ -205,7 +205,11 @@
                             </p>
                         </div>
                         <!-- Pagination -->
-                        <div
+                        <LazyNavigationPaginate2
+                            @paginate="loadMore"
+                            :is-loading="loading"
+                        />
+                        <!--<div
                             v-if="totalPages > 1"
                             class="w-full mt-4 px-2.5 sm:px-0"
                         >
@@ -214,7 +218,7 @@
                                 :per-page="limit"
                                 :current-page="page"
                             />
-                        </div>
+                        </div>-->
                     </div>
                 </div>
                 <!-- Sidebar -->
@@ -253,7 +257,7 @@ console.log("stores have been set up");
 definePageMeta({
     alias: ["/+:board", "/+:board?/:sort?"],
     key: (route) => route.fullPath,
-    title: "Board Listing"
+    title: "Board Listing",
 });
 
 const title = board.is_removed
@@ -298,7 +302,11 @@ const welcome = ref(route.query.hasOwnProperty("welcome"));
 };*/
 
 // Posts
-const postsStore = usePostsStore();
+const { posts, error, queryParams, loadMore, loading } = await usePosts(
+    route,
+    "all",
+);
+/*const postsStore = usePostsStore();
 console.log("using posts store");
 
 const sorts = [
@@ -340,7 +348,7 @@ const posts = postsStore.posts;
 
 const totalPages = computed(() => {
     return Math.ceil(totalCount.value / limit.value || 1);
-});
+    });*/
 
 // Links for sub navbar
 const links = [

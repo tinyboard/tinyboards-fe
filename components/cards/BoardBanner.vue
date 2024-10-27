@@ -224,8 +224,8 @@ const toast = useToastStore();
 // Is Authed
 const isAuthed = userStore.isAuthed;
 
-//const isSubscribed = ref(props.boardView.subscribed == "Subscribed");
-const isSubscribed = false;
+const isSubscribed = ref(props.board.subscribedType == "subscribed");
+//const isSubscribed = false;
 
 const toggleSubscribe = async () => {
     /*isSubscribed.value = !isSubscribed.value;

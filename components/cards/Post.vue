@@ -117,8 +117,8 @@
           <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle" :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.id}/${item.titleChunk}`">
             {{ item.title }}
           </NuxtLink>
-          <div v-if="(!isCompact || isExpanded) && item.bodyHtml" class="mt-2 relative overflow-hidden" :class="{
-            'max-h-56 overlay': !isExpanded && (item.bodyHtml > 800 || item.bodyHtml.includes('<img'))
+          <div v-if="(!isCompact || isExpanded) && item.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
+            'max-h-56 overlay': !isExpanded && (item.bodyHTML > 800 || item.bodyHTML.includes('<img'))
           }">
             <!-- Post Image -->
             <div v-if="hasImage" class="mt-2.5 md:mt-4">
@@ -127,7 +127,7 @@
               </span>
             </div>
             <!-- Post Body -->
-            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="item.bodyHtml"></div>
+            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="item.bodyHTML"></div>
           </div>
         </div>
         <!-- Reports -->
@@ -178,7 +178,7 @@
               </svg>
             </NuxtLink>
           </li>
-          <li v-if="(item.bodyHtml.length > 800 || item.bodyHtml.includes('<img')) && item.bodyHtml" class="ml-6 hidden sm:list-item">
+          <li v-if="(item.bodyHTML.length > 800 || item.bodyHTML.includes('<img')) && item.bodyHTML" class="ml-6 hidden sm:list-item">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700" @click="isExpanded = !isExpanded">
               <!-- Arrows In Icon -->
               <svg v-show="isExpanded" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -447,8 +447,8 @@ const creatorIsAdmin = props.item.creator.adminLevel > 0;
 });*/
 
 // Can moderate posts
-//const isMod = requireModPermission(props.item.myModPermissions, "content");
-const isMod = false;
+const isMod = requireModPermission(props.item.myModPermissions, "content");
+//const isMod = false;
 const isAdmin = requirePermission("content");
 const canMod = isAdmin || isMod;
 

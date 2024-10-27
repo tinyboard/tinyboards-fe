@@ -2,59 +2,10 @@ import { defineStore } from "pinia";
 import gql from "graphql-tag";
 
 import { postFragment } from "@/utils/fragments";
+import { useBoardStore } from "./StoreBoard";
+import { useSiteStore } from "./StoreSite";
 
-const POSTS_QUERY = gql`
-  query loadPosts(
-    $listingType: String!
-    $sort: String
-    $page: Int
-    $limit: Int
-    $boardId: Int
-    $personId: Int
-    $includeBoard: Boolean!
-  ) {
-    listPosts(
-      listingType: $listingType
-      sort: $sort
-      page: $page
-      limit: $limit
-      boardId: $boardId
-      personId: $personId
-    ) {
-      id
-      titleChunk
-      title
-      url
-      bodyHtml
-      isRemoved
-      isDeleted
-      isLocked
-      isNSFW
-      featuredBoard
-      featuredLocal
-      score
-      myVote
-      commentCount
-      creationDate
-      updated
-      creator {
-        id
-        name
-        instance
-        adminLevel
-        displayName
-        avatar
-      }
-      board @include(if: $includeBoard) {
-        id
-        name
-        title
-        icon
-        primaryColor
-      }
-    }
-  }
-`;
+import POSTS_QUERY from "@/graphql_queries/ListPosts";
 
 export const usePostsStore = defineStore("posts", {
   // State
@@ -76,12 +27,16 @@ export const usePostsStore = defineStore("posts", {
   },
   actions: {
     setQueryParams(route) {
+      const boardStore = useBoardStore();
+
       this.options.page = computed(
         () => Number.parseInt(route.query.page) || 1,
       );
       this.options.limit = computed(
         () => Number.parseInt(route.query.limit) || 25,
       );
+
+      this.options.boardId = boardStore.hasBoard ? boardStore.board.id : null;
 
       const sorts = [
         "hot",
@@ -104,7 +59,7 @@ export const usePostsStore = defineStore("posts", {
 
       return useAsyncQuery(POSTS_QUERY, {
         ...this.options,
-        includeBoard: this.options.boardId === null,
+        includeBoard: useSiteStore().enableBoards,
       });
 
       //this.posts = posts;
@@ -130,7 +85,7 @@ export const usePostsStore = defineStore("posts", {
         query: POSTS_QUERY,
         variables: {
           ...this.options,
-          includeBoard: this.options.boardId === null,
+          includeBoard: useSiteStore().enableBoards,
         },
       });
     },

@@ -94,6 +94,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
           postCount
           commentCount
           myModPermissions
+          subscribedType
           moderators {
             person {
               name

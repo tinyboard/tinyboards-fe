@@ -11,19 +11,14 @@
         <div class="flex flex-row space-x-2">
             <NuxtLink
                 custom
-                :to="`${route.path}?page=${postsStore.options.page - 1}&limit=${postsStore.options.limit}#banner`"
+                :to="movePage(-1)"
                 v-slot="{ navigate }"
                 class="button white text-gray-700"
                 :class="{ 'opacity-70 cursor-not-allowed': isBackDisabled }"
                 :disabled="isBackDisabled"
             >
                 <button
-                    @click="
-                        () =>
-                            navigate(
-                                `${route.path}?page=${postsStore.options.page - 1}&limit=${postsStore.options.limit}#banner`,
-                            )
-                    "
+                    @click="() => navigate(movePage(-1))"
                     class="button white text-gray-700"
                     :class="{ 'opacity-70 cursor-not-allowed': isBackDisabled }"
                     :disabled="isBackDisabled"
@@ -33,19 +28,14 @@
             </NuxtLink>
             <NuxtLink
                 custom
-                :to="`${route.path}?page=${postsStore.options.page + 1}&limit=${postsStore.options.limit}#banner`"
+                :to="movePage(1)"
                 v-slot="{ navigate }"
                 class="button white text-gray-700"
                 :class="{ 'opacity-70 cursor-not-allowed': isNextDisabled }"
                 :disabled="isNextDisabled"
             >
                 <button
-                    @click="
-                        () =>
-                            navigate(
-                                `${route.path}?page=${postsStore.options.page + 1}&limit=${postsStore.options.limit}#banner`,
-                            )
-                    "
+                    @click="() => navigate(movePage(1))"
                     class="button white text-gray-700"
                     :class="{ 'opacity-70 cursor-not-allowed': isNextDisabled }"
                     :disabled="isNextDisabled"
@@ -91,4 +81,7 @@ const props = defineProps({
 
 const isBackDisabled = ref(postsStore.options.page == 1);
 const isNextDisabled = ref(postsStore.posts.length < postsStore.options.limit);
+
+const movePage = (direction) =>
+    `${route.path}?page=${postsStore.options.page + direction}&limit=${postsStore.options.limit}&sort=${postsStore.options.sort}#banner`;
 </script>

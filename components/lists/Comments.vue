@@ -6,39 +6,40 @@
         class="mt-4 first:mt-0 first-of-type:mt-0"
     >
         <li
-            v-for="item in comments"
-            :key="item.comment.id"
-            class="mt-4 first:mt-0"
+            v-for="comment in comments"
+            :key="comment.id"
+            class="mt-2 first:mt-0"
         >
-            <div v-if="cards" class="bg-white border border-gray-200 p-4 mb-4">
+            <div
+                v-if="cards"
+                class="bg-white border border-gray-200 p-4 mb-4 rounded"
+            >
                 <div class="mb-2 text-gray-700">
                     <NuxtLink
-                        :to="`/post/${item.post.id}`"
+                        :to="`/post/${comment.post.id}`"
                         class="font-bold text-blue-600 hover:text-blue-700 hover:underline"
-                        >{{ item.post.title }}</NuxtLink
+                        >{{ comment.post.title }}</NuxtLink
                     >
                     in
                     <NuxtLink
-                        :to="`/+${item.board.name}`"
+                        :to="`/+${comment.board.name}`"
                         class="text-blue-600 hover:text-blue-700 hover:underline"
-                        >+{{ item.board.name }}</NuxtLink
+                        >+{{ comment.board.name }}</NuxtLink
                     >
                 </div>
                 <component
-                    v-if="item"
-                    :item="item"
+                    v-if="comment"
+                    :comment="comment"
                     :offset="offset"
-                    :is="
-                        canViewComment(item.comment) ? Comment : CommentRemoved
-                    "
+                    :is="canViewComment(comment) ? Comment : CommentRemoved"
                 />
             </div>
             <component
                 v-else
-                v-if="item"
-                :item="item"
+                v-if="comment"
+                :comment="comment"
                 :offset="offset"
-                :is="canViewComment(item.comment) ? Comment : CommentRemoved"
+                :is="canViewComment(comment) ? Comment : CommentRemoved"
             />
         </li>
     </ul>
@@ -83,11 +84,11 @@ function canViewComment(comment) {
     }
 
     // Own comment
-    if (v && comment.is_removed && v.id == comment.creator_id) {
+    if (v && comment.isRemoved && v.id == comment.creatorId) {
         return true;
     }
 
-    return !(comment.is_deleted || comment.is_removed);
+    return !(comment.isDeleted || comment.isRemoved);
 }
 
 /*
