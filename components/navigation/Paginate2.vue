@@ -47,7 +47,7 @@
         <button
             :disabled="isLoading"
             class="button white text-gray-700"
-            @click="$emit('paginate')"
+            @click="loadMore"
         >
             {{ isLoading ? "Loading" : "Load more" }}
         </button>
@@ -57,9 +57,12 @@
 <script setup>
 import { ref } from "vue";
 import { usePostsStore } from "@/stores/StorePosts";
+import { usePagination } from "@/composables/posts";
 
 const route = useRoute();
 const postsStore = usePostsStore();
+
+const { loading: isLoading, loadMore } = usePagination();
 
 const props = defineProps({
     /*posts: {
@@ -73,10 +76,10 @@ const props = defineProps({
             limit: 25,
         },
         },*/
-    isLoading: {
+    /*isLoading: {
         type: Boolean,
         default: false,
-    },
+        },*/
 });
 
 const isBackDisabled = ref(postsStore.options.page == 1);

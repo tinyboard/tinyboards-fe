@@ -1,11 +1,7 @@
 <template>
     <component
-        v-if="personView"
-        :personView="personView"
-        :moderates="moderates"
-        :comments="comments"
-        :totalPages="totalPages"
-        :page="page"
+        v-if="user"
+        :user="user"
         type="comment"
         :is="canView ? Profile : ProfileRemoved"
     />
@@ -75,36 +71,33 @@ const sort = computed(() => {
     return sorts.includes(route.query.sort) ? route.query.sort : "hot";
 });
 
-const {
-    data: userData,
-    error,
-    pending,
-    refresh,
-} = await useFetchUser(username.value, {
+// Fetch user with posts and comments
+const { data: userData, error } = await useFetchUser(username.value, {
+    withPosts: false,
+    withComments: true,
     sort: sort.value,
     limit: limit.value,
     page: page.value,
 });
 
-const personView = userData.value.person_view;
-const user = personView.person;
-const moderates = userData.value.moderates;
-
-if (user.is_deleted) {
-    title.value = "Deleted Account";
-} else if (user.is_banned) {
-    title.value = `@${user.name}: Suspended`;
-} else {
-    title.value = `${user.display_name ?? user.name} (@${user.name})`;
-}
-
 if (error.value && error.value.response) {
     throw createError({
         statusCode: 404,
         statusMessage:
-            "We could not find the page you were looking for. Try better next time.",
+            "The user you're looking for literally doesn't exist. Check your spelling.",
         fatal: true,
     });
+}
+
+const user = userData.value?.user;
+commentsStore.setComments(user?.comments);
+
+if (user.isDeleted) {
+    title.value = "Deleted Account";
+} else if (user.isBanned) {
+    title.value = `@${user.name}: Suspended`;
+} else {
+    title.value = `${user.displayName ?? user.name} (@${user.name})`;
 }
 
 // Is Self
@@ -112,23 +105,19 @@ const isSelf = computed(() => {
     return !!userStore.user && userStore.user.name === user.name;
 });
 
-// Admin
-const isAdmin = computed(() => {
-    return !!userStore.user && userStore.user.is_admin;
-});
+// Admin - can bypass banned page if they have either the content or the users permission
+const isAdmin = requirePermission("content") || requirePermission("users");
 
 const canView = computed(() => {
-    const u = personView.person;
-
-    if (u.is_deleted) {
+    if (user.isDeleted) {
         return false;
     }
 
-    if (!u.is_banned) {
+    if (!user.isBanned) {
         return true;
     }
 
-    return isSelf.value || isAdmin.value;
+    return isSelf.value || isAdmin;
 });
 
 /*const { items, totalCount, commentsPaginate, commentsPending, commentsError, commentsRefresh } = await getListing({
@@ -140,10 +129,4 @@ const canView = computed(() => {
 }, 'comments');*/
 
 //commentsStore.setComments(items.value);
-const totalCount = userData.value.comments_count_total;
-const comments = userData.value.comments;
-
-const totalPages = computed(() => {
-    return Math.ceil(totalCount / limit.value || 1);
-});
 </script>

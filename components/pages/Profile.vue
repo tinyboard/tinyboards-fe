@@ -168,16 +168,15 @@
                         <!-- Posts -->
                         <LazyListsPosts
                             v-if="user.posts?.length"
-                            :posts="user.posts"
                             :isCompact="!preferCardView"
                             :isLoading="pending"
                             :hasError="error"
                         />
                         <!-- Comments -->
                         <LazyListsComments
-                            v-else-if="comments?.length"
-                            :comments="comments"
-                            class="p-4 bg-white border-y sm:border md:rounded-md md:shadow-inner-white"
+                            v-else-if="user.comments?.length"
+                            mode="list"
+                            :cards="true"
                         />
                         <div
                             v-else
@@ -207,6 +206,7 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 //import { format, parseISO } from "date-fns";
 import { requirePermission } from "@/composables/admin";
 import { useImageStore } from "@/stores/StoreImages";
+import { usePostsStore } from "@/stores/StorePosts";
 
 const imageStore = useImageStore();
 

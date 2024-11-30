@@ -1,12 +1,8 @@
 <template>
     <component
-        v-if="personView"
-        :personView="personView"
-        :moderates="moderates"
-        :posts="posts"
-        :totalPages="totalPages"
-        :limit="limit"
-        :page="page"
+        v-if="user"
+        :user="user"
+        :type="'post'"
         :is="canView ? Profile : ProfileRemoved"
     />
 </template>
@@ -18,6 +14,7 @@ import { getListing } from "@/composables/listing";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
+import { usePreloadedPosts } from "@/composables/posts";
 import { ref } from "vue";
 
 const route = useRoute();
@@ -59,31 +56,15 @@ const page = computed(() => route.query.page || 1);
 const limit = computed(() => route.query.limit || 25);
 
 const postsStore = usePostsStore();
-
-const sorts = [
-    "hot",
-    "new",
-    "topall",
-    "topmonth",
-    "topweek",
-    "topday",
-    "mostcomments",
-    "newcomments",
-];
-const sort = computed(() => {
-    return sorts.includes(route.query.sort) ? route.query.sort : "hot";
-});
+postsStore.setQueryParams(route);
 
 // Fetch user with posts and comments
-const {
-    data: userData,
-    error,
-    pending,
-    refresh,
-} = await useFetchUser(username.value, {
-    sort: sort.value,
-    limit: limit.value,
-    page: page.value,
+const { data: userData, error } = await useFetchUser(username.value, {
+    withPosts: true,
+    withComments: false,
+    sort: postsStore.options.sort,
+    limit: postsStore.options.limit,
+    page: postsStore.options.page,
 });
 
 if (error.value && error.value.response) {
@@ -95,16 +76,18 @@ if (error.value && error.value.response) {
     });
 }
 
-const personView = userData.value.person_view;
-const user = personView.person;
-const moderates = userData.value.moderates;
+const user = userData.value?.user;
 
-if (user.is_deleted) {
+//postsStore.options.userId = user.id;
+
+const { loading, loadMore } = usePreloadedPosts(user.posts, user.id);
+
+if (user.isDeleted) {
     title.value = "Deleted Account";
-} else if (user.is_banned) {
+} else if (user.isBanned) {
     title.value = `@${user.name}: Suspended`;
 } else {
-    title.value = `${user.display_name ?? user.name} (@${user.name})`;
+    title.value = `${user.displayName ?? user.name} (@${user.name})`;
 }
 
 // Is Self
@@ -116,13 +99,11 @@ const isSelf = computed(() => {
 const isAdmin = requirePermission("content") || requirePermission("users");
 
 const canView = computed(() => {
-    const u = personView.person;
-
-    if (u.is_deleted) {
+    if (user.isDeleted) {
         return false;
     }
 
-    if (!u.is_banned) {
+    if (!user.isBanned) {
         return true;
     }
 
@@ -135,12 +116,4 @@ const canView = computed(() => {
 	page: page.value,
 	creator_id: user.value.id
 }, 'posts');*/
-
-postsStore.posts = userData.value.posts;
-const posts = postsStore.posts;
-const totalCount = userData.value.posts_count_total;
-
-const totalPages = computed(() => {
-    return Math.ceil(totalCount / limit.value || 1);
-});
 </script>

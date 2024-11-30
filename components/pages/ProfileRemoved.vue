@@ -104,13 +104,13 @@ import { useSiteStore } from "@/stores/StoreSite";
 import { format, parseISO } from "date-fns";
 
 const props = defineProps({
-    personView: {
+    user: {
         type: Object,
         required: true,
     },
 });
 
-const user = props.personView.person;
+const user = props.user;
 
 const userStore = useLoggedInUser();
 const modalStore = useModalStore();

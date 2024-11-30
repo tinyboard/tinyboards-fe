@@ -99,7 +99,7 @@
                         </span>
                         <!-- Reply Count -->
                         <span
-                            v-show="isCollapsed && comment.replies?.length"
+                            v-show="isCollapsed && comment.replyCount"
                             class="flex items-center space-x-2"
                         >
                             <span
@@ -107,9 +107,9 @@
                                 >·</span
                             >
                             <span>
-                                {{ comment.replies?.length }}
+                                {{ comment.replyCount }}
                                 {{
-                                    comment.replies?.length === 1
+                                    comment.replyCount === 1
                                         ? "reply"
                                         : "replies"
                                 }}
@@ -119,8 +119,13 @@
                 </div>
             </div>
             <!-- Replies -->
-            <LazyListsComments
+            <!--<LazyListsComments
                 v-if="comment.replies?.length && level <= limit"
+                v-show="!isCollapsed"
+                :comments="comment.replies"
+                :offset="offset"
+            />-->
+            <LazyListsComments
                 v-show="!isCollapsed"
                 :comments="comment.replies"
                 :offset="offset"

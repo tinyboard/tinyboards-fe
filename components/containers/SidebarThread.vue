@@ -1,51 +1,48 @@
 <template>
     <div
         id="sidebar-thread"
-        v-if="item"
+        v-if="post"
         class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
         <!-- Author Details -->
-        <div v-if="!(item.post.is_deleted || item.post.is_removed)">
+        <div v-if="!(post.isDeleted || post.isRemoved)">
             <NuxtLink
-                v-if="item.creator"
-                :to="`/@${item.creator.name}`"
+                v-if="post.creator"
+                :to="`/@${post.creator.name}`"
                 class="group flex items-center mb-4 text-sm"
             >
                 <!-- Avatar -->
                 <img
                     loading="lazy"
-                    :src="item.creator.avatar"
+                    :src="post.creator.avatar"
                     alt="avatar"
                     class="flex-shrink-0 w-9 h-9 object-cover rounded"
                 />
                 <!-- Username -->
                 <strong class="ml-2">
-                    {{ item.creator.name }}
+                    {{ post.creator.name }}
                 </strong>
                 <!-- Role -->
-                <span v-if="item.creator.is_admin" class="ml-1 badge badge-red"
+                <span v-if="post.creator.isAdmin" class="ml-1 badge badge-red"
                     >Admin</span
                 >
             </NuxtLink>
-            <div v-if="stats" class="flex flex-wrap -m-1">
+            <div v-if="post.creator" class="flex flex-wrap -m-1">
                 <div class="w-2/4 p-1 text-sm">
-                    <strong>{{ stats.post_count }}</strong>
+                    <strong>{{ post.creator.postCount }}</strong>
                     <p class="text-sm text-gray-500">Posts</p>
                 </div>
                 <div class="w-2/4 p-1 text-sm">
-                    <strong>{{ stats.comment_count }}</strong>
+                    <strong>{{ post.creator.commentCount }}</strong>
                     <p class="text-sm text-gray-500">Comments</p>
                 </div>
                 <div class="w-2/4 p-1 text-sm">
-                    <strong>{{ stats.rep }}</strong>
+                    <strong>{{ post.creator.rep }}</strong>
                     <p class="text-sm text-gray-500">Reputation</p>
                 </div>
                 <div class="w-2/4 p-1 text-sm">
                     <strong>{{
-                        format(
-                            parseISO(item.creator.creation_date),
-                            "MMM dd, yyyy",
-                        )
+                        format(parseISO(post.creator.creationDate), "yyyy MMM. dd")
                     }}</strong>
                     <p class="text-gray-500">Joined</p>
                 </div>
@@ -63,7 +60,7 @@
                         <dd class="font-medium">
                             {{
                                 format(
-                                    parseISO(item.counts.creation_date),
+                                    parseISO(post.creationDate),
                                     "MMM dd, yyyy",
                                 )
                             }}
@@ -74,7 +71,7 @@
                     <dl class="flex justify-between">
                         <dt>Upvotes</dt>
                         <dd class="text-green-600 font-medium">
-                            +{{ item.counts.upvotes }}
+                            +{{ post.upvotes }}
                         </dd>
                     </dl>
                 </li>
@@ -82,7 +79,7 @@
                     <dl class="flex justify-between">
                         <dt>Downvotes</dt>
                         <dd class="text-red-600 font-medium">
-                            -{{ item.counts.downvotes }}
+                            -{{ post.downvotes }}
                         </dd>
                     </dl>
                 </li>
@@ -94,7 +91,7 @@
                 Share
             </h2>
             <input
-                :value="`${config.useHTTPS ? 'https' : 'http'}://${config.domain}/${item.post.id}`"
+                :value="`${config.useHTTPS ? 'https' : 'http'}://${config.domain}/${post.id}`"
                 class="w-full p-1 text-sm mb-4"
                 @focus="$event.target.select()"
             />
@@ -124,13 +121,9 @@ const isMod = showBoardInfo ? boardStore.modPermissions !== null : false;
 
 // Define author
 const props = defineProps({
-    item: {
+    post: {
         type: Object,
-        required: true,
-    },
-    stats: {
-        type: Object,
-        required: false,
-    },
+        required: true
+    }
 });
 </script>

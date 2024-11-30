@@ -159,7 +159,7 @@
 
 <script setup>
 const props = defineProps({
-  item: {
+  post: {
     type: Object,
     required: true,
   },

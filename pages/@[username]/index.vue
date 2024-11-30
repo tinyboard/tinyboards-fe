@@ -33,8 +33,8 @@
                 <NuxtLink :to="`/@${username}/comments`">View All</NuxtLink>
             </div>
             <LazyListsComments
-                v-if="comments?.length"
-                :comments="comments"
+                v-if="user.comments?.length"
+                :comments="user.comments"
                 :cards="true"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
@@ -47,7 +47,8 @@
 <script setup>
 import { useFetchUser } from "@/composables/user";
 import { usePostsStore } from "@/stores/StorePosts";
-import { getListing } from "@/composables/listing";
+import { useCommentsStore } from "@/stores/StoreComments";
+import { usePreloadedPosts } from "@/composables/posts";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
@@ -56,6 +57,7 @@ import { ref } from "vue";
 const route = useRoute();
 const site = useSiteStore();
 const userStore = useLoggedInUser();
+const commentsStore = useCommentsStore();
 
 definePageMeta({
     alias: ["/@:username/overview", "/user/:username", "/u/:username"],
@@ -121,7 +123,7 @@ const moderates = user.moderates;
 if (user.isDeleted) {
     title.value = "Deleted Account";
 } else if (user.isBanned) {
-    title.value = `@${user.name}: Suspended`;
+    title.value = `@${user.name} - Banned`;
 } else {
     title.value = `${user.displayName ?? user.name} (@${user.name})`;
 }
@@ -161,4 +163,7 @@ const canView = computed(() => {
 
 const posts = user.posts;
 const comments = user.comments;
+
+usePreloadedPosts(posts);
+commentsStore.setComments(comments);
 </script>

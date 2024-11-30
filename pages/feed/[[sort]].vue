@@ -112,8 +112,7 @@
                     </div>
                     <!-- Posts -->
                     <LazyListsPosts
-                        v-if="posts?.length"
-                        :posts="posts"
+                        v-if="hasPosts"
                         :isCompact="!preferCardView"
                         :isLoading="false"
                         :hasError="error"
@@ -206,7 +205,7 @@ const isHomeFeed = computed(() => userStore.isAuthed && site.enableBoards);
 
 console.log("before fetch");
 
-const { posts, error, loadMore, loading } = await usePosts(
+const { hasPosts, error, loadMore, loading } = await usePosts(
     route,
     isHomeFeed.value ? "subscribed" : "local",
 );

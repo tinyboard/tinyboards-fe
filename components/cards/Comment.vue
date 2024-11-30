@@ -1,14 +1,5 @@
 <template>
   <div>
-    <p v-if="route.meta.hasRepliesDisabled" class="mb-1 flex space-x-[4px]">
-      <NuxtLink class="font-semibold" :href="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=2`">
-        {{ comment.post.title }}
-      </NuxtLink>
-      <p class="text-gray-600" v-if="site.enableBoards">in</p>
-      <NuxtLink v-if="site.enableBoards" :href="`/+${comment.board.name}`">
-        +{{ comment.board.name }}
-      </NuxtLink>
-    </p>
     <div :id="comment.id" class="comment group flex relative" :class="{
       'opacity-60 hover:opacity-100 focus:opacity-100 comments-center':
         isCollapsed,
@@ -36,7 +27,7 @@
               <NuxtLink v-if="comment.creator"
                 :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`"
                 class="flex comments-center text-sm">
-                <strong>{{ comment.creator.name }}</strong>
+                <strong>{{ comment.creator.displayName ?? comment.creator.name }}</strong>
                 <span v-if="comment.creator.instance">@{{ comment.creator.instance }}</span>
                 <!-- Role -->
                 <span v-if="comment.creator.isAdmin" class="ml-1 badge badge-red">Admin</span>
@@ -79,7 +70,7 @@
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
                   {{ score }}
-                  {{ score ** 2 === 1 ? "pt" : "pts" }}
+                  {{ score === 1 ? "pt" : "pts" }}
                 </span>
               </span>
               <!-- Reply Count -->
@@ -90,9 +81,9 @@
                   {{ comment.replies?.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
-              <span class="ml-2 text-red-500 text-xs" v-if="comment.isRemoved && canMod" title="Removed comment">
-                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
+              <span class="ml-2 text-red-600 text-xs" v-if="comment.isRemoved && canMod" title="Comment removed by moderator or admin">
+                <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path
@@ -100,12 +91,13 @@
                   </path>
                   <path d="M22 22l-5 -5"></path>
                   <path d="M17 22l5 -5"></path>
-                </svg>
+                </svg>-->
+                Removed
               </span>
-              <span class="ml-2 text-yellow-500 text-xs" v-else-if="comment.isDeleted && canMod"
-                title="Deleted comment">
-                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
+              <span class="ml-2 text-yellow-600 text-xs" v-else-if="comment.isDeleted && canMod"
+                title="Comment deleted by its creator">
+                <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
+                <!--<svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M4 7l16 0"></path>
@@ -113,7 +105,8 @@
                   <path d="M14 11l0 6"></path>
                   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                </svg>
+                </svg>-->
+                Deleted
               </span>
               <!-- Report count -->
               <span class="ml-2 text-orange-400 font-bold text-xs" v-if="comment.report_count"
@@ -133,7 +126,10 @@
             @closed="isEditing = false" />
           <!-- Comment Text Body -->
           <div class="comment-body"
-            :class="canMod && comment.isRemoved ? 'bg-red-400 bg-opacity-40' : 'bg-white dark:bg-gray-800'"
+            :class="{
+              'bg-red-400 bg-opacity-40': canMod && comment.isRemoved,
+              'bg-yellow-400 bg-opacity-40': canMod && comment.isDeleted
+            }"
             v-show="!isCollapsed && !isEditing" v-html="comment.bodyHTML"></div>
         </div>
         <!-- Comment Reports -->
@@ -268,39 +264,39 @@
               </svg>
             </button>
           </li>
-          <li v-if="isAuthed && isAuthor" class="hidden sm:list-comment">
+          <li v-if="isAuthed && isAuthor" class="hidden sm:inline sm:list-comment">
             <button @click="confirmDelete"
-              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              class="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400">
               Delete
             </button>
           </li>
-          <li v-if="isAuthed && !isAuthor" class="hidden sm:list-comment">
+          <li v-if="isAuthed && !isAuthor" class="hidden sm:inline sm:list-comment">
             <button @click="confirmReport"
-              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              class="text-xs font-medium text-gray-500 hover:text-yellow-600 dark:text-gray-400">
               Report
             </button>
           </li>
-          <li class="hidden sm:list-comment">
+          <li class="hidden sm:inline sm:list-comment">
             <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
-          <li class="hidden sm:list-comment">
+          <li class="hidden sm:inline sm:list-comment">
             <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
           </li>
-          <li v-if="canMod && !comment.isRemoved" class="hidden sm:list-comment">
+          <li v-if="canMod && !(comment.isRemoved || comment.isDeleted)" class="hidden sm:inline sm:list-comment">
             <button @click="() => confirmRemoveOrApprove(false)"
-              class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
+              class="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400">
               Remove
             </button>
           </li>
-          <li v-if="canMod && (comment.report_count || comment.isRemoved)" class="hidden sm:list-comment">
+          <li v-if="canMod && (comment.report_count || comment.isRemoved)" class="hidden sm:inline sm:list-comment">
             <button @click="() => confirmRemoveOrApprove(true)"
-              class="text-xs font-medium text-green-500 hover:text-green-700 dark:text-green-400">
+              class="text-xs font-medium text-gray-500 hover:text-green-600 dark:text-gray-400">
               Approve
             </button>
           </li>
@@ -313,12 +309,13 @@
             @comment-published="onCommentPublished" />
         </div>
         <!-- Replies -->
-        <LazyListsComments v-if="!route.meta.hasRepliesDisabled &&
-          comment.replies?.length &&
+        <!--<LazyListsComments v-if="!route.meta.hasRepliesDisabled &&
+          comment.replyCount &&
           level <= limit
-          " v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
+          " v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />-->
+          <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
-        <NuxtLink v-if="comment.replies?.length && level > limit" v-show="!isCollapsed"
+        <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
           :to="`/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;

@@ -22,7 +22,7 @@
                 <!-- Avatar (mobile only) -->
                 <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/24/24'" alt="avatar" class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded" />
                 <!-- Username -->
-                <strong class="ml-2 sm:ml-0">{{ item.creator.name }}</strong>
+                <strong class="ml-2 sm:ml-0">{{ item.creator.displayName ?? item.creator.name }}</strong>
                 <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
                 <!-- Role -->
                 <span v-if="creatorIsAdmin" class="ml-1 badge badge-red">Admin</span>

@@ -9,7 +9,7 @@ export const useCommentsStore = defineStore('comments', {
   },
   // Getters
   getters: {
-    getComment: (state) => (id: number | string): number => {
+    getComment: (state) => {
       id = Number(id);
       for (let i = 0; i < state.comments.length; i++) {
         if (state.comments[i].comment.id === id) {
@@ -20,6 +20,9 @@ export const useCommentsStore = defineStore('comments', {
   },
   // Actions
   actions: {
+    setComments(comments) {
+      this.comments = comments;
+    },
     updateComment(id, options) {
       for (let i = 0; i < this.comments.length; i++) {
         if (this.comments[i].comment.id === id) {

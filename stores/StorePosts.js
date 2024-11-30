@@ -6,6 +6,7 @@ import { useBoardStore } from "./StoreBoard";
 import { useSiteStore } from "./StoreSite";
 
 import POSTS_QUERY from "@/graphql_queries/ListPosts";
+import POST_QUERY from "@/graphql_queries/GetPost";
 
 export const usePostsStore = defineStore("posts", {
   // State
@@ -49,9 +50,15 @@ export const usePostsStore = defineStore("posts", {
         "newComments",
       ];
 
-      this.options.sort = sorts.includes(route.params.sort)
-        ? route.params.sort
-        : "hot";
+      if (route.params.hasOwnProperty("sort")) {
+        this.options.sort = sorts.includes(route.params.sort)
+          ? route.params.sort
+          : "hot";
+      } else {
+        this.options.sort = sorts.includes(route.query.sort)
+          ? route.params.sort
+          : "hot";
+      }
     },
     async fetchPosts({ route, listingType = "local" }) {
       this.setQueryParams(route);
@@ -65,8 +72,14 @@ export const usePostsStore = defineStore("posts", {
       //this.posts = posts;
       //this.paginationFunction = paginationFunction;
     },
+    async fetchPost(id) {
+      return useAsyncQuery(POST_QUERY, { id: Number(id), withBoard: useSiteStore().enableBoards });
+    },
     setPosts(posts) {
       this.posts = posts;
+    },
+    setUserId(id) {
+      this.options.personId = id;
     },
     extend(posts) {
       this.posts.concat(posts);
@@ -91,6 +104,7 @@ export const usePostsStore = defineStore("posts", {
     },
     clear() {
       this.posts = [];
+      this.options.personId = null;
     },
   },
 });

@@ -9,8 +9,8 @@
                   <div class="col-span-full flex gap-6 sm:py-6">
                         <!-- Thread -->
                         <div class="relative w-full">
-                              <component v-if="item" :item="item" :comments="comments"
-                                    :is="item.post.is_deleted ? threadDeleted : thread" />
+                              <component v-if="post" :post="post" :comments="comments"
+                                    :is="post.isDeleted ? threadDeleted : thread" />
                               <!-- Error -->
                               <div v-else class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
@@ -21,7 +21,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread :item="item" :stats="stats" />
+                        <ContainersSidebarThread :post="post" />
                   </div>
             </section>
       </main>
@@ -60,7 +60,7 @@ const threadDeleted = defineAsyncComponent(() => import('@/components/containers
 const postsStore = usePostsStore();
 
 // Post
-let { item, pending, error, refresh } = await usePost(route.params.id);
+let { post, comments, error } = await usePost(route.params.id);
 
 if (error.value && error.value.response) {
       throw createError({
@@ -70,39 +70,38 @@ if (error.value && error.value.response) {
       })
 };
 
-title.value = `${item.value.post_view.post.title} ${site.enableBoards ? '| +' + item.value.board_view.board.name : ''}`;
+title.value = `${post.title} ${site.enableBoards ? '| +' + post.board.name : ''}`;
 
 // if boards are enabled...
 if (site.enableBoards) {
-      const boardName = item.value.board_view.board.name;
+      const boardName = post.board.name;
       const params = route.params;
       const hasBoard = params.hasOwnProperty("board");
-      console.log(boardName);
+      // console.log(boardName);
       // ...and the `+board` is not present, or is incorrect, redirect correctly
       if (!hasBoard ||
             (hasBoard && params.board.toLowerCase() !== boardName.toLowerCase())) {
-            router.push(`/+${boardName}/post/${item.value.post_view.post.id}/${item.value.post_view.post.title_chunk}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+            router.push(`/+${boardName}/post/${post.id}/${post.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
       }
 
       /*if(!hasBoard) {
-            router.push(`/+${boardName}/post/${item.value.post_view.post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+            router.push(`/+${boardName}/post/${post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
       }
 
       if(hasBoard && params.board.toLowerCase() !== boardName.toLowerCase()) {
-            router.push(`/+${boardName}/post/${item.value.post_view.post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+            router.push(`/+${boardName}/post/${post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
       }*/
 } else if (route.params.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      router.push(`/post/${item.value.post_view.post.id}/${item.value.post_view.post.title_chunk}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+      router.push(`/post/${post.id}/${post.titleChunk}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
 }
 
 
 // Author stats
 const stats = ref(null);
-stats.value = item.value.author_counts;
+stats.value = post.author;
 
-postsStore.posts = [item.value.post_view];
-item = computed(() => postsStore.getPost(route.params.id));
+//post = computed(() => postsStore.getPost(route.params.id));
 
 // Comments
 const id = computed(() => {
@@ -113,7 +112,7 @@ const type = computed(() => {
 })
 const sort = ref(route.query.sort);
 
-const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params.id);
+/*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params.id);
 
 if (type.value === 'comment' && commentsError.value && commentsError.value.response) {
       throw createError({
@@ -123,7 +122,7 @@ if (type.value === 'comment' && commentsError.value && commentsError.value.respo
       })
 };
 
-watch(() => route.query, () => commentsRefresh());
+watch(() => route.query, () => commentsRefresh());*/
 
 // Links
 const links = [{ name: 'Comments', href: '#comments' }];

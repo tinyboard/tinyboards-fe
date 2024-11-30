@@ -185,8 +185,7 @@
                         </div>
                         <!-- Posts -->
                         <LazyListsPosts
-                            v-if="posts?.length"
-                            :posts="posts"
+                            v-if="hasPosts"
                             :isCompact="!preferCardView"
                             :isLoading="pending"
                             :hasError="error"
@@ -228,7 +227,7 @@
     </main>
 </template>
 <script setup>
-import { usePostsStore } from "@/stores/StorePosts";
+//import { usePostsStore } from "@/stores/StorePosts";
 import { getListing } from "@/composables/listing";
 // import { getBoard } from "@/composables/board";
 import { useBoardStore } from "@/stores/StoreBoard";
@@ -246,6 +245,7 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
+//const postStore = usePostsStore();
 const v = userStore.user;
 //const boardView = boardStore.boardView;
 const board = boardStore.board;
@@ -302,7 +302,7 @@ const welcome = ref(route.query.hasOwnProperty("welcome"));
 };*/
 
 // Posts
-const { posts, error, queryParams, loadMore, loading } = await usePosts(
+const { hasPosts, error, queryParams, loadMore, loading } = await usePosts(
     route,
     "all",
 );

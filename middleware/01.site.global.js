@@ -2,6 +2,7 @@ import cookie from "cookie";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { usePostsStore } from "@/stores/StorePosts";
+import { useCommentsStore } from "@/stores/StoreComments";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useApi } from "@/composables/api";
 import gql from "graphql-tag";
@@ -18,8 +19,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const jwt = cookies["token"];
 
-  // clear posts
+  //clear posts
   usePostsStore().clear();
+  // clear comments
+  useCommentsStore().setComments([]);
 
   const { data, error } = await useAsyncQuery(
     gql`

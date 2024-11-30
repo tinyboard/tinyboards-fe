@@ -111,8 +111,7 @@
                     </div>
                     <!-- Posts -->
                     <LazyListsPosts
-                        v-if="posts?.length"
-                        :posts="posts"
+                        v-if="hasPosts"
                         :isCompact="!preferCardView"
                         :isLoading="false"
                         :hasError="error"
@@ -173,7 +172,7 @@ definePageMeta({
 
 const preferCardView = useCookie("preferCardView") ?? false;
 
-const { posts, error, queryParams, loadMore, loading } = await usePosts(
+const { hasPosts, error, queryParams, loadMore, loading } = await usePosts(
     route,
     "all",
 );

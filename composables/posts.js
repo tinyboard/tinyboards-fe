@@ -1,17 +1,9 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useApi } from "@/composables/api";
 import { usePostsStore } from "@/stores/StorePosts";
 
-export async function usePosts(route, listingType) {
+export function usePagination() {
   const postsStore = usePostsStore();
-
-  const { data, error } = await postsStore.fetchPosts({
-    route,
-    listingType,
-  });
-
-  postsStore.setPosts(data.value?.listPosts);
-  const posts = ref(postsStore.posts);
   const loading = ref(false);
 
   const queryParams = {
@@ -26,23 +18,59 @@ export async function usePosts(route, listingType) {
       .then((result) => {
         queryParams.page.value = postsStore.options.page;
         postsStore.posts = postsStore.posts.concat(result.data.listPosts);
-        posts.value = postsStore.posts;
+        // posts.value = postsStore.posts;
       })
       .catch(console.error)
       .finally(() => (loading.value = false));
-    /*const result = await postsStore.paginate();
-
-    postsStore.posts = postsStore.posts.concat(result.data.listPosts);
-    posts.value = postsStore.posts;*/
   };
 
+  return { loading, loadMore };
+}
+
+export async function usePosts(route, listingType) {
+  const postsStore = usePostsStore();
+  const { data, error } = await postsStore.fetchPosts({
+    route,
+    listingType,
+  });
+
+  postsStore.setPosts(data.value?.listPosts);
+
+  //const posts = ref(postsStore.posts);
+
+  const queryParams = {
+    page: ref(postsStore.options.page),
+    limit: postsStore.options.limit,
+  };
+
+  const hasPosts = computed(() => postsStore.posts.length > 0);
+
+  const { loading, loadMore } = usePagination();
+
   return {
-    posts,
+    //posts,
+    hasPosts,
     error,
     queryParams,
     loadMore,
     loading,
   };
+}
+
+/**
+ * Use this when a list of posts is alreday available, but you need to be able to load more for eg. pagination. 
+ */
+export function usePreloadedPosts(posts, personId = null) {
+  const postsStore = usePostsStore();
+  postsStore.setPosts(posts);
+
+  const loading = ref(false);
+
+  if (personId) {
+    postsStore.setUserId(personId);
+  }
+
+  return usePagination();
 }
 
 // I moved this into listing.js (same folder as this one)
