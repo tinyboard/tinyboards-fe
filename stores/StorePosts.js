@@ -72,8 +72,8 @@ export const usePostsStore = defineStore("posts", {
       //this.posts = posts;
       //this.paginationFunction = paginationFunction;
     },
-    async fetchPost(id) {
-      return useAsyncQuery(POST_QUERY, { id: Number(id), withBoard: useSiteStore().enableBoards });
+    async fetchPost(id, { sort = "hot", context = 0, topCommentId = null }) {
+      return useAsyncQuery(POST_QUERY, { id: Number(id), sort, context, topCommentId, withBoard: useSiteStore().enableBoards });
     },
     setPosts(posts) {
       this.posts = posts;

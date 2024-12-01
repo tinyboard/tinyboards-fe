@@ -4,9 +4,23 @@ import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
 
 export async function usePost(id) {
+  const route = useRoute();
+
   const postsStore = usePostsStore();
   const commentsStore = useCommentsStore();
-  const { data, error } = await postsStore.fetchPost(id);
+
+  const sorts = ["hot", "top", "new", "old"];
+  const sort = computed(() => {
+      return sorts.includes(route.query.sort) ? route.query.sort : "hot";
+  });
+  const context = route.query.context ? Number(route.query.context) : 0;
+  const topCommentId = route.params.comment ? Number(route.params.comment) : null;
+
+  const { data, error } = await postsStore.fetchPost(id, {
+    sort,
+    context,
+    topCommentId
+  });
 
   const _post = data.value?.post;
   let { comments, ...post } = _post;

@@ -125,7 +125,7 @@
           <LazyInputsEdit v-if="isEditing" :id="comment.id" :body="comment.body" type="comment" @hasEdited="onHasEdited"
             @closed="isEditing = false" />
           <!-- Comment Text Body -->
-          <div class="comment-body"
+          <div :id="`comment-text-${comment.id}`" class="comment-body target:bg-primary target:bg-opacity-10"
             :class="{
               'bg-red-400 bg-opacity-40': canMod && comment.isRemoved,
               'bg-yellow-400 bg-opacity-40': canMod && comment.isDeleted
@@ -146,7 +146,7 @@
                 ? 'upvoted text-primary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
             ]" @click="vote(1)" :disabled="comment.post.isDeleted">
-              <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }}</span>
+              <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }} ({{ upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -184,7 +184,7 @@
                 ? 'downvoted text-secondary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
             ]" @click="vote(-1)" :disabled="comment.post.isDeleted">
-              <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }}</span>
+              <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }} ({{ downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -277,13 +277,13 @@
             </button>
           </li>
           <li class="hidden sm:inline sm:list-comment">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}`"
+            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3`"
+            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -424,6 +424,9 @@ const score = computed(() => {
   // return comment.value.score + (comment.value.myVote + voteType.value === 0 ? 0 : voteType.value) || 0
   return comment.value.score + voteType.value;
 })
+
+const upvotes = computed(() => voteType.value == 1 ? comment.value.upvotes + 1 : comment.value.upvotes);
+const downvotes = computed(() => voteType.value == -1 ? comment.value.downvotes + 1 : comment.value.downvotes);
 
 // Author
 const isAuthor = computed(() => {

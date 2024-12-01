@@ -4,7 +4,7 @@ export default gql`
   query getPost(
     $id: Int!,
     $sort: String,
-    $comment: Int,
+    $topCommentId: Int,
     $context: Int,
     $search: String,
     $withBoard: Boolean
@@ -18,6 +18,7 @@ export default gql`
       bodyHTML
       score
       upvotes
+      downvotes
       isNSFW
       isRemoved
       isDeleted
@@ -47,7 +48,7 @@ export default gql`
         icon
       }
       comments(
-        topCommentId: $comment,
+        topCommentId: $topCommentId,
         sort: $sort,
         context: $context,
         search: $search
