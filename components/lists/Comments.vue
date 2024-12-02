@@ -111,7 +111,7 @@ function canViewComment(comment) {
     }
 
     // Own comment
-    if (v && comment.isRemoved && v.id == comment.creatorId) {
+    if (v && comment.isRemoved && v.id == comment.creator.id) {
         return true;
     }
 

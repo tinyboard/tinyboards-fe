@@ -1,7 +1,7 @@
 <template>
   <div
     id="banner"
-    class="relative flex items-center justify-between p-4 sm:px-12 sm:py-10 bg-gray-200/50 sm:rounded-md bg-cover bg-center overflow-hidden"
+    class="relative flex items-center justify-between p-4 sm:px-12 sm:py-10 bg-gray-200/50 sm:rounded-md bg-cover bg-center overflow-hidden lights"
     :style="{ backgroundImage: `url(${imageUrl})` }"
   >
     <div class="relative overflow-hidden">
@@ -51,4 +51,26 @@ const props = defineProps({
   top: 0;
   bottom: 0;
 }
+
+.lights::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 57px;
+    width: 100%;
+    background:url(https://i.imgur.com/BdGY6tH.png);
+    animation: lights 1s infinite steps(2);
+    pointer-events: none;
+  }
+  @keyframes lights {
+    0% {
+      /*Two zeros, not one !!*/
+      /*[0] is equivalent to [0 50%] and will create a different animation */
+      background-position:0 0; 
+    } 
+    100% {
+      background-position:0 -138px;
+    }
+  }
 </style>

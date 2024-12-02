@@ -83,7 +83,7 @@
               </span>
               <span class="ml-2 text-red-600 text-xs" v-if="comment.isRemoved && canMod" title="Comment removed by moderator or admin">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <!--<svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path
@@ -91,13 +91,13 @@
                   </path>
                   <path d="M22 22l-5 -5"></path>
                   <path d="M17 22l5 -5"></path>
-                </svg>-->
-                Removed
+                </svg>
+                <span class="hidden sm:inline">Removed</span>
               </span>
               <span class="ml-2 text-yellow-600 text-xs" v-else-if="comment.isDeleted && canMod"
                 title="Comment deleted by its creator">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <!--<svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="16" height="16" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M4 7l16 0"></path>
@@ -105,8 +105,14 @@
                   <path d="M14 11l0 6"></path>
                   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                </svg>-->
-                Deleted
+                </svg>
+                <span class="hidden sm:inline">Deleted</span>
+              </span>
+              <span class="ml-2 text-green-600 text-xs" v-else-if="comment.isPinned"
+                title="Comment pinned by moderators">
+                <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
+                <svg  xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6" /><path d="M12 16l0 5" /><path d="M8 4l8 0" /></svg>
+                <span class="hidden sm:inline">Pinned</span>
               </span>
               <!-- Report count -->
               <span class="ml-2 text-orange-400 font-bold text-xs" v-if="comment.report_count"
@@ -157,7 +163,7 @@
             </button>
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Upvote</span>
+              <span class="hidden sm:inline">Upvote ({{ comment.upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -195,7 +201,7 @@
             </button>
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Downvote</span>
+              <span class="hidden sm:inline">Downvote ({{ comment.downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

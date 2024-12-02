@@ -59,6 +59,7 @@ export default gql`
         isRemoved
         isDeleted
         isLocked
+        isPinned
         score
         upvotes
         downvotes
