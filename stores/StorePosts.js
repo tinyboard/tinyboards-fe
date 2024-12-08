@@ -5,8 +5,8 @@ import { postFragment } from "@/utils/fragments";
 import { useBoardStore } from "./StoreBoard";
 import { useSiteStore } from "./StoreSite";
 
-import POSTS_QUERY from "@/graphql_queries/ListPosts";
-import POST_QUERY from "@/graphql_queries/GetPost";
+//import POSTS_QUERY from "@/graphql/queries/ListPosts";
+//import POST_QUERY from "@/graphql/queries/GetPost";
 
 export const usePostsStore = defineStore("posts", {
   // State
@@ -64,16 +64,19 @@ export const usePostsStore = defineStore("posts", {
       this.setQueryParams(route);
       this.options.listingType = listingType;
 
-      return useAsyncQuery(POSTS_QUERY, {
-        ...this.options,
-        includeBoard: useSiteStore().enableBoards,
+      return useAsyncGql({
+        operation: 'loadPosts',
+        variables: {
+          ...this.options,
+          includeBoard: useSiteStore().enableBoards,
+        }
       });
 
       //this.posts = posts;
       //this.paginationFunction = paginationFunction;
     },
     async fetchPost(id, { sort = "hot", context = 0, topCommentId = null }) {
-      return useAsyncQuery(POST_QUERY, { id: Number(id), sort, context, topCommentId, withBoard: useSiteStore().enableBoards });
+      return useAsyncGql({operation: 'getPost', variables: { id: Number(id), sort, context, topCommentId, withBoard: useSiteStore().enableBoards }});
     },
     setPosts(posts) {
       this.posts = posts;
@@ -92,10 +95,10 @@ export const usePostsStore = defineStore("posts", {
       this.options["page"] = pageClone;
       // I can't believe this shit really works
 
-      let { clients } = useApollo();
+      //let { clients } = useApollo();
 
-      return clients.default.query({
-        query: POSTS_QUERY,
+      return useAsyncGql({
+        operation: 'loadPosts',
         variables: {
           ...this.options,
           includeBoard: useSiteStore().enableBoards,

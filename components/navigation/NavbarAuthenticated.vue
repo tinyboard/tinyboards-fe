@@ -111,12 +111,12 @@
 							</span>
 						</NuxtLink>
 						<!-- Profile Dropdown -->
-						<MenusProfile :user="v" :counts="counts" :unread="unread" />
+						<MenusProfile :user="v" :unread="unread" />
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-2 md:hidden">
 					<!-- Admin Tools Link -->
-					<NuxtLink v-if="v.is_admin" to="/admin" class="inline-flex items-center justify-center p-1 text-white">
+					<NuxtLink v-if="v.adminLevel > 0" to="/admin" class="inline-flex items-center justify-center p-1 text-white">
 						<span class="sr-only">View admin tools</span>
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -229,7 +229,7 @@
 						<div class="flex items-center text-xs">
 							<span class="text-yellow-500">&#9733;&nbsp;</span>
 							<span class="text-gray-600">
-								{{ counts.rep ?? 0 }} reputation
+								{{ v.rep ?? 0 }} reputation
 							</span>
 						</div>
 					</div>
@@ -364,7 +364,7 @@ const search = () => {
 };
 
 const v = userStore.user;
-const counts = userStore.counts;
+//const counts = userStore.counts;
 const unread = ref(userStore.unread);
 
 // Notifications count

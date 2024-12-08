@@ -41,7 +41,7 @@
               <div class="flex items-center text-xs">
                 <span class="text-yellow-500">&#9733;&nbsp;</span>
                 <span class="text-gray-600">
-                  {{ counts.rep ?? 0 }} reputation
+                  {{ user.rep ?? 0 }} reputation
                 </span>
               </div>
             </div>
@@ -146,7 +146,6 @@
 
   const props = defineProps({
     user: Object,
-    counts: Object,
     unread: {
       type: Number,
       default: 0

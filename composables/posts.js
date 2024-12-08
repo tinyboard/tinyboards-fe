@@ -17,7 +17,8 @@ export function usePagination() {
       .paginate()
       .then((result) => {
         queryParams.page.value = postsStore.options.page;
-        postsStore.posts = postsStore.posts.concat(result.data.listPosts);
+        //console.log(result.data.value);
+        postsStore.posts = postsStore.posts.concat(result.data.value.listPosts);
         // posts.value = postsStore.posts;
       })
       .catch(console.error)
@@ -29,10 +30,24 @@ export function usePagination() {
 
 export async function usePosts(route, listingType) {
   const postsStore = usePostsStore();
+
   const { data, error } = await postsStore.fetchPosts({
     route,
     listingType,
   });
+
+  console.log("getting posts...");
+  if (error.value) {
+    console.error(JSON.stringify(error, null, 4));
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Error occured while fetching posts: ${JSON.stringify(error, null, 4)}`,
+      fatal: true,
+    });
+  }
+
+  //console.log("data:");
+  //console.log(JSON.stringify(data, null, 4));
 
   postsStore.setPosts(data.value?.listPosts);
 
@@ -50,7 +65,7 @@ export async function usePosts(route, listingType) {
   return {
     //posts,
     hasPosts,
-    error,
+    error: null,
     queryParams,
     loadMore,
     loading,

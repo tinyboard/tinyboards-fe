@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 // import { baseURL } from "@/server/constants";
 import { useApi } from "@/composables/api";
+//import { LOGIN_QUERY } from "@/graphql/mutations/Auth";
+//import { ME_QUERY } from "@/graphql/queries/Me";
+import Cookies from 'js-cookie';
 
 export const useLoggedInUser = defineStore("auth", {
   state: () => {
@@ -25,7 +28,7 @@ export const useLoggedInUser = defineStore("auth", {
     };
   },
   actions: {
-    login({ nameOrEmail, password }) {
+    /*login({ nameOrEmail, password }) {
       return new Promise((resolve, reject) => {
         useApi("/auth/login", {
           key: `login_${nameOrEmail}_${Date.now()}`,
@@ -46,23 +49,6 @@ export const useLoggedInUser = defineStore("auth", {
               this.moddedBoards = data.value.user.moderated_boards;
               this.adminLevel = data.value.user.admin_level;
 
-              /*let adminLevel = data.value.user.admin_level;
-
-              let keys = [];
-              for (let key in this.permissions) {
-                if (this.permissions.hasOwnProperty(key)) {
-                  keys.push(key);
-                }
-              }
-
-              console.log("hi from store");
-
-              for (let i = 1; i < keys.length; i++) {
-                console.log(2 ** i);
-                console.log(keys[i - 1]);
-                this.permissions[keys[i - 1]] = (adminLevel & (2 ** i)) > 0;
-              }*/
-
               this.token = data.value.jwt;
               this.isAuthed = true;
 
@@ -76,6 +62,49 @@ export const useLoggedInUser = defineStore("auth", {
             this.isAuthed = false;
             reject(error);
           });
+      });
+    },*/
+    login({ nameOrEmail, password }) {
+      //const { useMutation } = useApollo();
+      return new Promise((resolve, reject) => {
+        // Obtain auth token
+        GqlSubmitLogin({ usernameOrEmail: nameOrEmail, password })
+          .then((data) => {
+            console.log("Hi! the request was successful");
+            console.log(JSON.stringify(data, null, 4));
+            Cookies.set('token', data.login.token);
+            this.token = data.login.token;
+
+            // Login successful - fetch user
+            const me = useAsyncGql({ operation: 'getLoggedInUser' })
+              .then((resp) => {
+                const data = resp.data.value;
+
+                const moderates = data.me.moderates.map((m) => m.board);
+                const joined = data.me.joined;
+
+                const user = data.me;
+                delete user.moderates;
+                delete user.joined;
+
+                this.user = user;
+                this.joinedBoards = joined;
+                this.moddedBoards = moderates;
+                this.adminLevel = this.user.adminLevel;
+                this.isAuthed = true;
+                this.unread = data.unreadMentionsCount + data.unreadRepliesCount;
+
+                resolve(this.user);
+              })
+              .catch((err) => {
+                // Fetching user failed - remove token and reject promise
+                this.logout();
+                Cookies.remove('token');
+
+                reject(err);
+              })
+          })
+          .catch((err) => reject(err));
       });
     },
     signup({ username, email, password, invite_token, answer }) {

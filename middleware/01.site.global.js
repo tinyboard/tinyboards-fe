@@ -24,91 +24,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   // clear comments
   useCommentsStore().setComments([]);
 
-  const { data, error } = await useAsyncQuery(
-    gql`
-      query getSite(
-        $boardName: String
-        $shouldLoadSite: Boolean!
-        $shouldLoadLoggedInUser: Boolean!
-        $shouldLoadBoard: Boolean!
-      ) {
-        site @include(if: $shouldLoadSite) {
-          name
-          description
-          icon
-          primaryColor
-          secondaryColor
-          hoverColor
-          enableDownvotes
-          enableNSFW
-          applicationQuestion
-          privateInstance
-          boardsEnabled
-          boardCreationAdminOnly
-          requireEmailVerification
-        }
-        me @include(if: $shouldLoadLoggedInUser) {
-          person {
-            id
-            name
-            displayName
-            isBanned
-            unbanDate
-            avatar
-            adminLevel
-            rep
-            postScore
-            commentScore
-            joinedBoards {
-              icon
-              name
-              title
-              subscribers
-            }
-            moderates {
-              board {
-                icon
-                name
-                title
-                subscribers
-              }
-            }
-          }
-          unreadRepliesCount
-          unreadMentionsCount
-        }
-        board(name: $boardName) @include(if: $shouldLoadBoard) {
-          id
-          name
-          title
-          description
-          icon
-          banner
-          primaryColor
-          secondaryColor
-          hoverColor
-          creationDate
-          isNSFW
-          isBanned
-          banReason
-          sidebarHTML
-          isHidden
-          subscribers
-          postCount
-          commentCount
-          myModPermissions
-          subscribedType
-          moderators {
-            person {
-              name
-              displayName
-              avatar
-            }
-          }
-        }
-      }
-    `,
-    {
+  const { data, error } = await useAsyncGql({
+    operation: 'getSite',
+    variables: {
       // site is loaded on initial load - during SSR
       shouldLoadSite: process.server,
       // logged in user is loaded during SSR if there is a stored auth token
@@ -117,9 +35,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       shouldLoadBoard: to.params.hasOwnProperty("board"),
       boardName: to.params.board,
     },
-  );
+  });
 
+  console.log("got here");
+
+  console.log(JSON.stringify(data.value, null, 4));
   if (data.value.site) {
+    console.log("AAAAAAAAAAAA");
     const site = data.value.site;
     //siteStore.siteMode = site.siteMode;
     siteStore.name = site.name;
@@ -182,16 +104,16 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   if (data.value.me) {
-    userStore.user = data.value.me.person;
-    userStore.counts = {
+    userStore.user = data.value.me;
+    /*userStore.counts = {
       rep: 0,
-    };
+    };*/
     userStore.unread =
-      data.value.me.unreadRepliesCount + data.value.me.unreadMentionsCount;
+      data.value.unreadRepliesCount + data.value.unreadMentionsCount;
     userStore.token = cookies["token"];
     userStore.isAuthed = true;
-    userStore.adminLevel = data.value.me.person.adminLevel;
-    userStore.joinedBoards = data.value.me.person.joinedBoards;
-    userStore.moddedBoards = data.value.me.person.moderates.map((m) => m.board);
+    userStore.adminLevel = data.value.me.adminLevel;
+    userStore.joinedBoards = data.value.me.joinedBoards;
+    userStore.moddedBoards = data.value.me.moderates.map((m) => m.board);
   }
 });

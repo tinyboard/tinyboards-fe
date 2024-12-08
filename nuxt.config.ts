@@ -35,12 +35,8 @@ export default defineNuxtConfig({
   devServerHandlers: [],
   modern: true,
 
-  modules: [
-    "@pinia/nuxt",
-    "@nuxtjs/tailwindcss",
-    "@nuxtjs/apollo",
-    //"@nuxtjs/i18n",
-  ],
+  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", //"@nuxtjs/i18n",
+  "nuxt-graphql-client"],
 
   //i18n: {},
   routeRules: {
@@ -55,17 +51,25 @@ export default defineNuxtConfig({
     public: {
       domain: "",
       use_https: true,
+      GQL_HOST: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
     },
   },
 
-  apollo: {
+  'graphql-client': {
+    tokenStorage: {
+      name: 'token',
+      mode: 'cookie'
+    }
+  },
+
+  /*apollo: {
     clients: {
       default: {
         httpEndpoint: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
         tokenName: "token",
       },
     },
-  },
+  },*/
 
   optimizeDeps: {
     exclude: ["@vueuse/head"],

@@ -1,5 +1,5 @@
 //import { useApi } from "@/composables/api";
-import PROFILE_QUERY from "@/graphql_queries/UserProfile";
+//import PROFILE_QUERY from "@/graphql/queries/UserProfile";
 import { useSiteStore } from "@/stores/StoreSite";
 
 /*export async function useFetchUser(username, query = {}) {
@@ -15,9 +15,11 @@ import { useSiteStore } from "@/stores/StoreSite";
 export async function useFetchUser(username, query = {}) {
   const site = useSiteStore();
 
-  return useAsyncQuery(PROFILE_QUERY, {
-    username,
-    includeBoard: site.enableBoards,
-    ...query,
-  });
+  return useAsyncGql({
+    operation: 'userProfile', 
+    variables: {
+      username,
+      includeBoard: site.enableBoards,
+      ...query,
+    }});
 }
