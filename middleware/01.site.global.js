@@ -57,6 +57,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     siteStore.enableBoards = site.boardsEnabled;
     siteStore.boardCreationAdminOnly = site.boardCreationAdminOnly;
     siteStore.requireEmailVerification = site.requireEmailVerification;
+    siteStore.requireApplication = site.requireApplication;
+    siteStore.inviteOnly = site.inviteOnly;
   } /*else if (error) {
     console.error(error);
     throw createError({

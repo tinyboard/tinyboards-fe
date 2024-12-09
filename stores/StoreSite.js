@@ -18,6 +18,8 @@ export const useSiteStore = defineStore("site", {
       requireEmailVerification: false,
       enableBoards: false,
       boardCreationAdminOnly: true,
+      inviteOnly: false,
+      requireApplication: false
     };
   },
   /*actions: {

@@ -28,50 +28,11 @@ export const useLoggedInUser = defineStore("auth", {
     };
   },
   actions: {
-    /*login({ nameOrEmail, password }) {
-      return new Promise((resolve, reject) => {
-        useApi("/auth/login", {
-          key: `login_${nameOrEmail}_${Date.now()}`,
-          method: "post",
-          body: {
-            username_or_email: nameOrEmail,
-            password,
-          },
-        })
-          .then(({ data, error }) => {
-            if (data.value) {
-              //console.log(JSON.stringify(data.value.user, null, 4));
-              this.user = data.value.user.person;
-              this.counts = data.value.user.counts;
-              this.unread = data.value.user.unread_notifications;
-              console.log(data.value.user.subscribed_boards);
-              this.joinedBoards = data.value.user.subscribed_boards;
-              this.moddedBoards = data.value.user.moderated_boards;
-              this.adminLevel = data.value.user.admin_level;
-
-              this.token = data.value.jwt;
-              this.isAuthed = true;
-
-              resolve(data.value);
-            } else {
-              this.isAuthed = false;
-              reject(error.value);
-            }
-          })
-          .catch((error) => {
-            this.isAuthed = false;
-            reject(error);
-          });
-      });
-    },*/
     login({ nameOrEmail, password }) {
-      //const { useMutation } = useApollo();
       return new Promise((resolve, reject) => {
         // Obtain auth token
         GqlSubmitLogin({ usernameOrEmail: nameOrEmail, password })
           .then((data) => {
-            console.log("Hi! the request was successful");
-            console.log(JSON.stringify(data, null, 4));
             Cookies.set('token', data.login.token);
             this.token = data.login.token;
 
@@ -107,7 +68,61 @@ export const useLoggedInUser = defineStore("auth", {
           .catch((err) => reject(err));
       });
     },
-    signup({ username, email, password, invite_token, answer }) {
+    signup({ username, email, password, inviteCode, answer }) {
+      return new Promise((resolve, reject) => {
+        GqlRegister({ username, email, password, inviteCode, applicationAnswer: answer })
+          .then((resp) => {
+            const { token, accountCreated, applicationSubmitted } = resp.register;
+
+            if (accountCreated) {
+              // Account created = no approval required => fetch the user we just created
+              Cookies.set('token', token);
+              this.token = token;
+
+              // Login successful - fetch user
+              const me = useAsyncGql({ operation: 'getLoggedInUser' })
+                .then((resp) => {
+                  console.log("user fetched!");
+                  const data = resp.data.value;
+
+                  const moderates = data.me.moderates.map((m) => m.board);
+                  const joined = data.me.joined;
+
+                  const user = data.me;
+                  delete user.moderates;
+                  delete user.joined;
+
+                  this.user = user;
+                  this.joinedBoards = joined;
+                  this.moddedBoards = moderates;
+                  this.adminLevel = this.user.adminLevel;
+                  this.isAuthed = true;
+                  this.unread = data.unreadMentionsCount + data.unreadRepliesCount;
+
+                  resolve({
+                    accountCreated,
+                    applicationSubmitted
+                  });
+                })
+                .catch((err) => {
+                  // Fetching user failed - remove token and reject promise
+                  this.logout();
+                  Cookies.remove('token');
+
+                  reject(err);
+              });
+            } else {
+              // Application submitted, admin approval required => resolve with success, display message on signup page
+              resolve({
+                accountCreated,
+                applicationSubmitted
+              });
+            }
+          })
+          .catch(reject)
+      });
+    },
+    /*signup({ username, email, password, invite_token, answer }) {
       return new Promise((resolve, reject) => {
         useApi("/auth/signup", {
           key: `signup_${username}_${Date.now()}`,
@@ -155,7 +170,7 @@ export const useLoggedInUser = defineStore("auth", {
           Authorization: "Bearer " + authToken,
         }
       );
-    },
+    },*/
     fetchUser(authToken) {
       useApi("/me", {
         key: `get_user_${authToken}`,
