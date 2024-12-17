@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
@@ -85,7 +85,7 @@ const modalStore = useModalStore();
 const toast = useToastStore();
 
 const leave = async () => {
-    await useApi('/admin/leave_admin', {
+    await useAPI('/admin/leave_admin', {
         body: {},
         method: "post"
     })

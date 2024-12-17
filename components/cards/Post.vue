@@ -389,7 +389,7 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
@@ -468,7 +468,7 @@ const hasImage = computed(() => props.item.url && canEmbedImage(props.item.url))
 const voteType = ref(props.item.myVote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
-  await useApi(`/posts/${props.item.id}/vote`, {
+  await useAPI(`/posts/${props.item.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
@@ -492,7 +492,7 @@ const vote = async (type = 0) => {
 const isSaved = ref(props.item.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useApi(`/post/${props.item.id}/save`, {
+  await useAPI(`/post/${props.item.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,

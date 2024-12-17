@@ -1,9 +1,9 @@
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 
 export async function getBoard(name) {
 
     async function request(name){
-        const { data, pending, error, refresh } = await useApi("/boards/get", {
+        const { data, pending, error, refresh } = await useAPI("/boards/get", {
             query: name,
             key: "name",
         });

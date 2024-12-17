@@ -89,7 +89,7 @@
 <script setup>
 import { ref } from 'vue'
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { PERMISSIONS, requireOwnerPerms } from '@/composables/admin';
@@ -175,7 +175,7 @@ const submitAdmin = async () => {
   if (remove.value) {
     permissionCode.value = 0;
   }
-  await useApi('/admin/add_admin', {
+  await useAPI('/admin/add_admin', {
     body: {
       "username": username,
       "level": permissionCode.value

@@ -29,7 +29,7 @@
 <script setup>
 	import { marked } from 'marked';
 	// import { baseURL } from "@/server/constants";
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	const props = defineProps({
@@ -83,7 +83,7 @@
 	const submitEdit = () => {
 		if (localBody.value) {
 			isLoading.value = true;
-			useApi(`/${props.type}/${props.id}`, {
+			useAPI(`/${props.type}/${props.id}`, {
 				method: "put",
 				body: {
 					"body": localBody.value

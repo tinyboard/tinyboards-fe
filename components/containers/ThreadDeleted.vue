@@ -175,7 +175,7 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 import { usePost } from "@/composables/post";
 import { usePostComments } from "@/composables/comments";
 import { useSave } from "@/composables/save";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSubscribe } from "@/composables/subscribe";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
@@ -202,7 +202,7 @@ const { isSubscribed, subscribe } = useSubscribe();
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/posts/${props.item.post.id}/vote`, {
+  await useAPI(`/posts/${props.item.post.id}/vote`, {
     method: "post",
     body: {
       score: voteType,

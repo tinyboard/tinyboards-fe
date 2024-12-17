@@ -203,7 +203,7 @@
 import { ref } from "vue";
 import { useToastStore } from "@/stores/StoreToast";
 import { useBoardStore } from "@/stores/StoreBoard";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useModalStore } from "@/stores/StoreModal";
 import { useImageStore } from "@/stores/StoreImages";
 import { dataURLtoFile } from "@/utils/files";
@@ -267,7 +267,7 @@ const submitSettings = async () => {
         }
     }
 
-    useApi(`/boards/${board.id}`, {
+    useAPI(`/boards/${board.id}`, {
         method: "put",
         body: {
             icon: settings.value.icon,

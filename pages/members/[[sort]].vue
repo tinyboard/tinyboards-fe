@@ -172,7 +172,7 @@ const site = useSiteStore();
 
 import { useRoute } from "vue-router";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 const router = useRouter();
@@ -194,7 +194,7 @@ const {
     pending,
     error,
     refresh,
-} = await useApi("/members", {
+} = await useAPI("/members", {
     query: {
         sort: sort.value,
         limit: limit.value,

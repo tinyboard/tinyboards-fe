@@ -380,7 +380,7 @@ const submitSettings = async () => {
         }
     }
 
-    const { data, pending, error, refresh } = await useApi("/settings", {
+    const { data, pending, error, refresh } = await useAPI("/settings", {
         method: "put",
         body: {
             avatar: settings.value.avatar,

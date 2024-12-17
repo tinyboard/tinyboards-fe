@@ -45,6 +45,7 @@ query userProfile(
     postScore
     commentScore
     rep
+    isBanned
     posts(limit: $limit, sort: $sort, page: $page) @include(if: $withPosts) {
       id
       titleChunk
@@ -107,6 +108,7 @@ query userProfile(
         title
       }
       creator {
+        id
         name
         displayName
         instance

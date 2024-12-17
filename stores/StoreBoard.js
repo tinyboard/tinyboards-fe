@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 
 export const useBoardStore = defineStore("board", {
   state: () => {

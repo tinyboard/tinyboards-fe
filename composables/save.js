@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 
 const toast = useToastStore();
@@ -10,7 +10,7 @@ export function useSave(hasSaved) {
 	const save = (id,type) => {
 		isSaved.value = !isSaved.value;
 		// Make the request.
-		useApi(`/${type}s/${id}/saved`, {
+		useAPI(`/${type}s/${id}/saved`, {
 			method: "PATCH",
 		})
 		.then(({ data, error }) => {
@@ -26,6 +26,7 @@ export function useSave(hasSaved) {
 				console.error(error.value)
 			}
 		});
+		
 	};
 
 	return {

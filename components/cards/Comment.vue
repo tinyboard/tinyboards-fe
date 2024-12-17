@@ -339,7 +339,7 @@ import { useToastStore } from "@/stores/StoreToast";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useSiteStore } from "@/stores/StoreSite";
 import { formatDate } from "@/utils/formatDate";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
@@ -401,7 +401,7 @@ const voteType = ref(comment.value.myVote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/comments/${comment.value.id}/vote`, {
+  await useAPI(`/comments/${comment.value.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
@@ -457,7 +457,7 @@ const onHasEdited = (payload) => {
 const isSaved = ref(comment.value.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useApi(`/comment/${comment.value.id}/save`, {
+  await useAPI(`/comment/${comment.value.id}/save`, {
     method: "post",
     body: {
       save: isSaved.value,

@@ -30,12 +30,12 @@
                         class="bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md"
                     >
                         <div
-                            v-if="!isEditingBoard"
+                            v-if="!isEditingBoard && site.enableBoards"
                             class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center"
                         >
                             <div class="flex flex-row space-x-2 items-center">
                                 <img
-                                    :src="dummyBoard.icon_url"
+                                    :src="boardStore.board.icon"
                                     class="hidden md:block w-11 h-11 object-cover rounded"
                                     alt="board icon"
                                 />
@@ -44,8 +44,7 @@
                                         You are posting to +{{ boardName }}
                                     </p>
                                     <p class="text-sm text-gray-500">
-                                        Maybe board mods will be able to
-                                        customze the text here later
+                                        {{ boardStore.board.description }}
                                     </p>
                                 </div>
                             </div>
@@ -60,7 +59,7 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <!-- Board -->
                                 <div
-                                    v-if="isEditingBoard"
+                                    v-if="isEditingBoard && site.enableBoards"
                                     class="col-span-full"
                                 >
                                     <label
@@ -146,7 +145,7 @@
                                             class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
                                             rows="6"
                                             v-model="body"
-                                            :required="!url"
+                                            :required="!url && !image"
                                             @focus="hasFocusedBody = true"
                                         />
                                     </div>
@@ -284,16 +283,6 @@
 import { useSiteStore } from "@/stores/StoreSite";
 const site = useSiteStore();
 
-// useHead({
-// 	title: `${site.name} | create a post`,
-// 	meta: [
-// 	{
-// 		property: 'og:title',
-// 		content: `${site.name} | create a post`
-// 	}
-// 	]
-// });
-
 definePageMeta({
     alias: ["", "/+:board?/submit"],
     hasAuthRequired: true,
@@ -306,8 +295,10 @@ import { ref } from "vue";
 // import { baseURL } from "@/server/constants";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { dataURLtoFile } from "@/utils/files";
+import { useGqlMultipart } from "@/composables/graphql_multipart";
+import { useBoardStore } from "@/stores/StoreBoard";
 
 const pageTitle = ref("Submit");
 
@@ -317,35 +308,45 @@ useHead({
 
 const modal = useModalStore();
 const toast = useToastStore();
+const boardStore = useBoardStore();
 
 const router = useRouter();
 const route = useRoute();
 
-const isEditingBoard = ref(false);
+const isEditingBoard = ref(!boardStore.hasBoard);
 
-const dummyBoard = {
-    name: route.params.board,
-    title: "Board title, defaults to board name",
-    description: "Board short description, max 256 chars",
-    followers_count: 304,
-    posts_count: 1902,
-    comments_count: 13929,
-    created_at: "2022-11-27T19:31:27.730335",
-    icon_url:
-        "https://i.ibb.co/r4D7WWs/scott-goodwill-y8-Ngwq34-Ak-unsplash.jpg",
-    banner_url:
-        "https://i.ibb.co/7kfB6Y0/chris-schog-En-Ca-UE4-QNOw-unsplash.jpg",
-};
+const SUBMIT_POST_QUERY = `
+    mutation createPost(
+        $title: String!,
+        $board: String,
+        $body: String,
+        $link: String,
+        $isNSFW: Boolean,
+        $file: Upload
+    ) {
+        createPost(
+            title: $title,
+            board: $board,
+            body: $body,
+            link: $link,
+            isNSFW: $isNSFW,
+            file: $file
+        ) {
+            id
+            titleChunk
+        }
+    }
+`;
 
-const boardName = ref(dummyBoard.name ?? "campfire");
+const boardName = ref(boardStore.hasBoard ? boardStore.board.name : "");
 const title = ref(route.query.title);
 const url = ref(route.query.url);
 const image = ref(null);
 const body = ref(null);
 const isNsfw = ref(false);
 
-pageTitle.value = route.params.board
-    ? `Submit to +${route.params.board}`
+pageTitle.value = boardStore.hasBoard
+    ? `Submit to +${boardStore.board.name}`
     : "Submit";
 
 let hasFocusedUrl = ref(false);
@@ -410,91 +411,50 @@ const authCookie = useCookie("token").value;
 
 const isLoading = ref(false);
 
-const submit = () => {
-    isLoading.value = true;
-    // Upload image and post otherwise just post
-    if (!!image.value) {
-        const file = dataURLtoFile(image.value);
-
-        let formData = new FormData();
-        formData.append("file", file);
-
-        useApi("/file/upload", {
-            method: "put",
-            body: formData,
-        }).then(({ data, error }) => {
-            if (data.value) {
-                url.value = data.value.uploads[0];
-                // On success, post
-                post();
+function submit() {
+    useGqlMultipart({
+        query: SUBMIT_POST_QUERY,
+        variables: {
+            title: title.value,
+            board: boardName.value,
+            link: url.value,
+            body: body.value,
+            isNSFW: isNsfw.value,
+            file: null
+        },
+        files: !!image.value ? { file: dataURLtoFile(image.value) } : {}
+    })
+        .then(({ data, error }) => {
+            if (!!data.value.data) {
+                // object gore lmao
+                const post = data.value.data.createPost;
+                if (site.enableBoards) {
+                    navigateTo(
+                        `/+${boardName.value}/post/${post.id}/${post.titleChunk}`,
+                    );
+                } else {
+                    navigateTo(
+                        `/post/${post.id}/${post.titleChunk}`,
+                    );
+                }
             } else {
-                isLoading.value = false;
-                // Show error toast.
+                console.error("Error: " + data.value.errors[0].message);
                 toast.addNotification({
-                    header: "Failed to upload",
-                    message: "Your image failed to upload. Please try again.",
+                    header: "Failed to post",
+                    message: data.value.errors[0].message,
                     type: "error",
                     isVisibleOnRouteChange: true,
                 });
             }
-        });
-    } else {
-        post();
-    }
-};
-
-// Post
-const post = () => {
-    return new Promise((resolve, reject) => {
-        useApi("/posts", {
-            method: "post",
-            body: {
-                // "creatorId": 0,
-                board_name: boardName.value,
-                title: title.value,
-                type_: "text",
-                url: url.value,
-                // "image": image.value,
-                body: body.value,
-                is_nsfw: isNsfw.value,
-            },
         })
-            .then(({ data, error }) => {
-                if (data.value) {
-                    const post_view = JSON.parse(
-                        JSON.stringify(data.value.post_view),
-                    );
-                    const post = post_view.post;
-                    // Show success toast.
-                    toast.addNotification({
-                        header: "Post created",
-                        message: "Your post was published!",
-                        type: "success",
-                        isVisibleOnRouteChange: true,
-                    });
-                    // Navigate to thread page.
-                    navigateTo(
-                        `${site.enableBoards ? "/+" + post_view.board.name : ""}/post/${post.id}/${post.title_chunk}`,
-                    );
-                } else {
-                    // Show error toast.
-                    toast.addNotification({
-                        header: "Failed to post",
-                        message:
-                            "Your post failed to publish. Please try again.",
-                        type: "error",
-                        isVisibleOnRouteChange: true,
-                    });
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            })
-            .finally(() => {
-                isLoading.value = false;
-            });
-    });
-};
+        .catch((e) => {
+            console.error("Error: " + e)
+        })
+        .finally(() => {
+            isLoading.value = false;
+        });
+
+}
 
 const links = [
     //{ name: 'House Rules', href: '/help/rules', target: '_blank' },

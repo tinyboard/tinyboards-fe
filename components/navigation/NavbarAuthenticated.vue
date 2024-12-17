@@ -335,7 +335,7 @@
 
 <script setup>
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSiteStore } from '@/stores/StoreSite.js';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useBoardStore } from '@/stores/StoreBoard.js';
@@ -371,7 +371,7 @@ const unread = ref(userStore.unread);
 const authCookie = useCookie("token").value;
 
 const fetchNotifcationCount = () => {
-	useApi("/notifications/unread")
+	useAPI("/notifications/unread")
 		.then(({ data }) => {
 			unread.value = data.value.total_count
 		})

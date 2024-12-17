@@ -497,7 +497,7 @@ import { reactive, computed } from "vue";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { usePost } from "@/composables/post";
 import { usePostComments } from "@/composables/comments";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
@@ -526,7 +526,7 @@ const voteType = ref(props.post.myVote);
 const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/posts/${props.post.id}/vote`, {
+  await useAPI(`/posts/${props.post.id}/vote`, {
     method: "post",
     body: {
       score: voteType,
@@ -555,7 +555,7 @@ const vote = async (type = 0) => {
 const isSaved = ref(props.post.saved);
 const save = async () => {
   isSaved.value = !isSaved.value;
-  await useApi(`/post/${props.post.id}/save`, {
+  await useAPI(`/post/${props.post.id}/save`, {
     method: "post",
     body: {
       save: !isSaved.value,

@@ -31,7 +31,7 @@
 <script setup>
 	import { marked } from 'marked';
 	// import { baseURL } from "@/server/constants";
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	const props = defineProps({
@@ -78,7 +78,7 @@
 		if (body.value) {
 			isLoading.value = true;
 			return new Promise((resolve, reject) => {
-				useApi(`/posts/${props.postId}/comments`, {
+				useAPI(`/posts/${props.postId}/comments`, {
 					method: "post",
 					body: {
 						"body": body.value,

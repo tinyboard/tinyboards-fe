@@ -40,7 +40,7 @@
 
 <script setup>
 	import { ref } from "vue";
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 
 	const props = defineProps({
 		type: {
@@ -59,7 +59,7 @@
 	async function toggleOpen() {
 		open.value = !open.value;
 		if (reports.value.length === 0) {
-			await useApi(`${props.type}/reports`, {
+			await useAPI(`${props.type}/reports`, {
 				query: {
 					[`${props.type}_id`]: props.id,
 					unresolved_only: true

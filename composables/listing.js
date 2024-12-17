@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 
 export async function getListing(query, type_) {
     // let page = 1;
@@ -11,7 +11,7 @@ export async function getListing(query, type_) {
       postsModQueue: "/mod/queue/posts",
     };
     async function request(query) {
-      const { data, pending, error, refresh } = await useApi(endpoints[type_], {
+      const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
         query: { ...query },
         key: "get_" + type_ + "_key",
       });

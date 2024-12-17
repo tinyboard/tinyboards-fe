@@ -102,7 +102,7 @@
 
 <script setup>
 // import { baseURL } from '@/server/constants';
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
 import { ref } from 'vue';
@@ -120,7 +120,7 @@ const site = useSiteStore();
 
 const isLoading = ref(true);
 
-const { data, pending, error, refresh } = await useApi('/messages', {
+const { data, pending, error, refresh } = await useAPI('/messages', {
 	query: {
 		limit: 25,
 		page: 1,
@@ -134,7 +134,7 @@ const unreadCount = ref(data.value.unread);
 
 const markRead = () => {
 	isLoading.value = true;
-	useApi(`/notifications/messages/mark_read`, {
+	useAPI(`/notifications/messages/mark_read`, {
 		method: "post",
 		body: {}
 	})

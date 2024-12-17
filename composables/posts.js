@@ -1,5 +1,5 @@
 import { ref, computed } from "vue";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { usePostsStore } from "@/stores/StorePosts";
 
 export function usePagination() {
@@ -100,7 +100,7 @@ export function usePreloadedPosts(posts, personId = null) {
 //     postsModQueue: "/mod/queue/posts",
 //   };
 //   async function request(query) {
-//     const { data, pending, error, refresh } = await useApi(endpoints[type_], {
+//     const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
 //       query: { ...query },
 //       key: "get_" + type_ + "_key",
 //     });
@@ -146,7 +146,7 @@ export async function getModQueue(query, type_) {
     comments: "/mod/queue/comments",
   };
   async function request(query) {
-    const { data, pending, error, refresh } = await useApi(endpoints[type_], {
+    const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
       query: { ...query },
       key: "get_" + type_ + "_key",
     });

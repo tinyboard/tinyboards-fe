@@ -137,7 +137,7 @@ const links = [
 	{ name: 'Messages', href: '/inbox/messages' },
 ];
 
-const { data: counts, error: err } = await useApi("/notifications/unread");
+const { data: counts, error: err } = await useAPI("/notifications/unread");
 
 if (err && err.value?.response) {
 	throw createError({

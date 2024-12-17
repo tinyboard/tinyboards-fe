@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 //import { LOGIN_QUERY } from "@/graphql/mutations/Auth";
 //import { ME_QUERY } from "@/graphql/queries/Me";
 import Cookies from 'js-cookie';
@@ -29,6 +29,7 @@ export const useLoggedInUser = defineStore("auth", {
   },
   actions: {
     login({ nameOrEmail, password }) {
+      const { $client } = useNuxtApp();
       return new Promise((resolve, reject) => {
         // Obtain auth token
         GqlSubmitLogin({ usernameOrEmail: nameOrEmail, password })
@@ -124,7 +125,7 @@ export const useLoggedInUser = defineStore("auth", {
     },
     /*signup({ username, email, password, invite_token, answer }) {
       return new Promise((resolve, reject) => {
-        useApi("/auth/signup", {
+        useAPI("/auth/signup", {
           key: `signup_${username}_${Date.now()}`,
           method: "post",
           body: {
@@ -161,7 +162,7 @@ export const useLoggedInUser = defineStore("auth", {
       });
     },
     fetchUserPromise(authToken) {
-      return useApi(
+      return useAPI(
         "/me",
         {
           key: `get_user_${authToken}`,
@@ -172,7 +173,7 @@ export const useLoggedInUser = defineStore("auth", {
       );
     },*/
     fetchUser(authToken) {
-      useApi("/me", {
+      useAPI("/me", {
         key: `get_user_${authToken}`,
       })
         .then(({ data }) => {

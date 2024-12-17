@@ -1,7 +1,7 @@
 import cookie from "cookie";
 // import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
@@ -18,7 +18,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const jwt = cookies["token"];
 
     if (cookies["token"]) {
-      await useApi("/me", {
+      await useAPI("/me", {
         key: `get_user_${jwt}`,
       }).then(({ data, error }) => {
         if (data.value) {

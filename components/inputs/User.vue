@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useApi } from '@/composables/api';
+import { useAPI } from '@/composables/api';
 import {
     Combobox,
     ComboboxInput,
@@ -82,7 +82,7 @@ watch(
             params["is_banned"] = false;
         }
 
-        const { data, pending, error, refresh } = await useApi("/members", {
+        const { data, pending, error, refresh } = await useAPI("/members", {
             query: params,
             method: "get",
             key: `user_fetch_${params.search_term}_${params.limit}_`

@@ -37,7 +37,7 @@
 
 <script setup>
 	// import { baseURL } from '@/server/constants';
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 
 	definePageMeta({
 		'hasAuthRequired': true
@@ -50,7 +50,7 @@
 	const authCookie = useCookie("token").value;
 
 	const fetchMembers = () => {
-		useApi(`/names`, {
+		useAPI(`/names`, {
 			query: {
 				q: username.value
 			}

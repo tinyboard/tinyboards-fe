@@ -4,7 +4,7 @@ import { useBoardStore } from "@/stores/StoreBoard";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import gql from "graphql-tag";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
@@ -18,11 +18,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const cookies = cookie.parse(cookieHeader);
 
   const jwt = cookies["token"];
-
-  //clear posts
-  usePostsStore().clear();
-  // clear comments
-  useCommentsStore().setComments([]);
 
   const { data, error } = await useAsyncGql({
     operation: 'getSite',
@@ -118,4 +113,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     userStore.joinedBoards = data.value.me.joinedBoards;
     userStore.moddedBoards = data.value.me.moderates.map((m) => m.board);
   }
+
+  //clear posts
+  usePostsStore().clear();
+  // clear comments
+  useCommentsStore().setComments([]);
 });

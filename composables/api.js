@@ -1,8 +1,9 @@
 // import { baseURL } from "@/server/constants";
 
-export function useApi(path, options = {}, headers = {}) {
+export function useAPI(path, options = {}, headers = {}) {
   const authCookie = useCookie("token").value;
   const config = useRuntimeConfig();
+  const apiVersion = options.version ?? 1;
   
   let requestHeaders = {};
   if (headers.hasOwnProperty('Authorization')) {
@@ -15,7 +16,7 @@ export function useApi(path, options = {}, headers = {}) {
   }
 
   return useFetch(path, {
-    baseURL: `${config.public.use_https ? "https" : "http"}://${config.public.domain}/api/v1`,
+    baseURL: `${config.public.use_https ? "https" : "http"}://${config.public.domain}/api/v${apiVersion}`,
     headers: requestHeaders,
     ...options,
   });

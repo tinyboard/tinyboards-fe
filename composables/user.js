@@ -1,9 +1,9 @@
-//import { useApi } from "@/composables/api";
+//import { useAPI } from "@/composables/api";
 //import PROFILE_QUERY from "@/graphql/queries/UserProfile";
 import { useSiteStore } from "@/stores/StoreSite";
 
 /*export async function useFetchUser(username, query = {}) {
-  return useApi(`/user`, {
+  return useAPI(`/user`, {
     key: `user_${username}`,
     query: {
       username,

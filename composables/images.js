@@ -1,4 +1,4 @@
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useImageStore } from '@/stores/StoreImages';
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from '@/stores/StoreToast';
@@ -101,7 +101,7 @@ export const uploadFile = async (file, type) => {
 	let formData = new FormData();
 	formData.append('file', file);
 
-	const { data, pending, error, refresh } = await useApi("/file/upload", {
+	const { data, pending, error, refresh } = await useAPI("/file/upload", {
 		method: "put",
 		body: formData
 	});

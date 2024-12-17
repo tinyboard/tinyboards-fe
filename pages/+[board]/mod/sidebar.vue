@@ -92,7 +92,7 @@
 import { ref } from "vue";
 import { useToastStore } from "@/stores/StoreToast";
 import { useBoardStore } from "@/stores/StoreBoard";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -115,7 +115,7 @@ const isLoading = ref(false);
 
 const submitSettings = () => {
     isLoading.value = true;
-    useApi(`/boards/${board.id}`, {
+    useAPI(`/boards/${board.id}`, {
         method: "put",
         body: {
             sidebar: settings.value.sidebar,

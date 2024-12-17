@@ -364,7 +364,7 @@
 import { ref } from "vue";
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
@@ -398,7 +398,7 @@ const mods = board.moderators;
 
 const modSelf = async () => {
     modSelfPending.value = true;
-    const { data, error } = await useApi(`/boards/${board.id}/mods`, {
+    const { data, error } = await useAPI(`/boards/${board.id}/mods`, {
         method: "post",
         body: {},
     });

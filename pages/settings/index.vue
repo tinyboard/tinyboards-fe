@@ -113,7 +113,7 @@
 <script setup>
 	import { ref } from 'vue';
 	// import { baseURL } from "@/server/constants";
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { useModalStore } from "@/stores/StoreModal";
@@ -137,7 +137,7 @@
 	const v = userStore.user;
 
 	// Fetch user settings
-	// const { data, pending, error, refresh } = await useApi("/settings");
+	// const { data, pending, error, refresh } = await useAPI("/settings");
 
 	let settings = ref({});
 
@@ -212,7 +212,7 @@
 			}
 		}
 
-		const { data, pending, error, refresh } = await useApi('/settings', {
+		const { data, pending, error, refresh } = await useAPI('/settings', {
 			method: "put",
 			body: {
 				"avatar": settings.value.avatar,

@@ -91,7 +91,7 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	// import { baseURL } from "@/server/constants";
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 	import { useLoggedInUser } from '@/stores/StoreAuth';
 	import { useToastStore } from '@/stores/StoreToast';
 	import { useSiteStore } from '@/stores/StoreSite';
@@ -116,7 +116,7 @@
 	// Site
 	// const site = useSiteStore();
 	// fetch site
-	//const { data: site, pending, error, refresh } = await useApi("/admin/site");
+	//const { data: site, pending, error, refresh } = await useAPI("/admin/site");
 	const site = useSiteStore();
 
 	// Invite
@@ -125,7 +125,7 @@
 
 	/*if (!!invite.value) {
 		// Validate invite code
-		const { data, pending, error, refresh } = await useApi(`/validate_invite/${invite.value}`, {
+		const { data, pending, error, refresh } = await useAPI(`/validate_invite/${invite.value}`, {
 			method: "post",
 			body: {
 				'invite_token': invite.value

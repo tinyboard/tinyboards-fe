@@ -88,7 +88,7 @@
 <script setup>
 import { ref } from 'vue'
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
@@ -148,7 +148,7 @@ watch(
 const ban = async () => {
   //const isBanned = props.options.user.is_banned;
   const username = props.options.user?.name || target.value;
-  await useApi('/admin/ban', {
+  await useAPI('/admin/ban', {
     body: {
       "username": username,
       "banned": !isBanned.value,

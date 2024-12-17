@@ -154,7 +154,7 @@
 <script setup>
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { dataURLtoFile } from '@/utils/files';
 
@@ -171,7 +171,7 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useApi("/admin/site");
+const { data, pending, error, refresh } = await useAPI("/admin/site");
 
 // Convert colors from rgb to hex
 const toHexCode = rgb => {
@@ -224,7 +224,7 @@ const uploadFile = async (file) => {
 	let formData = new FormData();
 	formData.append('file', file);
 
-	const { data, pending, error, refresh } = await useApi("/file/upload", {
+	const { data, pending, error, refresh } = await useAPI("/file/upload", {
 		method: "put",
 		body: formData
 	});
@@ -255,7 +255,7 @@ const submitSettings = async () => {
 		settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
 	}
 
-	const { data, error } = await useApi('/admin/site', {
+	const { data, error } = await useAPI('/admin/site', {
 		method: "put",
 		body: {
 			"name": settings.value.name,

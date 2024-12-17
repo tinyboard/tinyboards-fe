@@ -219,7 +219,7 @@
 <script setup>
 import { ref } from "vue";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 import { useBoardStore } from "@/stores/StoreBoard";
@@ -354,7 +354,7 @@ const submit = async () => {
             requestBody["username"] = target.value;
         }
     }
-    let { data, error } = await useApi(apiRoute, {
+    let { data, error } = await useAPI(apiRoute, {
         body: requestBody,
         method: METHODS[mode.value],
     });

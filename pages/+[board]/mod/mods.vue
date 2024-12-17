@@ -426,7 +426,7 @@
 <script setup>
 import { computed, ref } from "vue";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useModalStore } from "@/stores/StoreModal";
@@ -469,7 +469,7 @@ const user = userStore.user;
 const isLoading = ref(false);
 
 // Fetch users
-const { data, pending, error, refresh } = await useApi(
+const { data, pending, error, refresh } = await useAPI(
     `/boards/${board.id}/mods`,
     {
         method: "get",
@@ -503,7 +503,7 @@ function setModModal(modView = null, isRemoving = false) {
 
 async function resolveInvite(accept) {
     isLoading.value = true;
-    const { data, error } = await useApi(
+    const { data, error } = await useAPI(
         accept
             ? `/boards/${board.id}/mods`
             : `/boards/${board.id}/mods/${user.id}`,

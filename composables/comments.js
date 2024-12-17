@@ -1,6 +1,6 @@
 import { ref } from "vue";
 
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 
 export async function usePostComments(id, query = {}) {
   const {
@@ -8,7 +8,7 @@ export async function usePostComments(id, query = {}) {
     pending,
     error,
     refresh,
-  } = await useApi("/comments", {
+  } = await useAPI("/comments", {
     query: { ...query, post_id: id },
     key: `post_${id}_comments`,
   });
@@ -34,7 +34,7 @@ export async function useComments(id, type = "post", query = {}, post_id) {
     pending,
     error,
     refresh,
-  } = await useApi(url, {
+  } = await useAPI(url, {
     query: {
       ...query,
       ...(type === "post" && { post_id: id }),

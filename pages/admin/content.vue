@@ -81,7 +81,7 @@
 <script setup>
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useImageStore } from '@/stores/StoreImages';
 import { useModalStore } from "@/stores/StoreModal";
@@ -103,7 +103,7 @@ const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useApi("/admin/site");
+const { data, pending, error, refresh } = await useAPI("/admin/site");
 
 // Settings.
 const settings = ref({});
@@ -133,7 +133,7 @@ const submitSettings = async () => {
 		}
 	}
 
-	useApi('/admin/site', {
+	useAPI('/admin/site', {
 			method: "put",
 			body: {
 				//"name": settings.value.name,

@@ -1,4 +1,4 @@
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
@@ -50,7 +50,7 @@ export async function usePostReports(id) {
     pending,
     error,
     refresh
-  } = await useApi(`/posts/${id}/reports`, {
+  } = await useAPI(`/posts/${id}/reports`, {
     query: {
       //post_id: id,
       unresolved_only: true
