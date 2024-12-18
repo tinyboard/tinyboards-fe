@@ -2,6 +2,7 @@ import { useAPI } from "@/composables/api";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
+import { ref } from "vue";
 
 export async function usePost(id) {
   const route = useRoute();
@@ -39,7 +40,7 @@ export async function usePost(id) {
 
   return {
     post,
-    comments,
+    comments: ref(comments),
     error
   };
 }

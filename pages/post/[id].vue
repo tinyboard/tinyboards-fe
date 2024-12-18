@@ -10,7 +10,8 @@
                         <!-- Thread -->
                         <div class="relative w-full">
                               <component v-if="post" :post="post" :comments="comments"
-                                    :is="post.isDeleted ? threadDeleted : thread" />
+                                    :is="canViewPost ? thread : threadRemoved" />
+                              <LazyContainersCommentSection v-if="post" :post="post" :comments="comments" />
                               <!-- Error -->
                               <div v-else class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
@@ -35,6 +36,9 @@ import { usePost } from '@/composables/post';
 import { useComments } from '@/composables/comments';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useBoardStore } from '@/stores/StoreBoard';
+import { useLoggedInUser } from "@/stores/StoreAuth";
+import { requirePermission } from "@/composables/admin";
+import { requireModPermission } from "@/composables/mod";
 
 const title = ref("Post");
 
@@ -51,13 +55,18 @@ const route = useRoute();
 const router = useRouter();
 const site = useSiteStore();
 const boardStore = useBoardStore();
+const userStore = useLoggedInUser();
+const modPermissions = boardStore.modPermissions;
 
 // Import thread components.
 const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
-const threadDeleted = defineAsyncComponent(() => import('@/components/containers/ThreadDeleted'));
+const threadRemoved = defineAsyncComponent(() => import('@/components/containers/ThreadRemoved'));
 
 // Posts store
 const postsStore = usePostsStore();
+
+const isAuthed = userStore.isAuthed;
+const v = userStore.user;
 
 // Post
 let { post, comments, error } = await usePost(route.params.id);
@@ -83,25 +92,13 @@ if (site.enableBoards) {
             (hasBoard && params.board.toLowerCase() !== boardName.toLowerCase())) {
             router.push(`/+${boardName}/post/${post.id}/${post.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
       }
-
-      /*if(!hasBoard) {
-            router.push(`/+${boardName}/post/${post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
-      }
-
-      if(hasBoard && params.board.toLowerCase() !== boardName.toLowerCase()) {
-            router.push(`/+${boardName}/post/${post.id}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
-      }*/
 } else if (route.params.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
       router.push(`/post/${post.id}/${post.titleChunk}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
 }
 
 
-// Author stats
-const stats = ref(null);
-stats.value = post.author;
 
-//post = computed(() => postsStore.getPost(route.params.id));
 
 // Comments
 const id = computed(() => {
@@ -111,6 +108,35 @@ const type = computed(() => {
       return !!route.params.comment ? 'comment' : 'post'
 })
 const sort = ref(route.query.sort);
+
+const onCommentPublished = (comment) => {
+  comments.value.unshift(comment);
+};
+
+/*
+ * Whether the user can see this post.
+ * 
+ * Admins: see everything
+ * Mods: can see removed posts, deleted content is hidden
+ * Logged in regular user: can view their own removed content only
+ * Everyone else: removed and deleted posts are unavailable
+ */
+const canViewPost = computed(() => {
+    // Admin or mod
+    if (
+        requirePermission("content") ||
+        requireModPermission(modPermissions, "content")
+    ) {
+        return true;
+    }
+
+    // Own post
+    if (v && post.isRemoved && v.id === post.creator.id) {
+        return true;
+    }
+
+    return !(post.isDeleted || post.isRemoved);
+});
 
 /*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params.id);
 

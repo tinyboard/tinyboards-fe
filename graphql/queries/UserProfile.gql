@@ -102,6 +102,7 @@ query userProfile(
         title
         titleChunk
         isDeleted
+        creatorId
       }
       board @include(if: $includeBoard) {
         name

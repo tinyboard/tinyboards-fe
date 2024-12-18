@@ -33,6 +33,8 @@
 	// import { baseURL } from "@/server/constants";
 	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
+	import { useSiteStore } from "@/stores/StoreSite";
+	import { useCommentsStore } from "@/stores/StoreComments";
 
 	const props = defineProps({
 		parentId: {
@@ -48,7 +50,9 @@
 	// Define emit
 	const emit = defineEmits(['closed','commentPublished']);
 	const toast = useToastStore();
+	const site = useSiteStore();
 	const authCookie = useCookie("token").value;
+	const commentsStore = useCommentsStore();
 
 	const body = ref(null);
 	const isLoading = ref(false);
@@ -73,40 +77,30 @@
 		}
 	};
 
-	// Submit content
-	const submitComment = () => {
-		if (body.value) {
-			isLoading.value = true;
-			return new Promise((resolve, reject) => {
-				useAPI(`/posts/${props.postId}/comments`, {
-					method: "post",
-					body: {
-						"body": body.value,
-						"parent_id": props.parentId,
-						//"post_id": props.postId
-					}
-				})
-				.then(({ data, error }) => {
-					if (data.value) {
-						data = JSON.parse(JSON.stringify(data.value));
-						emit('commentPublished', data.comment_view);
-						// Empty the input.
-						body.value = null;
-						// Show success toast.
-						toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
-					} else {
-						console.error(error.value);
-						// Show error toast.
-						toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
-					}
-				})
-				.finally(() => {
-					isLoading.value = false;
-					isPreviewVisible.value = false;
-				});
+	// Submit comment
+	function submitComment() {
+		GqlCreateComment({
+			replyToPostId: props.postId,
+			replyToCommentId: props.parentId,
+			body: body.value,
+			withBoard: site.enableBoards
+		})
+			.then((resp) => {
+				emit('commentPublished', resp.createComment);
+				// save comment to comments store
+				commentsStore.comments.push(resp.createComment);
+				// empty the input
+				body.value = "";
+				// Show success toast.
+				toast.addNotification({header:'Comment created',message:'Your comment was published!',type:'success'});
+			})
+			.catch((err) => {
+				console.error(err);
+				toast.addNotification({header:'Comment failed',message:'Your comment failed to publish. Please try again.',type:'error'});
+			})
+			.finally(() => {
+				isLoading.value = false;
+				isPreviewVisible.value = false;
 			});
-		} else {
-			toast.addNotification({header:'Comment failed',message:'Your comment needs some text! Please try again.',type:'error'});
-		}
-	};
+	}
 </script>

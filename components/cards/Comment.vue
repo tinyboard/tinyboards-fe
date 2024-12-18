@@ -31,6 +31,7 @@
                 <span v-if="comment.creator.instance">@{{ comment.creator.instance }}</span>
                 <!-- Role -->
                 <span v-if="comment.creator.isAdmin" class="ml-1 badge badge-red">Admin</span>
+                <span v-if="isOP" class="ml-1 badge badge-blue">OP</span>
               </NuxtLink>
               <!-- Parent Context Link -->
               <!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex comments-center align-middle text-gray-400 hover:text-gray-600">
@@ -311,7 +312,7 @@
         <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
           <img loading="lazy" :src="userStore.user.avatar" alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white" />
-          <LazyInputsComment :post-id="comment.post_id" :parent-id="comment.id" @closed="isReplying = false"
+          <LazyInputsComment :post-id="comment.postId" :parent-id="comment.id" @closed="isReplying = false"
             @comment-published="onCommentPublished" />
         </div>
         <!-- Replies -->
@@ -383,9 +384,13 @@ const level = computed(() => {
   return comment.value.level - props.offset;
 });
 
-const onCommentPublished = (comment) => {
+const onCommentPublished = (newComment) => {
   // Append reply to list of replies.
-  comment.value.replies.unshift(comment);
+  comment.value.replies.unshift({
+    ...newComment,
+    replies: []
+  });
+
   // Close the reply form.
   toggleReplying();
   // Navigate to comment if replies are hidden.
@@ -430,6 +435,8 @@ const score = computed(() => {
   // return comment.value.score + (comment.value.myVote + voteType.value === 0 ? 0 : voteType.value) || 0
   return comment.value.score + voteType.value;
 })
+
+const isOP = computed(() => comment.value.post.creatorId === comment.value.creator.id);
 
 const upvotes = computed(() => voteType.value == 1 ? comment.value.upvotes + 1 : comment.value.upvotes);
 const downvotes = computed(() => voteType.value == -1 ? comment.value.downvotes + 1 : comment.value.downvotes);

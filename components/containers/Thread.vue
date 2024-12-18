@@ -51,11 +51,14 @@
         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
       </svg>
       <div>
-        <strong>Post {{ post.isRemoved ? 'removed' : 'deleted' }}</strong>
+        <strong>This post was {{ post.isDeleted ? 'deleted by its creator' : 'removed by moderators' }}</strong>
         <br />
         <p class="text-sm text-red-800">
-          This post was {{ post.isRemoved ? 'removed by the admins' : 'deleted by its author' }}. It is no longer
-          available.
+          {{
+            post.isDeleted
+              ? "This post doesn't appear on any feeds and cannot be interacted with."
+              : "Moderators have removed this post. It doesn't appear on any feeds, and all interactions with it have been locked."
+          }}
         </p>
       </div>
     </div>
@@ -79,7 +82,7 @@
     </div>
     <!-- Post -->
     <div class="sm:order-2 w-full sm:p-4 border-b sm:border sm:shadow-inner-xs sm:rounded-md"
-      :class="canMod && post.isRemoved ? 'bg-red-500 bg-opacity-20' : 'bg-white'">
+      :class="post.isRemoved ? 'bg-red-500 bg-opacity-20' : 'bg-white'">
       <!-- Post Meta Information & Content -->
       <div
         class="flex flex-shrink-0 items-center justify-between p-2.5 sm:p-0 border-b sm:border-0 dark:border-gray-700 dark:border-opacity-70">
@@ -423,58 +426,6 @@
             </button>
           </li>
         </ul>
-      </div>
-    </div>
-    <!-- Comment Section -->
-    <div id="comments" class="order-last flex flex-col">
-      <!-- Comment Count & Sort Menu -->
-      <div class="flex items-center sm:mb-4 p-2.5 sm:p-4 bg-gray-100 sm:border sm:shadow-inner-white sm:rounded-md">
-        <p>
-          <strong class="text-base leading-4 dark:text-gray-100">
-            {{
-              post.commentCount === 1
-              ? "1 comment"
-              : `${post.commentCount} comments`
-            }}
-          </strong>
-        </p>
-        <MenusSort :sorts="sorts" isLeft class="ml-auto" />
-      </div>
-      <!-- Single Discussion Alert -->
-      <div v-if="!!route.params.comment"
-        class="flex items-center justify-center sm:justify-start mb-2.5 sm:mb-4 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
-        <p class="text-sm text-yellow-800">
-          You are viewing a single conversation.
-          <NuxtLink :to="`${site.enableBoards ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`" class="text-yellow-800">
-            <strong>View the entire thread &#8594;</strong>
-          </NuxtLink>
-        </p>
-      </div>
-      <!-- Comments & States -->
-      <div id="comments" class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x"
-        style="scroll-margin-top: 7rem;">
-        <!-- Write Form -->
-        <div v-if="isAuthed && !post.isLocked && !route.params.comment" class="flex md:space-x-2 mb-2 sm:mb-0">
-          <!-- Avatar -->
-          <img loading="lazy" :src="userStore.user.avatar" alt="avatar"
-            class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded" />
-          <!-- Input -->
-          <LazyInputsComment :post-id="post.id" :parent-id="null" @comment-published="onCommentPublished" />
-        </div>
-        <!-- Comments -->
-        <LazyListsComments v-if="comments.length" :comments="comments" :offset="!!route.params.comment ? 3 : null" />
-        <!-- Empty -->
-        <div v-else-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
-          <p>
-            <span class="font-medium">This comment section is empty...</span>
-            <br />
-            Awkward...
-          </p>
-        </div>
-        <!-- Error -->
-        <div v-else class="px-4 py-24 text-center text-gray-400">
-          <p>An unknown error occured.</p>
-        </div>
       </div>
     </div>
   </div>
