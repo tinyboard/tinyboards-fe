@@ -35,12 +35,13 @@ query getPost(
     featuredLocal
     featuredBoard
     commentCount
+    myModPermissions
     creator {
       id
       name
       displayName
       avatar
-      isAdmin
+      adminLevel
       instance
       creationDate
       rep
@@ -50,7 +51,11 @@ query getPost(
     board @include(if: $withBoard) {
       id
       name
+      title
       icon
+      primaryColor
+      secondaryColor
+      hoverColor
     }
     comments(
       topCommentId: $topCommentId

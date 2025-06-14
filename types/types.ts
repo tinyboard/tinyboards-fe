@@ -30,6 +30,10 @@ export type BoardFragment = {
     title: string;
     icon?: string | null;
     subscribers: number;
+    primaryColor?: string;
+    secondaryColor?: string;
+    hoverColor?: string;
+    myModPermissions?: number;
 };
 
 export type ContentType = "post" | "comment";

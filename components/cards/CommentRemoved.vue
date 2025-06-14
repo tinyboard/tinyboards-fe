@@ -1,6 +1,6 @@
 <template>
-    <div>
-    <div :id="comment.id" class="comment group flex relative" :class="{
+  <div>
+    <div :id="comment.id.toString()" class="comment group flex relative" :class="{
       'opacity-60 hover:opacity-100 focus:opacity-100 comments-center':
         isCollapsed,
     }" style="scroll-margin-top: 7rem;">
@@ -11,9 +11,18 @@
       <div class="relative flex flex-col flex-shrink-0 comments-center mr-2">
         <!-- User "avator" - ghost icon -->
         <div class="z-10">
-            <div class="flex flex-shrink-0 w-6 h-6 md:w-9 md:h-9 rounded border-dashed border-2 border-gray-400 justify-center items-center bg-white dark:bg-gray-700">
-                <svg class="w-4 h-4 md:w-6 md:h-6 text-gray-400"  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7" /><path d="M10 10h.01" /><path d="M14 10h.01" /></svg>
-            </div>
+          <div
+            class="flex flex-shrink-0 w-6 h-6 md:w-9 md:h-9 rounded border-dashed border-2 border-gray-400 justify-center items-center bg-white dark:bg-gray-700">
+            <svg class="w-4 h-4 md:w-6 md:h-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M5 11a7 7 0 0 1 14 0v7a1.78 1.78 0 0 1 -3.1 1.4a1.65 1.65 0 0 0 -2.6 0a1.65 1.65 0 0 1 -2.6 0a1.65 1.65 0 0 0 -2.6 0a1.78 1.78 0 0 1 -3.1 -1.4v-7" />
+              <path d="M10 10h.01" />
+              <path d="M14 10h.01" />
+            </svg>
+          </div>
         </div>
         <!-- Comment Collapse Bar -->
         <div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed"
@@ -51,20 +60,23 @@
             </div>
           </div>
           <!-- Comment Text Body -->
-          <div :id="`comment-text-${comment.id}`" class="comment-deleted-body target:bg-primary target:bg-opacity-10 mb-2" v-show="!isCollapsed">
-              Comment {{ comment.isRemoved ? "removed by moderator" : "deleted by creator" }}
+          <div :id="`comment-text-${comment.id}`"
+            class="comment-deleted-body target:bg-primary target:bg-opacity-10 mb-2" v-show="!isCollapsed">
+            Comment {{ comment.isRemoved ? "removed by moderator" : "deleted by creator" }}
           </div>
         </div>
         <!-- Comment Actions -->
         <ul class="relative flex flex-grow flex-wrap comments-center space-x-4" v-show="!isCollapsed">
           <li class="hidden sm:inline sm:list-comment">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}#comment-text-${comment.id}`"
+            <NuxtLink
+              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3#comment-text-${comment.id}`"
+            <NuxtLink
+              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -75,10 +87,10 @@
           comment.replyCount &&
           level <= limit
           " v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />-->
-          <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
+        <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
         <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
-          :to="`/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}`"
+          :to="`/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>
@@ -87,51 +99,55 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed, ref } from "vue";
 // import { baseURL } from "@/server/constants";
 import { formatDate } from "@/utils/formatDate";
 import { useSiteStore } from "@/stores/StoreSite";
+import { usePostsStore } from "@/stores/StorePosts";
+import type { Comment, PostFragment } from "@/types/types";
 
 const site = useSiteStore();
+const postStore = usePostsStore();
 
-const props = defineProps({
-    comment: Object,
-    offset: {
-        type: Number,
-        default: 0,
-    },
-    limit: {
-        type: Number,
-        default: 3,
-    },
-});
+const props = defineProps<{
+  comment: Comment;
+  limit?: number;
+  offset?: number;
+}>();
 
 //const item = props.item;
 const comment = props.comment;
+
+const limit = props.limit ?? 3;
+const offset = props.offset ?? 0;
 
 const isCollapsed = ref(false);
 
 // take comment level and subtract offset (depth) to get relative level
 const level = computed(() => {
-    return comment.level - props.offset;
+  return comment.level - offset;
 });
+
+const parentPost: PostFragment | undefined = comment.post ?? postStore.getPost(comment.postId);
 </script>
 
 <style scoped>
 /* Collapse Bar */
 .comment-collapse-bar {
-    @apply cursor-pointer;
+  @apply cursor-pointer;
 }
+
 .comment-collapse-bar:hover::before {
-    @apply border-primary;
+  @apply border-primary;
 }
+
 .comment-collapse-bar::before {
-    content: "";
-    left: calc(50% - 1px);
-    width: 14px;
-    height: calc(100% - 24px);
-    @apply absolute bottom-0 border-l border-gray-300;
+  content: "";
+  left: calc(50% - 1px);
+  width: 14px;
+  height: calc(100% - 24px);
+  @apply absolute bottom-0 border-l border-gray-300;
 }
 
 .comment-deleted-body {

@@ -108,6 +108,7 @@ query userProfile(
       board @include(if: $includeBoard) {
         name
         title
+        myModPermissions
       }
       creator {
         id
