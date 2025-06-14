@@ -27,7 +27,6 @@
     "graphql-tag": "^2.12.6",
     "js-cookie": "^3.0.1",
     "marked": "^4.2.5",
-    "pinia": "^3.0.2",
     "unhead": "^1.7.4",
     "vue-advanced-cropper": "^2.8.8"
   }
