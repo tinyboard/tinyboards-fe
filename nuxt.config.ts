@@ -1,5 +1,6 @@
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 import { defineNuxtConfig } from "nuxt/config";
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 const tls = require("tls");
 
@@ -8,9 +9,9 @@ const process = require("process");
 tls.DEFAULT_ECDH_CURVE = "auto";
 
 export default defineNuxtConfig({
-  alias: {
-    pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",
-  },
+  // alias: {
+  //   pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",
+  // },
 
   devServer: {
     port: 3000,
@@ -35,8 +36,12 @@ export default defineNuxtConfig({
   devServerHandlers: [],
   modern: true,
 
-  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", //"@nuxtjs/i18n",
-  "nuxt-graphql-client"],
+  modules: ["@nuxtjs/tailwindcss", //"@nuxtjs/i18n",
+    "nuxt-graphql-client", "@pinia/nuxt"],
+
+  /*pinia: {
+    storesDirs: ['./stores/**']
+  },*/
 
   //i18n: {},
   routeRules: {
@@ -78,11 +83,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-10-06",
 
   vite: {
+    plugins: [tsconfigPaths()],
     server: {
-    allowedHosts: ["tinyboards.test"],
-      fs: {
-        cachedChecks: false,
-      },
-    },
+      allowedHosts: ["tinyboards.test"],
+      // fs: {
+      //   cachedChecks: false,
+      // },
+    }
   },
 });
