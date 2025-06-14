@@ -16,7 +16,7 @@ export const useCommentsStore = defineStore('comments', {
   getters: {
     /** A function that looks up a comment based on its ID */
     getComment: (state) => {
-      return (id: number): Comment => state.comments.filter((comment: Comment) => comment.id === id);
+      return (id: number): Comment | undefined => state.comments.find((comment: Comment) => comment.id === id);
     }
   },
   // Actions
@@ -26,9 +26,9 @@ export const useCommentsStore = defineStore('comments', {
     },
     updateComment(id: number, options: { [key: string]: any }) {
       for (let i = 0; i < this.comments.length; i++) {
-        if (this.comments[i].comment.id === id) {
-          this.comments[i].comment = {
-            ...this.comments[i].comment,
+        if (this.comments[i].id === id) {
+          this.comments[i] = {
+            ...this.comments[i],
             ...options
           };
         }

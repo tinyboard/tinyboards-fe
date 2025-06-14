@@ -11,7 +11,8 @@
       <div class="relative flex flex-col flex-shrink-0 comments-center mr-2">
         <!-- User Avatar -->
         <NuxtLink v-if="comment.creator"
-          :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`" class="z-10">
+          :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`"
+          class="z-10">
           <img loading="lazy" :src="comment.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
             class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 rounded" />
         </NuxtLink>
@@ -60,8 +61,8 @@
                       <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
                       <path d="M16 5l3 3"></path>
                     </svg>
-                    <span class="hidden sm:inline">Edited</span> {{ formatDate(new Date(comment.updated), false) }} <span
-                      class="hidden sm:inline">ago</span>
+                    <span class="hidden sm:inline">Edited</span> {{ formatDate(new Date(comment.updated), false) }}
+                    <span class="hidden sm:inline">ago</span>
                   </span>
                 </span>
               </span>
@@ -82,10 +83,12 @@
                   {{ comment.replies?.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
-              <span class="ml-2 text-red-600 text-xs" v-if="comment.isRemoved && canMod" title="Comment removed by moderator or admin">
+              <span class="ml-2 text-red-600 text-xs" v-if="comment.isRemoved && canMod"
+                title="Comment removed by moderator or admin">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="20" height="20" viewBox="0 0 24 24"
-                  stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="20" height="20"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                  stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path
                     d="M13.593 19.855a9.96 9.96 0 0 1 -5.893 -.855l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c2.128 1.816 3.053 4.363 2.693 6.813">
@@ -98,8 +101,9 @@
               <span class="ml-2 text-yellow-600 text-xs" v-else-if="comment.isDeleted && canMod"
                 title="Comment deleted by its creator">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="16" height="16" viewBox="0 0 24 24"
-                  stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="16" height="16"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                  stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M4 7l16 0"></path>
                   <path d="M10 11l0 6"></path>
@@ -112,7 +116,14 @@
               <span class="ml-2 text-green-600 text-xs" v-else-if="comment.isPinned"
                 title="Comment pinned by moderators">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <svg  xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6" /><path d="M12 16l0 5" /><path d="M8 4l8 0" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="24" height="24"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6" />
+                  <path d="M12 16l0 5" />
+                  <path d="M8 4l8 0" />
+                </svg>
                 <span class="hidden sm:inline">Pinned</span>
               </span>
               <!-- Report count -->
@@ -132,12 +143,10 @@
           <LazyInputsEdit v-if="isEditing" :id="comment.id" :body="comment.body" type="comment" @hasEdited="onHasEdited"
             @closed="isEditing = false" />
           <!-- Comment Text Body -->
-          <div :id="`comment-text-${comment.id}`" class="comment-body target:bg-primary target:bg-opacity-10"
-            :class="{
-              'bg-red-400 bg-opacity-40': canMod && comment.isRemoved,
-              'bg-yellow-400 bg-opacity-40': canMod && comment.isDeleted
-            }"
-            v-show="!isCollapsed && !isEditing" v-html="comment.bodyHTML"></div>
+          <div :id="`comment-text-${comment.id}`" class="comment-body target:bg-primary target:bg-opacity-10" :class="{
+            'bg-red-400 bg-opacity-40': canMod && comment.isRemoved,
+            'bg-yellow-400 bg-opacity-40': canMod && comment.isDeleted
+          }" v-show="!isCollapsed && !isEditing" v-html="comment.bodyHTML"></div>
         </div>
         <!-- Comment Reports -->
         <div v-if="comment.report_count" class="mb-2">
@@ -163,7 +172,8 @@
               </svg>
             </button>
             <!-- Else, redirect to login -->
-            <NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+            <NuxtLink v-else to="/login"
+              class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               <span class="hidden sm:inline">Upvote ({{ comment.upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
@@ -201,7 +211,8 @@
               </svg>
             </button>
             <!-- Else, redirect to login -->
-            <NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+            <NuxtLink v-else to="/login"
+              class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               <span class="hidden sm:inline">Downvote ({{ comment.downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
@@ -216,11 +227,12 @@
             !route.meta.hasRepliesDisabled &&
             !comment.post.isLocked &&
             !comment.post.isDeleted
-            ">
+          ">
             <button @click="isReplying = true"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 14l-4 -4l4 -4"></path>
                 <path d="M5 10h11a4 4 0 1 1 0 8h-1"></path>
@@ -231,8 +243,9 @@
           <li v-if="isAuthed && isAuthor">
             <button @click="isEditing = !isEditing"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
                 <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
@@ -261,7 +274,8 @@
             </button>
           </li>
           <li class="sm:hidden">
-            <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+            <button @click="openOptions"
+              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -284,13 +298,15 @@
             </button>
           </li>
           <li class="hidden sm:inline sm:list-comment">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}#comment-text-${comment.id}`"
+            <NuxtLink
+              :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3#comment-text-${comment.id}`"
+            <NuxtLink
+              :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -320,7 +336,7 @@
           comment.replyCount &&
           level <= limit
           " v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />-->
-          <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
+        <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
         <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
           :to="`/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}`"
@@ -332,7 +348,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
@@ -344,6 +360,7 @@ import { useAPI } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
+import type { Comment } from "@/types/types";
 
 const route = useRoute();
 
@@ -351,7 +368,7 @@ const modalStore = useModalStore();
 const toast = useToastStore();
 const site = useSiteStore();
 const boardStore = useBoardStore();
-const modPermissions = boardStore.modPermissions;
+const modPermissions = boardStore.hasBoard ? boardStore.board!.myModPermissions : 0;
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
@@ -359,7 +376,7 @@ const isAuthed = userStore.isAuthed;
 const authCookie = useCookie("token").value;
 
 const props = defineProps({
-  comment: Object,
+  comment: Comment,
   offset: {
     type: Number,
     default: 0,
@@ -381,12 +398,12 @@ const isCollapsed = ref(false);
 
 // take comment level and subtract offset (depth) to get relative level
 const level = computed(() => {
-  return comment.value.level - props.offset;
+  return comment.value!.level - props.offset;
 });
 
-const onCommentPublished = (newComment) => {
+const onCommentPublished = (newComment: Comment) => {
   // Append reply to list of replies.
-  comment.value.replies.unshift({
+  comment.value!.replies!.unshift({
     ...newComment,
     replies: []
   });
@@ -396,44 +413,44 @@ const onCommentPublished = (newComment) => {
   // Navigate to comment if replies are hidden.
   if (route.meta.hasRepliesDisabled) {
     navigateTo(
-      `/post/${comment.value.post.id}/${comment.value.parentId}/#${comment.comment.id}`
+      `/post/${comment.value!.postId}/${comment.value!.parentId}/#${comment.comment!.id}`
     );
   }
 };
 
 // Vote
-const voteType = ref(comment.value.myVote);
+const voteType = ref(comment.value!.myVote);
 const vote = async (type = 0) => {
-  voteType.value = voteType.value === type ? 0 : type;
+  // voteType.value = voteType.value === type ? 0 : type;
 
-  await useAPI(`/comments/${comment.value.id}/vote`, {
-    method: "post",
-    body: {
-      score: voteType,
-    },
-  }).then(({ data, error }) => {
-    if (data.value) {
-      data = JSON.parse(JSON.stringify(data.value));
-      console.log(data);
-    } else {
-      // Revert failed vote & show error toast.
-      setTimeout(() => {
-        voteType.value = comment.value.myVote;
-        toast.addNotification({
-          header: "Vote failed",
-          message: "Your vote failed to cast. Please try again.",
-          type: "error",
-        });
-      }, 400);
-      // Log the error.
-      console.log(error.value);
-    }
-  });
+  // await useAPI(`/comments/${comment.value!.id}/vote`, {
+  //   method: "post",
+  //   body: {
+  //     score: voteType,
+  //   },
+  // }).then(({ data, error }) => {
+  //   if (data.value) {
+  //     data = JSON.parse(JSON.stringify(data.value));
+  //     console.log(data);
+  //   } else {
+  //     // Revert failed vote & show error toast.
+  //     setTimeout(() => {
+  //       voteType.value = comment.value!.myVote;
+  //       toast.addNotification({
+  //         header: "Vote failed",
+  //         message: "Your vote failed to cast. Please try again.",
+  //         type: "error",
+  //       });
+  //     }, 400);
+  //     // Log the error.
+  //     console.log(error.value);
+  //   }
+  // });
 };
 
 const score = computed(() => {
   // return comment.value.score + (comment.value.myVote + voteType.value === 0 ? 0 : voteType.value) || 0
-  return comment.value.score + voteType.value;
+  return comment.value!.score + voteType.value;
 })
 
 const isOP = computed(() => comment.value.post.creatorId === comment.value.creator.id);
