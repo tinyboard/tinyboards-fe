@@ -93,7 +93,7 @@ import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { PERMISSIONS, requireOwnerPerms } from '@/composables/admin';
-import { usePostsStore } from '@/stores/StorePosts';
+import { usePostsStore } from '~/stores/StorePosts';
 import { useCommentsStore } from '@/stores/StoreComments';
 import {
   TransitionRoot,

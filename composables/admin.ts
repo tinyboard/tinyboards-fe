@@ -11,9 +11,8 @@ export const PERMISSIONS = {
   system: 256,
 };
 
-export const requirePermission = (permission) => {
+export const requirePermission = (permission: string) => {
   const u = useLoggedInUser();
-
   return (
     (u.adminLevel &
       (PERMISSIONS[permission] + PERMISSIONS["full"] + PERMISSIONS["owner"])) >
@@ -33,7 +32,7 @@ export const requireOwnerPerms = () => {
   return (u.adminLevel & PERMISSIONS["owner"]) > 0;
 };
 
-export const createPermissionString = (adminLevel) => {
+export const createPermissionString = (adminLevel: number) => {
   if (adminLevel & PERMISSIONS["system"]) {
     return "system";
   }

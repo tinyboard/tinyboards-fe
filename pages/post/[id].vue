@@ -28,12 +28,11 @@
       </main>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed, defineAsyncComponent, ref } from 'vue';
 // import { baseURL } from "@/server/constants";
 import { usePostsStore } from '@/stores/StorePosts';
 import { usePost } from '@/composables/post';
-import { useComments } from '@/composables/comments';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useBoardStore } from '@/stores/StoreBoard';
 import { useLoggedInUser } from "@/stores/StoreAuth";
@@ -56,11 +55,11 @@ const router = useRouter();
 const site = useSiteStore();
 const boardStore = useBoardStore();
 const userStore = useLoggedInUser();
-const modPermissions = boardStore.modPermissions;
+const modPermissions = boardStore.board?.myModPermissions;
 
 // Import thread components.
-const thread = defineAsyncComponent(() => import('@/components/containers/Thread'));
-const threadRemoved = defineAsyncComponent(() => import('@/components/containers/ThreadRemoved'));
+const thread = defineAsyncComponent(() => import('@/components/containers/Thread.vue'));
+const threadRemoved = defineAsyncComponent(() => import('@/components/containers/ThreadRemoved.vue'));
 
 // Posts store
 const postsStore = usePostsStore();
@@ -68,28 +67,45 @@ const postsStore = usePostsStore();
 const isAuthed = userStore.isAuthed;
 const v = userStore.user;
 
+let postID: number = NaN;
+if (typeof (route.params.id) === 'string') {
+      postID = parseInt(route.params.id);
+}
+
+// handle invalid post ID
+if (Number.isNaN(postID)) {
+      throw createError({
+            status: 400,
+            statusText: "Bad post ID given. Do better."
+      });
+}
+
 // Post
-let { post, comments, error } = await usePost(route.params.id);
+let { post, error } = await usePost(postID);
 
 if (error.value && error.value.response) {
       throw createError({
-            statusCode: 404,
-            statusMessage: 'We could not find the page you were looking for. Try better next time.',
-            fatal: true
+            status: 404,
+            statusText: 'We could not find the page you were looking for. Try better next time.'
       })
 };
 
-title.value = `${post.title} ${site.enableBoards ? '| +' + post.board.name : ''}`;
+// quick reference to comments
+let comments = post.comments;
+
+// If boards are enabled, post.board is not null -> safe to assume not null
+title.value = `${post.title} ${site.enableBoards ? '| +' + post.board!.name : ''}`;
 
 // if boards are enabled...
 if (site.enableBoards) {
-      const boardName = post.board.name;
+      const boardName = post.board!.name;
       const params = route.params;
       const hasBoard = params.hasOwnProperty("board");
-      // console.log(boardName);
-      // ...and the `+board` is not present, or is incorrect, redirect correctly
+      const boardInParams = typeof (params.board) === 'string' ? params.board : '';
+
+      // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
-            (hasBoard && params.board.toLowerCase() !== boardName.toLowerCase())) {
+            (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
             router.push(`/+${boardName}/post/${post.id}/${post.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
       }
 } else if (route.params.hasOwnProperty("board")) {
@@ -109,8 +125,8 @@ const type = computed(() => {
 })
 const sort = ref(route.query.sort);
 
-const onCommentPublished = (comment) => {
-  comments.value.unshift(comment);
+const onCommentPublished = (comment: Comment) => {
+      comments.unshift(comment);
 };
 
 /*
@@ -122,20 +138,20 @@ const onCommentPublished = (comment) => {
  * Everyone else: removed and deleted posts are unavailable
  */
 const canViewPost = computed(() => {
-    // Admin or mod
-    if (
-        requirePermission("content") ||
-        requireModPermission(modPermissions, "content")
-    ) {
-        return true;
-    }
+      // Admin or mod
+      if (
+            requirePermission("content") ||
+            requireModPermission(modPermissions, "content")
+      ) {
+            return true;
+      }
 
-    // Own post
-    if (v && post.isRemoved && v.id === post.creator.id) {
-        return true;
-    }
+      // Own post
+      if (v && post.isRemoved && v.id === post.creatorId) {
+            return true;
+      }
 
-    return !(post.isDeleted || post.isRemoved);
+      return !(post.isDeleted || post.isRemoved);
 });
 
 /*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params.id);

@@ -79,6 +79,7 @@ export default defineNuxtConfig({
 
   vite: {
     server: {
+    allowedHosts: ["tinyboards.test"],
       fs: {
         cachedChecks: false,
       },

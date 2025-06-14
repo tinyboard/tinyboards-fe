@@ -3,8 +3,9 @@
     <!-- Pinned Banner: Site-wide admin pin -->
     <div v-if="post.featuredLocal"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-red-900 bg-red-100 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24"
-        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+        stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
         <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
@@ -21,8 +22,9 @@
     <!-- Pinned Banner: Board pin -->
     <div v-if="post.featuredBoard"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-green-900 bg-green-100 border-y sm:border-x border-green-300 sm:rounded-md sm:shadow-inner-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24"
-        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+        stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
         <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
@@ -40,8 +42,8 @@
     <div v-if="post.isDeleted || post.isRemoved"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-red-900 bg-red-100 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white">
       <svg xmlns="http://www.w3.org/2000/svg"
-        class="icon icon-tabler icon-tabler-trash hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" width="24" height="24"
-        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+        class="icon icon-tabler icon-tabler-trash hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" width="24"
+        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
         stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M4 7l16 0"></path>
@@ -57,7 +59,8 @@
           {{
             post.isDeleted
               ? "This post doesn't appear on any feeds and cannot be interacted with."
-              : "Moderators have removed this post. It doesn't appear on any feeds, and all interactions with it have been locked."
+              : "Moderators have removed this post. It doesn't appear on any feeds, and all interactions with it have been \
+          locked."
           }}
         </p>
       </div>
@@ -65,8 +68,9 @@
     <!-- Locked Banner -->
     <div v-if="post.isLocked"
       class="order-2 sm:order-first flex items-center justify-center sm:justify-start mt-2.5 sm:my-0 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4" viewBox="0 0 24 24"
-        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" class="hidden sm:inline opacity-50 w-5 h-5 ml-1.5 mr-4"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+        stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <rect x="5" y="11" width="14" height="10" rx="2"></rect>
         <circle cx="12" cy="16" r="1"></circle>
@@ -147,7 +151,8 @@
       <!-- Post Content -->
       <div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
         <!-- Title -->
-        <NuxtLink :external="!!post.url" :to="!!post.url ? post.url : `${site.enableBoards ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
+        <NuxtLink :external="!!post.url"
+          :to="!!post.url ? post.url : `${site.enableBoards ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
           :target="post.url ? '_blank' : null" class="text-lg md:text-xl font-medium dark:text-gray-100">
           {{ post.title }}
         </NuxtLink>
@@ -169,8 +174,10 @@
         </span>
       </div>
       <!-- Post Edit Form -->
-      <LazyInputsEdit v-if="isEditing" :id="post.id" :body="post.body" @closed="isEditing = false"
-        class="mt-4" />
+      <LazyInputsEdit v-if="isEditing" :id="post.id" :body="post.body" @closed="isEditing = false" @has-edited="(editResp) => {
+        post.bodyHTML = editResp.bodyHTML;
+        post.body = editResp.body;
+      }" class="mt-4" />
       <!-- Post Text Body -->
       <div v-if="post.bodyHTML" v-show="!isEditing" class="px-2.5 sm:px-0 mt-3 sm:mt-4 relative overflow-hidden">
         <div class="prose prose-sm max-w-none" v-html="post.bodyHTML"></div>
@@ -318,7 +325,8 @@
             </button>
           </li>
           <li class="sm:hidden ml-3">
-            <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+            <button @click="openOptions"
+              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -345,21 +353,21 @@
           </li>
           <li v-if="(isMod && !post.featuredLocal) || isAdmin" class="hidden sm:list-item ml-6">
             <button class="group flex items-center leading-none"
-            :class="[isMod ? 'text-green-500 dark:text-green-400 hover:text-green-600': 'text-red-500 dark:text-red-400 hover:text-red-600']"
+              :class="[isMod ? 'text-green-500 dark:text-green-400 hover:text-green-600' : 'text-red-500 dark:text-red-400 hover:text-red-600']"
               @click="confirmSticky">
               <!-- Pin Icon -->
               <svg v-show="!(post.featuredLocal || post.featuredBoard)" xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                stroke-linecap="round" stroke-linejoin="round">
+                class="w-6 h-6 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4"></path>
                 <line x1="9" y1="15" x2="4.5" y2="19.5"></line>
                 <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
               </svg>
               <!-- Pin Off Icon -->
-              <svg v-show="post.featuredLocal || post.featuredBoard" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+              <svg v-show="post.featuredLocal || post.featuredBoard" xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
                 <path
@@ -374,7 +382,8 @@
             </button>
           </li>
           <li v-if="canMod" class="hidden sm:list-item ml-6">
-            <button class="group flex items-center text-yellow-500 leading-none dark:text-gray-400 hover:text-yellow-600"
+            <button
+              class="group flex items-center text-yellow-500 leading-none dark:text-gray-400 hover:text-yellow-600"
               @click="confirmLock">
               <!-- Lock Icon -->
               <svg v-show="!post.isLocked" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
@@ -431,7 +440,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 const props = defineProps({
   post: {
     type: Object,
@@ -443,11 +452,9 @@ const props = defineProps({
   },
 });
 
-import { reactive, computed } from "vue";
+import { computed } from "vue";
 // import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { usePost } from "@/composables/post";
-import { usePostComments } from "@/composables/comments";
 import { useAPI } from "@/composables/api";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useModalStore } from "@/stores/StoreModal";
@@ -470,7 +477,6 @@ const board = boardStore.board;
 const modPermissions = board.myModPermissions;
 
 const isAuthed = userStore.isAuthed;
-const authCookie = useCookie("token").value;
 
 // Vote
 const voteType = ref(props.post.myVote);
@@ -531,7 +537,7 @@ const save = async () => {
 };
 
 // Comments
-const onCommentPublished = (comment) => {
+const onCommentPublished = (comment: Comment) => {
   props.comments.unshift(comment);
 };
 
