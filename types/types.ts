@@ -23,6 +23,12 @@ export type BoardFragment = {
 
 export type ContentType = "post" | "comment";
 
+export type ModPermission = 'none' | 'config' | 'appearance' |
+    'content' | 'users' | 'full';
+
+export type AdminPermission = 'none' | 'config' | 'content' |
+    'users' | 'boards' | 'full' | 'owner' | 'system';
+
 /*export type SortType = "hot" | "new" | "topAll" | "topMonth" | "topWeek" | "topDay" | "mostComments" | "newComments";
 export type ListingType = "all" | "local" | "subscribed" | "moderated";
 

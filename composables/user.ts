@@ -12,14 +12,21 @@ import { useSiteStore } from "@/stores/StoreSite";
   });
 }*/
 
-export async function useFetchUser(username, query = {}) {
+/**
+ * Retrieve a user's profile. 
+ * @param username Username of the user.
+ * @param query Query parameters, such as post listing sort and limit.
+ * @returns A `Promise` of a user profile.
+ */
+export async function useFetchUser(username: string, query = {}) {
   const site = useSiteStore();
 
   return useAsyncGql({
-    operation: 'userProfile', 
+    operation: 'userProfile',
     variables: {
       username,
       includeBoard: site.enableBoards,
       ...query,
-    }});
+    }
+  });
 }

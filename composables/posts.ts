@@ -1,7 +1,12 @@
 import { ref, computed } from "vue";
-import { useAPI } from "@/composables/api";
 import { usePostsStore } from "@/stores/StorePosts";
+import type { Post, ListingType } from "@/types/types";
 
+/**
+ * Pagination for post listings.
+ * @returns A `ref<boolean>` indicating whether more posts are being loaded, and a function to retrieve
+ * more posts.
+ */
 export function usePagination() {
   const postsStore = usePostsStore();
   const loading = ref(false);
@@ -28,11 +33,18 @@ export function usePagination() {
   return { loading, loadMore };
 }
 
-export async function usePosts(route, listingType) {
+/**
+ * Load posts into the PostStore. Returns functions to load more posts as well.
+ * 
+ * Parameters such as sort, limit and page are retrieved from the route query.
+ * @param listingType Listing type. See `types.ts` for all available listing types.
+ * @returns Function for pagination, and additional data from the fetch response.
+ */
+export async function usePosts(listingType: ListingType) {
   const postsStore = usePostsStore();
 
   const { data, error } = await postsStore.fetchPosts({
-    route,
+    // route,
     listingType,
   });
 
@@ -75,7 +87,7 @@ export async function usePosts(route, listingType) {
 /**
  * Use this when a list of posts is alreday available, but you need to be able to load more for eg. pagination. 
  */
-export function usePreloadedPosts(posts, personId = null) {
+export function usePreloadedPosts(posts: Post[], personId = null) {
   const postsStore = usePostsStore();
   postsStore.setPosts(posts);
 
@@ -137,48 +149,48 @@ export function usePreloadedPosts(posts, personId = null) {
 //   };
 // }
 
-export async function getModQueue(query, type_) {
-  // let page = 1;
-  let items = ref([]);
-  let totalCount = ref(0);
-  let endpoints = {
-    posts: "/mod/queue/posts",
-    comments: "/mod/queue/comments",
-  };
-  async function request(query) {
-    const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
-      query: { ...query },
-      key: "get_" + type_ + "_key",
-    });
+// export async function getModQueue(query, type_) {
+//   // let page = 1;
+//   let items = ref([]);
+//   let totalCount = ref(0);
+//   let endpoints = {
+//     posts: "/mod/queue/posts",
+//     comments: "/mod/queue/comments",
+//   };
+//   async function request(query) {
+//     const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
+//       query: { ...query },
+//       key: "get_" + type_ + "_key",
+//     });
 
-    //console.info("console log");
+//     //console.info("console log");
 
-    //console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
-    if (data.value) {
-      items.value = [...items.value, ...data.value[type_]];
-      totalCount.value = data.value["total_count"];
-    }
+//     //console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
+//     if (data.value) {
+//       items.value = [...items.value, ...data.value[type_]];
+//       totalCount.value = data.value["total_count"];
+//     }
 
-    return {
-      pending,
-      error,
-      refresh,
-    };
-  }
+//     return {
+//       pending,
+//       error,
+//       refresh,
+//     };
+//   }
 
-  async function paginate() {
-    page++;
-    return request(query);
-  }
+//   async function paginate() {
+//     page++;
+//     return request(query);
+//   }
 
-  let { pending, error, refresh } = await request(query);
+//   let { pending, error, refresh } = await request(query);
 
-  return {
-    items,
-    totalCount,
-    paginate,
-    pending,
-    error,
-    refresh,
-  };
-}
+//   return {
+//     items,
+//     totalCount,
+//     paginate,
+//     pending,
+//     error,
+//     refresh,
+//   };
+// }

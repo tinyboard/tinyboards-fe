@@ -5,6 +5,12 @@ import { ref } from "vue";
 import type { Comment, Post } from "@/types/types";
 import type { EditPostMutation } from "#gql";
 
+/**
+ * Retrieve a post from the backend, and organize its comments into a tree stucture.
+ * Comment sort, context and top comment ID are retrieved from the route. 
+ * @param id ID of the post to fetch.
+ * @returns A `Promise` with either a `Post` object or a server error.
+ */
 export async function usePost(id: number): Promise<{
   post: Post;
   error: any;

@@ -1,6 +1,7 @@
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import type { AdminPermission } from "@/types/types";
 
-export const PERMISSIONS = {
+export const PERMISSIONS: { [key: string]: number } = {
   appearance: 2,
   config: 4,
   content: 8,
@@ -11,10 +12,10 @@ export const PERMISSIONS = {
   system: 256,
 };
 
-export const requirePermission = (permission: string) => {
+export const requirePermission = (permission: AdminPermission) => {
   const u = useLoggedInUser();
   return (
-    (u.adminLevel &
+    ((u.adminLevel ?? 0) &
       (PERMISSIONS[permission] + PERMISSIONS["full"] + PERMISSIONS["owner"])) >
     0
   );
@@ -23,13 +24,13 @@ export const requirePermission = (permission: string) => {
 export const requireFullPerms = () => {
   const u = useLoggedInUser();
 
-  return (u.adminLevel & (PERMISSIONS["full"] + PERMISSIONS["owner"])) > 0;
+  return ((u.adminLevel ?? 0) & (PERMISSIONS["full"] + PERMISSIONS["owner"])) > 0;
 };
 
 export const requireOwnerPerms = () => {
   const u = useLoggedInUser();
 
-  return (u.adminLevel & PERMISSIONS["owner"]) > 0;
+  return ((u.adminLevel ?? 0) & PERMISSIONS["owner"]) > 0;
 };
 
 export const createPermissionString = (adminLevel: number) => {

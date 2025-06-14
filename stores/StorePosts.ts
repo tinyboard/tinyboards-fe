@@ -60,7 +60,7 @@ export const usePostsStore = defineStore("posts", {
 
       this.options.sort = mapToSortType(route.params["sort"] as string ?? "hot");
     },
-    async fetchPosts({ listingType = "local" as ListingType }): Promise<AsyncData<GetPostQuery, Error | null>> {
+    async fetchPosts({ listingType = "local" as ListingType }: { listingType: ListingType }): Promise<AsyncData<GetPostQuery, Error | null>> {
       this.setQueryParams();
       this.options.listingType = listingType;
 

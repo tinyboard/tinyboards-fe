@@ -2,17 +2,18 @@ import { defineStore } from 'pinia';
 import type { ContentType } from '@/types/types';
 
 interface ModalOptions {
-  hasInit: boolean;
   modal: string | null;
   id: number | null;
-  contentType: ContentType | null;
+  contentType: string | null;
   isOpen: boolean;
   options: { [key: string]: any } // additional options that can be passed onto the modal
 }
 
+type ModalStore = ModalOptions & { hasInit: boolean };
+
 export const useModalStore = defineStore('modal', {
   // State
-  state: (): ModalOptions => {
+  state: (): ModalStore => {
     return {
       hasInit: false,
       modal: null,
