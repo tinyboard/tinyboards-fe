@@ -9,7 +9,7 @@ export const useCommentsStore = defineStore('comments', {
   // State
   state: (): CommentStore => {
     return {
-      comments: [] as Comment[]
+      comments: []
     }
   },
   // Getters

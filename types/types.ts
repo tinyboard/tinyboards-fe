@@ -3,9 +3,19 @@ import { CommentSortType, ListingType, SortType } from "#gql/default";
 
 export type { CommentSortType, ListingType, SortType } from "#gql/default";
 
+export type PostFragment = {
+    id: number;
+    title: string;
+    titleChunk: string;
+    isDeleted: boolean;
+    isLocked: boolean;
+    creatorId: number;
+}
+
 export type Post = GetPostQuery["post"];
 export type Comment = Post["comments"][0] & {
-    replies?: Comment[]
+    replies?: Comment[];
+    post?: PostFragment;
 };
 
 export type Person = UserProfileQuery["user"];
@@ -15,6 +25,7 @@ export type Site = GetSiteQuery["site"];
 export type Board = GetSiteQuery["board"];
 
 export type BoardFragment = {
+    id: number;
     name: string;
     title: string;
     icon?: string | null;

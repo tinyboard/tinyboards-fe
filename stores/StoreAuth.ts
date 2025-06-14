@@ -116,11 +116,9 @@ export const useLoggedInUser = defineStore("auth", {
                   const data = resp.data.value;
 
                   const moderates = data.me.moderates.map((m) => m.board);
-                  const joined = data.me.joined;
+                  const joined = data.me.joinedBoards;
 
                   const user = data.me;
-                  delete user.moderates;
-                  delete user.joined;
 
                   this.user = user;
                   this.joinedBoards = joined;
@@ -162,7 +160,7 @@ export const useLoggedInUser = defineStore("auth", {
       this.moddedBoards!.push(board);
     },
     removeModdedBoard(id: number) {
-      this.moddedBoards = this.moddedBoards!.filter((boardView) => boardView.board.id !== id);
+      this.moddedBoards = this.moddedBoards!.filter((board) => board.id !== id);
     },
     logout() {
       this.user = null;

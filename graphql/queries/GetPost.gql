@@ -20,6 +20,7 @@ query getPost(
     url
     body
     bodyHTML
+    creatorId
     score
     upvotes
     downvotes
@@ -60,7 +61,9 @@ query getPost(
       id
       parentId
       postId
+      body
       bodyHTML
+      creatorId
       isRemoved
       isDeleted
       isLocked
@@ -72,6 +75,7 @@ query getPost(
       creationDate
       updated
       myVote
+      isSaved
       level
       creator {
         id

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :id="comment.id" class="comment group flex relative" :class="{
+    <div :id="comment.id.toString()" class="comment group flex relative" :class="{
       'opacity-60 hover:opacity-100 focus:opacity-100 comments-center':
         isCollapsed,
     }" style="scroll-margin-top: 7rem;">
@@ -126,16 +126,17 @@
                 </svg>
                 <span class="hidden sm:inline">Pinned</span>
               </span>
+              <!-- TODO: comment reports -->
               <!-- Report count -->
-              <span class="ml-2 text-orange-400 font-bold text-xs" v-if="comment.report_count"
-                :title="`${comment.report_count} report(s)`">
+              <span class="ml-2 text-orange-400 font-bold text-xs"
+                v-if="/* should be true if comment has reports */ false" :title="`??? report(s)`">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
                 </svg>
-                {{ comment.report_count }}
+                ???
               </span>
             </div>
           </div>
@@ -149,7 +150,7 @@
           }" v-show="!isCollapsed && !isEditing" v-html="comment.bodyHTML"></div>
         </div>
         <!-- Comment Reports -->
-        <div v-if="comment.report_count" class="mb-2">
+        <div v-if="false" class="mb-2">
           <CardsReports :id="comment.id" type="comment" />
         </div>
         <!-- Comment Actions -->
@@ -157,11 +158,10 @@
           <li>
             <!-- If logged in, allow upvoting -->
             <button v-if="isAuthed" class="text-xs font-medium" :class="[
-              { 'cursor-not-allowed': comment.post.isDeleted },
               voteType === 1
                 ? 'upvoted text-primary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
-            ]" @click="vote(1)" :disabled="comment.post.isDeleted">
+            ]" @click="vote(1)">
               <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }} ({{ upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
@@ -196,11 +196,10 @@
           <li>
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" class="text-xs font-medium" :class="[
-              { 'cursor-not-allowed': comment.post.isDeleted },
               voteType === -1
                 ? 'downvoted text-secondary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
-            ]" @click="vote(-1)" :disabled="comment.post.isDeleted">
+            ]" @click="vote(-1)">
               <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }} ({{ downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
@@ -224,9 +223,9 @@
             </NuxtLink>
           </li>
           <li v-if="isAuthed &&
-            !route.meta.hasRepliesDisabled &&
-            !comment.post.isLocked &&
-            !comment.post.isDeleted
+            !route.meta.hasRepliesDisabled
+            // !comment.post.isLocked &&
+            // !comment.post.isDeleted
           ">
             <button @click="isReplying = true"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
@@ -255,10 +254,11 @@
             </button>
           </li>
           <li v-if="isAuthed && !isAuthor">
-            <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
-              <svg v-if="isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+            <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
+              @click="() => console.warn('Implement comment saving!')">
+              <svg v-if="comment.isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24"
+                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M3 3l18 18"></path>
                 <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7">
@@ -270,7 +270,7 @@
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
               </svg>
-              <span class="hidden sm:inline">{{ isSaved ? "Unsave" : "Save" }}</span>
+              <span class="hidden sm:inline">{{ comment.isSaved ? "Unsave" : "Save" }}</span>
             </button>
           </li>
           <li class="sm:hidden">
@@ -299,14 +299,14 @@
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}#comment-text-${comment.id}`"
+              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards ? '/+' + comment.board.name : ''}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=3#comment-text-${comment.id}`"
+              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -317,7 +317,7 @@
               Remove
             </button>
           </li>
-          <li v-if="canMod && (comment.report_count || comment.isRemoved)" class="hidden sm:inline sm:list-comment">
+          <li v-if="canMod && comment.isRemoved" class="hidden sm:inline sm:list-comment">
             <button @click="() => confirmRemoveOrApprove(true)"
               class="text-xs font-medium text-gray-500 hover:text-green-600 dark:text-gray-400">
               Approve
@@ -326,7 +326,7 @@
         </ul>
         <!-- Write Form -->
         <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
-          <img loading="lazy" :src="userStore.user.avatar" alt="avatar"
+          <img loading="lazy" :src="userStore.user!.avatar!" alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white" />
           <LazyInputsComment :post-id="comment.postId" :parent-id="comment.id" @closed="isReplying = false"
             @comment-published="onCommentPublished" />
@@ -339,7 +339,7 @@
         <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
         <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
-          :to="`/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}`"
+          :to="`/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>
@@ -354,13 +354,14 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { useCommentsStore } from "@/stores/StoreComments";
+import { usePostsStore } from "@/stores/StorePosts";
 import { useSiteStore } from "@/stores/StoreSite";
 import { formatDate } from "@/utils/formatDate";
 import { useAPI } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
-import type { Comment } from "@/types/types";
+import type { Comment, Post, PostFragment } from "@/types/types";
 
 const route = useRoute();
 
@@ -368,6 +369,8 @@ const modalStore = useModalStore();
 const toast = useToastStore();
 const site = useSiteStore();
 const boardStore = useBoardStore();
+// used for getting the parent post
+const postStore = usePostsStore();
 const modPermissions = boardStore.hasBoard ? boardStore.board!.myModPermissions : 0;
 
 const userStore = useLoggedInUser();
@@ -375,21 +378,28 @@ const isAuthed = userStore.isAuthed;
 
 const authCookie = useCookie("token").value;
 
-const props = defineProps({
-  comment: Comment,
-  offset: {
-    type: Number,
-    default: 0,
-  },
-  limit: {
-    type: Number,
-    default: 3,
-  },
-});
+// const props = defineProps({
+//   comment: TComment,
+//   offset: {
+//     type: Number,
+//     default: 0,
+//   },
+//   limit: {
+//     type: Number,
+//     default: 3,
+//   },
+// });
+
+const props = defineProps<{
+  comment: Comment;
+  offset?: number;
+  limit?: number;
+}>();
 
 //const comment = ref(props.comment);
 const comment = ref(props.comment);
-
+const offset = props.offset ?? 0;
+const limit = props.limit ?? 0;
 //const commentsStore = useCommentsStore();
 //commentsStore.comments.push(props.comment);
 
@@ -398,8 +408,12 @@ const isCollapsed = ref(false);
 
 // take comment level and subtract offset (depth) to get relative level
 const level = computed(() => {
-  return comment.value!.level - props.offset;
+  return comment.value!.level - offset;
 });
+
+// in some queries, we request the parent post
+// if we don't, it can be obtained from the post store (in post pages, it's the only post in the store)
+const parentPost: PostFragment | undefined = comment.value.post ?? postStore.getPost(comment.value.postId);
 
 const onCommentPublished = (newComment: Comment) => {
   // Append reply to list of replies.
@@ -413,7 +427,7 @@ const onCommentPublished = (newComment: Comment) => {
   // Navigate to comment if replies are hidden.
   if (route.meta.hasRepliesDisabled) {
     navigateTo(
-      `/post/${comment.value!.postId}/${comment.value!.parentId}/#${comment.comment!.id}`
+      `/post/${comment.value!.postId}/${comment.value!.parentId}/#${comment.value!.id}`
     );
   }
 };
@@ -453,7 +467,8 @@ const score = computed(() => {
   return comment.value!.score + voteType.value;
 })
 
-const isOP = computed(() => comment.value.post.creatorId === comment.value.creator.id);
+// TODO: figure this out
+const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);
 
 const upvotes = computed(() => voteType.value == 1 ? comment.value.upvotes + 1 : comment.value.upvotes);
 const downvotes = computed(() => voteType.value == -1 ? comment.value.downvotes + 1 : comment.value.downvotes);
@@ -472,42 +487,46 @@ const canMod = requirePermission("content") || requireModPermission(modPermissio
 
 // Edit
 const isEditing = ref(false);
-const onHasEdited = (payload) => {
+const onHasEdited = (payload: {
+  newBody: string;
+  newBodyHTML: string;
+}) => {
   // Update comment with saved edits.
-  comment.value = payload.comment_view.comment;
+  comment.value.body = payload.newBody;
+  comment.value.bodyHTML = payload.newBodyHTML;
 };
 
 // Save
-const isSaved = ref(comment.value.saved);
-const save = async () => {
-  isSaved.value = !isSaved.value;
-  await useAPI(`/comment/${comment.value.id}/save`, {
-    method: "post",
-    body: {
-      save: isSaved.value,
-    }
-  }).then(({ data, error }) => {
-    if (data.value) {
-      toast.addNotification({
-        header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,
-        message: `Comment ${isSaved.value ? 'saved' : 'unsaved'} successfully.`,
-        type: "success",
-      });
-    } else {
-      // Revert failed save & show error toast.
-      setTimeout(() => {
-        isSaved.value = !isSaved.value;
-        toast.addNotification({
-          header: "Save failed",
-          message: `Failed to ${isSaved.value ? 'saved' : 'unsaved'} comment. Please try again.`,
-          type: "error",
-        });
-      }, 400);
-      // Log the error.
-      console.error(error.value);
-    }
-  });
-};
+// const isSaved = ref(comment.value.saved);
+// const save = async () => {
+//   isSaved.value = !isSaved.value;
+//   await useAPI(`/comment/${comment.value.id}/save`, {
+//     method: "post",
+//     body: {
+//       save: isSaved.value,
+//     }
+//   }).then(({ data, error }) => {
+//     if (data.value) {
+//       toast.addNotification({
+//         header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,
+//         message: `Comment ${isSaved.value ? 'saved' : 'unsaved'} successfully.`,
+//         type: "success",
+//       });
+//     } else {
+//       // Revert failed save & show error toast.
+//       setTimeout(() => {
+//         isSaved.value = !isSaved.value;
+//         toast.addNotification({
+//           header: "Save failed",
+//           message: `Failed to ${isSaved.value ? 'saved' : 'unsaved'} comment. Please try again.`,
+//           type: "error",
+//         });
+//       }, 400);
+//       // Log the error.
+//       console.error(error.value);
+//     }
+//   });
+// };
 
 // Delete
 const confirmDelete = () => {
@@ -530,7 +549,7 @@ const confirmReport = () => {
 };
 
 // Remove
-const confirmRemoveOrApprove = approve => {
+const confirmRemoveOrApprove = (approve: boolean) => {
   modalStore.setModal({
     modal: "ModalRemoveOrApprove",
     id: comment.value.id,

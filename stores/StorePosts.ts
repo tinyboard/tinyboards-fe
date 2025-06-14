@@ -40,6 +40,11 @@ export const usePostsStore = defineStore("posts", {
     },
     //paginationFunction: () => {},  
   }),
+  getters: {
+    getPost(state) {
+      return (id: number): Post | undefined => state.posts.find((post: Post) => post.id === id);
+    }
+  },
   actions: {
     setQueryParams(/*route*/) {
       const route = useRoute();

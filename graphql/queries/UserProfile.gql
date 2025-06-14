@@ -1,14 +1,14 @@
 enum SortType {
-  active,
-  hot,
-  new,
-  old,
-  topDay,
-  topWeek,
-  topMonth,
-  topYear,
-  topAll,
-  mostComments,
+  active
+  hot
+  new
+  old
+  topDay
+  topWeek
+  topMonth
+  topYear
+  topAll
+  mostComments
   newComments
 }
 
@@ -38,7 +38,6 @@ query userProfile(
     bio
     bioHTML
     creationDate
-    isAdmin
     adminLevel
     postCount
     commentCount
@@ -52,6 +51,7 @@ query userProfile(
       title
       url
       bodyHTML
+      creatorId
       isRemoved
       isDeleted
       isLocked
@@ -80,8 +80,7 @@ query userProfile(
         primaryColor
       }
     }
-    comments(limit: $limit, page: $page)
-      @include(if: $withComments) {
+    comments(limit: $limit, page: $page) @include(if: $withComments) {
       id
       postId
       body
@@ -99,9 +98,11 @@ query userProfile(
       level
       post {
         id
+        creatorId
         title
         titleChunk
         isDeleted
+        isLocked
         creatorId
       }
       board @include(if: $includeBoard) {
@@ -127,4 +128,3 @@ query userProfile(
     }
   }
 }
-

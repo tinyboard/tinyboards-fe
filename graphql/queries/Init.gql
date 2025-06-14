@@ -22,31 +22,33 @@ query getSite(
     requireEmailVerification
   }
   me @include(if: $shouldLoadLoggedInUser) {
-      id
+    id
+    name
+    displayName
+    isBanned
+    unbanDate
+    avatar
+    adminLevel
+    rep
+    postScore
+    commentScore
+    creationDate
+    postCount
+    commentCount
+    joinedBoards {
+      icon
       name
-      displayName
-      isBanned
-      unbanDate
-      avatar
-      adminLevel
-      rep
-      postScore
-      commentScore
-      joinedBoards {
+      title
+      subscribers
+    }
+    moderates {
+      board {
         icon
         name
         title
         subscribers
       }
-      moderates {
-        board {
-          icon
-          name
-          title
-          subscribers
-        }
-      }
-    
+    }
   }
   unreadRepliesCount @include(if: $shouldLoadLoggedInUser)
   unreadMentionsCount @include(if: $shouldLoadLoggedInUser)
