@@ -3,8 +3,21 @@ import { useSiteStore } from "./StoreSite";
 
 const site = useSiteStore();
 
+interface BoardWizardStore {
+  name: string | null;
+  displayName: string;
+  description: string;
+  primaryColor: string;
+  secondaryColor: string;
+  hoverColor: string;
+  privacy: number;
+  boarding: {
+    canProceed: boolean;
+  };
+}
+
 // Convert colors from rgb to hex
-const toHexCode = (rgb) => {
+const toHexCode = (rgb: string): string => {
   const values = rgb
     .replace(" ", "")
     .split(",")
@@ -20,7 +33,7 @@ const toHexCode = (rgb) => {
 };
 
 export const useWizardStore = defineStore("wizard", {
-  state: () => {
+  state: (): BoardWizardStore => {
     return {
       name: null,
       displayName: "",

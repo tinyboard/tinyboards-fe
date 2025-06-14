@@ -27,11 +27,11 @@ export async function usePost(id: number): Promise<{
 
   const post = data.value?.post;
 
+  commentsStore.setComments(post.comments);
   // organize post comments into a tree
   post.comments = treeComments(post.comments);
 
   postsStore.setPosts([post]);
-  commentsStore.setComments(post.comments);
   //console.log(comments);
 
   //console.log(comments);

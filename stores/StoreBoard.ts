@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 //import { useAPIComputedRef } from "@/composables/api";
-import type { Board } from "~/types/types";
+import type { Board } from "@/types/types";
 
 interface BoardStoreState {
   board: Board;

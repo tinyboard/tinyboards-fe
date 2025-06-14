@@ -1,8 +1,15 @@
 import { defineStore } from 'pinia';
 
+interface ImageStore {
+	avatar: string | null;
+	banner: string | null;
+	background: string | null;
+	default_avatar: string | null;
+}
+
 export const useImageStore = defineStore('image', {
 	// State
-	state: () => {
+	state: (): ImageStore => {
 		return {
 			avatar: null,
 			banner: null,
@@ -11,16 +18,16 @@ export const useImageStore = defineStore('image', {
 		};
 	},
 	actions: {
-		setAvatar(avatar) {
+		setAvatar(avatar: string) {
 			this.avatar = avatar;
 		},
-		setBanner(banner) {
+		setBanner(banner: string) {
 			this.banner = banner;
 		},
-		setBackground(bg) {
+		setBackground(bg: string) {
 			this.background = bg;
 		},
-		setDefaultAvatar(default_avatar) {
+		setDefaultAvatar(default_avatar: string) {
 			this.default_avatar = default_avatar;
 		},
 		purgeAvatar() {

@@ -21,6 +21,8 @@ export type BoardFragment = {
     subscribers: number;
 };
 
+export type ContentType = "post" | "comment";
+
 /*export type SortType = "hot" | "new" | "topAll" | "topMonth" | "topWeek" | "topDay" | "mostComments" | "newComments";
 export type ListingType = "all" | "local" | "subscribed" | "moderated";
 

@@ -1,8 +1,27 @@
 import { defineStore } from "pinia";
 
+interface SiteStore {
+  name: string;
+  description: string;
+  icon: string;
+  primaryColor: string;
+  secondaryColor: string;
+  hoverColor: string;
+  siteMode: 'open' | 'private'; // TODO: make this the same as on the BE
+  enableDownvotes: boolean;
+  enableNSFW: boolean;
+  applicationQuestion: string | null;
+  isPrivate: boolean;
+  requireEmailVerification: boolean;
+  enableBoards: boolean;
+  boardCreationAdminOnly: boolean;
+  inviteOnly: boolean;
+  requireApplication: boolean;
+}
+
 export const useSiteStore = defineStore("site", {
   // State
-  state: () => {
+  state: (): SiteStore => {
     return {
       name: "tinyboards",
       description: "",
