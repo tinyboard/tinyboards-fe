@@ -5,9 +5,7 @@ const tls = require('tls');
 tls.DEFAULT_ECDH_CURVE = 'auto';
 
 export default defineNuxtConfig({
-	alias: {
-    pinia: '/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs',
-  },
+	// Pinia alias removed - using default Pinia setup
   app: {
     head: {
       link: [
@@ -32,8 +30,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      domain: '',
-      use_https: true
+      domain: process.env.NUXT_PUBLIC_DOMAIN || 'localhost:8080',
+      use_https: process.env.NUXT_PUBLIC_USE_HTTPS === 'true' || false
     }
   },
   optimizeDeps: {

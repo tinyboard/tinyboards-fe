@@ -9,24 +9,6 @@
 			<!-- Form -->
 			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
-					<!-- Federation -->
-					<div class="md:grid md:grid-cols-3 md:gap-6">
-						<!-- Label -->
-						<div class="md:col-span-1">
-							<p class="text-base font-bold leading-6 text-gray-900">Federation</p>
-						</div>
-						<!-- Inputs -->
-						<div class="mt-4 md:col-span-2 md:mt-0">
-							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.enable_federation" @enabled="settings.enable_federation = !settings.enable_federation" />
-								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable
-									federation</label>
-							</div>
-							<p class="mt-2 text-sm text-gray-500">
-								Opt the site into the Fediverse.
-							</p>
-						</div>
-					</div>
 					<!-- NSFW -->
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->

@@ -21,23 +21,4 @@ export function useApi(path, options = {}, headers = {}) {
   });
 }
 
-export function useApubApi(path, options, headers = {}) {
-  const authCookie = useCookie("token").value;
-  const config = useRuntimeConfig();
-  
-  let requestHeaders = {};
-  if (headers.hasOwnProperty('Authorization')) {
-    requestHeaders = headers;
-  } else {
-    requestHeaders = {
-      Authorization: authCookie ? `Bearer ${authCookie}` : "",
-      ...headers
-    }
-  }
-
-  return useFetch(path, {
-    baseURL: `${config.public.use_https ? "https" : "http"}://${config.public.domain}`,
-    headers: requestHeaders,
-    ...options,
-  });
-}
+// useApubApi removed - ActivityPub/federation functionality disabled for local-only operation
