@@ -2,7 +2,7 @@ import { formatDistanceToNowStrict, isValid } from "date-fns/esm";
 import { zonedTimeToUtc } from "date-fns-tz/esm";
 import locale from "date-fns/esm/locale/en-US";
 
-const formatDistanceLocale = {
+const formatDistanceLocale: { [key: string]: string } = {
   lessThanXSeconds: "{{count}}s",
   xSeconds: "{{count}}s",
   halfAMinute: "30s",
@@ -21,13 +21,13 @@ const formatDistanceLocale = {
   almostXYears: "{{count}}yrs",
 };
 
-function formatDistance(token, count, options) {
+function formatDistance(token: string, count: number, options?: { addSuffix?: boolean; comparison?: number }): string {
   options = options || {};
 
-  const result = formatDistanceLocale[token].replace("{{count}}", count);
+  const result = formatDistanceLocale[token].replace("{{count}}", count.toString());
 
   if (options.addSuffix) {
-    if (options.comparison > 0) {
+    if (options.comparison ? options.comparison > 0 : false) {
       return "in " + result;
     } else {
       return result + " ago";
@@ -37,7 +37,7 @@ function formatDistance(token, count, options) {
   return result;
 }
 
-export function formatDate(date, addSuffix = true) {
+export function formatDate(date: string | Date | undefined, addSuffix = true): string | undefined {
   const timestamp = date ? new Date(date) : "";
   const zonedDate = zonedTimeToUtc(timestamp, "UTC");
   try {

@@ -32,6 +32,7 @@ query userProfile(
     id
     name
     displayName
+    instance
     avatar
     banner
     profileBackground
@@ -45,6 +46,7 @@ query userProfile(
     commentScore
     rep
     isBanned
+    isAdmin
     posts(limit: $limit, sort: $sort, page: $page) @include(if: $withPosts) {
       id
       titleChunk

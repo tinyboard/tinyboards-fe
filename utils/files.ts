@@ -1,4 +1,5 @@
-export const dataURLtoFile = (dataURL) => {
+/** Convert a data URL to a File object. */
+export const dataURLtoFile = (dataURL: string): File => {
   const type = dataURL.split(";")[0].slice(5);
 
   const arr = dataURL.split(",");

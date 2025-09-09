@@ -1,4 +1,4 @@
-import type { Comment } from "~/types/types";
+import type { Comment } from "@/types/types";
 
 /**
  * Create a comment tree.
