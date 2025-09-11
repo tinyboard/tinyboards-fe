@@ -3,7 +3,7 @@
         <!-- Sub Navigation & Banner -->
         <section
             class="flex-col"
-            :class="route.params.board ? 'flex' : 'hidden md:flex'"
+            :class="route.params?.board ? 'flex' : 'hidden md:flex'"
         >
             <NavigationNavbarSub
                 :links="links"
@@ -14,7 +14,7 @@
             >
                 <!-- Banner -->
                 <LazyCardsBoardBanner
-                    v-if="route.params.board"
+                    v-if="route.params?.board"
                     :board="board"
                     class="col-span-full"
                 />

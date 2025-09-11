@@ -1,0 +1,19 @@
+mutation excludeBoardFromAll($board_id: Int!, $exclude: Boolean!) {
+  excludeBoardFromAll(board_id: $board_id, exclude: $exclude) {
+    id
+    name
+    title
+    description
+    icon
+    banner
+    nsfw
+    restricted_posting
+    creation_date
+    is_banned
+    exclude_from_all
+    myModPermissions
+    postCount
+    subscriberCount
+    moderatorCount
+  }
+}

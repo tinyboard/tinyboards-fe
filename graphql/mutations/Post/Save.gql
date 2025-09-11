@@ -1,0 +1,6 @@
+mutation savePost($postId: Int!, $save: Boolean!) {
+  savePost(postId: $postId, save: $save) {
+    id
+    isSaved
+  }
+}

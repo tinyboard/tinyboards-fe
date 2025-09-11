@@ -1,0 +1,39 @@
+mutation updateUserSettings(
+  $name: String,
+  $display_name: String,
+  $bio: String,
+  $show_nsfw: Boolean,
+  $default_sort_type: Int,
+  $default_listing_type: Int,
+  $avatar: Upload,
+  $banner: Upload,
+  $profile_background: Upload,
+  $email: String
+) {
+  updateSettings(
+    name: $name,
+    displayName: $display_name,
+    bio: $bio,
+    showNsfw: $show_nsfw,
+    defaultSortType: $default_sort_type,
+    defaultListingType: $default_listing_type,
+    avatar: $avatar,
+    banner: $banner,
+    profileBackground: $profile_background,
+    email: $email
+  ) {
+    id
+    name
+    displayName
+    bio
+    bioHtml
+    avatar
+    banner
+    profileBackground
+    email
+    showNsfw
+    defaultSortType
+    defaultListingType
+    updated
+  }
+}

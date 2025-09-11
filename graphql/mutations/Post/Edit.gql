@@ -1,9 +1,36 @@
 mutation editPost(
-	$id: Int!,
-	$body: String!
+  $postId: Int!
+  $title: String
+  $body: String
+  $url: String
+  $nsfw: Boolean
 ) {
-	editPost(id: $id, body: $body) {
-		body
-		bodyHTML
-	}
+  editPost(
+    postId: $postId
+    title: $title
+    body: $body
+    url: $url
+    nsfw: $nsfw
+  ) {
+    id
+    title
+    titleChunk
+    url
+    body
+    bodyHTML
+    score
+    upvotes
+    downvotes
+    isNSFW
+    isRemoved
+    isDeleted
+    isLocked
+    creationDate
+    updated
+    isSaved
+    myVote
+    featuredLocal
+    featuredBoard
+    commentCount
+  }
 }

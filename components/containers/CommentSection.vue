@@ -15,7 +15,7 @@
 			<MenusSort :sorts="sorts" isLeft class="ml-auto" />
 		</div>
 		<!-- Single Discussion Alert -->
-		<div v-if="!!route.params.comment"
+		<div v-if="!!route.params?.comment"
 			class="flex items-center justify-center sm:justify-start mb-2.5 sm:mb-4 p-2.5 text-center sm:text-left text-yellow-900 bg-yellow-100 border-y sm:border-x border-yellow-300 sm:rounded-md sm:shadow-inner-white">
 			<p class="text-sm text-yellow-800">
 				You are viewing a single conversation.
@@ -29,7 +29,7 @@
 		<div id="comments" class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x"
 			style="scroll-margin-top: 7rem;">
 			<!-- Write Form -->
-			<div v-if="isAuthed && !isReplyingDisabled && !route.params.comment" class="flex md:space-x-2 mb-2 sm:mb-0">
+			<div v-if="isAuthed && !isReplyingDisabled && !route.params?.comment" class="flex md:space-x-2 mb-2 sm:mb-0">
 				<!-- Avatar -->
 				<img loading="lazy" :src="userStore.user!.avatar!" alt="avatar"
 					class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover rounded" />
@@ -38,7 +38,7 @@
 			</div>
 			<!-- Comments -->
 			<LazyListsComments v-if="comments.length" :comments="comments"
-				:offset="!!route.params.comment ? 3 : null" />
+				:offset="!!route.params?.comment ? 3 : null" />
 			<!-- Empty -->
 			<div v-else-if="comments.length === 0" class="px-4 py-24 text-center text-gray-400">
 				<p>

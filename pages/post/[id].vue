@@ -68,8 +68,8 @@ const isAuthed = userStore.isAuthed;
 const v = userStore.user;
 
 let postID: number = NaN;
-if (typeof (route.params.id) === 'string') {
-      postID = parseInt(route.params.id);
+if (typeof (route.params?.id) === 'string') {
+      postID = parseInt(route.params?.id ?? '');
 }
 
 // handle invalid post ID
@@ -99,18 +99,18 @@ title.value = `${post.title} ${site.enableBoards ? '| +' + post.board!.name : ''
 // if boards are enabled...
 if (site.enableBoards) {
       const boardName = post.board!.name;
-      const params = route.params;
+      const params = route.params ?? {};
       const hasBoard = params.hasOwnProperty("board");
       const boardInParams = typeof (params.board) === 'string' ? params.board : '';
 
       // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
-            router.push(`/+${boardName}/post/${post.id}/${post.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+            router.push(`/+${boardName}/post/${post.id}/${post.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
       }
-} else if (route.params.hasOwnProperty("board")) {
+} else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      router.push(`/post/${post.id}/${post.titleChunk}${route.params.hasOwnProperty("comment") ? "/" + route.params.comment : ''}`);
+      router.push(`/post/${post.id}/${post.titleChunk}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
 }
 
 
@@ -118,10 +118,10 @@ if (site.enableBoards) {
 
 // Comments
 const id = computed(() => {
-      return !!route.params.comment ? route.params.comment : route.params.id
+      return !!route.params?.comment ? route.params?.comment : route.params?.id
 });
 const type = computed(() => {
-      return !!route.params.comment ? 'comment' : 'post'
+      return !!route.params?.comment ? 'comment' : 'post'
 })
 const sort = ref(route.query.sort);
 
@@ -154,7 +154,7 @@ const canViewPost = computed(() => {
       return !(post.isDeleted || post.isRemoved);
 });
 
-/*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params.id);
+/*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params?.id);
 
 if (type.value === 'comment' && commentsError.value && commentsError.value.response) {
       throw createError({

@@ -1,0 +1,18 @@
+query listMembers($page: Int, $limit: Int, $sort: String, $search: String) {
+  listMembers(page: $page, limit: $limit, sort: $sort, search: $search) {
+    members {
+      id
+      name
+      display_name
+      avatar
+      admin_level
+      instance
+      creation_date
+      rep
+      post_count
+      comment_count
+      is_banned
+    }
+    total_count
+  }
+}

@@ -1,0 +1,6 @@
+mutation removeComment($commentId: Int!, $removed: Boolean!, $reason: String) {
+  removeComment(commentId: $commentId, removed: $removed, reason: $reason) {
+    id
+    isRemoved
+  }
+}

@@ -455,7 +455,6 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
-import { useAPI } from "@/composables/api";
 import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
@@ -533,25 +532,32 @@ const hasImage = computed(() => props.post.url && canEmbedImage(props.post.url))
 // Vote
 const voteType = ref(props.post.myVote);
 const vote = async (type = 0) => {
+  const previousVote = voteType.value;
   voteType.value = voteType.value === type ? 0 : type;
-  await useAPI(`/posts/${props.post.id}/vote`, {
-    method: "post",
-    body: {
-      score: voteType,
+  
+  try {
+    const { mutate } = useMutation('votePost');
+    const result = await mutate({
+      postId: props.post.id,
+      vote: voteType.value
+    });
+    
+    if (result.data?.votePost) {
+      // Update post score from response
+      if (props.post.score !== undefined) {
+        props.post.score = result.data.votePost.score;
+      }
     }
-  }).then(({ data, error }) => {
-    if (error.value) {
-      // Revert failed vote & show error toast.
-      voteType.value = props.post.myVote;
-      toast.addNotification({
-        header: "Vote failed",
-        message: "Your vote failed to cast. Please try again.",
-        type: "error",
-      });
-      // Log the error.
-      console.error(error.value);
-    }
-  });
+  } catch (error) {
+    // Revert failed vote & show error toast
+    voteType.value = previousVote;
+    toast.addNotification({
+      header: "Vote failed",
+      message: error.message || "Your vote failed to cast. Please try again.",
+      type: "error",
+    });
+    console.error(error);
+  }
 };
 
 // Save

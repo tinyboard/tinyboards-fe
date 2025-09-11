@@ -111,7 +111,7 @@
 	const userStore = useLoggedInUser();
 	const toast = useToastStore();
 
-	const redirect = route.params.redirect ?? "/feed";
+	const redirect = route.params?.redirect ?? "/feed";
 
 	// Site
 	// const site = useSiteStore();

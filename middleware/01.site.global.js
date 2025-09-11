@@ -27,8 +27,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       // logged in user is loaded during SSR if there is a stored auth token
       shouldLoadLoggedInUser: process.server && cookies["token"] !== undefined,
       // board is loaded if the user visits any pages under "/+board/*"
-      shouldLoadBoard: to.params.hasOwnProperty("board"),
-      boardName: to.params.board,
+      shouldLoadBoard: to.params?.hasOwnProperty("board") ?? false,
+      boardName: to.params?.board,
     },
   });
 

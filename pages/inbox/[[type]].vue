@@ -41,7 +41,6 @@
 
 <script setup>
 // import { baseURL } from '@/server/constants';
-import { useAPI } from "@/composables/api";
 import { formatDate } from "@/utils/formatDate";
 import { useToastStore } from "@/stores/StoreToast";
 
@@ -63,13 +62,12 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 // Fetch notifications
 const unreadCount = ref(0);
 
-const type = ref(route.params.type || 'replies');
+const type = ref(route.params?.type || 'replies');
 
-const { data: notifications, pending, error, refresh } = await useAPI(`/notifications/${type.value}`, {
-	query: {
-		limit: limit.value,
-		page: page.value
-	}
+const { data: notifications, pending, error, refresh } = await useAsyncQuery('getNotifications', {
+	type: type.value,
+	limit: limit.value,
+	page: page.value
 })
 
 if (error.value && error.value.response) {
@@ -87,27 +85,28 @@ if (notifications.value.unread_count) {
 
 const isLoading = ref(false);
 
-const markRead = () => {
+const markRead = async () => {
 	isLoading.value = true;
-	useAPI(`/notifications/${type.value}/mark_read`, {
-		method: "post",
-		body: {}
-	})
-		.then(({ data, error }) => {
-			if (!error.value) {
-				unreadCount.value = 0;
-				// Show success toast.
-				toast.addNotification({ header: 'Marked all read', message: `All ${type.value} marked as read.`, type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Failed to mark all read', message: 'Please try again.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	const { mutate } = useMutation('markNotificationsRead');
+	
+	try {
+		const result = await mutate({
+			type: type.value
 		});
+		
+		if (result.data) {
+			unreadCount.value = 0;
+			// Show success toast.
+			toast.addNotification({ header: 'Marked all read', message: `All ${type.value} marked as read.`, type: 'success' });
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ header: 'Failed to mark all read', message: 'Please try again.', type: 'error' });
+		// Log the error.
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 
 const totalPages = computed(() => {

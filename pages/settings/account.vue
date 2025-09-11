@@ -70,8 +70,6 @@
 
 <script setup>
 import { ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 
 definePageMeta({
@@ -83,14 +81,14 @@ definePageMeta({
 const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
-// Fetch user settings.
-const { data, pending, error, refresh } = await useAPI("/settings");
+// Fetch user settings using GraphQL
+const { data, pending, error, refresh } = await useAsyncQuery('getSettings');
 
 // Settings.
 let settings = ref({});
 
 if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
+	settings.value = { ...JSON.parse(JSON.stringify(data.value.me)) };
 }
 
 const isLoading = ref(false);
@@ -103,28 +101,68 @@ const hasPassword = computed(() => {
 	return !!password.value || !!newPassword.value || !!confirmPassword.value;
 })
 
-// Submit settings.
-const submitSettings = () => {
+// Submit settings and password change
+const { mutate: updateSettings } = useMutation('updateUserSettings');
+const { mutate: updatePasswordMutation } = useMutation('updatePassword');
+
+const submitSettings = async () => {
 	isLoading.value = true;
-	useAPI('/settings', {
-		method: "put",
-		body: {
-			"email": settings.value.email
-		}
-	})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Settings saved', message: 'Your account settings were updated!', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Saving failed', message: 'Your settings have failed to save.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	
+	try {
+		// Update user settings first
+		const settingsResult = await updateSettings({
+			email: settings.value.email,
+			display_name: settings.value.displayName,
+			bio: settings.value.bio
 		});
+		
+		if (settingsResult.data) {
+			// Update password if provided
+			if (hasPassword.value) {
+				if (newPassword.value !== confirmPassword.value) {
+					throw new Error('New passwords do not match');
+				}
+				
+				if (newPassword.value.length < 8) {
+					throw new Error('Password must be at least 8 characters long');
+				}
+				
+				const passwordResult = await updatePasswordMutation({
+					old_password: password.value,
+					new_password: newPassword.value
+				});
+				
+				if (passwordResult.data?.updatePassword?.success) {
+					// Clear password fields
+					password.value = null;
+					newPassword.value = null;
+					confirmPassword.value = null;
+					
+					toast.addNotification({ 
+						header: 'Settings saved', 
+						message: 'Your account settings and password were updated!', 
+						type: 'success' 
+					});
+				}
+			} else {
+				toast.addNotification({ 
+					header: 'Settings saved', 
+					message: 'Your account settings were updated!', 
+					type: 'success' 
+				});
+			}
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ 
+			header: 'Saving failed', 
+			message: error.message || 'Your settings have failed to save.', 
+			type: 'error' 
+		});
+		// Log the error.
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

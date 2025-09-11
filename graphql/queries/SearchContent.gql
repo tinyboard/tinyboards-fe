@@ -1,0 +1,45 @@
+query searchContent($query: String!, $type: String, $page: Int, $limit: Int) {
+  searchContent(query: $query, type: $type, page: $page, limit: $limit) {
+    posts {
+      id
+      title
+      body
+      url
+      creator {
+        id
+        name
+        display_name
+      }
+      board {
+        id
+        name
+        title
+      }
+    }
+    comments {
+      id
+      body
+      creator {
+        id
+        name
+        display_name
+      }
+      post {
+        id
+        title
+      }
+    }
+    users {
+      id
+      name
+      display_name
+      avatar
+    }
+    boards {
+      id
+      name
+      title
+      description
+    }
+  }
+}

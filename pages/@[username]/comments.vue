@@ -28,11 +28,11 @@ definePageMeta({
 });
 
 // useHead({
-// 	title: `${site.name} | ${route.params.username}'s profile`,
+// 	title: `${site.name} | ${route.params?.username}'s profile`,
 // 	meta: [
 // 		{
 // 			property: 'og:title',
-// 			content: `${site.name} | ${route.params.username}'s profile`
+// 			content: `${site.name} | ${route.params?.username}'s profile`
 // 		}
 // 	]
 // });
@@ -46,9 +46,9 @@ const ProfileRemoved = defineAsyncComponent(
 );
 
 // User
-const username = computed(() => route.params.username);
+const username = computed(() => route.params?.username);
 
-const title = ref(route.params.username);
+const title = ref(route.params?.username);
 
 useHead({
     title: title,

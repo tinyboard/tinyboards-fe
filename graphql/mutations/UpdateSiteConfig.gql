@@ -1,0 +1,13 @@
+mutation updateSiteConfig(
+  $board_creation_admin_only: Boolean
+) {
+  updateSiteConfig(input: {
+    board_creation_admin_only: $board_creation_admin_only
+  }) {
+    id
+    name
+    description
+    board_creation_admin_only
+    updated
+  }
+}

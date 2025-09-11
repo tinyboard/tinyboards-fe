@@ -15,7 +15,7 @@
 			</li>
 		</ul>
 		<form @submit.prevent="onSubmit" @submit="submitMessage()" class="flex space-x-2 p-2.5 sm:p-4 border-t border-gray-100">
-			<!-- <textarea ref="textarea" required rows="1" class="form-input gray scrollbar-hidden" :placeholder="`Message ${route.params.id}`" v-model="text" autofocus @input="inputHandler" @keydown="inputHandler" style="resize: none;"></textarea> -->
+			<!-- <textarea ref="textarea" required rows="1" class="form-input gray scrollbar-hidden" :placeholder="`Message ${route.params?.id}`" v-model="text" autofocus @input="inputHandler" @keydown="inputHandler" style="resize: none;"></textarea> -->
 			<textarea ref="textarea" required placeholder="Write a message" rows="4" class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="text" @keydown="inputHandler"/>
 			<button type="submit" class="flex items-center button primary">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -44,7 +44,7 @@
 		query: {
 			limit: 50,
 			page: 1,
-			parent_id: route.query.new ? null : Number(route.params.id)
+			parent_id: route.query.new ? null : Number(route.params?.id)
 		}
 	})
 	.then(({ data, error }) => {
@@ -58,7 +58,7 @@
 	const textarea = ref(null);
 
 	// const recipientId = computed(() => {
-	// 	const id = messages.value.messages[0].private_message.recipient_id ?? route.params.id;
+	// 	const id = messages.value.messages[0].private_message.recipient_id ?? route.params?.id;
 	// 	return Number(id);
 	// });
 

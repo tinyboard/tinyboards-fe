@@ -16,7 +16,7 @@ onMounted(() => {
     const isNothingFocused = document.activeElement === document.body;
 
     if (isNothingFocused) {
-      const board = route.params.board;
+      const board = route.params?.board;
       const clipText = event.clipboardData.getData('Text');
       const url = new RegExp('^(?:[a-z]+:)?//', 'i');
 

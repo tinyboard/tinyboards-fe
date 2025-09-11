@@ -159,7 +159,7 @@ const props = defineProps({
 
 // const sortInit = user.default_sort_type ?? 'hot';
 
-const sort = ref(route.query.sort || route.params.sort);
+const sort = ref(route.query.sort || route.params?.sort);
 
 const selectedSort = computed(() => {
     const i = props.sorts.findIndex((x) => x.key === sort.value);

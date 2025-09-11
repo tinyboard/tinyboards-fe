@@ -78,10 +78,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
-import GET_SITE_QUERY from "@/graphql_queries/GetSite";
-import CREATE_INVITE_MUTATION from "@/graphql_queries/CreateInvite";
 
 const route = useRoute();
 
@@ -96,7 +93,7 @@ const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
 // Fetch site settings using GraphQL
-const { data: siteData, pending: sitePending, error: siteError } = await useAsyncQuery(GET_SITE_QUERY);
+const { data: siteData, pending: sitePending, error: siteError } = await useAsyncQuery('getSite');
 const site = computed(() => siteData.value?.site || {});
 
 // Pagination
@@ -104,13 +101,11 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch invites
-const { data: invites, pendingInvites, errorInvites, refresh: refreshInvites } = await useAPI("/admin/invite", {
-	query: {
-		limit: limit.value,
-		page: page.value
-	},
-	method: "get",
+const { data: invitesData, pending: pendingInvites, error: errorInvites, refresh: refreshInvites } = await useAsyncQuery('listInvites', {
+	limit: limit.value,
+	page: page.value
 });
+const invites = computed(() => invitesData.value?.listInvites || { invites: [], total_count: 0 });
 
 const totalPages = computed(() => {
 	return (invites.value.total_count / limit.value) || 1;
@@ -123,7 +118,7 @@ const createInvite = async () => {
 	isLoading.value = true;
 	
 	try {
-		const { mutate } = useMutation(CREATE_INVITE_MUTATION);
+		const { mutate } = useMutation('createInvite');
 		const result = await mutate();
 		
 		if (result.data?.createInvite?.inviteCode) {
@@ -149,25 +144,33 @@ const createInvite = async () => {
 	}
 };
 
-const deleteInvite = (invite) => {
+const deleteInvite = async (invite) => {
 	isLoading.value = true;
-	useAPI(`/admin/invite/${invite}`, {
-		method: "delete",
-		body: {}
-	})
-		.then(({ data, error }) => {
-			if (!error.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Invite deleted', message: 'The invite code was deleted.', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Failed deleting invite', message: 'Please try again.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	
+	try {
+		const { mutate } = useMutation('deleteInvite');
+		const result = await mutate({ inviteId: invite });
+		
+		if (result.data?.deleteInvite?.success) {
+			// Refetch invites
+			refreshInvites();
+			// Show success toast
+			toast.addNotification({ 
+				header: 'Invite deleted', 
+				message: 'The invite code was deleted.', 
+				type: 'success' 
+			});
+		}
+	} catch (error) {
+		// Show error toast
+		toast.addNotification({ 
+			header: 'Failed deleting invite', 
+			message: error.message || 'Please try again.', 
+			type: 'error' 
 		});
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

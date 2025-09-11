@@ -3,7 +3,7 @@
         <!-- Sub Navigation & Banner -->
         <section
             class="flex-col"
-            :class="route.params.board ? 'flex' : 'hidden md:flex'"
+            :class="route.params?.board ? 'flex' : 'hidden md:flex'"
         >
             <NavigationNavbarSub
                 :links="links"
@@ -14,7 +14,7 @@
             >
                 <!-- Banner -->
                 <LazyCardsBoardBanner
-                    v-if="route.params.board"
+                    v-if="route.params?.board"
                     :board="board"
                     class="col-span-full"
                 />
@@ -221,7 +221,7 @@
                     </div>
                 </div>
                 <!-- Sidebar -->
-                <component :is="route.params.board ? SidebarBoard : Sidebar" />
+                <component :is="route.params?.board ? SidebarBoard : Sidebar" />
             </div>
         </section>
     </main>
@@ -286,7 +286,7 @@ const welcome = ref(route.query.hasOwnProperty("welcome"));
     _error,
     _refresh,
 } = await getBoard({
-    name: route.params.board,
+    name: route.params?.board,
    });*/
 
 /*const board = {
@@ -320,13 +320,13 @@ const sorts = [
     "newcomments",
 ];
 const sort = computed(() => {
-    return sorts.includes(route.params.sort) ? route.params.sort : "hot";
+    return sorts.includes(route.params?.sort) ? route.params?.sort : "hot";
 });
 
 const { items, totalCount, paginate, pending, error, refresh } =
     await getListing(
         {
-            board_name: route.params.board,
+            board_name: route.params?.board,
             sort: sort.value,
             limit: limit.value,
             page: page.value,

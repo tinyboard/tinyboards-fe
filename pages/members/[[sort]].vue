@@ -130,7 +130,7 @@
                                         <span class="text-gray-900">{{
                                             format(
                                                 parseISO(
-                                                    member.person.creation_date,
+                                                    member.creation_date,
                                                 ),
                                                 "yyyy MMM. dd",
                                             )
@@ -186,7 +186,7 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 24);
 const sorts = ["new", "old", "mostcomments", "mostposts", "mostrep"];
 
 const sort = computed(() => {
-    return sorts.includes(route.params.sort) ? route.params.sort : "new";
+    return sorts.includes(route.params?.sort) ? route.params?.sort : "new";
 });
 
 const {

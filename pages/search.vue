@@ -67,7 +67,7 @@
 					<!-- Posts -->
                <LazyListsPosts v-if="type !== 'comment' && posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<LazyListsComments v-else-if="results.comments?.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<LazyListsComments v-else-if="results?.searchContent?.comments?.length" :comments="results.searchContent.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
 					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
@@ -101,8 +101,6 @@
 </template>
 
 <script setup>
-	// import { baseURL } from '@/server/constants';
-	import { useAPI } from "@/composables/api";
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { useCommentsStore } from '@/stores/StoreComments';
 	import { useSiteStore } from '@/stores/StoreSite';
@@ -148,18 +146,15 @@
 	const postStore = usePostsStore();
 
 	// Fetch search results.
-	const { data: results, pending, error, refresh } = await useAPI("/search", {
-		query: {
-			type: type.value,
-			query: route.query.query,
-			sort: route.query.sort,
-			is_nsfw: false,
-			limit: limit.value
-		}
+	const { data: results, pending, error, refresh } = await useAsyncQuery('searchContent', {
+		query: route.query.query || '',
+		type: type.value,
+		page: page.value,
+		limit: limit.value
 	});
 
-	postStore.posts = results.value.posts;
-	const posts = postStore.posts;
+	const posts = computed(() => results.value?.searchContent?.posts || []);
+	postStore.posts = posts.value;
 
 	const totalPages = computed(() => {
 		if (type.value === 'post') {

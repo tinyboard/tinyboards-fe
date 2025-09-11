@@ -26,7 +26,7 @@ const props = defineProps({
     },
 });
 
-const boardPage = computed(() => route.params.hasOwnProperty("board"));
+const boardPage = computed(() => route.params?.hasOwnProperty("board"));
 //console.log(props.boardPage);
 
 /*onBeforeUnmount(() => {

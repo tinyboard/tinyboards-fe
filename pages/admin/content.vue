@@ -80,8 +80,6 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useImageStore } from '@/stores/StoreImages';
 import { useModalStore } from "@/stores/StoreModal";
@@ -103,13 +101,13 @@ const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useAPI("/admin/site");
+const { data, pending, error, refresh } = await useAsyncQuery('getSite');
 
 // Settings.
 const settings = ref({});
 
-if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
+if (data.value?.site) {
+	settings.value = { ...JSON.parse(JSON.stringify(data.value.site)) };
 };
 
 // Submit settings.
@@ -133,36 +131,34 @@ const submitSettings = async () => {
 		}
 	}
 
-	useAPI('/admin/site', {
-			method: "put",
-			body: {
-				//"name": settings.value.name,
-				//"description": settings.value.description,
-				"enable_downvotes": settings.value.enable_downvotes,
-				"site_mode": settings.value.site_mode,
-				"enable_nsfw": settings.value.enable_nsfw,
-				"application_question": settings.value.application_question,
-				"private_instance": settings.value.private_instance,
-				"email_verification_required": settings.value.email_verification_required,
-				"default_avatar": settings.value.default_avatar
-				//"boards_enabled": settings.value.boards_enabled
+	try {
+		const { mutate } = useMutation('updateSiteConfig');
+		const result = await mutate({
+			input: {
+				enableNSFW: settings.value.enable_nsfw,
+				federationEnabled: settings.value.enable_federation,
+				defaultAvatar: settings.value.default_avatar,
+				enableDownvotes: settings.value.enable_downvotes,
+				privateInstance: settings.value.private_instance,
+				requireEmailVerification: settings.value.email_verification_required,
+				applicationQuestion: settings.value.application_question
 			}
-		})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
-
-				window.location.reload(true);
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Saving failed', message: 'Site settings have failed to save.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
 		});
+
+		if (result?.data?.updateSiteConfig) {
+			// Show success toast.
+			toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
+			window.location.reload(true);
+		} else {
+			throw new Error('Update failed');
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ header: 'Saving failed', message: 'Site settings have failed to save.', type: 'error' });
+		// Log the error.
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

@@ -357,7 +357,6 @@ import { useCommentsStore } from "@/stores/StoreComments";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useSiteStore } from "@/stores/StoreSite";
 import { formatDate } from "@/utils/formatDate";
-import { useAPI } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
@@ -435,29 +434,31 @@ const onCommentPublished = (newComment: Comment) => {
 // Vote
 const voteType = ref(comment.value!.myVote);
 const vote = async (type = 0) => {
-  // voteType.value = voteType.value === type ? 0 : type;
+  const previousVote = voteType.value;
+  voteType.value = voteType.value === type ? 0 : type;
 
-  // await useAPI(`/comments/${comment.value!.id}/vote`, {
-  //   method: "post",
-  //   body: {
-  //     score: voteType,
-  //   },
-  // }).then(({ data, error }) => {
-  //   if (data.value) {
-  //     data = JSON.parse(JSON.stringify(data.value));
-  //     console.log(data);
-  //   } else {
-  //     // Revert failed vote & show error toast.
-  //     setTimeout(() => {
-  //       voteType.value = comment.value!.myVote;
-  //       toast.addNotification({
-  //         header: "Vote failed",
-  //         message: "Your vote failed to cast. Please try again.",
-  //         type: "error",
-  //       });
-  //     }, 400);
-  //     // Log the error.
-  //     console.log(error.value);
+  try {
+    const { mutate } = useMutation('voteComment');
+    const result = await mutate({
+      commentId: comment.value!.id,
+      vote: voteType.value
+    });
+    
+    if (result.data?.voteComment) {
+      // Update comment score from response
+      if (comment.value!.score !== undefined) {
+        comment.value!.score = result.data.voteComment.score;
+      }
+    }
+  } catch (error) {
+    // Revert failed vote & show error toast
+    voteType.value = previousVote;
+    toast.addNotification({
+      header: "Vote failed",
+      message: error.message || "Your vote failed to cast. Please try again.",
+      type: "error",
+    });
+    console.error(error);
   //   }
   // });
 };

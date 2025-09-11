@@ -23,7 +23,7 @@ export async function usePost(id: number): Promise<{
   //const sorts = ["hot", "top", "new", "old"];
   const sort = route.query.sort?.toString() ?? "hot";
   const context = route.query.context ? Number(route.query.context) : 0;
-  const topCommentId = route.params.comment ? Number(route.params.comment) : null;
+  const topCommentId = route.params?.comment ? Number(route.params?.comment) : null;
 
   const { data, error } = await postsStore.fetchPost(id, {
     sort,

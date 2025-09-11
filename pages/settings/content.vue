@@ -41,7 +41,6 @@
 <script setup>
 	import { ref } from 'vue';
 	// import { baseURL } from "@/server/constants";
-	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	definePageMeta({
@@ -53,40 +52,41 @@
 	const toast = useToastStore();
 	const authCookie = useCookie("token").value;
 
-	// Fetch user settings.
-	const { data, pending, error, refresh } = await useAPI("/settings");
+	// Fetch user settings using GraphQL
+	const { data, pending, error, refresh } = await useAsyncQuery('getSettings');
 
 	// Settings.
 	let settings = ref({});
 
 	if (data.value) {
-		settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
+		settings.value = { ...JSON.parse(JSON.stringify(data.value.me)) };
 	}
 
 	const isLoading = ref(false);
 
 	// Submit settings.
-	const submitSettings = () => {
+	const submitSettings = async () => {
 		isLoading.value = true;
-		useAPI('/settings', {
-			method: "put",
-			body: {
-				"show_nsfw": settings.value.show_nsfw
-			}
-		})
-		.then(({ data, error }) => {
-			if (data.value) {
+		const { mutate } = useMutation('updateUserSettings');
+		
+		try {
+			const result = await mutate({
+				input: {
+					showNSFW: settings.value.show_nsfw
+				}
+			});
+			
+			if (result.data) {
 				// Show success toast.
 				toast.addNotification({header:'Settings saved',message:'Your account settings were updated!',type:'success'});
-			} else {
-				// Show error toast.
-				toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
-				// Log the error.
-				console.error(error.value);
 			}
-		})
-		.finally(() => {
+		} catch (error) {
+			// Show error toast.
+			toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
+			// Log the error.
+			console.error(error);
+		} finally {
 			isLoading.value = false;
-		});
+		}
 	};
 </script>

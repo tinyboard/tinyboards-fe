@@ -48,6 +48,7 @@ export default defineNuxtConfig({
     // Static page generated on-demand once
     "/help/**": { static: true },
     "/": { redirect: "/feed" },
+    "/feed/**": { ssr: false },
     // Force server-side rendering
     "/user/**": { ssr: true },
   },
@@ -61,6 +62,7 @@ export default defineNuxtConfig({
   },
 
   'graphql-client': {
+    schema: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
     tokenStorage: {
       name: 'token',
       mode: 'cookie'

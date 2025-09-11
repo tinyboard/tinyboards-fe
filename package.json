@@ -34,6 +34,6 @@
     "vue-advanced-cropper": "^2.8.8"
   },
   "overrides": {
-    "vue": "latest"
+    "vue": "^3.0.0"
   }
 }

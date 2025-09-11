@@ -58,8 +58,6 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 
 definePageMeta({
@@ -73,46 +71,50 @@ definePageMeta({
 
 const toast = useToastStore();
 
-// Fetch site settings.
-const { data, pending, error, refresh } = await useAPI("/admin/site");
+// Fetch site settings using GraphQL
+const { data, pending, error, refresh } = await useAsyncQuery('getSite');
 
 // Settings.
 const settings = ref({});
 
 if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
+	settings.value = { ...JSON.parse(JSON.stringify(data.value.getSite.local_site)) };
 };
 
-// Submit settings.
+// Submit settings using GraphQL.
 const isLoading = ref(false);
+const { mutate: updateSiteConfig } = useMutation('updateSiteConfig');
 
 const submitSettings = async () => {
 	isLoading.value = true;
 
-	useAPI('/admin/site', {
-			method: "put",
-			body: {
-				//"name": settings.value.name,
-				//"description": settings.value.description,
-				"boards_enabled": settings.value.boards_enabled,
-				"board_creation_admin_only": settings.value.board_creation_admin_only
-			}
-		})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
-
-				window.location.reload(true);
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Saving failed', message: 'Site settings have failed to save.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	try {
+		const result = await updateSiteConfig({
+			board_creation_admin_only: settings.value.board_creation_admin_only
 		});
+
+		if (result.data) {
+			// Show success toast.
+			toast.addNotification({ 
+				header: 'Settings saved', 
+				message: 'Site settings were updated!', 
+				type: 'success' 
+			});
+
+			// Update local data without full reload
+			settings.value = { ...settings.value, ...result.data.updateSiteConfig };
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ 
+			header: 'Saving failed', 
+			message: 'Site settings have failed to save.', 
+			type: 'error' 
+		});
+		// Log the error.
+		console.error('Failed to update site config:', error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

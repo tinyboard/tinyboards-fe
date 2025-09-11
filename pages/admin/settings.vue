@@ -186,7 +186,6 @@
 <script setup>
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { dataURLtoFile } from '@/utils/files';
 
@@ -203,7 +202,8 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useAPI("/admin/site");
+const { data: siteData, pending, error, refresh } = await useAsyncQuery('getSite');
+const data = computed(() => ({ value: siteData.value?.site }));
 
 // Convert colors from rgb to hex
 const toHexCode = rgb => {
@@ -256,24 +256,29 @@ const uploadFile = async (file) => {
 	let formData = new FormData();
 	formData.append('file', file);
 
-	const { data, pending, error, refresh } = await useAPI("/file/upload", {
-		method: "put",
-		body: formData
-	});
+	// For now, keep file upload as REST API until GraphQL file upload is implemented
+	try {
+		const config = useRuntimeConfig();
+		const response = await $fetch("/api/v1/file/upload", {
+			baseURL: `${config.public.use_https ? "https" : "http"}://${config.public.domain}`,
+			method: "PUT",
+			body: formData,
+			headers: {
+				Authorization: `Bearer ${authCookie}`
+			}
+		});
 
-	if (data.value.uploads.length > 0) {
-		return data.value.uploads[0];
-	} else if (error.value.statusCode == 413) {
-		toast.addNotification({ header: 'Your files are too large!', message: 'Your file is over 25MB!! How did you bypass the previous checks?', type: 'error' });
-
-		throw new Error(error.value);
-	} else {
-		// Show error toast.
-		toast.addNotification({ header: 'Upload failed', message: 'Failed to upload image :(', type: 'error' });
-		// Log the error.
-		console.error(error.value);
-
-		throw new Error(error.value);
+		if (response.uploads && response.uploads.length > 0) {
+			return response.uploads[0];
+		}
+	} catch (error) {
+		if (error.statusCode === 413) {
+			toast.addNotification({ header: 'Your files are too large!', message: 'Your file is over 25MB!! How did you bypass the previous checks?', type: 'error' });
+		} else {
+			toast.addNotification({ header: 'Upload failed', message: 'Failed to upload image :(', type: 'error' });
+		}
+		console.error(error);
+		throw error;
 	}
 }
 
@@ -283,44 +288,53 @@ const isLoading = ref(false);
 const submitSettings = async () => {
 	isLoading.value = true;
 
-	if (icon.value) {
-		settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
-	}
-
-	const { data, error } = await useAPI('/admin/site', {
-		method: "put",
-		body: {
-			"name": settings.value.name,
-			"description": settings.value.description,
-			"welcome_message": settings.value.welcome_message,
-			"icon": settings.value.icon,
-			"enable_downvotes": settings.value.enable_downvotes,
-			"primary_color": toRGB(primaryColor.value),
-			"secondary_color": toRGB(secondaryColor.value),
-			"hover_color": toRGB(hoverColor.value),
-			"site_mode": settings.value.site_mode,
-			"registration_mode": settings.value.registration_mode,
-			"enable_nsfw": settings.value.enable_nsfw,
-			"application_question": settings.value.application_question,
-			"private_instance": settings.value.private_instance,
-			"email_verification_required": settings.value.email_verification_required,
-			"default_avatar": settings.value.default_avatar,
+	try {
+		if (icon.value) {
+			settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
 		}
-	});
 
-	isLoading.value = false;
+		const { mutate } = useMutation('updateSiteConfig');
+		const result = await mutate({
+			input: {
+				name: settings.value.name,
+				description: settings.value.description,
+				welcome_message: settings.value.welcome_message,
+				icon: settings.value.icon,
+				enable_downvotes: settings.value.enable_downvotes,
+				primary_color: toRGB(primaryColor.value),
+				secondary_color: toRGB(secondaryColor.value),
+				hover_color: toRGB(hoverColor.value),
+				site_mode: settings.value.site_mode,
+				registration_mode: settings.value.registration_mode,
+				enable_nsfw: settings.value.enable_nsfw,
+				application_question: settings.value.application_question,
+				private_instance: settings.value.private_instance,
+				email_verification_required: settings.value.email_verification_required,
+				default_avatar: settings.value.default_avatar
+			}
+		});
 
-	if (data.value) {
-		// Show success toast.
-		toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
+		if (result.data?.updateSiteConfig) {
+			// Show success toast
+			toast.addNotification({ 
+				header: 'Settings saved', 
+				message: 'Site settings were updated!', 
+				type: 'success' 
+			});
 
-		// refresh to purge outdated stuff
-		window.location.reload(true);
-	} else {
-		// Show error toast.
-		toast.addNotification({ header: 'Saving failed', message: 'Site settings have failed to save.', type: 'error' });
-		// Log the error.
-		console.error(error.value);
+			// refresh to purge outdated stuff
+			window.location.reload(true);
+		}
+	} catch (error) {
+		// Show error toast
+		toast.addNotification({ 
+			header: 'Saving failed', 
+			message: error.message || 'Site settings have failed to save.', 
+			type: 'error' 
+		});
+		console.error(error);
+	} finally {
+		isLoading.value = false;
 	}
 };
 </script>

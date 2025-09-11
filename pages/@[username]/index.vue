@@ -68,7 +68,7 @@ definePageMeta({
     //isScrollDisabled: true
 });
 
-const title = ref(route.params.username);
+const title = ref(route.params?.username);
 
 useHead({
     title: title,
@@ -88,7 +88,7 @@ const ProfileRemoved = defineAsyncComponent(
     () => import("@/components/pages/ProfileRemoved"),
 );
 
-const username = computed(() => route.params.username);
+const username = computed(() => route.params?.username);
 
 // Fetch user with posts and comments
 const { data: userData, error } = await useFetchUser(username.value, {

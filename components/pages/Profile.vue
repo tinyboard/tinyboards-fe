@@ -326,14 +326,14 @@ const commentSorts = [
 
 // Sub navbar links
 const links = [
-    { name: "Overview", href: `/@${route.params.username}` },
+    { name: "Overview", href: `/@${route.params?.username}` },
     {
         name: `Posts (${user.postCount})`,
-        href: `/@${route.params.username}/posts`,
+        href: `/@${route.params?.username}/posts`,
     },
     {
         name: `Comments (${user.commentCount})`,
-        href: `/@${route.params.username}/comments`,
+        href: `/@${route.params?.username}/comments`,
     },
 ];
 </script>

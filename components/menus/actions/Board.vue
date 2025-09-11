@@ -103,10 +103,11 @@
                 </div>
                 <!-- Mod Actions -->
                 <div v-if="isAdmin" class="py-2 text-md sm:text-sm border-t">
-                    <!-- Manage Admin -->
+                    <!-- Add Self as Moderator -->
                     <MenuItem v-if="!isMod" v-slot="{ active, close }">
                         <button
-                            @click="close()"
+                            @click="addSelfAsMod(); close()"
+                            :disabled="isLoading"
                             class="group flex items-center w-full px-4 py-1.5"
                             :class="
                                 active
@@ -135,12 +136,48 @@
                                     d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"
                                 />
                             </svg>
-                            <span>Mod Self</span>
+                            <span>{{ isLoading ? 'Adding...' : 'Mod Self' }}</span>
                         </button>
                     </MenuItem>
-                    <MenuItem disabled v-slot="{ active, close }">
+                    <!-- Remove Self as Moderator -->
+                    <MenuItem v-if="isMod" v-slot="{ active, close }">
                         <button
-                            @click="close()"
+                            @click="removeSelfAsMod(); close()"
+                            :disabled="isLoading"
+                            class="group flex items-center w-full px-4 py-1.5"
+                            :class="
+                                active
+                                    ? 'bg-orange-100 text-orange-900'
+                                    : 'text-orange-700'
+                            "
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4 mr-2"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M3 12h18m-9 -9l9 9l-9 9" />
+                            </svg>
+                            <span>{{ isLoading ? 'Removing...' : 'Unmod Self' }}</span>
+                        </button>
+                    </MenuItem>
+                    <!-- Ban/Unban Board -->
+                    <MenuItem v-slot="{ active, close }">
+                        <button
+                            @click="board.is_banned ? unbanBoard() : banBoard(); close()"
+                            :disabled="isLoading"
                             class="group flex items-center w-full px-4 py-1.5"
                             :class="
                                 active
@@ -175,12 +212,15 @@
                                     d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z"
                                 />
                             </svg>
-                            <span>Ban +{{ board.name }}</span>
+                            <span v-if="isLoading">{{ board.is_banned ? 'Unbanning...' : 'Banning...' }}</span>
+                            <span v-else>{{ board.is_banned ? 'Unban' : 'Ban' }} +{{ board.name }}</span>
                         </button>
                     </MenuItem>
-                    <MenuItem disabled v-slot="{ active, close }">
+                    <!-- Hide/Show from All Feed -->
+                    <MenuItem v-slot="{ active, close }">
                         <button
-                            @click="close()"
+                            @click="toggleBoardFromAll(); close()"
+                            :disabled="isLoading"
                             class="group flex items-center w-full px-4 py-1.5"
                             :class="
                                 active
@@ -212,7 +252,8 @@
                                 <path d="M14 10l.01 0" />
                                 <path d="M10 14a3.5 3.5 0 0 0 4 0" />
                             </svg>
-                            <span>Hide from Feeds</span>
+                            <span v-if="isLoading">{{ board.exclude_from_all ? 'Showing in feeds...' : 'Hiding from feeds...' }}</span>
+                            <span v-else>{{ board.exclude_from_all ? 'Show in Feeds' : 'Hide from Feeds' }}</span>
                         </button>
                     </MenuItem>
                 </div>
@@ -222,18 +263,196 @@
 </template>
 
 <script setup>
-//import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { useModalStore } from "@/stores/StoreModal";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { useToastStore } from "@/stores/StoreToast";
 import { requirePermission } from "@/composables/admin";
-//import { useLoggedInUser } from '@/stores/StoreAuth';
 
-//const userStore = useLoggedInUser();
 const modalStore = useModalStore();
 const boardStore = useBoardStore();
+const toast = useToastStore();
 const board = boardStore.board;
 const isMod = board.myModPermissions !== 0;
-
 const isAdmin = requirePermission("boards");
+const isLoading = ref(false);
+
+// GraphQL mutations
+const { mutate: addSelfAsModerator } = useMutation('adminAddSelfAsMod');
+const { mutate: removeSelfAsModerator } = useMutation('adminRemoveSelfAsMod');
+const { mutate: banBoardMutation } = useMutation('adminBanBoard');
+const { mutate: unbanBoardMutation } = useMutation('adminUnbanBoard');
+const { mutate: excludeBoardMutation } = useMutation('excludeBoardFromAll');
+
+// Methods
+const addSelfAsMod = async () => {
+    if (isLoading.value) return;
+    
+    try {
+        isLoading.value = true;
+        const result = await addSelfAsModerator({
+            board_id: board.id,
+            permissions: null // Full permissions by default
+        });
+        
+        if (result.data) {
+            // Update local board store
+            boardStore.updateBoard(result.data.adminAddSelfAsMod);
+            toast.addNotification({
+                header: 'Success',
+                message: `You are now a moderator of +${board.name}`,
+                type: 'success'
+            });
+        }
+    } catch (error) {
+        console.error('Error adding self as mod:', error);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Failed to add yourself as moderator',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const removeSelfAsMod = async () => {
+    if (isLoading.value) return;
+    
+    try {
+        isLoading.value = true;
+        const result = await removeSelfAsModerator({
+            board_id: board.id
+        });
+        
+        if (result.data) {
+            // Update local board store
+            boardStore.updateBoard(result.data.adminRemoveSelfAsMod);
+            toast.addNotification({
+                header: 'Success',
+                message: `You are no longer a moderator of +${board.name}`,
+                type: 'success'
+            });
+        }
+    } catch (error) {
+        console.error('Error removing self as mod:', error);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Failed to remove yourself as moderator',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const banBoard = async () => {
+    if (isLoading.value) return;
+    
+    const publicReason = prompt('Enter public reason for banning this board:');
+    if (!publicReason) return;
+    
+    const adminNotes = prompt('Enter admin notes (optional):');
+    
+    try {
+        isLoading.value = true;
+        const result = await banBoardMutation({
+            board_id: board.id,
+            public_reason: publicReason,
+            admin_notes: adminNotes || null
+        });
+        
+        if (result.data) {
+            // Update local board store
+            boardStore.updateBoard(result.data.adminBanBoard);
+            toast.addNotification({
+                header: 'Board Banned',
+                message: `+${board.name} has been banned`,
+                type: 'success'
+            });
+        }
+    } catch (error) {
+        console.error('Error banning board:', error);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Failed to ban board',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const unbanBoard = async () => {
+    if (isLoading.value) return;
+    
+    if (!confirm(`Are you sure you want to unban +${board.name}?`)) {
+        return;
+    }
+    
+    try {
+        isLoading.value = true;
+        const result = await unbanBoardMutation({
+            board_id: board.id
+        });
+        
+        if (result.data) {
+            // Update local board store
+            boardStore.updateBoard(result.data.adminUnbanBoard);
+            toast.addNotification({
+                header: 'Board Unbanned',
+                message: `+${board.name} has been unbanned`,
+                type: 'success'
+            });
+        }
+    } catch (error) {
+        console.error('Error unbanning board:', error);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Failed to unban board',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
+    }
+};
+
+const toggleBoardFromAll = async () => {
+    if (isLoading.value) return;
+    
+    const exclude = !board.exclude_from_all;
+    const action = exclude ? 'hide from' : 'show in';
+    
+    if (!confirm(`Are you sure you want to ${action} the /all feed for +${board.name}?`)) {
+        return;
+    }
+    
+    try {
+        isLoading.value = true;
+        const result = await excludeBoardMutation({
+            board_id: board.id,
+            exclude: exclude
+        });
+        
+        if (result.data) {
+            // Update local board store
+            boardStore.updateBoard(result.data.excludeBoardFromAll);
+            toast.addNotification({
+                header: 'Board Updated',
+                message: `+${board.name} will ${exclude ? 'not appear' : 'appear'} in /all feed`,
+                type: 'success'
+            });
+        }
+    } catch (error) {
+        console.error('Error updating board visibility:', error);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Failed to update board visibility',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
+    }
+};
 </script>

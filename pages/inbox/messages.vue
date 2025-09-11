@@ -14,7 +14,7 @@
 					<button class="ml-4 button button-sm gray" @click="markRead" :disabled="unreadCount === 0 || isLoading">
 						&#10003; Mark all read
 					</button>
-					<button v-if="route.params.id" class="ml-2 flex items-center button button-sm gray" @click="markRead"
+					<button v-if="route.params?.id" class="ml-2 flex items-center button button-sm gray" @click="markRead"
 						:disabled="unreadCount === 0 || isLoading">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

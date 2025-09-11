@@ -78,9 +78,9 @@ definePageMeta({
     /*middleware: [
         function (to, from) {
             const MAX_PAGE = 4;
-            const page = to.params.page;
+            const page = to.params?.page;
 
-            if (page > 1 && (from.name !== 'boards-wizard-page' || page === from.params.page)) {
+            if (page > 1 && (from.name !== 'boards-wizard-page' || page === from.params?.page)) {
                 return createError({
                     statusCode: 400,
                     statusMessage: "You must start from the beginning.",

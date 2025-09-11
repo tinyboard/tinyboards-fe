@@ -188,7 +188,7 @@ const pageTitle = computed(() => {
     if (boardStore.hasBoard) {
         return `+${boardStore.board.name}`;
     } else if (route.meta.title === "Profile") {
-        return `@${route.params.username}`;
+        return `@${route.params?.username}`;
     } else {
         return route.meta.title ?? "Page";
     }

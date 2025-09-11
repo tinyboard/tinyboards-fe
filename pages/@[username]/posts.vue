@@ -29,7 +29,7 @@ definePageMeta({
     title: "Profile",
 });
 
-const title = ref(route.params.username);
+const title = ref(route.params?.username);
 
 useHead({
     title: title,
@@ -49,7 +49,7 @@ const ProfileRemoved = defineAsyncComponent(
     () => import("@/components/pages/ProfileRemoved"),
 );
 
-const username = computed(() => route.params.username);
+const username = computed(() => route.params?.username);
 
 // Query parameters
 const page = computed(() => route.query.page || 1);

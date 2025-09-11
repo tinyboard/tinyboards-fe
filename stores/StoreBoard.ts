@@ -19,6 +19,11 @@ export const useBoardStore = defineStore("board", {
     setBoard(board: Board) {
       this.board = board;
     },
+    updateBoard(boardUpdate: Partial<Board>) {
+      if (this.board) {
+        this.board = { ...this.board, ...boardUpdate };
+      }
+    },
     clear() {
       this.board = undefined;
     },

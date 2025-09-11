@@ -58,12 +58,12 @@ export const usePostsStore = defineStore("posts", {
         () => !!route.query["limit"] ? Math.min(Number.parseInt(route.query["limit"].toString()), 100) : 25
       );*/
 
-      this.options.page = !!route.query["page"] ? Number.parseInt(route.query["page"].toString()) : 1;
-      this.options.limit = !!route.query["limit"] ? Math.min(Number.parseInt(route.query["limit"].toString()), 100) : 25;
+      this.options.page = !!route?.query?.["page"] ? Number.parseInt(route.query["page"].toString()) : 1;
+      this.options.limit = !!route?.query?.["limit"] ? Math.min(Number.parseInt(route.query["limit"].toString()), 100) : 25;
 
       this.options.boardId = boardStore.hasBoard ? boardStore.board!.id : null; // safe to ignore board being undefined because of hasBoard check
 
-      this.options.sort = mapToSortType(route.params["sort"] as string ?? "hot");
+      this.options.sort = mapToSortType(route?.params?.["sort"] as string ?? "hot");
     },
     async fetchPosts({ listingType = "local" as ListingType }: { listingType: ListingType }): Promise<AsyncData<GetPostQuery, Error | null>> {
       this.setQueryParams();
