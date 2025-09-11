@@ -1,0 +1,13 @@
+import gql from "graphql-tag";
+
+export default gql`
+  mutation votePost($postId: Int!, $score: Int!) {
+    votePost(postId: $postId, score: $score) {
+      id
+      score
+      upvotes
+      downvotes
+      myVote
+    }
+  }
+`;

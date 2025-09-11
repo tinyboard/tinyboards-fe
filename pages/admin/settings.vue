@@ -139,6 +139,38 @@
 							</div>
 						</div>
 					</div>
+					<!-- Registration Mode -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Registration Policy</label>
+						</div>
+						<!-- Input -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<select v-model="settings.registration_mode" 
+								class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
+								<option value="Open">Open Registration</option>
+								<option value="OpenWithEmailVerification">Open with Email Verification</option>
+								<option value="InviteOnlyAdmin">Invite Only (Admin)</option>
+								<option value="InviteOnlyUser">Invite Only (User)</option>
+								<option value="RequireApplication">Application Required</option>
+								<option value="Closed">Registration Closed</option>
+							</select>
+							<p class="mt-2 text-sm text-gray-500">
+								Controls how new users can register on your site.
+							</p>
+							<!-- Application Question (only show when RequireApplication is selected) -->
+							<div v-if="settings.registration_mode === 'RequireApplication'" class="mt-4">
+								<label class="block text-sm font-medium text-gray-700 mb-2">Application Question</label>
+								<textarea 
+									v-model="settings.application_question"
+									rows="3"
+									class="block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
+									placeholder="Why do you want to join this community?"
+								></textarea>
+							</div>
+						</div>
+					</div>
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
@@ -267,6 +299,7 @@ const submitSettings = async () => {
 			"secondary_color": toRGB(secondaryColor.value),
 			"hover_color": toRGB(hoverColor.value),
 			"site_mode": settings.value.site_mode,
+			"registration_mode": settings.value.registration_mode,
 			"enable_nsfw": settings.value.enable_nsfw,
 			"application_question": settings.value.application_question,
 			"private_instance": settings.value.private_instance,

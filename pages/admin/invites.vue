@@ -4,10 +4,14 @@
 			<!-- Page Heading & Description -->
 			<div>
 				<h3 class="text-lg font-medium leading-6 text-gray-900">Invites</h3>
-				<p class="mt-1 text-sm text-gray-600">Here is a list of active invites to your tinyboard. Click the trash
-					button to revoke.</p>
+				<p class="mt-1 text-sm text-gray-600">
+					Manage invite codes for your tinyboard. 
+					<span v-if="site.registration_mode === 'InviteOnlyAdmin'">Only admins can create invites.</span>
+					<span v-else-if="site.registration_mode === 'InviteOnlyUser'">Admins and users can create invites.</span>
+					<span v-else>Invites are not currently required for registration.</span>
+				</p>
 			</div>
-			<button v-if="site.site_mode === 'InviteMode'" @click="createInvite"
+			<button v-if="site.registration_mode === 'InviteOnlyAdmin' || site.registration_mode === 'InviteOnlyUser'" @click="createInvite"
 				class="ml-auto flex items-center button green">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-2" viewBox="0 0 24 24" stroke-width="2"
 					stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -74,9 +78,10 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-// import { baseURL } from "@/server/constants";
 import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
+import GET_SITE_QUERY from "@/graphql_queries/GetSite";
+import CREATE_INVITE_MUTATION from "@/graphql_queries/CreateInvite";
 
 const route = useRoute();
 
@@ -90,8 +95,9 @@ definePageMeta({
 const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
-// Fetch site settings
-const { data: site, pending, error, refresh } = await useApi("/admin/site");
+// Fetch site settings using GraphQL
+const { data: siteData, pending: sitePending, error: siteError } = await useAsyncQuery(GET_SITE_QUERY);
+const site = computed(() => siteData.value?.site || {});
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
@@ -113,28 +119,34 @@ const totalPages = computed(() => {
 // Create invite
 const isLoading = ref(false);
 
-const createInvite = () => {
+const createInvite = async () => {
 	isLoading.value = true;
-	useApi('/admin/invite', {
-		method: "post",
-		body: {},
-	})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Refetch invites.
-				refreshInvites();
-				// Show success toast.
-				toast.addNotification({ header: 'Invite created', message: 'A fresh invite code was created!', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Failed creating invite', message: 'Please try again.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	
+	try {
+		const { mutate } = useMutation(CREATE_INVITE_MUTATION);
+		const result = await mutate();
+		
+		if (result.data?.createInvite?.inviteCode) {
+			// Refetch invites.
+			refreshInvites();
+			// Show success toast with invite code
+			toast.addNotification({ 
+				header: 'Invite created', 
+				message: `Invite code: ${result.data.createInvite.inviteCode}`, 
+				type: 'success' 
+			});
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ 
+			header: 'Failed creating invite', 
+			message: error.message || 'Please try again.', 
+			type: 'error' 
 		});
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 
 const deleteInvite = (invite) => {

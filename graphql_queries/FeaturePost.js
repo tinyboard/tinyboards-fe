@@ -1,0 +1,11 @@
+import gql from "graphql-tag";
+
+export default gql`
+  mutation featurePost($postId: Int!, $featured: Boolean!, $featureType: String!) {
+    featurePost(postId: $postId, featured: $featured, featureType: $featureType) {
+      id
+      featuredLocal
+      featuredBoard
+    }
+  }
+`;

@@ -11,6 +11,7 @@ export const useSiteStore = defineStore("site", {
       secondaryColor: "96, 128, 63",
       hoverColor: "54, 94, 129",
       siteMode: "open",
+      registrationMode: "Open",
       enableDownvotes: true,
       enableNSFW: true,
       applicationQuestion: null,
