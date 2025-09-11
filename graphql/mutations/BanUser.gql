@@ -1,8 +1,4 @@
-mutation banUser($userId: Int!, $banned: Boolean!, $reason: String, $expires: String) {
-  banUser(userId: $userId, banned: $banned, reason: $reason, expires: $expires) {
-    id
-    is_banned
-    ban_reason
-    ban_expires
-  }
+# Placeholder - original commented out  
+mutation placeholderBanUser {
+  __typename
 }

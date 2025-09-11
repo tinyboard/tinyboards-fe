@@ -15,7 +15,7 @@ export default defineNuxtConfig({
 
   devServer: {
     port: 3000,
-    host: "tinyboards.test",
+    host: "localhost",
   },
 
   app: {
@@ -87,7 +87,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tsconfigPaths()],
     server: {
-      allowedHosts: ["tinyboards.test"],
+      allowedHosts: ["localhost"],
       // fs: {
       //   cachedChecks: false,
       // },

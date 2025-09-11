@@ -1,5 +1,4 @@
-mutation markNotificationsRead($type: String!) {
-  markNotificationsRead(type: $type) {
-    success
-  }
+# Placeholder - original commented out
+mutation placeholderMarkNotificationsRead {
+  __typename
 }

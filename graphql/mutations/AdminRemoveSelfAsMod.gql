@@ -1,19 +1,17 @@
-mutation adminRemoveSelfAsMod($board_id: Int!) {
-  adminRemoveSelfAsMod(board_id: $board_id) {
+mutation adminRemoveSelfAsMod($boardId: Int!) {
+  adminRemoveSelfAsMod(boardId: $boardId) {
     id
     name
     title
     description
     icon
     banner
-    nsfw
-    restricted_posting
-    creation_date
-    is_banned
-    exclude_from_all
+    isNSFW
+    creationDate
+    isBanned
+    excludeFromAll
     myModPermissions
     postCount
-    subscriberCount
-    moderatorCount
+    subscribers
   }
 }

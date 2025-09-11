@@ -1,5 +1,5 @@
-mutation votePost($postId: Int!, $score: Int!) {
-  votePost(postId: $postId, score: $score) {
+mutation voteOnPost($id: Int!, $voteType: Int!) {
+  voteOnPost(id: $id, voteType: $voteType) {
     id
     score
     upvotes

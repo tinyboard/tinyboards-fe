@@ -1,26 +1,4 @@
-query getNotifications($type: String!, $page: Int, $limit: Int) {
-  getNotifications(type: $type, page: $page, limit: $limit) {
-    notifications {
-      id
-      type
-      read
-      created
-      person {
-        id
-        name
-        display_name
-        avatar
-      }
-      post {
-        id
-        title
-        body
-      }
-      comment {
-        id
-        body
-      }
-    }
-    total_count
-  }
+# Placeholder - original commented out
+query placeholderGetNotifications {
+  __typename
 }

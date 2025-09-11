@@ -1,39 +1,35 @@
 mutation updateUserSettings(
   $name: String,
-  $display_name: String,
+  $displayName: String,
   $bio: String,
-  $show_nsfw: Boolean,
-  $default_sort_type: Int,
-  $default_listing_type: Int,
+  $showNsfw: Boolean,
+  $defaultSortType: Int,
+  $defaultListingType: Int,
   $avatar: Upload,
   $banner: Upload,
-  $profile_background: Upload,
+  $profileBackground: Upload,
   $email: String
 ) {
   updateSettings(
     name: $name,
-    displayName: $display_name,
+    displayName: $displayName,
     bio: $bio,
-    showNsfw: $show_nsfw,
-    defaultSortType: $default_sort_type,
-    defaultListingType: $default_listing_type,
+    showNsfw: $showNsfw,
+    defaultSortType: $defaultSortType,
+    defaultListingType: $defaultListingType,
     avatar: $avatar,
     banner: $banner,
-    profileBackground: $profile_background,
+    profileBackground: $profileBackground,
     email: $email
   ) {
     id
     name
     displayName
     bio
-    bioHtml
+    bioHTML
     avatar
     banner
     profileBackground
-    email
-    showNsfw
-    defaultSortType
-    defaultListingType
     updated
   }
 }

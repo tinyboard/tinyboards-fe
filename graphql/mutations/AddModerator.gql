@@ -1,15 +1,4 @@
-mutation addModerator($boardId: Int!, $userId: Int!, $permissions: String!) {
-  addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
-    id
-    person {
-      id
-      name
-      display_name
-    }
-    board {
-      id
-      name
-    }
-    permissions
-  }
+# Placeholder - original commented out
+mutation placeholderAddModerator {
+  __typename
 }

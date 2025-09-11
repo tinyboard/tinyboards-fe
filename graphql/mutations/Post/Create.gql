@@ -2,17 +2,17 @@ mutation createPost(
   $title: String!
   $board: String
   $body: String
-  $url: String
-  $nsfw: Boolean
-  $image: String
+  $link: String
+  $isNSFW: Boolean
+  $file: Upload
 ) {
   createPost(
     title: $title
     board: $board
     body: $body
-    url: $url
-    nsfw: $nsfw
-    image: $image
+    link: $link
+    isNSFW: $isNSFW
+    file: $file
   ) {
     id
     title

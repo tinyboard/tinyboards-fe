@@ -1,15 +1,4 @@
-query getBoardModerators($boardId: Int!) {
-  getBoardModerators(boardId: $boardId) {
-    moderators {
-      id
-      person {
-        id
-        name
-        display_name
-        avatar
-      }
-      permissions
-      created
-    }
-  }
+# Placeholder - original commented out
+query placeholderGetBoardModerators {
+  __typename
 }

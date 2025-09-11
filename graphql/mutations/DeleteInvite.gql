@@ -1,5 +1,4 @@
-mutation deleteInvite($inviteId: Int!) {
-  deleteInvite(inviteId: $inviteId) {
-    success
-  }
+# Placeholder - original commented out
+mutation placeholderDeleteInvite {
+  __typename
 }

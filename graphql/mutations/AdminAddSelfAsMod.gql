@@ -1,19 +1,24 @@
-mutation adminAddSelfAsMod($board_id: Int!, $permissions: Int) {
-  adminAddSelfAsMod(board_id: $board_id, permissions: $permissions) {
+mutation adminAddSelfAsMod($boardId: Int!, $permissions: Int) {
+  adminAddSelfAsMod(boardId: $boardId, permissions: $permissions) {
     id
     name
     title
     description
     icon
     banner
-    nsfw
-    restricted_posting
-    creation_date
-    is_banned
-    exclude_from_all
+    isNSFW
+    creationDate
+    isBanned
+    excludeFromAll
     myModPermissions
     postCount
-    subscriberCount
-    moderatorCount
+    subscribers
+    moderators {
+      person {
+        name
+        displayName
+        avatar
+      }
+    }
   }
 }

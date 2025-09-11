@@ -1,6 +1,5 @@
-mutation savePost($postId: Int!, $save: Boolean!) {
-  savePost(postId: $postId, save: $save) {
-    id
-    isSaved
-  }
+# DISABLED: savePost mutation doesn't exist in backend schema
+
+mutation placeholderSavePost {
+  __typename
 }

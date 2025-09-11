@@ -20,7 +20,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const jwt = cookies["token"];
 
   const { data, error } = await useAsyncGql({
-    operation: 'getSite',
+    operation: 'initApp',
     variables: {
       // site is loaded on initial load - during SSR
       shouldLoadSite: process.server,

@@ -1,17 +1,4 @@
-query listBannedUsers($page: Int, $limit: Int) {
-  listBannedUsers(page: $page, limit: $limit) {
-    persons {
-      person {
-        id
-        name
-        display_name
-        avatar
-        creation_date
-        is_banned
-        unban_date
-        ban_reason
-      }
-    }
-    total_count
-  }
+# Placeholder - original commented out
+query placeholderListBannedUsers {
+  __typename
 }

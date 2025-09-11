@@ -3,34 +3,46 @@ query getMe {
     id
     name
     displayName
-    email
     avatar
     banner
     bio
-    signature
+    bioHTML
     isAdmin
     isDeleted
     isBanned
+    unbanDate
     creationDate
     updated
     rep
     postCount
     commentCount
-    isEmailVerified
-    showNSFW
-    showBots
-    theme
-    defaultSortType
-    defaultListingType
-    interfaceLanguage
-    emailNotificationsEnabled
+    postScore
+    commentScore
+    hasVerifiedEmail
     adminLevel
     profileBackground
-    avatarFrame
-    bioHTML
     profileMusic
     profileMusicYoutube
-    boardCreationApproved
+    isApplicationAccepted
+    isLocal
+    instance
+    settings {
+      showNSFW
+    }
+    joinedBoards {
+      id
+      name
+      title
+      icon
+    }
+    moderates {
+      board {
+        id
+        name
+        title
+        icon
+      }
+    }
   }
   unreadRepliesCount
   unreadMentionsCount

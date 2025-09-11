@@ -1,8 +1,4 @@
-mutation reportContent($contentType: String!, $contentId: Int!, $reason: String!) {
-  reportContent(contentType: $contentType, contentId: $contentId, reason: $reason) {
-    id
-    reason
-    resolved
-    created
-  }
+# Placeholder - original commented out
+mutation placeholderReportContent {
+  __typename
 }

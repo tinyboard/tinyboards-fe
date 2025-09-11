@@ -1,5 +1,5 @@
-mutation lockPost($postId: Int!, $locked: Boolean!) {
-  lockPost(postId: $postId, locked: $locked) {
+mutation setPostLocked($id: Int!, $value: Boolean!) {
+  setPostLocked(id: $id, value: $value) {
     id
     isLocked
   }

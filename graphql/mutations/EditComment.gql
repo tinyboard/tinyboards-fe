@@ -1,9 +1,9 @@
 mutation editComment(
-  $commentId: Int!
+  $id: Int!
   $body: String!
 ) {
   editComment(
-    commentId: $commentId
+    id: $id
     body: $body
   ) {
     id

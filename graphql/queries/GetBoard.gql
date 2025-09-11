@@ -1,5 +1,5 @@
 query getBoard($name: String!) {
-  boardByName(name: $name) {
+  board(name: $name) {
     id
     name
     title
@@ -9,12 +9,8 @@ query getBoard($name: String!) {
     isDeleted
     isNSFW
     isHidden
-    actorId
-    local
-    lastRefreshedDate
     icon
     banner
-    postingRestrictedToMods
     isRemoved
     banReason
     primaryColor
@@ -28,14 +24,21 @@ query getBoard($name: String!) {
     bannedAt
     excludeFromAll
     subscribers
-    posts
-    comments
+    postCount
+    commentCount
     usersActiveDay
     usersActiveWeek
     usersActiveMonth
     usersActiveHalfYear
-    isSubscribed
-    isMod
-    canCreatePost
+    subscribedType
+    myModPermissions
+    moderators {
+      person {
+        id
+        name
+        displayName
+        avatar
+      }
+    }
   }
 }

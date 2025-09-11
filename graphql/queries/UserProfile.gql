@@ -28,7 +28,7 @@ query userProfile(
   $withPosts: Boolean!
   $withComments: Boolean!
 ) {
-  user(name: $username) {
+  person(name: $username) {
     id
     name
     displayName

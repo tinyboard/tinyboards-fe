@@ -1,19 +1,17 @@
-mutation adminBanBoard($board_id: Int!, $public_reason: String!, $admin_notes: String) {
-  adminBanBoard(board_id: $board_id, public_reason: $public_reason, admin_notes: $admin_notes) {
+mutation adminBanBoard($boardId: Int!, $publicReason: String!, $adminNotes: String) {
+  adminBanBoard(boardId: $boardId, publicReason: $publicReason, adminNotes: $adminNotes) {
     id
     name
     title
     description
     icon
     banner
-    nsfw
-    restricted_posting
-    creation_date
-    is_banned
-    exclude_from_all
+    isNSFW
+    creationDate
+    isBanned
+    excludeFromAll
     myModPermissions
     postCount
-    subscriberCount
-    moderatorCount
+    subscribers
   }
 }

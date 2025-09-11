@@ -1,5 +1,5 @@
-mutation voteComment($commentId: Int!, $score: Int!) {
-  voteComment(commentId: $commentId, score: $score) {
+mutation voteOnComment($id: Int!, $voteType: Int!) {
+  voteOnComment(id: $id, voteType: $voteType) {
     id
     score
     upvotes

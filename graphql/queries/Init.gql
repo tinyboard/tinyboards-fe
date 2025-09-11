@@ -1,4 +1,4 @@
-query getSite(
+query initApp(
   $boardName: String! = ""
   $shouldLoadSite: Boolean!
   $shouldLoadLoggedInUser: Boolean!

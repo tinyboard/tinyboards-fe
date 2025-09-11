@@ -1,17 +1,4 @@
-query listInvites($page: Int, $limit: Int) {
-  listInvites(page: $page, limit: $limit) {
-    invites {
-      id
-      verification_code
-      created
-      expires
-      used
-      creator {
-        id
-        name
-        display_name
-      }
-    }
-    total_count
-  }
+# Placeholder - original commented out
+query placeholderListInvites {
+  __typename
 }
