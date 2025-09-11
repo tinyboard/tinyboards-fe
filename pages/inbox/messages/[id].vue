@@ -31,7 +31,7 @@
 
 <script setup>
 	// import { baseURL } from '@/server/constants';
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 
 	const route = useRoute();
 
@@ -40,7 +40,7 @@
 	// Fetch messages
 	const localMessages = ref([]);
 
-	const { data: messages, pending, error, refresh } = useApi('/messages', {
+	const { data: messages, pending, error, refresh } = useAPI('/messages', {
 		query: {
 			limit: 50,
 			page: 1,
@@ -71,7 +71,7 @@
 		list.value.scrollTop = list.value.scrollHeight;
 		// If not empty, submit the messsage
 		if (text.value.replace(/\s/g,'').length) {
-			useApi(`/messages`, {
+			useAPI(`/messages`, {
 				body: {
 					"recipient_id": 0,
 					"subject": "Topic of Convo here",

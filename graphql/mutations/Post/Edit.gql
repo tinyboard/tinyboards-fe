@@ -1,0 +1,9 @@
+mutation editPost(
+	$id: Int!,
+	$body: String!
+) {
+	editPost(id: $id, body: $body) {
+		body
+		bodyHTML
+	}
+}

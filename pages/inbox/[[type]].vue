@@ -41,7 +41,7 @@
 
 <script setup>
 // import { baseURL } from '@/server/constants';
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { formatDate } from "@/utils/formatDate";
 import { useToastStore } from "@/stores/StoreToast";
 
@@ -65,7 +65,7 @@ const unreadCount = ref(0);
 
 const type = ref(route.params.type || 'replies');
 
-const { data: notifications, pending, error, refresh } = await useApi(`/notifications/${type.value}`, {
+const { data: notifications, pending, error, refresh } = await useAPI(`/notifications/${type.value}`, {
 	query: {
 		limit: limit.value,
 		page: page.value
@@ -89,7 +89,7 @@ const isLoading = ref(false);
 
 const markRead = () => {
 	isLoading.value = true;
-	useApi(`/notifications/${type.value}/mark_read`, {
+	useAPI(`/notifications/${type.value}/mark_read`, {
 		method: "post",
 		body: {}
 	})

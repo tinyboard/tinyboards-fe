@@ -1,20 +1,10 @@
 <template>
-    <div
-        id="posts-list"
-        class="flex flex-col"
-        :class="
-            isCompact
-                ? 'border-y sm:border-x rounded-md divide-y'
-                : 'space-y-2 sm:space-y-4'
-        "
-    >
-        <CardsPost
-            v-for="post in postsStore.posts"
-            :item="post"
-            :key="post.id"
-            :isCompact="isCompact"
-            :boardPage="boardPage"
-        />
+    <div id="posts-list" class="flex flex-col" :class="isCompact
+            ? 'border-y sm:border-x rounded-md divide-y'
+            : 'space-y-2 sm:space-y-4'
+        ">
+        <CardsPost v-for="post in postsStore.posts" :post="post" :key="post.id" :isCompact="isCompact"
+            :boardPage="boardPage" />
     </div>
 </template>
 <script setup>
@@ -28,9 +18,9 @@ const postsStore = usePostsStore();
 
 const props = defineProps({
     /*posts: {
-		type: Array,
-		required: true
-	},*/
+        type: Array,
+        required: true
+    },*/
     isCompact: {
         type: Boolean,
     },

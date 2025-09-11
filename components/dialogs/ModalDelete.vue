@@ -39,7 +39,7 @@
 <script setup>
   import { computed, ref } from 'vue'
   // import { baseURL } from "@/server/constants";
-  import { useApi } from "@/composables/api";
+  import { useAPI } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -87,7 +87,7 @@
   const deleteItem = async () => {
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useApi(`/${type}s/${id}`, {
+    await useAPI(`/${type}s/${id}`, {
       body: {
         "deleted": true
       },

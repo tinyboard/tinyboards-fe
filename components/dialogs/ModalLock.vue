@@ -42,7 +42,7 @@
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
-  import { useApi } from '@/composables/api';
+  import { useAPI } from '@/composables/api';
   import {
     TransitionRoot,
     TransitionChild,
@@ -72,7 +72,7 @@
 
   const lockItem = async () => {
     const id = props.id;
-    await useApi(`/posts/${id}/locked`,
+    await useAPI(`/posts/${id}/locked`,
       {
         method: "PATCH",
         body: {

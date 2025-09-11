@@ -1,0 +1,84 @@
+query getSite(
+  $boardName: String! = ""
+  $shouldLoadSite: Boolean!
+  $shouldLoadLoggedInUser: Boolean!
+  $shouldLoadBoard: Boolean!
+) {
+  site @include(if: $shouldLoadSite) {
+    name
+    description
+    icon
+    primaryColor
+    secondaryColor
+    hoverColor
+    enableDownvotes
+    enableNSFW
+    applicationQuestion
+    privateInstance
+    inviteOnly
+    requireApplication
+    boardsEnabled
+    boardCreationAdminOnly
+    requireEmailVerification
+  }
+  me @include(if: $shouldLoadLoggedInUser) {
+    id
+    name
+    displayName
+    isBanned
+    unbanDate
+    avatar
+    adminLevel
+    rep
+    postScore
+    commentScore
+    creationDate
+    postCount
+    commentCount
+    joinedBoards {
+      icon
+      name
+      title
+      subscribers
+    }
+    moderates {
+      board {
+        icon
+        name
+        title
+        subscribers
+      }
+    }
+  }
+  unreadRepliesCount @include(if: $shouldLoadLoggedInUser)
+  unreadMentionsCount @include(if: $shouldLoadLoggedInUser)
+  board(name: $boardName) @include(if: $shouldLoadBoard) {
+    id
+    name
+    title
+    description
+    icon
+    banner
+    primaryColor
+    secondaryColor
+    hoverColor
+    creationDate
+    isNSFW
+    isBanned
+    banReason
+    sidebarHTML
+    isHidden
+    subscribers
+    postCount
+    commentCount
+    myModPermissions
+    subscribedType
+    moderators {
+      person {
+        name
+        displayName
+        avatar
+      }
+    }
+  }
+}

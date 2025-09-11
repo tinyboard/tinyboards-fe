@@ -159,7 +159,7 @@
 <script setup>
 import { ref } from "vue";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 definePageMeta({
@@ -180,7 +180,7 @@ const {
   pending,
   error,
   refresh,
-} = await useApi("/members", {
+} = await useAPI("/members", {
   query: { sort: "mostrep" },
   limit: 5,
 });
@@ -190,7 +190,7 @@ const {
   membersNewPending,
   membersNewError,
   membersNewRefresh,
-} = await useApi("/members", {
+} = await useAPI("/members", {
   query: { sort: "new" },
   limit: 5,
 });
@@ -200,7 +200,7 @@ const {
   membersPostsPending,
   membersPostsError,
   membersPostsRefresh,
-} = await useApi("/members", {
+} = await useAPI("/members", {
   query: { sort: "mostposts" },
   limit: 5,
 });

@@ -1,52 +1,28 @@
 <template>
     <!-- List of Comments -->
-    <ul
-        id="comments-list"
-        v-if="comments"
-        class="mt-4 first:mt-0 first-of-type:mt-0"
-    >
-        <li
-            v-for="comment in comments"
-            :key="comment.id"
-            class="mt-2 first:mt-0"
-        >
-            <div
-                v-if="cards"
-                class="bg-white border border-gray-200 p-4 mb-4 rounded"
-            >
+    <ul id="comments-list" v-if="comments" class="mt-4 first:mt-0 first-of-type:mt-0">
+        <li v-for="comment in comments" :key="comment.id" class="mt-2 first:mt-0">
+            <div v-if="cards" class="bg-white border border-gray-200 p-4 mb-4 rounded">
                 <div class="mb-2 text-gray-700" v-if="site.enableBoards">
                     <NuxtLink
                         :to="`/+${comment.board.name}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
-                        class="font-bold text-blue-600 hover:text-blue-700 hover:underline"
-                        >{{ comment.post.title }}</NuxtLink
-                    >
+                        class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
+                    </NuxtLink>
                     in
-                    <NuxtLink
-                        :to="`/+${comment.board.name}`"
-                        class="text-blue-600 hover:text-blue-700 hover:underline"
-                        >+{{ comment.board.name }}</NuxtLink
-                    >
+                    <NuxtLink :to="`/+${comment.board.name}`" class="text-blue-600 hover:text-blue-700 hover:underline">
+                        +{{ comment.board.name }}</NuxtLink>
                 </div>
                 <div class="mb-2 text-gray-700" v-else>
                     <NuxtLink
                         :to="`/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
-                        class="font-bold text-blue-600 hover:text-blue-700 hover:underline"
-                        >{{ comment.post.title }}</NuxtLink>
+                        class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
+                    </NuxtLink>
                 </div>
-                <component
-                    v-if="comment"
-                    :comment="comment"
-                    :offset="offset"
-                    :is="canViewComment(comment) ? Comment : CommentRemoved"
-                />
+                <component v-if="comment" :comment="comment" :offset="offset"
+                    :is="canViewComment(comment) ? Comment : CommentRemoved" />
             </div>
-            <component
-                v-else
-                v-if="comment"
-                :comment="comment"
-                :offset="offset"
-                :is="canViewComment(comment) ? Comment : CommentRemoved"
-            />
+            <component v-else-if="comment" :comment="comment" :offset="offset"
+                :is="canViewComment(comment) ? Comment : CommentRemoved" />
         </li>
     </ul>
 </template>
@@ -54,7 +30,7 @@
 <script setup>
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
-import { useBoardStore } from "@/stores/StoreBoard";
+import { useBoardStore } from "~/stores/StoreBoard";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
@@ -79,7 +55,7 @@ const props = defineProps({
     },
     mode: {
         type: String,
-        default: "tree" 
+        default: "tree"
     }
 });
 
@@ -119,13 +95,13 @@ function canViewComment(comment) {
 }
 
 /*
-	let error = props.commentData.error;
+    let error = props.commentData.error;
 
-	let comments = ref([]);
-	//if (!error.value) {
-	console.log('getting items');
-	comments.value = props.commentData.listing.value.comments;
-	console.log('done');*/
+    let comments = ref([]);
+    //if (!error.value) {
+    console.log('getting items');
+    comments.value = props.commentData.listing.value.comments;
+    console.log('done');*/
 //}
 
 // ======================================================================

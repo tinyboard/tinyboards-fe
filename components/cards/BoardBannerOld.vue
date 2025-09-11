@@ -255,7 +255,7 @@
 
 <script setup>
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
 
@@ -274,7 +274,7 @@ const isSubscribed = ref(props.boardView.subscribed == "Subscribed");
 
 const toggleSubscribe = async () => {
     isSubscribed.value = !isSubscribed.value;
-    const { data, error } = await useApi(
+    const { data, error } = await useAPI(
         "/subscriptions/boards" + (isSubscribed.value ? "" : `/${board.id}`),
         {
             method: isSubscribed.value ? "post" : "delete",

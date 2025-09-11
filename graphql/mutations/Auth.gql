@@ -1,0 +1,13 @@
+mutation submitLogin($usernameOrEmail: String!, $password: String!) {
+	login(usernameOrEmail: $usernameOrEmail, password: $password) {
+		token
+	}
+}
+
+mutation register($username: String!, $password: String!, $email: String, $inviteCode: String, $applicationAnswer: String) {
+	register(username: $username, password: $password, email: $email, inviteCode: $inviteCode, applicationAnswer: $applicationAnswer) {
+		token
+		accountCreated
+		applicationSubmitted
+	}
+}

@@ -78,7 +78,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import GET_SITE_QUERY from "@/graphql_queries/GetSite";
 import CREATE_INVITE_MUTATION from "@/graphql_queries/CreateInvite";
@@ -104,7 +104,7 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch invites
-const { data: invites, pendingInvites, errorInvites, refresh: refreshInvites } = await useApi("/admin/invite", {
+const { data: invites, pendingInvites, errorInvites, refresh: refreshInvites } = await useAPI("/admin/invite", {
 	query: {
 		limit: limit.value,
 		page: page.value
@@ -151,7 +151,7 @@ const createInvite = async () => {
 
 const deleteInvite = (invite) => {
 	isLoading.value = true;
-	useApi(`/admin/invite/${invite}`, {
+	useAPI(`/admin/invite/${invite}`, {
 		method: "delete",
 		body: {}
 	})

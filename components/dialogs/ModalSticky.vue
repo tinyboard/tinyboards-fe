@@ -187,7 +187,7 @@
 <script setup>
 import { ref } from "vue";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSiteStore } from "@/stores/StoreSite";
 //import { useBoardStore } from "@/stores/StoreBoard";
 import { useToastStore } from "@/stores/StoreToast";
@@ -247,7 +247,7 @@ const togglePostPin = async () => {
         pinType.value = "Local";
     }
 
-    await useApi(`/posts/${id}/featured`, {
+    await useAPI(`/posts/${id}/featured`, {
         body: {
             //"post_id": id,
             value: !isStickied.value,

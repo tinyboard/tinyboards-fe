@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 //import { useSiteStore } from "@/stores/StoreSite";
@@ -135,7 +135,7 @@ const board = boardStore.board;
 const u = userStore.user;
 
 const leave = async () => {
-    await useApi(`/boards/${board.id}/mods/${u.id}`, {
+    await useAPI(`/boards/${board.id}/mods/${u.id}`, {
         body: {},
         method: "DELETE",
     })

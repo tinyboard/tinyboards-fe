@@ -29,18 +29,20 @@
 <script setup>
 	import { marked } from 'marked';
 	// import { baseURL } from "@/server/constants";
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
+
+	import { editPost } from "@/composables/post";
 
 	const props = defineProps({
 		id: {
 			type: Number,
-		default: null,
+			default: null,
 			required: true
 		},
 		body: {
 			type: String,
-		default: null,
+			default: null,
 			required: true
 		},
 		type: {
@@ -80,10 +82,10 @@
 	};
 
 	// Submit edit
-	const submitEdit = () => {
+	/*const submitEdit = () => {
 		if (localBody.value) {
 			isLoading.value = true;
-			useApi(`/${props.type}/${props.id}`, {
+			useAPI(`/${props.type}/${props.id}`, {
 				method: "put",
 				body: {
 					"body": localBody.value
@@ -112,5 +114,30 @@
 		} else {
 			toast.addNotification({header:'Edits failed',message:'Your edits need some text! Please try again.',type:'error'});
 		}
-	};
+	};*/
+
+	//submit edit
+	function submitEdit() {
+		isLoading.value = true;
+		if (props.type === "post") {
+			editPost(props.id, localBody.value)
+				.then((resp) => {
+					if (!!resp.editPost) {
+						emit("hasEdited", resp.editPost);
+						emit("closed");
+						toast.addNotification({header:'Edits saved',message:`Your ${props.type} was updated.`,type:'success'});
+					} else {
+						// Log the error.
+						//console.error(error.value);
+						// Show error toast.
+						toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
+					}
+					
+				})
+				.finally(() => {
+					isLoading.value = false;
+					isPreviewVisible.value = false;
+				});
+		}
+	}
 </script>

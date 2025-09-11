@@ -168,7 +168,7 @@
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
 import { useToastStore } from '@/stores/StoreToast';
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -183,7 +183,7 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useApi("/admin/site");
+const { data, pending, error, refresh } = await useAPI("/admin/site");
 
 // Settings.
 const settings = ref({});
@@ -197,7 +197,7 @@ const isLoading = ref(false);
 
 const submitSettings = () => {
 	isLoading.value = true;
-	useApi('/admin/site', {
+	useAPI('/admin/site', {
 		method: "put",
 		body: {
 			"name": settings.value.name,

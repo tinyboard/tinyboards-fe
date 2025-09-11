@@ -5,18 +5,24 @@
 				<div class="flex flex-grow items-center">
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
-						<div v-if="boardStore.boardActive" class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
+						<div v-if="boardStore.boardActive"
+							class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
 							<NuxtLink to="/feed">
-								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
+								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon"
+									class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							</NuxtLink>
-							<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 								<path d="M9 6l6 6l-6 6" />
 							</svg>
-							<NuxtLink :to="`/+${boardStore.board.name}`" class="font-bold text-lg text-white">+{{ boardStore.boardView.board.name }}</NuxtLink>
+							<NuxtLink :to="`/+${boardStore.board.name}`" class="font-bold text-lg text-white">+{{
+								boardStore.boardView.board.name }}</NuxtLink>
 						</div>
 						<NuxtLink v-else to="/feed" class="header-brand font-bold text-lg text-white">
-							<img id="navbar-icon" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
+							<img id="navbar-icon" :src="site.icon"
+								class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							<span>{{ site.name }}</span>
 						</NuxtLink>
 						<span class="absolute -right-5 -bottom-1 flashing-text font-mono">
@@ -29,7 +35,7 @@
 						<ul class="flex">
 							<li class="header-menu-item flex items-center text-sm leading-5" v-for="link in links"
 								:key="link.name">
-								<NuxtLink :to="link.href" custom v-slot="{ href, navigate, isActive }">
+								<NuxtLink :to="link.href" custom v-slot="{ navigate, isActive }">
 									<a :href="link.href" @click.prevent="navigate(link.href)"
 										:class="[isActive ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 										{{ link.name }}
@@ -45,8 +51,8 @@
 						<form class="header-search-form group relative" @submit.prevent="search">
 							<div class="absolute left-3 top-2">
 								<button class="text-white/20 hover:text-white" type="submit">
-									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-										stroke="currentColor" class="w-5 h-5">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+										stroke-width="2" stroke="currentColor" class="w-5 h-5">
 										<path stroke-linecap="round" stroke-linejoin="round"
 											d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
 									</svg>
@@ -111,17 +117,19 @@
 							</span>
 						</NuxtLink>
 						<!-- Profile Dropdown -->
-						<MenusProfile :user="v" :counts="counts" :unread="unread" />
+						<MenusProfile :user="v" :unread="unread" />
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-2 md:hidden">
 					<!-- Admin Tools Link -->
-					<NuxtLink v-if="v.is_admin" to="/admin" class="inline-flex items-center justify-center p-1 text-white">
+					<NuxtLink v-if="v.adminLevel > 0" to="/admin"
+						class="inline-flex items-center justify-center p-1 text-white">
 						<span class="sr-only">View admin tools</span>
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3">
+							<path
+								d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3">
 							</path>
 						</svg>
 					</NuxtLink>
@@ -170,7 +178,8 @@
 		<!-- Mobile Menu -->
 		<transition enter-class="opacity-0" enter-active-class="duration-300 ease-out" enter-to-class="opacity-100"
 			leave-class="opacity-100" leave-active-class="duration-200 ease-in" leave-to-class="opacity-0">
-			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen" class="fixed inset-0 bg-black/80">
+			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen"
+				class="fixed inset-0 bg-black/80">
 			</div>
 		</transition>
 		<aside
@@ -205,9 +214,9 @@
 					placeholder="Search posts, @users and +boards" />
 				<div v-show="text" class="absolute" style="top: 9px; right: 0.625rem;">
 					<button class="text-gray-300" @click="text = null">
-						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24"
-							stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-							stroke-linejoin="round">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24"
+							viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+							stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							<circle cx="12" cy="12" r="9"></circle>
 							<path d="M10 10l4 4m0 -4l-4 4"></path>
@@ -229,7 +238,7 @@
 						<div class="flex items-center text-xs">
 							<span class="text-yellow-500">&#9733;&nbsp;</span>
 							<span class="text-gray-600">
-								{{ counts.rep ?? 0 }} reputation
+								{{ v.rep ?? 0 }} reputation
 							</span>
 						</div>
 					</div>
@@ -335,10 +344,10 @@
 
 <script setup>
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSiteStore } from '@/stores/StoreSite.js';
 import { useLoggedInUser } from '@/stores/StoreAuth';
-import { useBoardStore } from '@/stores/StoreBoard.js';
+import { useBoardStore } from '~/stores/StoreBoard.js';
 import { shuffle } from "@/utils/shuffleArray";
 import Cookies from 'js-cookie';
 
@@ -364,14 +373,14 @@ const search = () => {
 };
 
 const v = userStore.user;
-const counts = userStore.counts;
+//const counts = userStore.counts;
 const unread = ref(userStore.unread);
 
 // Notifications count
 const authCookie = useCookie("token").value;
 
 const fetchNotifcationCount = () => {
-	useApi("/notifications/unread")
+	useAPI("/notifications/unread")
 		.then(({ data }) => {
 			unread.value = data.value.total_count
 		})

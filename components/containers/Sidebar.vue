@@ -92,7 +92,7 @@
 // import { baseURL } from "@/server/constants";
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
@@ -109,7 +109,7 @@ const {
   pending,
   error,
   refresh,
-} = await useApi("/members", {
+} = await useAPI("/members", {
   query: { sort: "new", limit: 8 },
 });
 

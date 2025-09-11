@@ -71,7 +71,7 @@
 <script setup>
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 
 definePageMeta({
@@ -84,7 +84,7 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch user settings.
-const { data, pending, error, refresh } = await useApi("/settings");
+const { data, pending, error, refresh } = await useAPI("/settings");
 
 // Settings.
 let settings = ref({});
@@ -106,7 +106,7 @@ const hasPassword = computed(() => {
 // Submit settings.
 const submitSettings = () => {
 	isLoading.value = true;
-	useApi('/settings', {
+	useAPI('/settings', {
 		method: "put",
 		body: {
 			"email": settings.value.email

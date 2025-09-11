@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
@@ -164,7 +164,7 @@ const target = ref('');
 const password = ref('');
 
 const transfer = async () => {
-    await useApi('/admin/add_admin', {
+    await useAPI('/admin/add_admin', {
         body: {
             username: target.value,
             level: PERMISSIONS['owner'],

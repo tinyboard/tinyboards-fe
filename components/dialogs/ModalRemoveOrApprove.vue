@@ -42,7 +42,7 @@
 <script setup>
   import { ref } from 'vue'
   // import { baseURL } from "@/server/constants";
-  import { useApi } from '@/composables/api';
+  import { useAPI } from '@/composables/api';
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -93,7 +93,7 @@
   const toggleItemRemove = async () => {
     const type = props.type;
     const id = props.id;
-    await useApi(`/${type === 'post' ? 'post' : 'comment'}s/${id}/removed`, {
+    await useAPI(`/${type === 'post' ? 'post' : 'comment'}s/${id}/removed`, {
       body: {
           //"target_id": id,
           "reason": "Violating community rules.",

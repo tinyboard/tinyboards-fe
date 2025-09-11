@@ -124,7 +124,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
@@ -148,7 +148,7 @@ const modalStore = useModalStore();
 const user = useLoggedInUser();
 
 // Fetch site settings
-//const { data: site, pending, error, refresh } = await useApi("/admin/site");
+//const { data: site, pending, error, refresh } = await useAPI("/admin/site");
 const site = useSiteStore();
 
 // Pagination
@@ -159,7 +159,7 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 const searchTerm = ref(route.query.search_term || "");
 
 // Fetch users
-const { data: members, pending, error, refresh } = await useApi("/members", {
+const { data: members, pending, error, refresh } = await useAPI("/members", {
     query: {
         limit: limit.value,
         page: page.value,
@@ -177,7 +177,7 @@ const totalPages = computed(() => {
 watch(
     () => route.query.page,
     async newPage => {
-        const { data: newMembers } = await useApi("/members", {
+        const { data: newMembers } = await useAPI("/members", {
             query: {
                 limit: limit.value,
                 page: page.value,
@@ -199,7 +199,7 @@ watch(
         const query = JSON.parse(JSON.stringify(route.query));
         query.search_term = newSearch;
         router.replace({ query });
-        const { data: newMembers } = await useApi("/members", {
+        const { data: newMembers } = await useAPI("/members", {
             query: {
                 limit: limit.value,
                 page: page.value,

@@ -39,7 +39,7 @@
 <script setup>
   import { ref } from 'vue'
   // import { baseURL } from "@/server/constants";
-  import { useApi } from "@/composables/api";
+  import { useAPI } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import {
@@ -78,7 +78,7 @@
     const type = props.type;
     const id = props.id;
 
-    await useApi(`/${type}/${id}/reports`, {
+    await useAPI(`/${type}/${id}/reports`, {
       method: "post",
       body: {
         //[`${type}_id`]: id,

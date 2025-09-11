@@ -130,27 +130,27 @@ const props = defineProps({
             },
             {
                 name: "Top All",
-                key: "topall",
+                key: "topAll",
                 href: { params: { sort: "topall" } },
             },
             {
                 name: "Top Month",
-                key: "topmonth",
+                key: "topMonth",
                 href: { params: { sort: "topmonth" } },
             },
             {
                 name: "Top Week",
-                key: "topweek",
+                key: "topWeek",
                 href: { params: { sort: "topweek" } },
             },
             {
                 name: "Most Comments",
-                key: "mostcomments",
+                key: "mostComments",
                 href: { params: { sort: "mostcomments" } },
             },
             {
                 name: "Latest Comments",
-                key: "newcomments",
+                key: "newComments",
                 href: { params: { sort: "newcomments" } },
             },
         ],

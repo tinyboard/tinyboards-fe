@@ -175,7 +175,7 @@ const next = () => {
             }
         }
 
-        const { data, pending, error, refresh } = await useApi('/boards', {
+        const { data, pending, error, refresh } = await useAPI('/boards', {
             method: "post",
             body: {
                 "name": board.name,

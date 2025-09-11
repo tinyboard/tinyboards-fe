@@ -84,7 +84,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
@@ -102,7 +102,7 @@ const toast = useToastStore();
 const modalStore = useModalStore();
 
 // Fetch site settings
-//const { data: site, pending, error, refresh } = await useApi("/admin/site");
+//const { data: site, pending, error, refresh } = await useAPI("/admin/site");
 const site = useSiteStore();
 
 // Pagination
@@ -110,7 +110,7 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch invites
-const { data: bans, pendingInvites, errorInvites, refresh: refreshInvites } = await useApi("/admin/list_bans", {
+const { data: bans, pendingInvites, errorInvites, refresh: refreshInvites } = await useAPI("/admin/list_bans", {
     query: {
         limit: limit.value,
         page: page.value
@@ -162,7 +162,7 @@ const confirmUnban = (u) => {
 
 /*const createInvite = () => {
     isLoading.value = true;
-    useApi('/admin/invite', {
+    useAPI('/admin/invite', {
         method: "post",
         body: {},
     })
@@ -186,7 +186,7 @@ const confirmUnban = (u) => {
 
 const deleteInvite = (invite) => {
     isLoading.value = true;
-    useApi(`/admin/invite/${invite}`, {
+    useAPI(`/admin/invite/${invite}`, {
         method: "delete",
         body: {}
     })

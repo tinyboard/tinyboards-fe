@@ -102,7 +102,7 @@
 
 <script setup>
 	// import { baseURL } from '@/server/constants';
-	import { useApi } from "@/composables/api";
+	import { useAPI } from "@/composables/api";
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { useCommentsStore } from '@/stores/StoreComments';
 	import { useSiteStore } from '@/stores/StoreSite';
@@ -148,7 +148,7 @@
 	const postStore = usePostsStore();
 
 	// Fetch search results.
-	const { data: results, pending, error, refresh } = await useApi("/search", {
+	const { data: results, pending, error, refresh } = await useAPI("/search", {
 		query: {
 			type: type.value,
 			query: route.query.query,

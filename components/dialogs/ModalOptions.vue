@@ -155,7 +155,7 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { usePostsStore } from '@/stores/StorePosts';
-import { useApi } from '@/composables/api';
+import { useAPI } from '@/composables/api';
 import {
     TransitionRoot,
     TransitionChild,

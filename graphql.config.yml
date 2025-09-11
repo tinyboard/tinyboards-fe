@@ -1,0 +1,3 @@
+# configuration for VSCode graphql extension
+schema: "http://tinyboards.test/api/v2/graphql"
+documents: "**/*.{graphql,gql,js,ts,jsx,tsx}"

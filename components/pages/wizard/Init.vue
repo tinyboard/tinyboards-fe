@@ -24,7 +24,7 @@
 <script setup>
 import { useWizardStore } from '@/stores/StoreWizard';
 import { ref, computed } from 'vue';
-import { useApi } from '@/composables/api';
+import { useAPI } from '@/composables/api';
 
 const board = useWizardStore();
 
@@ -59,7 +59,7 @@ watch(
 
         /*if (name.value !== '') {
             console.log("fetching");
-           let { data, error } = await useApi("/board/exists", {
+           let { data, error } = await useAPI("/board/exists", {
                 key: `check_${name.value}`,
                 query: {
                     board_name: name.value
@@ -80,7 +80,7 @@ watch(
             timeoutID = setTimeout(
                 async () => {
 
-                    let { data, error } = await useApi("/boards/exists", {
+                    let { data, error } = await useAPI("/boards/exists", {
                         key: `check_${name.value}`,
                         query: {
                             board_name: name.value
