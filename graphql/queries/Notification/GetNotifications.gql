@@ -1,0 +1,50 @@
+query getNotifications(
+  $unreadOnly: Boolean,
+  $page: Int,
+  $limit: Int
+) {
+  getNotifications(
+    unreadOnly: $unreadOnly,
+    page: $page,
+    limit: $limit
+  ) {
+    id
+    kind
+    isRead
+    created
+    comment {
+      id
+      body
+      creationDate
+      creator {
+        name
+        displayName
+        avatar
+      }
+      post {
+        id
+        title
+      }
+    }
+    post {
+      id
+      title
+      body
+      creationDate
+      creator {
+        name
+        displayName
+        avatar
+      }
+      board {
+        name
+        title
+      }
+    }
+    person {
+      name
+      displayName
+      avatar
+    }
+  }
+}

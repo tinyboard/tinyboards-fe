@@ -1,0 +1,5 @@
+mutation banUser($personId: Int!, $reason: String, $expires: String) {
+  banUser(personId: $personId, reason: $reason, expires: $expires) {
+    success
+  }
+}

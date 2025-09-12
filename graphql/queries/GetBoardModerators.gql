@@ -1,4 +1,0 @@
-# Placeholder - original commented out
-query placeholderGetBoardModerators {
-  __typename
-}

@@ -1,0 +1,19 @@
+mutation addModerator($boardId: Int!, $personId: Int!, $permissions: Int) {
+  addModerator(boardId: $boardId, personId: $personId, permissions: $permissions) {
+    success
+    board {
+      id
+      name
+      title
+      moderators {
+        person {
+          name
+          displayName
+          avatar
+        }
+        permissions
+        rank
+      }
+    }
+  }
+}

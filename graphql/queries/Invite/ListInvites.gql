@@ -1,0 +1,7 @@
+query listInvites {
+  listInvites {
+    id
+    verificationCode
+    created
+  }
+}

@@ -1,5 +1,41 @@
-# DISABLED: featurePost mutation doesn't exist in backend schema
-
-mutation placeholderFeaturePost {
-  __typename
+mutation featurePost($postId: Int!, $featured: Boolean!, $featureType: String) {
+  featurePost(postId: $postId, featured: $featured, featureType: $featureType) {
+    id
+    title
+    body
+    url
+    creationDate
+    updated
+    isRemoved
+    isDeleted
+    isLocked
+    featuredBoard
+    featuredLocal
+    nsfw
+    creatorBannedFromBoard
+    score
+    upvotes
+    downvotes
+    commentCount
+    hotRank
+    newest_comment_time
+    myVote
+    saved
+    read
+    board {
+      id
+      name
+      title
+      subscribed
+      sidebar
+      icon
+    }
+    creator {
+      id
+      name
+      displayName
+      avatar
+      isAdmin
+    }
+  }
 }
