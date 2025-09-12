@@ -20,7 +20,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const jwt = cookies["token"];
 
   const { data, error } = await useAsyncGql({
-    operation: 'getSite',
+    operation: "getSite",
     variables: {
       // site is loaded on initial load - during SSR
       shouldLoadSite: process.server,
@@ -35,7 +35,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   console.log("got here");
 
   console.log(JSON.stringify(data.value, null, 4));
-  if (data.value.site) {
+  if (data.value?.site) {
     console.log("AAAAAAAAAAAA");
     const site = data.value.site;
     //siteStore.siteMode = site.siteMode;
@@ -63,7 +63,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     });
     }*/
 
-  if (data.value.board) {
+  if (data.value?.board) {
     const recentBoards = useCookie("recentBoards");
     boardStore.setBoard(data.value.board);
 
@@ -87,7 +87,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     } else {
       // board already listed: move it to the top
       recentBoards.value = recentBoards.value.filter(
-        (board) => board.name != data.value.board.name,
+        (board) => board.name != data.value.board.name
       );
 
       recentBoards.value.unshift({
@@ -100,7 +100,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     boardStore.clear();
   }
 
-  if (data.value.me) {
+  if (data.value?.me) {
     userStore.user = data.value.me;
     /*userStore.counts = {
       rep: 0,
