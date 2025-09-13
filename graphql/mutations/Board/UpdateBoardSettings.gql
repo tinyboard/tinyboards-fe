@@ -1,0 +1,59 @@
+mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
+  updateBoardSettings(input: $input) {
+    board {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      isNSFW
+      creationDate
+      updated
+      isRemoved
+      isBanned
+      banReason
+      publicBanReason
+      bannedBy
+      bannedAt
+      primaryColor
+      secondary_color
+      hoverColor
+      sidebar
+      sidebarHTML
+      isHidden
+      excludeFromAll
+      postCount
+      subscribers
+      commentCount
+      usersActiveDay
+      usersActiveWeek
+      usersActiveMonth
+      usersActiveHalfYear
+      myModPermissions
+      subscribedType
+      moderators {
+        id
+        boardId
+        personId
+        permissions
+        rank
+        inviteAccepted
+        inviteAcceptedDate
+        creationDate
+        person {
+          id
+          name
+          displayName
+          avatar
+          banner
+          bio
+          creationDate
+          isAdmin
+          isBanned
+          botAccount
+        }
+      }
+    }
+  }
+}

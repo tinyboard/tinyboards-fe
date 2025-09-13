@@ -44,6 +44,42 @@ export type ModPermission = 'none' | 'config' | 'appearance' |
 export type AdminPermission = 'none' | 'config' | 'content' |
     'users' | 'boards' | 'full' | 'owner' | 'system';
 
+// Input types for board mutations
+export type CreateBoardInput = {
+    name: string;
+    title: string;
+    description?: string;
+    isNsfw?: boolean;
+    primaryColor?: string;
+    secondaryColor?: string;
+    hoverColor?: string;
+};
+
+export type UpdateBoardSettingsInput = {
+    boardId: number;
+    title?: string;
+    description?: string;
+    isNsfw?: boolean;
+    primaryColor?: string;
+    secondaryColor?: string;
+    hoverColor?: string;
+    sidebar?: string;
+    postingRestrictedToMods?: boolean;
+    isHidden?: boolean;
+    excludeFromAll?: boolean;
+    icon?: string;
+    banner?: string;
+};
+
+// Response types for board mutations
+export type CreateBoardResponse = {
+    board: Board;
+};
+
+export type UpdateBoardSettingsResponse = {
+    board: Board;
+};
+
 /*export type SortType = "hot" | "new" | "topAll" | "topMonth" | "topWeek" | "topDay" | "mostComments" | "newComments";
 export type ListingType = "all" | "local" | "subscribed" | "moderated";
 
