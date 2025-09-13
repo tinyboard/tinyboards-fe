@@ -1,0 +1,14 @@
+query userFollowing($personId: Int!) {
+  userFollowing(personId: $personId) {
+    id
+    name
+    displayName
+    avatar
+    banner
+    bio
+    creationDate
+    isAdmin
+    isBanned
+    botAccount
+  }
+}

@@ -1,0 +1,3 @@
+mutation acceptFollowRequest($subscriberId: Int!) {
+  acceptFollowRequest(subscriberId: $subscriberId)
+}

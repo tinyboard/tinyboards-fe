@@ -1,0 +1,3 @@
+query isFollowingUser($personId: Int!) {
+  isFollowingUser(personId: $personId)
+}

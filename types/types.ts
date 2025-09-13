@@ -20,6 +20,19 @@ export type Comment = Post["comments"][0] & {
 
 export type Person = UserProfileQuery["user"];
 
+// User interaction types
+export type UserFollowersResponse = {
+    userFollowers: Person[];
+};
+
+export type UserFollowingResponse = {
+    userFollowing: Person[];
+};
+
+export type PendingFollowRequestsResponse = {
+    pendingFollowRequests: Person[];
+};
+
 export type Site = GetSiteQuery["site"];
 
 export type Board = GetSiteQuery["board"];

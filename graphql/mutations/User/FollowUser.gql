@@ -1,0 +1,3 @@
+mutation followUser($personId: Int!) {
+  followUser(personId: $personId)
+}
