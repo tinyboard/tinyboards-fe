@@ -1,4 +1,12 @@
-import type { GetPostQuery, GetSiteQuery, UserProfileQuery } from "#gql";
+import type { 
+    GetPostQuery, 
+    GetSiteQuery, 
+    UserProfileQuery,
+    GetConversationsQuery,
+    GetConversationQuery,
+    SendMessageMutation,
+    EditMessageMutation
+} from "#gql";
 import { CommentSortType, ListingType, SortType } from "#gql/default";
 
 export type { CommentSortType, ListingType, SortType } from "#gql/default";
@@ -175,3 +183,30 @@ export function mapToListingType(sort: string, fallback: ListingType = ListingTy
             return fallback;
     }
 }
+
+// Message types
+export type Message = GetConversationQuery["getConversation"][0];
+export type Conversation = GetConversationsQuery["listConversations"][0];
+
+export type SendMessageInput = {
+    recipientId: number;
+    title: string;
+    body: string;
+};
+
+export type EditMessageInput = {
+    messageId: number;
+    title?: string;
+    body?: string;
+};
+
+export type MarkMessageReadInput = {
+    messageId: number;
+};
+
+export type DeleteMessageInput = {
+    messageId: number;
+};
+
+export type SendMessageResponse = SendMessageMutation["sendMessage"];
+export type EditMessageResponse = EditMessageMutation["editMessage"];

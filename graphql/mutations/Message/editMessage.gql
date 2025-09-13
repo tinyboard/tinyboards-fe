@@ -1,0 +1,23 @@
+mutation EditMessage($input: EditMessageInput!) {
+  editMessage(input: $input) {
+    message {
+      id
+      title
+      body
+      published
+      updated
+      creator {
+        id
+        name
+        displayName
+        avatar
+      }
+      recipient {
+        id
+        name
+        displayName
+        avatar
+      }
+    }
+  }
+}

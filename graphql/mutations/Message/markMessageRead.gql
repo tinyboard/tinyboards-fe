@@ -1,0 +1,5 @@
+mutation MarkMessageRead($input: MarkMessageReadInput!) {
+  markMessageRead(input: $input) {
+    success
+  }
+}
