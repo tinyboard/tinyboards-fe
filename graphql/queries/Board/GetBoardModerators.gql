@@ -2,7 +2,8 @@ query getBoardModerators($boardId: Int!) {
   getBoardModerators(boardId: $boardId) {
     id
     boardId
-    person {
+    userId
+    user {
       name
       displayName
       avatar

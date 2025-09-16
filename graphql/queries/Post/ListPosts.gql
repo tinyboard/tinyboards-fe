@@ -20,13 +20,16 @@ enum SortType {
 }
 
 
-query loadPosts(
+query listPosts(
   $listingType: ListingType!
   $sort: SortType
   $page: Int
   $limit: Int
   $boardId: Int
-  $personId: Int
+  $userId: Int
+  $personName: String
+  $boardName: String
+  $savedOnly: Boolean
   $includeBoard: Boolean!
 ) {
   listPosts(
@@ -35,7 +38,10 @@ query loadPosts(
     page: $page
     limit: $limit
     boardId: $boardId
-    personId: $personId
+    userId: $userId
+    personName: $personName
+    boardName: $boardName
+    savedOnly: $savedOnly
   ) {
     id
     titleChunk

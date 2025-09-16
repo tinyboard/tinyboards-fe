@@ -14,7 +14,7 @@ mutation adminAddSelfAsMod($boardId: Int!, $permissions: Int) {
     postCount
     subscribers
     moderators {
-      person {
+      user {
         name
         displayName
         avatar

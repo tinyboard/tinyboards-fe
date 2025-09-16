@@ -70,7 +70,7 @@ query listBoards(
     subscribedType
     myModPermissions
     moderators {
-      person {
+      user {
         id
         name
         displayName

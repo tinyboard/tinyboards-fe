@@ -1,12 +1,12 @@
-mutation addModerator($boardId: Int!, $personId: Int!, $permissions: Int) {
-  addModerator(boardId: $boardId, personId: $personId, permissions: $permissions) {
+mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+  addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
     success
     board {
       id
       name
       title
       moderators {
-        person {
+        user {
           name
           displayName
           avatar

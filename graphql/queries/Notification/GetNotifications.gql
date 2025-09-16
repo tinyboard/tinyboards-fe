@@ -41,7 +41,7 @@ query getNotifications(
         title
       }
     }
-    person {
+    user {
       name
       displayName
       avatar

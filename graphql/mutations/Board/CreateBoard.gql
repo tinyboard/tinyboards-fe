@@ -17,7 +17,7 @@ mutation createBoard($input: CreateBoardInput!) {
       bannedBy
       bannedAt
       primaryColor
-      secondary_color
+      secondaryColor
       hoverColor
       sidebar
       sidebarHTML
@@ -35,23 +35,22 @@ mutation createBoard($input: CreateBoardInput!) {
       moderators {
         id
         boardId
-        personId
+        userId
         permissions
         rank
         inviteAccepted
         inviteAcceptedDate
         creationDate
-        person {
+        user {
           id
           name
           displayName
           avatar
-          banner
-          bio
           creationDate
           isAdmin
-          isBanned
-          botAccount
+          rep
+          postCount
+          commentCount
         }
       }
     }

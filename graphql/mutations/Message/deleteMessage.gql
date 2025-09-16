@@ -1,5 +1,3 @@
-mutation DeleteMessage($input: DeleteMessageInput!) {
-  deleteMessage(input: $input) {
-    success
-  }
+mutation deleteMessage($messageId: Int!) {
+  deleteMessage(messageId: $messageId)
 }

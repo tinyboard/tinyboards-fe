@@ -1,5 +1,3 @@
-mutation MarkMessageRead($input: MarkMessageReadInput!) {
-  markMessageRead(input: $input) {
-    success
-  }
+mutation markConversationRead($userId: Int!) {
+  markConversationRead(userId: $userId)
 }

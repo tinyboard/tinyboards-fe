@@ -33,7 +33,7 @@ query getBoard($name: String!) {
     subscribedType
     myModPermissions
     moderators {
-      person {
+      user {
         id
         name
         displayName

@@ -1,9 +1,10 @@
-mutation SendMessage($input: SendMessageInput!) {
+mutation sendMessage($input: SendMessageInput!) {
   sendMessage(input: $input) {
     message {
       id
       title
       body
+      bodyHTML
       published
       updated
       creator {

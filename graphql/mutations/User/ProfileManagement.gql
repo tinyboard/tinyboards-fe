@@ -1,0 +1,45 @@
+mutation toggleBotAccount($isBot: Boolean!) {
+  toggleBotAccount(isBot: $isBot)
+}
+
+mutation updateNotificationSettings(
+  $emailNotificationsEnabled: Boolean
+  $showBots: Boolean
+  $showNsfw: Boolean
+) {
+  updateNotificationSettings(
+    emailNotificationsEnabled: $emailNotificationsEnabled
+    showBots: $showBots
+    showNsfw: $showNsfw
+  )
+}
+
+mutation updateInterfaceSettings(
+  $theme: String
+  $interfaceLanguage: String
+  $defaultSortType: Int
+  $defaultListingType: Int
+) {
+  updateInterfaceSettings(
+    theme: $theme
+    interfaceLanguage: $interfaceLanguage
+    defaultSortType: $defaultSortType
+    defaultListingType: $defaultListingType
+  )
+}
+
+mutation removeAvatar {
+  removeAvatar
+}
+
+mutation removeBanner {
+  removeBanner
+}
+
+mutation removeProfileBackground {
+  removeProfileBackground
+}
+
+mutation clearBio {
+  clearBio
+}

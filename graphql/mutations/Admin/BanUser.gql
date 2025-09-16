@@ -1,5 +1,5 @@
-mutation banUser($personId: Int!, $reason: String, $expires: String) {
-  banUser(personId: $personId, reason: $reason, expires: $expires) {
+mutation banUser($userId: Int!, $reason: String, $expires: String) {
+  banUser(userId: $userId, reason: $reason, expires: $expires) {
     success
   }
 }
