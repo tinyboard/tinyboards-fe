@@ -73,8 +73,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="ban" :disabled="!options.user && target == ''">
-                  Yes, {{ isBanned ? 'unban' : 'ban' }} {{ options.user?.name ?? 'user' }}
+                <button class="button red" @click="ban" :disabled="(!options.user && target == '') || isLoading">
+                  {{ isLoading ? 'Processing...' : `Yes, ${isBanned ? 'unban' : 'ban'} ${options.user?.name ?? 'user'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -87,8 +87,6 @@
 
 <script setup>
 import { ref } from 'vue'
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
@@ -125,10 +123,10 @@ const duration = ref(3);
 const permanent = ref(false);
 
 const isBanned = computed(() => props.options.user?.is_banned || props.options.unban);
-
-// Removal
-const authCookie = useCookie("token").value;
 const toast = useToastStore();
+
+// Loading state
+const isLoading = ref(false);
 
 // debugging
 watch(
@@ -136,54 +134,80 @@ watch(
   newValue => console.log(newValue)
 );
 
-// returns the timestamp of the date when the ban expires
-/*const expiryTimestamp = () => {
-  if (permanent.value || props.options.user.is_banned) {
-    return null;
-  } else {
-    return Math.floor(Date.now() / 1000) + duration.value * 60 * 60 * 24;
-  }
-}*/
-
 const ban = async () => {
-  //const isBanned = props.options.user.is_banned;
+  if (isLoading.value) return;
+
+  // For now, if we don't have a user ID but have a username/target, we'll need to show an error
+  // This suggests the GraphQL API might need to be updated to accept usernames or we need a way to resolve them
+  const userId = props.options.user?.id;
   const username = props.options.user?.name || target.value;
-  await useAPI('/admin/ban', {
-    body: {
-      "username": username,
-      "banned": !isBanned.value,
-      "reason": reason.value ?? `breaking ${site.name} rules`,
-      "duration_days": (permanent.value || isBanned.value) ? null : duration.value
-    },
-    method: "post"
-  })
-    .then(({ data }) => {
-      if (data.value) {
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
+
+  if (!userId && !username) {
+    toast.addNotification({
+      header: 'Ban failed',
+      message: 'User ID is required for banning operations.',
+      type: 'error'
+    });
+    return;
+  }
+
+  isLoading.value = true;
+
+  try {
+    const { $gql } = useNuxtApp();
+
+    if (isBanned.value) {
+      // For unbanning, we need to check if there's an unban mutation or if we should use a different approach
+      // Since there doesn't appear to be an unban mutation, this might need backend API updates
+      // For now, we'll show an error suggesting this needs to be implemented
+      throw new Error('Unbanning via GraphQL is not yet implemented. Please use the admin panel or contact the development team.');
+    } else {
+      // Calculate expiration date if not permanent
+      let expirationDate = null;
+      if (!permanent.value) {
+        const expiration = new Date();
+        expiration.setDate(expiration.getDate() + duration.value);
+        expirationDate = expiration.toISOString();
+      }
+
+      const result = await $gql.mutation({
+        banUser: {
+          __args: {
+            userId: userId,
+            reason: reason.value || `breaking ${site.name} rules`,
+            expires: expirationDate
+          },
+          success: true
+        }
+      });
+
+      if (result.banUser?.success) {
+        // Show success toast
         setTimeout(() => {
           toast.addNotification({
-            header: `${username} ${isBanned.value ? 'unbanned' : 'banned'}`,
+            header: `${username} banned`,
             message: 'Reload the page to see changes.',
             type: 'success'
           });
         }, 400);
       } else {
-        // Show error toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
-            message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
-            type: 'error'
-          });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
-      modalStore.closeModal();
-    });
+        throw new Error('Ban operation was not successful');
+      }
+    }
+  } catch (error) {
+    console.error('Error with ban operation:', error);
+    // Show error toast
+    setTimeout(() => {
+      toast.addNotification({
+        header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
+        message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
+        type: 'error'
+      });
+    }, 400);
+  } finally {
+    isLoading.value = false;
+    // Close the modal
+    modalStore.closeModal();
+  }
 };
 </script>

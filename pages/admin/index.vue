@@ -55,24 +55,24 @@
               Top Scoring Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li v-for="(member, i) in members.members.slice(0, 5)" :key="member.person.id"
+              <li v-for="(member, i) in members?.listMembers?.members?.slice(0, 5)" :key="member.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
-                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
+                  <NuxtLink :to="`/@${member.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.person.name
+                      member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">Admin</span>
+                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
                       {{
-                        member.counts.post_score + member.counts.comment_score
+                        (member.post_score || 0) + (member.comment_score || 0)
                       }}
                     </p>
                   </div>
@@ -86,23 +86,23 @@
               Top Posting Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li v-for="(member, i) in membersPosts.members.slice(0, 5)" :key="member.person.id"
+              <li v-for="(member, i) in membersPosts?.listMembers?.members?.slice(0, 5)" :key="member.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
-                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
+                  <NuxtLink :to="`/@${member.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.person.name
+                      member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">Admin</span>
+                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
-                      {{ member.counts.post_count }}
+                      {{ member.post_count || 0 }}
                     </p>
                   </div>
                 </div>
@@ -120,19 +120,19 @@
               Newest Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li v-for="(member, i) in members.members.slice(0, 5)" :key="member.person.id"
+              <li v-for="(member, i) in membersNew?.listMembers?.members?.slice(0, 5)" :key="member.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-2/4 flex flex-shrink-0 items-center">
-                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
+                  <NuxtLink :to="`/@${member.name}`" class="ml-3 w-2/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.person.name
+                      member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">
+                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">
                       Admin
                     </span>
                   </NuxtLink>
@@ -140,7 +140,7 @@
                     <p class="text-gray-400 text-sm font-medium uppercase">
                       {{
                         format(
-                          parseISO(member.person.creation_date),
+                          parseISO(member.creation_date),
                           "MMM dd, yyyy"
                         )
                       }}
@@ -158,8 +158,6 @@
 
 <script setup>
 import { ref } from "vue";
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 definePageMeta({
@@ -173,35 +171,34 @@ definePageMeta({
     'isLeftNavbarDisabled': true
 });
 
-// Settings
-// Fetch members by sort
+// Fetch members using GraphQL
 const {
   data: members,
   pending,
   error,
   refresh,
-} = await useAPI("/members", {
-  query: { sort: "mostrep" },
+} = await useAsyncQuery('listMembers', {
   limit: 5,
+  sort: 'MostReputation'
 });
 
 const {
   data: membersNew,
-  membersNewPending,
-  membersNewError,
-  membersNewRefresh,
-} = await useAPI("/members", {
-  query: { sort: "new" },
+  pending: membersNewPending,
+  error: membersNewError,
+  refresh: membersNewRefresh,
+} = await useAsyncQuery('listMembers', {
   limit: 5,
+  sort: 'New'
 });
 
 const {
   data: membersPosts,
-  membersPostsPending,
-  membersPostsError,
-  membersPostsRefresh,
-} = await useAPI("/members", {
-  query: { sort: "mostposts" },
+  pending: membersPostsPending,
+  error: membersPostsError,
+  refresh: membersPostsRefresh,
+} = await useAsyncQuery('listMembers', {
   limit: 5,
+  sort: 'MostPosts'
 });
 </script>

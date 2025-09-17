@@ -278,25 +278,32 @@
             </button>
           </li>-->
           <li v-if="isAuthed && !isAuthor" class="ml-3 sm:ml-6">
-            <button @click="save"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+            <button @click="save" :disabled="isSaveLoading"
+              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700 disabled:opacity-50">
               <!-- Bookmark Icon -->
-              <svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+              <svg v-show="!isSaved && !isSaveLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
                 class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
               </svg>
               <!-- Bookmark Slash Icon -->
-              <svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+              <svg v-show="isSaved && !isSaveLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
                 class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
                 <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
               </svg>
+              <!-- Loading Icon -->
+              <svg v-show="isSaveLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                class="w-6 h-6 sm:w-4 sm:h-4 mr-1 animate-spin">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 3a9 9 0 1 0 9 9"></path>
+              </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                isSaved ? "Unsave" : "Save"
+                isSaveLoading ? "..." : (isSaved ? "Unsave" : "Save")
               }}</span>
             </button>
           </li>
@@ -481,59 +488,65 @@ const isAuthed = userStore.isAuthed;
 // Vote
 const voteType = ref(props.post.myVote);
 const vote = async (type = 0) => {
+  const previousVote = voteType.value;
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useAPI(`/posts/${props.post.id}/vote`, {
-    method: "post",
-    body: {
-      score: voteType,
+  try {
+    const { mutate } = useMutation('voteOnPost');
+    const result = await mutate({
+      id: props.post.id,
+      voteType: voteType.value
+    });
+
+    if (result.data?.voteOnPost) {
+      // Update post score from response
+      if (props.post.score !== undefined) {
+        props.post.score = result.data.voteOnPost.score;
+      }
     }
-  }).then(({ data, error }) => {
-    if (data.value) {
-      data = JSON.parse(JSON.stringify(data.value));
-      console.log(data);
-    } else {
-      // Revert failed vote & show error toast.
-      setTimeout(() => {
-        voteType.value = 0;
-        toast.addNotification({
-          header: "Vote failed",
-          message: "Your vote failed to cast. Please try again.",
-          type: "error",
-        });
-      }, 400);
-      // Log the error.
-      console.log(error.value);
-    }
-  });
+  } catch (error) {
+    // Revert failed vote & show error toast
+    voteType.value = previousVote;
+    toast.addNotification({
+      header: "Vote failed",
+      message: error.message || "Your vote failed to cast. Please try again.",
+      type: "error",
+    });
+    console.error(error);
+  }
 };
 
 // Save
-const isSaved = ref(props.post.saved);
+const isSaved = ref(props.post.isSaved || props.post.saved);
+const isSaveLoading = ref(false);
 const save = async () => {
+  const previousSaveState = isSaved.value;
   isSaved.value = !isSaved.value;
-  await useAPI(`/post/${props.post.id}/save`, {
-    method: "post",
-    body: {
-      save: !isSaved.value,
+  isSaveLoading.value = true;
+
+  try {
+    const { mutate } = useMutation('savePost');
+    const result = await mutate({
+      postId: props.post.id,
+      save: isSaved.value
+    });
+
+    if (result.data?.savePost) {
+      // Update the post's save status from the response
+      isSaved.value = result.data.savePost.isSaved;
     }
-  }).then(({ data, error }) => {
-    if (data.value) {
-      //data = JSON.parse(JSON.stringify(data.value));
-    } else {
-      // Revert failed save & show error toast.
-      setTimeout(() => {
-        isSaved.value = false;
-        toast.addNotification({
-          header: "Saving failed",
-          message: "Failed to save the post. Please try again.",
-          type: "error",
-        });
-      }, 400);
-      // Log the error.
-      console.error(error.value);
-    }
-  });
+  } catch (error) {
+    // Revert failed save & show error toast
+    isSaved.value = previousSaveState;
+    toast.addNotification({
+      header: "Save failed",
+      message: error.message || "Failed to save the post. Please try again.",
+      type: "error",
+    });
+    console.error(error);
+  } finally {
+    isSaveLoading.value = false;
+  }
 };
 
 // Comments

@@ -149,7 +149,13 @@
                     </button>
                 </li>
                 <li class="flex-grow" v-if="!isSelf">
-                    <button class="button white w-full" disabled>Follow</button>
+                    <button
+                        class="button white w-full"
+                        @click="toggleFollow"
+                        :disabled="isFollowLoading"
+                    >
+                        {{ followButtonText }}
+                    </button>
                 </li>
                 <li class="flex-grow" v-if="!isSelf">
                     <button class="button white w-full" disabled>
@@ -165,7 +171,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { format, parseISO } from "date-fns";
 import { requirePermission } from "@/composables/admin";
 import { useLoggedInUser } from "@/stores/StoreAuth";
@@ -174,6 +180,7 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { onFileChange } from "@/composables/images";
 import { useGqlMultipart } from "@/composables/graphql_multipart";
+import { GqlFollowUser, GqlUnfollowUser, GqlIsFollowingUser } from "#gql";
 import type { Person } from "@/types/types";
 
 const userStore = useLoggedInUser();
@@ -183,6 +190,11 @@ const toast = useToastStore();
 //const frame = 'https://i.ibb.co/PZ4rj8Z/6e1b5f5977036a189465f5455f2c54722c12883d.png';
 const isEditing = ref(false);
 const isLoading = ref(false);
+
+// Follow state management
+const isFollowing = ref(false);
+const isFollowLoading = ref(false);
+const followStatusChecked = ref(false);
 
 const props = defineProps<{
     user: Person;
@@ -228,6 +240,82 @@ const isSelf = computed(() => {
         return !!userStore.user && userStore.user.is_admin
     });*/
 const isAdmin = requirePermission("users");
+
+// Follow button text
+const followButtonText = computed(() => {
+    if (isFollowLoading.value) {
+        return 'Loading...';
+    }
+    if (!followStatusChecked.value) {
+        return 'Follow';
+    }
+    return isFollowing.value ? 'Unfollow' : 'Follow';
+});
+
+// Check if currently following user
+const checkFollowStatus = async () => {
+    if (!isAuthed || isSelf.value) {
+        return;
+    }
+
+    try {
+        const result = await GqlIsFollowingUser({ userId: props.user.id });
+        isFollowing.value = result.isFollowingUser;
+        followStatusChecked.value = true;
+    } catch (error) {
+        console.error('Error checking follow status:', error);
+        followStatusChecked.value = true;
+    }
+};
+
+// Toggle follow/unfollow
+const toggleFollow = async () => {
+    if (!isAuthed || isSelf.value || isFollowLoading.value) {
+        return;
+    }
+
+    isFollowLoading.value = true;
+
+    try {
+        if (isFollowing.value) {
+            // Unfollow user
+            const result = await GqlUnfollowUser({ userId: props.user.id });
+            if (result.unfollowUser) {
+                isFollowing.value = false;
+                toast.addNotification({
+                    header: "User unfollowed",
+                    message: `You are no longer following @${props.user.name}`,
+                    type: "success"
+                });
+            }
+        } else {
+            // Follow user
+            const result = await GqlFollowUser({ userId: props.user.id });
+            if (result.followUser) {
+                isFollowing.value = true;
+                toast.addNotification({
+                    header: "User followed",
+                    message: `You are now following @${props.user.name}`,
+                    type: "success"
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error toggling follow:', error);
+        toast.addNotification({
+            header: "Action failed",
+            message: error.message || "An error occurred while processing your request.",
+            type: "error"
+        });
+    } finally {
+        isFollowLoading.value = false;
+    }
+};
+
+// Check follow status on component mount
+onMounted(() => {
+    checkFollowStatus();
+});
 
 // Settings
 const discard = () => {

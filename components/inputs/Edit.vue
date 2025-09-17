@@ -28,11 +28,10 @@
 
 <script setup>
 	import { marked } from 'marked';
-	// import { baseURL } from "@/server/constants";
-	import { useAPI } from "@/composables/api";
 	import { useToastStore } from '@/stores/StoreToast';
 
 	import { editPost } from "@/composables/post";
+	import { editComment } from "@/composables/comments";
 
 	const props = defineProps({
 		id: {
@@ -47,8 +46,9 @@
 		},
 		type: {
 			type: String,
-		default: 'post',
-			required: true
+			default: 'post',
+			required: true,
+			validator: (value) => ['post', 'comment'].includes(value)
 		},
 	});
 
@@ -56,7 +56,6 @@
 	const emit = defineEmits(['closed','hasEdited']);
 
 	const toast = useToastStore();
-	const authCookie = useCookie("token").value;
 
 	const localBody = ref(props.body);
 	const isLoading = ref(false);
@@ -82,62 +81,34 @@
 	};
 
 	// Submit edit
-	/*const submitEdit = () => {
-		if (localBody.value) {
-			isLoading.value = true;
-			useAPI(`/${props.type}/${props.id}`, {
-				method: "put",
-				body: {
-					"body": localBody.value
-				},
-			})
-			.then(({ data, error }) => {
-				if (data.value) {
-					data = JSON.parse(JSON.stringify(data.value));
-					// Emit response.
-					emit('hasEdited', data);
-					// Close the input.
-					emit('closed');
-					// Show success toast.
+	function submitEdit() {
+		if (!localBody.value.trim()) {
+			toast.addNotification({header:'Edits failed',message:'Your edits need some text! Please try again.',type:'error'});
+			return;
+		}
+
+		isLoading.value = true;
+
+		const editFunction = props.type === "post" ? editPost : editComment;
+
+		editFunction(props.id, localBody.value)
+			.then((resp) => {
+				if (resp && (resp.body || resp.bodyHTML)) {
+					emit("hasEdited", resp);
+					emit("closed");
 					toast.addNotification({header:'Edits saved',message:`Your ${props.type} was updated.`,type:'success'});
 				} else {
-					// Log the error.
-					console.error(error.value);
 					// Show error toast.
 					toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
 				}
+			})
+			.catch((error) => {
+				console.error('Edit error:', error);
+				toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
 			})
 			.finally(() => {
 				isLoading.value = false;
 				isPreviewVisible.value = false;
 			});
-		} else {
-			toast.addNotification({header:'Edits failed',message:'Your edits need some text! Please try again.',type:'error'});
-		}
-	};*/
-
-	//submit edit
-	function submitEdit() {
-		isLoading.value = true;
-		if (props.type === "post") {
-			editPost(props.id, localBody.value)
-				.then((resp) => {
-					if (!!resp.editPost) {
-						emit("hasEdited", resp.editPost);
-						emit("closed");
-						toast.addNotification({header:'Edits saved',message:`Your ${props.type} was updated.`,type:'success'});
-					} else {
-						// Log the error.
-						//console.error(error.value);
-						// Show error toast.
-						toast.addNotification({header:'Edits failed',message:'Your edits failed to save. Please try again.',type:'error'});
-					}
-					
-				})
-				.finally(() => {
-					isLoading.value = false;
-					isPreviewVisible.value = false;
-				});
-		}
 	}
 </script>

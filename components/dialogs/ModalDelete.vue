@@ -24,8 +24,12 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="deleteItem">
-                  Yes, delete this {{ type ?? 'post' }}
+                <button
+                  class="button red"
+                  @click="deleteItem"
+                  :disabled="isDeleting"
+                >
+                  {{ isDeleting ? 'Deleting...' : `Yes, delete this ${type ?? 'post'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -38,8 +42,6 @@
 
 <script setup>
   import { computed, ref } from 'vue'
-  // import { baseURL } from "@/server/constants";
-  import { useAPI } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -81,54 +83,70 @@
   });
 
   // Deletion
-  const authCookie = useCookie("token").value;
   const toast = useToastStore();
+  const isDeleting = ref(false);
 
   const deleteItem = async () => {
+    if (isDeleting.value) return;
+
+    isDeleting.value = true;
     const type = props.type;
     const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useAPI(`/${type}s/${id}`, {
-      body: {
-        "deleted": true
-      },
-      method: "delete",
-    })
-    .then(({ data }) => {
-      if (data.value) {
-        // Update state.
-        if (type === 'post') {
+
+    try {
+      if (type === 'post') {
+        // Use GraphQL mutation for post removal
+        const { setPostRemoved } = await GqlSetPostRemoved({
+          id: id,
+          value: true
+        });
+
+        if (setPostRemoved) {
+          // Update state
           postsStore.updatePost(id, {
-            is_deleted: true
+            isRemoved: true
           });
-        } else {
-          commentsStore.updateComment(id, {
-            is_deleted: true
-          });
-        };
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        // Show success toast.
-        setTimeout(() => {
+
+          // Show success toast
           toast.addNotification({
-            header:`${type} deleted!`,
-            message:`Your ${type} was removed forever.`,
-            type:'success'
+            header: 'Post deleted!',
+            message: 'Your post was removed successfully.',
+            type: 'success'
           });
-        }, 400);
+        }
       } else {
-        // Show error toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header:'Deletion failed',
-            message:`Failed to delete ${type}. Please try again.`,
-            type:'error'
+        // Use GraphQL mutation for comment removal
+        const { setCommentRemoved } = await GqlSetCommentRemoved({
+          id: id,
+          value: true
+        });
+
+        if (setCommentRemoved) {
+          // Update state
+          commentsStore.updateComment(id, {
+            isRemoved: true
           });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
+
+          // Show success toast
+          toast.addNotification({
+            header: 'Comment deleted!',
+            message: 'Your comment was removed successfully.',
+            type: 'success'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      // Show error toast
+      toast.addNotification({
+        header: 'Deletion failed',
+        message: `Failed to delete ${type}. Please try again.`,
+        type: 'error'
+      });
+    } finally {
+      isDeleting.value = false;
+      // Close the modal
       modalStore.closeModal();
-    });
+    }
   };
 </script>

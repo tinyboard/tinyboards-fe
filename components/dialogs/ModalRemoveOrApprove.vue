@@ -27,8 +27,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button :class="props.options.approve ? 'button green' : 'button red'" @click="toggleItemRemove">
-                  Yes, {{ props.options.approve ? 'approve' : 'remove' }} this {{ type ?? 'post' }}
+                <button :class="props.options.approve ? 'button green' : 'button red'" @click="toggleItemRemove" :disabled="isLoading">
+                  {{ isLoading ? 'Processing...' : `Yes, ${props.options.approve ? 'approve' : 'remove'} this ${type ?? 'post'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -41,8 +41,6 @@
 
 <script setup>
   import { ref } from 'vue'
-  // import { baseURL } from "@/server/constants";
-  import { useAPI } from '@/composables/api';
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -77,6 +75,7 @@
   const modalStore = useModalStore();
   const postsStore = usePostsStore();
   const commentsStore = useCommentsStore();
+  const toast = useToastStore();
 
   const item = computed(() => {
     if (props.type === 'post') {
@@ -86,37 +85,47 @@
     }
   });
 
-  // Removal
-  const authCookie = useCookie("token").value;
-  const toast = useToastStore();
+  // Loading state
+  const isLoading = ref(false);
 
   const toggleItemRemove = async () => {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
     const type = props.type;
     const id = props.id;
-    await useAPI(`/${type === 'post' ? 'post' : 'comment'}s/${id}/removed`, {
-      body: {
-          //"target_id": id,
-          "reason": "Violating community rules.",
-          "value": !props.options.approve
-      },
-      method: "PATCH",
-    })
-    .then(({ data }) => {
-      if (data.value) {
-        // Update state.
-        /*if (type === 'post') {
-          postsStore.updatePost(id, {
-            is_removed: !props.options.approve
-          });
-        } else {
-          commentsStore.updateComment(id, {
-            is_removed: !props.options.approve
-          }); 
-        };*/
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
+
+    try {
+      const { $gql } = useNuxtApp();
+      let result;
+
+      if (type === 'post') {
+        result = await $gql.mutation({
+          setPostRemoved: {
+            __args: {
+              id: id,
+              value: !props.options.approve
+            },
+            id: true,
+            isRemoved: true
+          }
+        });
+      } else {
+        result = await $gql.mutation({
+          setCommentRemoved: {
+            __args: {
+              id: id,
+              value: !props.options.approve
+            },
+            id: true,
+            isRemoved: true
+          }
+        });
+      }
+
+      const mutationKey = type === 'post' ? 'setPostRemoved' : 'setCommentRemoved';
+      if (result[mutationKey]) {
+        // Show success toast
         setTimeout(() => {
           toast.addNotification({
             header:`${type} ${props.options.approve ? 'approved' : 'removed'}.`,
@@ -125,19 +134,22 @@
           });
         }, 400);
       } else {
-        // Show error toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header:'Operation failed',
-            message:`Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
-            type:'error'
-          });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
+        throw new Error(`Failed to update ${type} removal status`);
+      }
+    } catch (error) {
+      console.error(`Error updating ${type} removal status:`, error);
+      // Show error toast
+      setTimeout(() => {
+        toast.addNotification({
+          header:'Operation failed',
+          message:`Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
+          type:'error'
+        });
+      }, 400);
+    } finally {
+      isLoading.value = false;
+      // Close the modal
       modalStore.closeModal();
-    });
+    }
   };
 </script>

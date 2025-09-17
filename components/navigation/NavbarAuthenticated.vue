@@ -348,6 +348,7 @@ import { useAPI } from "@/composables/api";
 import { useSiteStore } from '@/stores/StoreSite.js';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useBoardStore } from '~/stores/StoreBoard.js';
+import { useNotificationRefresh } from '@/composables/notificationRefresh';
 import { shuffle } from "@/utils/shuffleArray";
 import Cookies from 'js-cookie';
 
@@ -378,16 +379,56 @@ const unread = ref(userStore.unread);
 
 // Notifications count
 const authCookie = useCookie("token").value;
+const { registerRefreshCallback } = useNotificationRefresh();
 
-const fetchNotifcationCount = () => {
-	useAPI("/notifications/unread")
-		.then(({ data }) => {
-			unread.value = data.value.total_count
-		})
-};
+const { data: notificationCounts, pending: notificationsPending, error: notificationError, refresh: refreshNotificationCounts } = await useAsyncQuery('GetNotificationCounts');
 
-watch(route, (to) => {
-	fetchNotifcationCount()
+// Register refresh callback for cross-component communication
+onMounted(() => {
+	const unregister = registerRefreshCallback(() => {
+		if (authCookie) {
+			refreshNotificationCounts();
+		}
+	});
+
+	onUnmounted(() => {
+		unregister();
+	});
+});
+
+// Calculate total unread count from all notification types
+const unreadTotal = computed(() => {
+	if (!notificationCounts.value || notificationError.value) return 0;
+	return (notificationCounts.value.unreadRepliesCount || 0) +
+		   (notificationCounts.value.unreadMentionsCount || 0) +
+		   (notificationCounts.value.getUnreadMessageCount || 0);
+});
+
+// Update unread count when data changes
+watch(unreadTotal, (newTotal) => {
+	unread.value = newTotal;
+}, { immediate: true });
+
+// Handle notification count fetch errors silently (don't break the navbar)
+watch(notificationError, (error) => {
+	if (error) {
+		console.warn('Failed to load notification counts:', error);
+		unread.value = 0; // Reset to 0 on error
+	}
+});
+
+// Only refresh notification counts when navigating to/from inbox or notification-related pages
+watch(route, (to, from) => {
+	// Only refresh if we have an auth cookie and route change is relevant to notifications
+	if (authCookie) {
+		const notificationRoutes = ['/inbox', '/submit'];
+		const isNotificationRoute = (path) => notificationRoutes.some(route => path.startsWith(route));
+
+		// Refresh if navigating to/from notification-related pages or after creating content
+		if (isNotificationRoute(to.path) || isNotificationRoute(from?.path || '')) {
+			refreshNotificationCounts();
+		}
+	}
 });
 
 // Define sub-navigation menu links

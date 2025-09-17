@@ -137,22 +137,28 @@ const links = [
 	{ name: 'Messages', href: '/inbox/messages' },
 ];
 
-const { data: counts, error: err } = await useAPI("/notifications/unread");
+const { data: notificationCounts, error: err, pending: notificationsPending } = await useAsyncQuery('GetNotificationCounts');
 
-if (err && err.value?.response) {
-	throw createError({
-		statusCode: 500,
-		statusMessage:
-			"You've broken something on the server. Be more careful!",
-		fatal: true,
-	});
+// Handle GraphQL errors more gracefully
+if (err.value && err.value?.response) {
+	console.error('Failed to load notification counts:', err.value);
+	// Don't throw a fatal error, just log it and show 0 counts
 }
 
-const {
-	replies: unreadReplies,
-	mentions: unreadMentions,
-	messages: unreadMessages
-} = counts.value;
+const unreadReplies = computed(() => {
+	if (err.value || !notificationCounts.value) return 0;
+	return notificationCounts.value?.unreadRepliesCount || 0;
+});
+
+const unreadMentions = computed(() => {
+	if (err.value || !notificationCounts.value) return 0;
+	return notificationCounts.value?.unreadMentionsCount || 0;
+});
+
+const unreadMessages = computed(() => {
+	if (err.value || !notificationCounts.value) return 0;
+	return notificationCounts.value?.getUnreadMessageCount || 0;
+});
 </script>
 
 <style scoped>

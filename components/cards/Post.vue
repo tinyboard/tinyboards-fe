@@ -263,25 +263,32 @@
             </button>
           </li>-->
           <li v-if="isAuthed" class="ml-3 sm:ml-6">
-            <button @click="() => console.warn('Saving not implemented!')"
-              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
+            <button @click="save" :disabled="isSaveLoading"
+              class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700 disabled:opacity-50">
               <!-- Bookmark Icon -->
-              <svg v-show="!isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+              <svg v-show="!isSaved && !isSaveLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
                 class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
               </svg>
               <!-- Bookmark Slash Icon -->
-              <svg v-show="isSaved" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+              <svg v-show="isSaved && !isSaveLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
                 class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <line x1="3" y1="3" x2="21" y2="21"></line>
                 <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7"></path>
               </svg>
+              <!-- Loading Icon -->
+              <svg v-show="isSaveLoading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                class="w-6 h-6 sm:w-4 sm:h-4 mr-1 animate-spin">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 3a9 9 0 1 0 9 9"></path>
+              </svg>
               <span class="hidden sm:inline text-sm font-medium">{{
-                isSaved ? "Unsave" : "Save"
+                isSaveLoading ? "..." : (isSaved ? "Unsave" : "Save")
                 }}</span>
             </button>
           </li>
@@ -365,6 +372,33 @@
                 <path d="M5.7 5.7l12.6 12.6"></path>
               </svg>
               <span class="hidden sm:inline text-sm font-medium">Remove</span>
+            </button>
+          </li>
+          <li v-if="canMod" class="hidden sm:list-item ml-6">
+            <button
+              class="group flex items-center text-yellow-500 leading-none dark:text-yellow-400 hover:text-yellow-600"
+              @click="confirmLock">
+              <!-- Lock Icon -->
+              <svg v-show="!post.isLocked" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                <circle cx="12" cy="16" r="1"></circle>
+                <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
+              </svg>
+              <!-- Unlock Icon -->
+              <svg v-show="post.isLocked" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                <circle cx="12" cy="16" r="1"></circle>
+                <path d="M8 11v-5a4 4 0 0 1 8 0"></path>
+              </svg>
+              <span class="hidden sm:inline text-sm font-medium">{{
+                post.isLocked ? "Unlock" : "Lock"
+              }}</span>
             </button>
           </li>
           <li v-if="canMod && post.isRemoved" class="hidden sm:list-item ml-6">
@@ -562,31 +596,36 @@ const vote = async (type = 0) => {
 
 // Save
 const isSaved = ref(props.post.isSaved);
-// const save = async () => {
-//   isSaved.value = !isSaved.value;
-//   await useAPI(`/post/${props.post.id}/save`, {
-//     method: "post",
-//     body: {
-//       save: !isSaved.value,
-//     }
-//   }).then(({ data, error }) => {
-//     if (data.value) {
-//       data = JSON.parse(JSON.stringify(data.value));
-//     } else {
-//       // Revert failed save & show error toast.
-//       setTimeout(() => {
-//         isSaved.value = false;
-//         toast.addNotification({
-//           header: "Saving failed",
-//           message: "Failed to save the post. Please try again.",
-//           type: "error",
-//         });
-//       }, 400);
-//       // Log the error.
-//       console.error(error.value);
-//     }
-//   });
-// };
+const isSaveLoading = ref(false);
+const save = async () => {
+  const previousSaveState = isSaved.value;
+  isSaved.value = !isSaved.value;
+  isSaveLoading.value = true;
+
+  try {
+    const { mutate } = useMutation('savePost');
+    const result = await mutate({
+      postId: props.post.id,
+      save: isSaved.value
+    });
+
+    if (result.data?.savePost) {
+      // Update the post's save status from the response
+      isSaved.value = result.data.savePost.isSaved;
+    }
+  } catch (error) {
+    // Revert failed save & show error toast
+    isSaved.value = previousSaveState;
+    toast.addNotification({
+      header: "Save failed",
+      message: error.message || "Failed to save the post. Please try again.",
+      type: "error",
+    });
+    console.error(error);
+  } finally {
+    isSaveLoading.value = false;
+  }
+};
 
 // Delete
 const confirmDelete = () => {
@@ -634,6 +673,19 @@ const confirmRemove = () => {
     options: {
       approve: false
     }
+  });
+};
+
+// Lock
+const confirmLock = () => {
+  modalStore.setModal({
+    modal: "ModalLock",
+    id: props.post.id,
+    isOpen: true,
+    contentType: "post",
+    options: {
+      isLocked: props.post.isLocked,
+    },
   });
 };
 

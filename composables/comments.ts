@@ -1,6 +1,7 @@
 import { ref } from "vue";
 
 import { useAPI } from "@/composables/api";
+import type { EditCommentMutation } from "#gql";
 
 export async function usePostComments(id, query = {}) {
   const {
@@ -54,4 +55,26 @@ export async function useComments(id, type = "post", query = {}, post_id) {
     commentsError: error,
     commentsRefresh: refresh,
   };
+}
+
+/**
+ * Submit a request to edit a comment's body.
+ * @param id ID of the comment to edit
+ * @param newBody The new comment body
+ * @returns A Promise that resolves to the updated comment data if successful
+ */
+export async function editComment(id: number, newBody: string): Promise<{
+  body: string;
+  bodyHTML: string;
+}> {
+  return new Promise((resolve, reject) => {
+    GqlEditComment({ id, body: newBody })
+      .then((editCommentResponse: EditCommentMutation) => {
+        resolve({
+          body: editCommentResponse.editComment.body,
+          bodyHTML: editCommentResponse.editComment.bodyHTML
+        })
+      })
+      .catch(reject)
+  });
 }

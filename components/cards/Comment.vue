@@ -129,7 +129,7 @@
               <!-- TODO: comment reports -->
               <!-- Report count -->
               <span class="ml-2 text-orange-400 font-bold text-xs"
-                v-if="/* should be true if comment has reports */ false" :title="`??? report(s)`">
+                v-if="false" :title="`??? report(s)`">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -222,11 +222,7 @@
               </svg>
             </NuxtLink>
           </li>
-          <li v-if="isAuthed &&
-            !route.meta.hasRepliesDisabled
-            // !comment.post.isLocked &&
-            // !comment.post.isDeleted
-          ">
+          <li v-if="isAuthed && !route.meta.hasRepliesDisabled">
             <button @click="isReplying = true"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
@@ -255,8 +251,8 @@
           </li>
           <li v-if="isAuthed && !isAuthor">
             <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
-              @click="() => console.warn('Implement comment saving!')">
-              <svg v-if="comment.isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24"
+              @click="save" :disabled="isSaving">
+              <svg v-if="isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24"
                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -270,7 +266,7 @@
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
               </svg>
-              <span class="hidden sm:inline">{{ comment.isSaved ? "Unsave" : "Save" }}</span>
+              <span class="hidden sm:inline">{{ isSaving ? 'Saving...' : (isSaved ? "Unsave" : "Save") }}</span>
             </button>
           </li>
           <li class="sm:hidden">
@@ -498,36 +494,45 @@ const onHasEdited = (payload: {
 };
 
 // Save
-// const isSaved = ref(comment.value.saved);
-// const save = async () => {
-//   isSaved.value = !isSaved.value;
-//   await useAPI(`/comment/${comment.value.id}/save`, {
-//     method: "post",
-//     body: {
-//       save: isSaved.value,
-//     }
-//   }).then(({ data, error }) => {
-//     if (data.value) {
-//       toast.addNotification({
-//         header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,
-//         message: `Comment ${isSaved.value ? 'saved' : 'unsaved'} successfully.`,
-//         type: "success",
-//       });
-//     } else {
-//       // Revert failed save & show error toast.
-//       setTimeout(() => {
-//         isSaved.value = !isSaved.value;
-//         toast.addNotification({
-//           header: "Save failed",
-//           message: `Failed to ${isSaved.value ? 'saved' : 'unsaved'} comment. Please try again.`,
-//           type: "error",
-//         });
-//       }, 400);
-//       // Log the error.
-//       console.error(error.value);
-//     }
-//   });
-// };
+const isSaved = ref(comment.value.isSaved);
+const isSaving = ref(false);
+
+const save = async () => {
+  const previousSaved = isSaved.value;
+  isSaved.value = !isSaved.value;
+  isSaving.value = true;
+
+  try {
+    const { mutate } = useMutation('saveComment');
+    const result = await mutate({
+      commentId: comment.value.id,
+      save: isSaved.value
+    });
+
+    if (result.data?.saveComment) {
+      // Update comment save status from response
+      comment.value.isSaved = result.data.saveComment.isSaved;
+      isSaved.value = result.data.saveComment.isSaved;
+
+      toast.addNotification({
+        header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,
+        message: `Comment ${isSaved.value ? 'saved' : 'unsaved'} successfully.`,
+        type: "success",
+      });
+    }
+  } catch (error) {
+    // Revert failed save & show error toast
+    isSaved.value = previousSaved;
+    toast.addNotification({
+      header: "Save failed",
+      message: error.message || `Failed to ${!previousSaved ? 'save' : 'unsave'} comment. Please try again.`,
+      type: "error",
+    });
+    console.error(error);
+  } finally {
+    isSaving.value = false;
+  }
+};
 
 // Delete
 const confirmDelete = () => {

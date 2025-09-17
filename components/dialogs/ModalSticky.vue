@@ -170,10 +170,9 @@
                                     class="button"
                                     :class="isStickied ? 'red' : 'green'"
                                     @click="togglePostPin"
+                                    :disabled="isLoading"
                                 >
-                                    Yes,
-                                    {{ isStickied ? "unpin" : "pin" }}
-                                    this post.
+                                    {{ isLoading ? 'Processing...' : `Yes, ${isStickied ? "unpin" : "pin"} this post.` }}
                                 </button>
                             </div>
                         </DialogPanel>
@@ -186,10 +185,7 @@
 
 <script setup>
 import { ref } from "vue";
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useSiteStore } from "@/stores/StoreSite";
-//import { useBoardStore } from "@/stores/StoreBoard";
 import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 import { usePostsStore } from "@/stores/StorePosts";
@@ -220,12 +216,6 @@ const props = defineProps({
 });
 
 const modalStore = useModalStore();
-//const boardStore = useBoardStore();
-// const postsStore = usePostsStore();
-
-//const item = computed(() => postsStore.getPost(props.id));
-
-// Sticky
 const toast = useToastStore();
 const site = useSiteStore();
 
@@ -240,51 +230,60 @@ const isAdminAndMod = computed(
     () => props.options.isMod && requirePermission("content"),
 );
 
+// Loading state
+const isLoading = ref(false);
+
 const togglePostPin = async () => {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
     const id = props.id;
 
     if (props.options.isSitePinned) {
         pinType.value = "Local";
     }
 
-    await useAPI(`/posts/${id}/featured`, {
-        body: {
-            //"post_id": id,
-            value: !isStickied.value,
-            feature_type: pinType.value,
-        },
-        method: "PATCH",
-    })
-        .then(({ data }) => {
-            if (data.value) {
-                // Update post state.
-                /*postsStore.updatePost(id, {
-          featured_local: !isStickied
-        });
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));*/
-                // Show success toast.
-                setTimeout(() => {
-                    toast.addNotification({
-                        header: `Post ${isStickied.value ? "unpinned" : "pinned"}.`,
-                        message: `The post ${isStickied ? "is not pinned anymore" : "is pinned to the top"}.`,
-                        type: "success",
-                    });
-                }, 400);
-            } else {
-                // Show error toast.
-                setTimeout(() => {
-                    toast.addNotification({
-                        header: `${isStickied.value ? "Unpinning" : "Pinning"} failed`,
-                        message: `Failed to ${isStickied ? "unpin" : "pin"} the post. Please try again.`,
-                        type: "error",
-                    });
-                }, 400);
+    try {
+        const { $gql } = useNuxtApp();
+        const result = await $gql.mutation({
+            featurePost: {
+                __args: {
+                    postId: id,
+                    featured: !isStickied.value,
+                    featureType: pinType.value,
+                },
+                id: true,
+                featuredBoard: true,
+                featuredLocal: true
             }
-        })
-        .finally(() => {
-            // Close the modal.
-            modalStore.closeModal();
         });
+
+        if (result.featurePost) {
+            // Show success toast
+            setTimeout(() => {
+                toast.addNotification({
+                    header: `Post ${isStickied.value ? "unpinned" : "pinned"}.`,
+                    message: `The post ${isStickied.value ? "is not pinned anymore" : "is pinned to the top"}.`,
+                    type: "success",
+                });
+            }, 400);
+        } else {
+            throw new Error('Failed to update post feature status');
+        }
+    } catch (error) {
+        console.error('Error updating post feature status:', error);
+        // Show error toast
+        setTimeout(() => {
+            toast.addNotification({
+                header: `${isStickied.value ? "Unpinning" : "Pinning"} failed`,
+                message: `Failed to ${isStickied.value ? "unpin" : "pin"} the post. Please try again.`,
+                type: "error",
+            });
+        }, 400);
+    } finally {
+        isLoading.value = false;
+        // Close the modal
+        modalStore.closeModal();
+    }
 };
 </script>

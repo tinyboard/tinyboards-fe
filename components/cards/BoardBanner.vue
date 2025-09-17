@@ -64,15 +64,18 @@
                         </h1>
                         <button v-if="isAuthed" class="hidden sm:block button w-24 group" :class="[
                             isSubscribed ? 'gray hover:red' : 'primary',
-                        ]" @click="toggleSubscribe">
-                            <span :class="{
-                                'inline group-hover:hidden': isSubscribed,
-                            }">{{ isSubscribed ? "Joined" : "Join" }}</span>
-                            <span :class="[
-                                isSubscribed
-                                    ? 'hidden group-hover:inline'
-                                    : 'hidden',
-                            ]">Leave</span>
+                        ]" @click="toggleSubscribe" :disabled="isSubscribing">
+                            <span v-if="isSubscribing">Loading...</span>
+                            <template v-else>
+                                <span :class="{
+                                    'inline group-hover:hidden': isSubscribed,
+                                }">{{ isSubscribed ? "Joined" : "Join" }}</span>
+                                <span :class="[
+                                    isSubscribed
+                                        ? 'hidden group-hover:inline'
+                                        : 'hidden',
+                                ]">Leave</span>
+                            </template>
                         </button>
                         <NuxtLink v-if="isMod" :to="`/+${board.name}/mod/settings`"
                             class="hidden sm:block button w-24 gray text-center">
@@ -98,15 +101,18 @@
                         Settings
                     </NuxtLink>
                     <button class="button flex-grow group" :class="[isSubscribed ? 'gray hover:red' : 'primary']"
-                        @click="toggleSubscribe">
-                        <span :class="{
-                            'inline group-hover:hidden': isSubscribed,
-                        }">{{ isSubscribed ? "Joined" : "Join" }}</span>
-                        <span :class="[
-                            isSubscribed
-                                ? 'hidden group-hover:inline'
-                                : 'hidden',
-                        ]">Leave</span>
+                        @click="toggleSubscribe" :disabled="isSubscribing">
+                        <span v-if="isSubscribing">Loading...</span>
+                        <template v-else>
+                            <span :class="{
+                                'inline group-hover:hidden': isSubscribed,
+                            }">{{ isSubscribed ? "Joined" : "Join" }}</span>
+                            <span :class="[
+                                isSubscribed
+                                    ? 'hidden group-hover:inline'
+                                    : 'hidden',
+                            ]">Leave</span>
+                        </template>
                     </button>
                     <!--<NuxtLink :to="`/+${board.name}/submit`" class="button primary flex-grow text-center">
 						Create Post
@@ -120,7 +126,6 @@
 
 <script lang="ts" setup>
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
 import type { Board } from "@/types/types";
@@ -139,44 +144,73 @@ const toast = useToastStore();
 const isAuthed = userStore.isAuthed;
 
 const isSubscribed = ref(board.subscribedType == "subscribed");
-//const isSubscribed = false;
+const isSubscribing = ref(false);
 
 const toggleSubscribe = async () => {
-    /*isSubscribed.value = !isSubscribed.value;
-    const { data, error } = await useAPI(
-        "/subscriptions/boards" + (isSubscribed.value ? "" : `/${board.id}`),
-        {
-            method: isSubscribed.value ? "post" : "delete",
-            body: {
-                board_name: board.name,
-                //"subscribe": isSubscribed.value
-            },
-        },
-    );
+    if (isSubscribing.value) return;
 
-    if (data.value) {
-        toast.addNotification({
-            header: `${isSubscribed.value ? "Joined" : "Left"} +${board.name}!`,
-            message: `You are ${isSubscribed.value ? "now a member" : "no longer a member"} of +${board.name}.`,
-            type: "success",
-        });
+    isSubscribing.value = true;
+    const originalState = isSubscribed.value;
+
+    try {
+        const { $gql } = useNuxtApp();
 
         if (isSubscribed.value) {
-            //console.log(JSON.stringify(data.value["board_view"]));
-            userStore.addJoinedBoard(data.value["board_view"]);
+            // Unsubscribe from board
+            const result = await $gql.mutation({
+                unsubscribeFromBoard: {
+                    boardId: board.id
+                }
+            });
+
+            if (result.unsubscribeFromBoard) {
+                isSubscribed.value = false;
+                toast.addNotification({
+                    header: `Left +${board.name}!`,
+                    message: `You are no longer a member of +${board.name}.`,
+                    type: "success",
+                });
+
+                // Update user store
+                userStore.removeJoinedBoard(board.id);
+            }
         } else {
-            userStore.removeJoinedBoard(data.value["board_view"].board.id);
+            // Subscribe to board
+            const result = await $gql.mutation({
+                subscribeToBoard: {
+                    boardId: board.id
+                }
+            });
+
+            if (result.subscribeToBoard) {
+                isSubscribed.value = true;
+                toast.addNotification({
+                    header: `Joined +${board.name}!`,
+                    message: `You are now a member of +${board.name}.`,
+                    type: "success",
+                });
+
+                // Update user store - create a board view object
+                const boardView = {
+                    board: board,
+                    subscribed: "Subscribed"
+                };
+                userStore.addJoinedBoard(boardView);
+            }
         }
-    } else {
+    } catch (error) {
+        console.error('Error toggling board subscription:', error);
         toast.addNotification({
-            header: `${isSubscribed.value ? "Joining" : "Leaving"} failed.`,
-            message: "Something went wrong. Try again sometime later.",
+            header: `${originalState ? "Leaving" : "Joining"} failed.`,
+            message: error.message || "Something went wrong. Try again sometime later.",
             type: "error",
         });
 
-        isSubscribed.value = !isSubscribed.value;
-        console.error(error.value);
-        }*/
+        // Revert state on error
+        isSubscribed.value = originalState;
+    } finally {
+        isSubscribing.value = false;
+    }
 };
 </script>
 

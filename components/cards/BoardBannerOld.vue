@@ -216,8 +216,9 @@
                             class="button button-sm border-[1px]"
                             :class="[isSubscribed ? 'red' : 'green']"
                             @click="toggleSubscribe"
+                            :disabled="isSubscribing"
                         >
-                            {{ isSubscribed ? "Leave" : "Join" }}
+                            {{ isSubscribing ? "Loading..." : (isSubscribed ? "Leave" : "Join") }}
                         </button>
                     </li>
                 </ul>
@@ -255,7 +256,6 @@
 
 <script setup>
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
 
@@ -271,42 +271,71 @@ const toast = useToastStore();
 const isAuthed = userStore.isAuthed;
 
 const isSubscribed = ref(props.boardView.subscribed == "Subscribed");
+const isSubscribing = ref(false);
 
 const toggleSubscribe = async () => {
-    isSubscribed.value = !isSubscribed.value;
-    const { data, error } = await useAPI(
-        "/subscriptions/boards" + (isSubscribed.value ? "" : `/${board.id}`),
-        {
-            method: isSubscribed.value ? "post" : "delete",
-            body: {
-                board_name: board.name,
-                //"subscribe": isSubscribed.value
-            },
-        },
-    );
+    if (isSubscribing.value) return;
 
-    if (data.value) {
-        toast.addNotification({
-            header: `${isSubscribed.value ? "Joined" : "Left"} +${board.name}!`,
-            message: `You are ${isSubscribed.value ? "now a member" : "no longer a member"} of +${board.name}.`,
-            type: "success",
-        });
+    isSubscribing.value = true;
+    const originalState = isSubscribed.value;
+
+    try {
+        const { $gql } = useNuxtApp();
 
         if (isSubscribed.value) {
-            //console.log(JSON.stringify(data.value["board_view"]));
-            userStore.addJoinedBoard(data.value["board_view"]);
+            // Unsubscribe from board
+            const result = await $gql.mutation({
+                unsubscribeFromBoard: {
+                    boardId: board.id
+                }
+            });
+
+            if (result.unsubscribeFromBoard) {
+                isSubscribed.value = false;
+                toast.addNotification({
+                    header: `Left +${board.name}!`,
+                    message: `You are no longer a member of +${board.name}.`,
+                    type: "success",
+                });
+
+                // Update user store
+                userStore.removeJoinedBoard(board.id);
+            }
         } else {
-            userStore.removeJoinedBoard(data.value["board_view"].board.id);
+            // Subscribe to board
+            const result = await $gql.mutation({
+                subscribeToBoard: {
+                    boardId: board.id
+                }
+            });
+
+            if (result.subscribeToBoard) {
+                isSubscribed.value = true;
+                toast.addNotification({
+                    header: `Joined +${board.name}!`,
+                    message: `You are now a member of +${board.name}.`,
+                    type: "success",
+                });
+
+                // Update user store - using the existing boardView structure
+                userStore.addJoinedBoard({
+                    ...props.boardView,
+                    subscribed: "Subscribed"
+                });
+            }
         }
-    } else {
+    } catch (error) {
+        console.error('Error toggling board subscription:', error);
         toast.addNotification({
-            header: `${isSubscribed.value ? "Joining" : "Leaving"} failed.`,
-            message: "Something went wrong. Try again sometime later.",
+            header: `${originalState ? "Leaving" : "Joining"} failed.`,
+            message: error.message || "Something went wrong. Try again sometime later.",
             type: "error",
         });
 
-        isSubscribed.value = !isSubscribed.value;
-        console.error(error.value);
+        // Revert state on error
+        isSubscribed.value = originalState;
+    } finally {
+        isSubscribing.value = false;
     }
 };
 </script>
