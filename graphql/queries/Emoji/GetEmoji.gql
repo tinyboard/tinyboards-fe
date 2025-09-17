@@ -1,0 +1,16 @@
+query getEmoji($emojiId: Int!) {
+  getEmoji(emojiId: $emojiId) {
+    id
+    shortcode
+    imageUrl
+    altText
+    category
+    creationDate
+    updated
+    boardId
+    createdByUserId
+    isActive
+    usageCount
+    emojiScope
+  }
+}

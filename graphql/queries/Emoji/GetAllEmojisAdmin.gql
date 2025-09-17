@@ -1,0 +1,16 @@
+query getAllEmojisAdmin($boardId: Int) {
+  getAllEmojisAdmin(boardId: $boardId) {
+    id
+    shortcode
+    imageUrl
+    altText
+    category
+    creationDate
+    updated
+    boardId
+    createdByUserId
+    isActive
+    usageCount
+    emojiScope
+  }
+}
