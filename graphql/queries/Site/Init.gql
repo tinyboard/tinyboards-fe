@@ -74,7 +74,7 @@ query initApp(
     myModPermissions
     subscribedType
     moderators {
-      person {
+      user {
         name
         displayName
         avatar

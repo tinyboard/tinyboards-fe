@@ -11,22 +11,19 @@ mutation featurePost($postId: Int!, $featured: Boolean!, $featureType: String) {
     isLocked
     featuredBoard
     featuredLocal
-    nsfw
-    creatorBannedFromBoard
+    isNSFW
     score
     upvotes
     downvotes
     commentCount
-    hotRank
-    newest_comment_time
+    newestCommentTime
     myVote
-    saved
-    read
+    isSaved
     board {
       id
       name
       title
-      subscribed
+      subscribedType
       sidebar
       icon
     }

@@ -1,5 +1,5 @@
-query userFollowers($personId: Int!) {
-  userFollowers(personId: $personId) {
+query userFollowers($userId: Int!) {
+  userFollowers(userId: $userId) {
     id
     name
     displayName
@@ -9,6 +9,5 @@ query userFollowers($personId: Int!) {
     creationDate
     isAdmin
     isBanned
-    botAccount
   }
 }

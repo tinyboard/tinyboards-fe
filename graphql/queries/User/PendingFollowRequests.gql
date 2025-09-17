@@ -9,6 +9,5 @@ query pendingFollowRequests {
     creationDate
     isAdmin
     isBanned
-    botAccount
   }
 }

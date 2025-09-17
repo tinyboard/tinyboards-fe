@@ -41,10 +41,5 @@ query getNotifications(
         title
       }
     }
-    user {
-      name
-      displayName
-      avatar
-    }
   }
 }

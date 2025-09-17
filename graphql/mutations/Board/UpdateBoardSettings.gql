@@ -17,7 +17,7 @@ mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
       bannedBy
       bannedAt
       primaryColor
-      secondary_color
+      secondaryColor
       hoverColor
       sidebar
       sidebarHTML
@@ -35,13 +35,13 @@ mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
       moderators {
         id
         boardId
-        personId
+        userId
         permissions
         rank
         inviteAccepted
         inviteAcceptedDate
         creationDate
-        person {
+        user {
           id
           name
           displayName
@@ -51,7 +51,6 @@ mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
           creationDate
           isAdmin
           isBanned
-          botAccount
         }
       }
     }

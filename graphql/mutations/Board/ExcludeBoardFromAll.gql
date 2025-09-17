@@ -14,7 +14,7 @@ mutation excludeBoardFromAll($boardId: Int!, $exclude: Boolean!) {
     postCount
     subscribers
     moderators {
-      person {
+      user {
         name
         displayName
         avatar

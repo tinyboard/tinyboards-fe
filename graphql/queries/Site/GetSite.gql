@@ -23,12 +23,6 @@ query getSite {
     legalInformation
     hideModlogModNames
     applicationEmailAdmins
-    actorNameMaxLength
-    federationEnabled
-    federationDebug
-    federationStrictAllowlist
-    federationHttpFetchRetryLimit
-    federationWorkerCount
     captchaEnabled
     captchaDifficulty
     creationDate

@@ -4,10 +4,8 @@ query listBannedUsers($page: Int, $limit: Int) {
     name
     displayName
     avatar
-    email
     isAdmin
     isBanned
-    banExpires
     creationDate
   }
 }
