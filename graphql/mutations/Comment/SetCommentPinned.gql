@@ -1,0 +1,12 @@
+mutation setCommentPinned(
+  $id: Int!
+  $value: Boolean!
+) {
+  setCommentPinned(
+    id: $id
+    value: $value
+  ) {
+    id
+    isPinned
+  }
+}

@@ -315,28 +315,7 @@ const route = useRoute();
 
 const isEditingBoard = ref(!boardStore.hasBoard);
 
-const SUBMIT_POST_QUERY = `
-    mutation createPost(
-        $title: String!,
-        $board: String,
-        $body: String,
-        $link: String,
-        $isNSFW: Boolean,
-        $file: Upload
-    ) {
-        createPost(
-            title: $title,
-            board: $board,
-            body: $body,
-            link: $link,
-            isNSFW: $isNSFW,
-            file: $file
-        ) {
-            id
-            titleChunk
-        }
-    }
-`;
+// Using createPost mutation from GraphQL files
 
 const boardName = ref(boardStore.hasBoard ? boardStore.board.name : "");
 const title = ref(route.query.title);
@@ -412,22 +391,20 @@ const authCookie = useCookie("token").value;
 const isLoading = ref(false);
 
 function submit() {
-    useGqlMultipart({
-        query: SUBMIT_POST_QUERY,
-        variables: {
-            title: title.value,
-            board: boardName.value,
-            link: url.value,
-            body: body.value,
-            isNSFW: isNsfw.value,
-            file: null
-        },
-        files: !!image.value ? { file: dataURLtoFile(image.value) } : {}
+    isLoading.value = true;
+
+    GqlCreatePost({
+        title: title.value,
+        board: boardName.value,
+        body: body.value,
+        link: url.value,
+        isNSFW: isNsfw.value,
+        file: !!image.value ? dataURLtoFile(image.value) : null
     })
-        .then(({ data, error }) => {
-            if (!!data.value.data) {
-                // object gore lmao
-                const post = data.value.data.createPost;
+        .then((data) => {
+            if (data.createPost) {
+                const post = data.createPost;
+
                 if (site.enableBoards) {
                     navigateTo(
                         `/+${boardName.value}/post/${post.id}/${post.titleChunk}`,
@@ -438,17 +415,23 @@ function submit() {
                     );
                 }
             } else {
-                console.error("Error: " + data.value.errors[0].message);
+                console.error("Error: Failed to create post");
                 toast.addNotification({
-                    header: "Failed to post",
-                    message: data.value.errors[0].message,
+                    header: "Failed to create post",
+                    message: "An error occurred while creating the post.",
                     type: "error",
                     isVisibleOnRouteChange: true,
                 });
             }
         })
         .catch((e) => {
-            console.error("Error: " + e)
+            console.error("Error: " + e);
+            toast.addNotification({
+                header: "Network error",
+                message: "Failed to submit post due to a network error. Please try again.",
+                type: "error",
+                isVisibleOnRouteChange: true,
+            });
         })
         .finally(() => {
             isLoading.value = false;

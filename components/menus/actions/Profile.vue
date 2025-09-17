@@ -37,8 +37,9 @@
         <!-- User Actions -->
         <div v-if="!isSelf" class="py-2 text-sm">
           <MenuItem disabled v-slot="{ active, close }">
-          <button @click="close()" class="group flex items-center w-full px-4 py-1.5"
-            :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
+          <button @click="toggleBlockUser(); close()" class="group flex items-center w-full px-4 py-1.5"
+            :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'"
+            :disabled="isBlocking">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
               stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -46,7 +47,7 @@
               <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
               <path d="M17 9l4 4m0 -4l-4 4"></path>
             </svg>
-            <span>Block @{{ user.name }}</span>
+            <span>{{ isBlocking ? 'Processing...' : (user.isBlocked ? 'Unblock' : 'Block') }} @{{ user.name }}</span>
           </button>
           </MenuItem>
         </div>
@@ -133,9 +134,14 @@
 import { computed, ref } from 'vue'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { useModalStore } from '@/stores/StoreModal';
+import { useToastStore } from '@/stores/StoreToast';
 import { requireFullPerms } from '@/composables/admin';
 
 const modalStore = useModalStore();
+const toast = useToastStore();
+
+// Track blocking state
+const isBlocking = ref(false);
 
 const props = defineProps({
   isLeft: {
@@ -196,5 +202,56 @@ const confirmPurge = () => {
       'user': props.user
     }
   });
+};
+
+// Block/Unblock User
+const toggleBlockUser = async () => {
+  isBlocking.value = true;
+  try {
+    const { $gql } = useNuxtApp();
+
+    if (props.user.isBlocked) {
+      // Unblock user
+      const result = await $gql.mutation({
+        unblockUser: {
+          targetId: props.user.id
+        }
+      });
+
+      if (result.unblockUser) {
+        props.user.isBlocked = false;
+        toast.addNotification({
+          header: "User unblocked",
+          message: `You have unblocked @${props.user.name}`,
+          type: "success"
+        });
+      }
+    } else {
+      // Block user
+      const result = await $gql.mutation({
+        blockUser: {
+          targetId: props.user.id
+        }
+      });
+
+      if (result.blockUser) {
+        props.user.isBlocked = true;
+        toast.addNotification({
+          header: "User blocked",
+          message: `You have blocked @${props.user.name}`,
+          type: "success"
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error toggling user block:', error);
+    toast.addNotification({
+      header: "Action failed",
+      message: error.message || "An error occurred while processing your request.",
+      type: "error"
+    });
+  } finally {
+    isBlocking.value = false;
+  }
 };
 </script>

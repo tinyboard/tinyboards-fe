@@ -22,9 +22,19 @@
 								class="w-20 h-20 object-cover p-0.5 border bg-white" />
 							<div v-else class="w-20 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
-								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
-									{{ settings.avatar ? 'Change avatar' : 'Upload avatar' }}
-								</label>
+								<div class="flex space-x-2">
+									<label for="avatar-upload" class="inline-block button gray cursor-pointer">
+										{{ settings.avatar ? 'Change avatar' : 'Upload avatar' }}
+									</label>
+									<button
+										v-if="settings.avatar"
+										@click="removeAvatar"
+										type="button"
+										class="button red"
+										:disabled="isRemoving.avatar">
+										{{ isRemoving.avatar ? 'Removing...' : 'Remove' }}
+									</button>
+								</div>
 								<input id="avatar-upload" type="file" class="hidden"
 									accept="image/png, image/jpeg, image/gif"
 									@change="e => onFileChange(e, 'avatar')" />
@@ -46,9 +56,19 @@
 								class="w-full h-24 object-cover p-0.5 border bg-white" />
 							<div v-else class="w-full h-32 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="mt-5">
-								<label for="banner-upload" class="inline-block button gray cursor-pointer">
-									{{ settings.banner ? 'Change banner' : 'Upload banner' }}
-								</label>
+								<div class="flex space-x-2">
+									<label for="banner-upload" class="inline-block button gray cursor-pointer">
+										{{ settings.banner ? 'Change banner' : 'Upload banner' }}
+									</label>
+									<button
+										v-if="settings.banner"
+										@click="removeBanner"
+										type="button"
+										class="button red"
+										:disabled="isRemoving.banner">
+										{{ isRemoving.banner ? 'Removing...' : 'Remove' }}
+									</button>
+								</div>
 								<input id="banner-upload" type="file" class="hidden"
 									accept="image/png, image/jpeg, image/gif"
 									@change="e => onFileChange(e, 'banner')" />
@@ -110,8 +130,17 @@
 							<textarea id="biography" name="biography" rows="4"
 								class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
 								placeholder="A stranger surfing this World Wide Web." v-model="settings.bio" />
-							<p class="mt-2 text-sm text-gray-500">Brief description about yourself. Markdown supported.
-							</p>
+							<div class="flex justify-between items-center mt-2">
+								<p class="text-sm text-gray-500">Brief description about yourself. Markdown supported.</p>
+								<button
+									v-if="settings.bio && settings.bio.trim()"
+									@click="clearBio"
+									type="button"
+									class="text-sm text-red-600 hover:text-red-800"
+									:disabled="isRemoving.bio">
+									{{ isRemoving.bio ? 'Clearing...' : 'Clear bio' }}
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -204,6 +233,111 @@ const isLoading = ref(false);
    }*/
 
 const files = {};
+
+// Track which items are being removed
+const isRemoving = ref({
+	avatar: false,
+	banner: false,
+	bio: false
+});
+
+// Remove Avatar
+const removeAvatar = async () => {
+	isRemoving.value.avatar = true;
+	try {
+		const { $gql } = useNuxtApp();
+		const result = await $gql.mutation({
+			removeAvatar: {
+				id: true,
+				avatar: true
+			}
+		});
+
+		if (result.removeAvatar) {
+			settings.value.avatar = null;
+			imageStore.purgeAvatar();
+			toast.addNotification({
+				header: "Avatar removed",
+				message: "Your avatar has been successfully removed.",
+				type: "success"
+			});
+		}
+	} catch (error) {
+		console.error('Error removing avatar:', error);
+		toast.addNotification({
+			header: "Failed to remove avatar",
+			message: error.message || "An error occurred while removing your avatar.",
+			type: "error"
+		});
+	} finally {
+		isRemoving.value.avatar = false;
+	}
+};
+
+// Remove Banner
+const removeBanner = async () => {
+	isRemoving.value.banner = true;
+	try {
+		const { $gql } = useNuxtApp();
+		const result = await $gql.mutation({
+			removeBanner: {
+				id: true,
+				banner: true
+			}
+		});
+
+		if (result.removeBanner) {
+			settings.value.banner = null;
+			imageStore.purgeBanner();
+			toast.addNotification({
+				header: "Banner removed",
+				message: "Your banner has been successfully removed.",
+				type: "success"
+			});
+		}
+	} catch (error) {
+		console.error('Error removing banner:', error);
+		toast.addNotification({
+			header: "Failed to remove banner",
+			message: error.message || "An error occurred while removing your banner.",
+			type: "error"
+		});
+	} finally {
+		isRemoving.value.banner = false;
+	}
+};
+
+// Clear Bio
+const clearBio = async () => {
+	isRemoving.value.bio = true;
+	try {
+		const { $gql } = useNuxtApp();
+		const result = await $gql.mutation({
+			clearBio: {
+				id: true,
+				bio: true
+			}
+		});
+
+		if (result.clearBio) {
+			settings.value.bio = '';
+			toast.addNotification({
+				header: "Bio cleared",
+				message: "Your bio has been successfully cleared.",
+				type: "success"
+			});
+		}
+	} catch (error) {
+		console.error('Error clearing bio:', error);
+		toast.addNotification({
+			header: "Failed to clear bio",
+			message: error.message || "An error occurred while clearing your bio.",
+			type: "error"
+		});
+	} finally {
+		isRemoving.value.bio = false;
+	}
+};
 
 const submitSettings = async () => {
 	isLoading.value = true;

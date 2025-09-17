@@ -1,0 +1,3 @@
+mutation unblockBoard($boardId: Int!) {
+  unblockBoard(boardId: $boardId)
+}

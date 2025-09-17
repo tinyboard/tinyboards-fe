@@ -70,7 +70,7 @@ export const usePostsStore = defineStore("posts", {
       this.options.listingType = listingType;
 
       return useAsyncGql({
-        operation: 'loadPosts',
+        operation: 'listPosts',
         variables: {
           ...this.options,
           includeBoard: useSiteStore().enableBoards,
@@ -120,7 +120,7 @@ export const usePostsStore = defineStore("posts", {
       //let { clients } = useApollo();
 
       return useAsyncGql({
-        operation: 'loadPosts',
+        operation: 'listPosts',
         variables: {
           ...this.options,
           includeBoard: useSiteStore().enableBoards,

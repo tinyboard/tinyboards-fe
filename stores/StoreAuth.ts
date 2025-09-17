@@ -46,7 +46,7 @@ export const useLoggedInUser = defineStore("auth", {
       const { $client } = useNuxtApp();
       return new Promise((resolve, reject) => {
         // Obtain auth token
-        GqlSubmitLogin({ usernameOrEmail: nameOrEmail, password })
+        GqlLogin({ usernameOrEmail: nameOrEmail, password })
           .then((data) => {
             Cookies.set('token', data.login.token);
             this.token = data.login.token;
