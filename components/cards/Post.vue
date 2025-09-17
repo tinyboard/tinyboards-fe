@@ -536,16 +536,16 @@ const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
   
   try {
-    const { mutate } = useMutation('votePost');
+    const { mutate } = useMutation('voteOnPost');
     const result = await mutate({
-      postId: props.post.id,
-      vote: voteType.value
+      id: props.post.id,
+      voteType: voteType.value
     });
     
-    if (result.data?.votePost) {
+    if (result.data?.voteOnPost) {
       // Update post score from response
       if (props.post.score !== undefined) {
-        props.post.score = result.data.votePost.score;
+        props.post.score = result.data.voteOnPost.score;
       }
     }
   } catch (error) {

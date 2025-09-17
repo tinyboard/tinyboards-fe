@@ -438,16 +438,16 @@ const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
   try {
-    const { mutate } = useMutation('voteComment');
+    const { mutate } = useMutation('voteOnComment');
     const result = await mutate({
-      commentId: comment.value!.id,
-      vote: voteType.value
+      id: comment.value!.id,
+      voteType: voteType.value
     });
     
-    if (result.data?.voteComment) {
+    if (result.data?.voteOnComment) {
       // Update comment score from response
       if (comment.value!.score !== undefined) {
-        comment.value!.score = result.data.voteComment.score;
+        comment.value!.score = result.data.voteOnComment.score;
       }
     }
   } catch (error) {
