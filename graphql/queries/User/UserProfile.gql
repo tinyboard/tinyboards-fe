@@ -66,6 +66,12 @@ query userProfile(
       creationDate
       updated
       myModPermissions
+      altText
+      embedTitle
+      embedDescription
+      embedVideoUrl
+      sourceUrl
+      lastCrawlDate
       creator {
         id
         name

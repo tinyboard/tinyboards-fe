@@ -265,7 +265,6 @@ const moderators = board.moderators || [];
 console.log("stores have been set up");
 
 definePageMeta({
-    alias: ["/+:board"],
     key: (route) => route.fullPath,
     title: "Board Listing",
 });

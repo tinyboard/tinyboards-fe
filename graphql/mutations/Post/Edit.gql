@@ -26,5 +26,11 @@ mutation editPost(
     featuredLocal
     featuredBoard
     commentCount
+    altText
+    embedTitle
+    embedDescription
+    embedVideoUrl
+    sourceUrl
+    lastCrawlDate
   }
 }

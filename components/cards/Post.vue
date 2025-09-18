@@ -70,7 +70,7 @@
           </div>
           <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
-            <NuxtLink v-if="site.enableBoards && !boardPage && post.board" :to="`/+${post.board.name}`" class="font-bold"
+            <NuxtLink v-if="site.enableBoards && !boardPage && post.board" :to="`/b/${post.board.name}`" class="font-bold"
               :style="{ 'color': post.board.primaryColor ? 'rgb(' + post.board.primaryColor + ')' : '' }">
               <div class="hidden md:flex space-x-2 items-center">
                 <img v-if="post.board.icon" :src="post.board.icon" class="bg-white border p-[0.5px]"
@@ -136,7 +136,7 @@
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle"
-            :to="`${site.enableBoards && post.board ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`">
+            :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk}`">
             {{ post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
@@ -145,7 +145,7 @@
             <!-- Post Image -->
             <div v-if="hasImage && !!post.url" class="mt-2.5 md:mt-4">
               <span class="inline-block p-2.5 bg-white border shadow-polaroid">
-                <img loading="lazy" :src="post.url" alt="Post image" class="sm:max-w-xs object-cover img-expand" />
+                <img loading="lazy" :src="post.url" :alt="post.altText || 'Post image'" class="sm:max-w-xs object-cover img-expand" />
               </span>
             </div>
             <!-- Post Body -->
@@ -239,7 +239,7 @@
             </button>
           </li>
           <li class="ml-3 sm:ml-6 list-item">
-            <NuxtLink :to="`${site.enableBoards && post.board ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
+            <NuxtLink :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk}`"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
@@ -458,7 +458,7 @@
         </svg>
       </button>-->
       <!-- Stretched link (card mode only) -->
-      <NuxtLink :to="`${site.enableBoards && post.board ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
+      <NuxtLink :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk}`"
         class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
     <!-- Avatar - Desktop Only -->

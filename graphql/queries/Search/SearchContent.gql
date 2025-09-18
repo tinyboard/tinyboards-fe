@@ -23,6 +23,12 @@ query searchContent(
       title
       body
       creationDate
+      altText
+      embedTitle
+      embedDescription
+      embedVideoUrl
+      sourceUrl
+      lastCrawlDate
       creator {
         name
         displayName

@@ -42,12 +42,6 @@ import { requireModPermission } from "@/composables/mod";
 const title = ref("Post");
 
 definePageMeta({
-      alias: [
-            '/post/:id/:slug?',
-            '/p/:id/:slug?',
-            '/+:board/post/:id/:slug?',
-            '/+:board/p/:id/:slug?'
-      ],
       key: (route) => route.fullPath
 });
 

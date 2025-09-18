@@ -36,6 +36,12 @@ query getPost(
     featuredBoard
     commentCount
     myModPermissions
+    altText
+    embedTitle
+    embedDescription
+    embedVideoUrl
+    sourceUrl
+    lastCrawlDate
     creator {
       id
       name

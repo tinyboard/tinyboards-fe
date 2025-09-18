@@ -34,6 +34,12 @@ mutation createPost(
     featuredLocal
     featuredBoard
     commentCount
+    altText
+    embedTitle
+    embedDescription
+    embedVideoUrl
+    sourceUrl
+    lastCrawlDate
     creator {
       id
       name
