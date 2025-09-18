@@ -3,13 +3,13 @@ import { defineStore } from "pinia";
 import type { Board } from "@/types/types";
 
 interface BoardStoreState {
-  board: Board;
+  board: Board | null;
 }
 
 export const useBoardStore = defineStore("board", {
   state: (): BoardStoreState => {
     return {
-      board: undefined,
+      board: null,
     };
   },
   getters: {
@@ -25,7 +25,7 @@ export const useBoardStore = defineStore("board", {
       }
     },
     clear() {
-      this.board = undefined;
+      this.board = null;
     },
   },
 });

@@ -41,11 +41,11 @@
                     >
                         <div class="text-center flex flex-col items-center">
                             <img
-                                :src="board.icon"
+                                :src="board?.icon || '/img/default-board-icon.png'"
                                 class="bg-white p-[2px] border border-gray-300 w-32 h-32"
                             />
                             <h1 class="text-3xl text-gray-700 font-bold mt-4">
-                                Welcome to +{{ board.name }}
+                                Welcome to +{{ board?.name || 'Unknown Board' }}
                             </h1>
                             <p class="text-md text-gray-500">
                                 Right now it's empty here. Let's get started by
@@ -53,7 +53,7 @@
                             </p>
                             <!-- Create Post -->
                             <NuxtLink
-                                v-if="!submitPage"
+                                v-if="!submitPage && board?.name"
                                 :to="`/+${board.name}/submit`"
                                 class="flex items-center button primary mt-4"
                             >
@@ -247,22 +247,32 @@ const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
 //const postStore = usePostsStore();
 const v = userStore.user;
+
+// Check if board exists when visiting a board route
+if (route.params?.board && !boardStore.hasBoard) {
+    throw createError({
+        statusCode: 404,
+        statusMessage: `Board "+${route.params.board}" not found`,
+        fatal: true
+    });
+}
+
 //const boardView = boardStore.boardView;
-const board = boardStore.board;
+const board = boardStore.board || {};
 //const boardCounts = boardView.counts;
-const moderators = board.moderators;
+const moderators = board.moderators || [];
 
 console.log("stores have been set up");
 
 definePageMeta({
-    alias: ["/+:board", "/+:board?/:sort?"],
+    alias: ["/+:board"],
     key: (route) => route.fullPath,
     title: "Board Listing",
 });
 
-const title = board.is_removed
-    ? `+${board.name}: Banned`
-    : `${board.title ?? board.name} (+${board.name})`;
+const title = board?.is_removed
+    ? `+${board?.name || 'Unknown'}: Banned`
+    : `${board?.title ?? board?.name ?? 'Unknown Board'} (+${board?.name ?? 'unknown'})`;
 
 useHead({
     title,

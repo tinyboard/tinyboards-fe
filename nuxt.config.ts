@@ -45,12 +45,46 @@ export default defineNuxtConfig({
 
   //i18n: {},
   routeRules: {
-    // Static page generated on-demand once
-    "/help/**": { static: true },
-    "/": { redirect: "/feed" },
-    "/feed/**": { ssr: false },
-    // Force server-side rendering
-    "/user/**": { ssr: true },
+    // Static prerendered pages
+    "/help/**": {
+      static: true,
+      prerender: true,
+      headers: { 'Cache-Control': 's-maxage=86400' }
+    },
+
+    // SSR with caching for user profiles
+    "/@**": {
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300' }
+    },
+
+    // Hybrid rendering for feeds
+    "/feed/**": {
+      ssr: true,
+      experimentalNoScripts: true // Remove hydration overhead
+    },
+
+    // SPA for admin interfaces
+    "/admin/**": {
+      ssr: false,
+      index: false
+    },
+    "/settings/**": {
+      ssr: false,
+      index: false
+    },
+
+    // Board pages with SSR for SEO
+    "/+**": {
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300' }
+    },
+
+    // Static homepage redirect
+    "/": {
+      redirect: "/feed",
+      prerender: true
+    }
   },
 
   runtimeConfig: {
@@ -91,6 +125,17 @@ export default defineNuxtConfig({
       // fs: {
       //   cachedChecks: false,
       // },
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vue-vendor': ['vue', '@vue/runtime-core'],
+            'ui-components': ['@headlessui/vue'],
+            'utils': ['date-fns', 'marked']
+          }
+        }
+      }
     }
   },
 });

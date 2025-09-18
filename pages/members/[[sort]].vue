@@ -9,7 +9,7 @@
                 <!-- Banner -->
                 <CardsBanner
                     title="Members"
-                    :sub-title="`Showing ${members.members.length} members`"
+                    :sub-title="`Showing ${members?.members?.length || 0} members`"
                     image-url="https://forum.porpl.net/image/51bc2d71-6c70-4add-a7b0-03fed9024fb6.webp"
                     class="col-span-full"
                 />
@@ -21,7 +21,7 @@
         >
             <div class="col-span-full">
                 <ul
-                    v-if="members.members.length"
+                    v-if="members?.members?.length"
                     class="w-full grid grid-cols-4 gap-2 sm:gap-4 overflow-hidden"
                 >
                     <li
@@ -141,6 +141,26 @@
                         </NuxtLink>
                     </li>
                 </ul>
+                <!-- Empty State -->
+                <div v-else-if="!pending && !error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+                    <p>
+                        <span class="font-medium">
+                            No members found.
+                        </span>
+                        <br/>
+                        Try a different sort option.
+                    </p>
+                </div>
+                <!-- Error State -->
+                <div v-else-if="error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+                    <p>
+                        <span class="font-medium">
+                            There was an error loading members.
+                        </span>
+                        <br/>
+                        Please try again later.
+                    </p>
+                </div>
             </div>
             <div
                 v-if="totalPages > 1"
@@ -212,7 +232,7 @@ if (error.value && error.value.response) {
 }
 
 const totalPages = computed(() => {
-    return Math.ceil(members.value.total_count / limit.value || 1);
+    return Math.ceil((members.value?.total_count || 0) / limit.value) || 1;
 });
 
 // Links for sub navigation bar.

@@ -3,10 +3,10 @@
 		<!-- Avatar -->
 		<div class="flex-shrink-0">
 			<NuxtLink v-if="creator" :to="`/@${creator.name}`">
-				<img loading="lazy" :src="creator.avatar || '/default-avatar.png'" :alt="`${creator.displayName || creator.name} avatar`"
+				<img loading="lazy" :src="creator.avatar || 'https://placekitten.com/36/36'" :alt="`${creator.displayName || creator.name} avatar`"
 					class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent rounded" />
 			</NuxtLink>
-			<img v-else loading="lazy" src="/default-avatar.png" alt="System notification"
+			<img v-else loading="lazy" src="https://placekitten.com/36/36" alt="System notification"
 				class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white rounded" />
 		</div>
 

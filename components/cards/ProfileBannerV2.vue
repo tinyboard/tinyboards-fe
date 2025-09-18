@@ -362,7 +362,9 @@ const submitSettings = async () => {
         isLoading.value = false;
         // @ts-ignore Ignored: this returns a GraphQL response, but the exact fields are unknown to TS
         if (!!data.value.data) {
-            window.location.reload();
+            if (process.client && typeof window !== 'undefined') {
+                window.location.reload();
+            }
         } else {
             // @ts-ignore
             console.error("Error: " + data.value.errors[0].message);

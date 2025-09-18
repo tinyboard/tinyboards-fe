@@ -61,7 +61,7 @@ export const usePostsStore = defineStore("posts", {
       this.options.page = !!route?.query?.["page"] ? Number.parseInt(route.query["page"].toString()) : 1;
       this.options.limit = !!route?.query?.["limit"] ? Math.min(Number.parseInt(route.query["limit"].toString()), 100) : 25;
 
-      this.options.boardId = boardStore.hasBoard ? boardStore.board!.id : null; // safe to ignore board being undefined because of hasBoard check
+      this.options.boardId = boardStore.hasBoard ? boardStore.board?.id ?? null : null;
 
       this.options.sort = mapToSortType(route?.params?.["sort"] as string ?? "hot");
     },

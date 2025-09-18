@@ -4,118 +4,101 @@ import { useBoardStore } from "@/stores/StoreBoard";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useLoggedInUser } from "@/stores/StoreAuth";
-import { useAPI } from "@/composables/api";
-import gql from "graphql-tag";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const nuxtApp = useNuxtApp();
   const siteStore = useSiteStore();
   const boardStore = useBoardStore();
   const userStore = useLoggedInUser();
-  //console.log("fetch site...");
+  const postsStore = usePostsStore();
+  const commentsStore = useCommentsStore();
 
-  const cookieHeader = nuxtApp.ssrContext?.event.req.headers["cookie"] || "";
-  const cookies = cookie.parse(cookieHeader);
+  // Get cookies safely for SSR
+  let cookies = {};
+  if (process.server) {
+    const cookieHeader = useNuxtApp().ssrContext?.event.req.headers["cookie"] || "";
+    cookies = cookie.parse(cookieHeader);
+  }
 
-  const jwt = cookies["token"];
-
-  const { data, error } = await useAsyncGql({
-    operation: 'initApp',
-    variables: {
-      // site is loaded on initial load - during SSR
-      shouldLoadSite: process.server,
-      // logged in user is loaded during SSR if there is a stored auth token
-      shouldLoadLoggedInUser: process.server && cookies["token"] !== undefined,
-      // board is loaded if the user visits any pages under "/+board/*"
-      shouldLoadBoard: to.params?.hasOwnProperty("board") ?? false,
-      boardName: to.params?.board,
-    },
-  });
-
-  console.log("got here");
-
-  console.log(JSON.stringify(data.value, null, 4));
-  if (data.value.site) {
-    console.log("AAAAAAAAAAAA");
-    const site = data.value.site;
-    //siteStore.siteMode = site.siteMode;
-    siteStore.name = site.name;
-    siteStore.description = site.description;
-    siteStore.icon = site.icon;
-    siteStore.primaryColor = site.primaryColor;
-    siteStore.secondaryColor = site.secondaryColor;
-    siteStore.hoverColor = site.hoverColor;
-    siteStore.enableDownvotes = site.enableDownvotes;
-    siteStore.enableNSFW = site.enableNSFW;
-    siteStore.applicationQuestion = site.applicationQuestion;
-    siteStore.isPrivate = site.privateInstance;
-    siteStore.enableBoards = site.boardsEnabled;
-    siteStore.boardCreationAdminOnly = site.boardCreationAdminOnly;
-    siteStore.requireEmailVerification = site.requireEmailVerification;
-    siteStore.requireApplication = site.requireApplication;
-    siteStore.inviteOnly = site.inviteOnly;
-  } /*else if (error) {
-    console.error(error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: `Error occured while fetching site: ${JSON.stringify(error, null, 4)}`,
-      fatal: true,
+  // Use the original initApp query with improved error handling
+  try {
+    const { data, error } = await useAsyncGql({
+      operation: 'initApp',
+      variables: {
+        shouldLoadSite: true,
+        shouldLoadLoggedInUser: process.server && cookies["token"] !== undefined,
+        shouldLoadBoard: to.params?.hasOwnProperty("board") ?? false,
+        boardName: to.params?.board,
+      },
     });
-    }*/
 
-  if (data.value.board) {
-    const recentBoards = useCookie("recentBoards");
-    boardStore.setBoard(data.value.board);
-
-    if (!recentBoards.value) {
-      recentBoards.value = [];
+    if (error.value && error.value.response) {
+      // Handle GraphQL errors gracefully
+      if (process.dev) {
+        console.warn('GraphQL error in middleware:', error.value);
+      }
+      // Don't throw, just continue with empty data
     }
 
-    // new board
-    if (
-      recentBoards.value.filter((board) => board.name == data.value.board.name)
-        .length == 0
-    ) {
-      recentBoards.value.unshift({
-        name: data.value.board.name,
-        title: data.value.board.title,
-        icon: data.value.board.icon,
-      });
-
-      // only the 5 most recently viewed boards are stored
-      recentBoards.value = recentBoards.value.slice(0, 5);
-    } else {
-      // board already listed: move it to the top
-      recentBoards.value = recentBoards.value.filter(
-        (board) => board.name != data.value.board.name,
-      );
-
-      recentBoards.value.unshift({
-        name: data.value.board.name,
-        title: data.value.board.title,
-        icon: data.value.board.icon,
-      });
+    if (data.value && data.value.site) {
+      siteStore.name = data.value.site?.name ?? '';
+      siteStore.description = data.value.site?.description ?? '';
+      siteStore.icon = data.value.site?.icon ?? '';
+      siteStore.primaryColor = data.value.site?.primaryColor ?? '';
+      siteStore.secondaryColor = data.value.site?.secondaryColor ?? '';
+      siteStore.hoverColor = data.value.site?.hoverColor ?? '';
+      siteStore.enableDownvotes = data.value.site?.enableDownvotes ?? false;
+      siteStore.enableNSFW = data.value.site?.enableNSFW ?? false;
+      siteStore.applicationQuestion = data.value.site?.applicationQuestion ?? '';
+      siteStore.isPrivate = data.value.site?.privateInstance ?? false;
+      siteStore.enableBoards = data.value.site?.boardsEnabled ?? false;
+      siteStore.boardCreationAdminOnly = data.value.site?.boardCreationAdminOnly ?? false;
+      siteStore.requireEmailVerification = data.value.site?.requireEmailVerification ?? false;
+      siteStore.requireApplication = data.value.site?.requireApplication ?? false;
+      siteStore.inviteOnly = data.value.site?.inviteOnly ?? false;
     }
-  } else {
-    boardStore.clear();
+
+    if (data.value && data.value.me) {
+      userStore.user = data.value.me;
+      userStore.unread = (data.value.unreadRepliesCount || 0) + (data.value.unreadMentionsCount || 0);
+      userStore.token = cookies["token"];
+      userStore.isAuthed = true;
+      userStore.adminLevel = data.value.me.adminLevel;
+      userStore.joinedBoards = data.value.me.joinedBoards;
+      userStore.moddedBoards = data.value.me?.moderates?.map((m) => m.board) ?? [];
+    }
+
+    if (data.value && data.value.board) {
+      boardStore.setBoard(data.value.board);
+
+      const recentBoards = useCookie("recentBoards");
+      if (!recentBoards.value) {
+        recentBoards.value = [];
+      }
+
+      if ((recentBoards.value ?? []).filter((b) => b?.name == data.value.board?.name).length == 0) {
+        recentBoards.value.unshift({
+          name: data.value.board?.name ?? '',
+          title: data.value.board?.title ?? '',
+          icon: data.value.board?.icon ?? '',
+        });
+        recentBoards.value = recentBoards.value.slice(0, 5);
+      } else {
+        recentBoards.value = (recentBoards.value ?? []).filter((b) => b?.name != data.value.board?.name);
+        recentBoards.value.unshift({
+          name: data.value.board?.name ?? '',
+          title: data.value.board?.title ?? '',
+          icon: data.value.board?.icon ?? '',
+        });
+      }
+    }
+  } catch (error) {
+    // Handle any other errors gracefully
+    if (process.dev) {
+      console.warn('Error in middleware:', error);
+    }
   }
 
-  if (data.value.me) {
-    userStore.user = data.value.me;
-    /*userStore.counts = {
-      rep: 0,
-    };*/
-    userStore.unread =
-      data.value.unreadRepliesCount + data.value.unreadMentionsCount;
-    userStore.token = cookies["token"];
-    userStore.isAuthed = true;
-    userStore.adminLevel = data.value.me.adminLevel;
-    userStore.joinedBoards = data.value.me.joinedBoards;
-    userStore.moddedBoards = data.value.me.moderates.map((m) => m.board);
-  }
-
-  //clear posts
-  usePostsStore().clear();
-  // clear comments
-  useCommentsStore().setComments([]);
+  // Clear posts and comments on route change
+  postsStore.clear();
+  commentsStore.setComments([]);
 });

@@ -12,7 +12,7 @@
                 <h3 class="text-lg text-gray-800 font-semibold">
                     Recent Posts
                 </h3>
-                <NuxtLink :to="`/@${username}/posts`">View All</NuxtLink>
+                <NuxtLink :to="`/@${username}/posts`" v-if="username">View All</NuxtLink>
             </div>
             <LazyListsPosts
                 v-if="posts?.length"
@@ -22,7 +22,7 @@
                 :hasError="error"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
-                @{{ username }} hasn't made any posts. At all.
+                @{{ username || 'Unknown user' }} hasn't made any posts. At all.
             </div>
             <div
                 class="flex flex-row justify-between bg-white border-y sm:border p-4 sm:rounded-md mt-4 mb-2"
@@ -30,15 +30,15 @@
                 <h3 class="text-lg text-gray-800 font-semibold">
                     Recent Comments
                 </h3>
-                <NuxtLink :to="`/@${username}/comments`">View All</NuxtLink>
+                <NuxtLink :to="`/@${username}/comments`" v-if="username">View All</NuxtLink>
             </div>
             <LazyListsComments
-                v-if="user.comments?.length"
+                v-if="user?.comments?.length"
                 :comments="user.comments"
                 :cards="true"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
-                @{{ username }} hasn't made any comments.
+                @{{ username || 'Unknown user' }} hasn't made any comments.
             </div>
         </template>
     </component>
@@ -118,7 +118,15 @@ if (error.value && error.value.response) {
 
 //const personView = userData.value.person_view;
 const user = userData.value?.user;
-const moderates = user.moderates;
+const moderates = user?.moderates || [];
+
+if (!user) {
+    throw createError({
+        statusCode: 404,
+        statusMessage: "User not found",
+        fatal: true,
+    });
+}
 
 if (user.isDeleted) {
     title.value = "Deleted Account";
@@ -136,18 +144,18 @@ preferCardView.value =
 
 // Is Self
 const isSelf = computed(() => {
-    return !!userStore.user && userStore.user.name === user.name;
+    return !!userStore.user && userStore.user.name === user?.name;
 });
 
 // Admin - can bypass banned page if they have either the content or the users permission
 const isAdmin = requirePermission("content") || requirePermission("users");
 
 const canView = computed(() => {
-    if (user.isDeleted) {
+    if (user?.isDeleted) {
         return false;
     }
 
-    if (!user.isBanned) {
+    if (!user?.isBanned) {
         return true;
     }
 
@@ -161,8 +169,8 @@ const canView = computed(() => {
 	creator_id: user.value.id
 }, 'posts');*/
 
-const posts = user.posts;
-const comments = user.comments;
+const posts = user?.posts || [];
+const comments = user?.comments || [];
 
 usePreloadedPosts(posts);
 commentsStore.setComments(comments);

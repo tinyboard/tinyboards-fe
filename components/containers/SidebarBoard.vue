@@ -1,12 +1,13 @@
 <template>
     <div
+        v-if="board.value"
         id="sidebar-board"
         class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
         <!-- Create Post -->
         <NuxtLink
             v-if="!postPage"
-            :to="`/+${board.name}/submit`"
+            :to="`/+${board.value.name}/submit`"
             class="flex items-center button primary"
         >
             <svg
@@ -32,12 +33,12 @@
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                 About
                 <span class="text-gray-700 text-opacity-70"
-                    >+{{ board.name }}</span
+                    >+{{ board.value.name }}</span
                 >
             </h2>
             <div class="prose prose-sm text-gray-900">
-                <div v-if="board.sidebar_html" v-html="board.sidebar_html" />
-                <p v-else>{{ board.description }}</p>
+                <div v-if="board.value.sidebar_html" v-html="board.value.sidebar_html" />
+                <p v-else>{{ board.value.description }}</p>
             </div>
             <div class="text-gray-600 mt-4">
                 <svg
@@ -65,19 +66,19 @@
                 </svg>
                 Board since
                 <span class="text-gray-900">{{
-                    format(parseISO(board.creationDate), "yyyy MMM. dd")
+                    board.value.creationDate ? format(parseISO(board.value.creationDate), "yyyy MMM. dd") : 'Unknown'
                 }}</span>
             </div>
         </div>
         <!-- Board Moderation -->
-        <div v-if="isMod">
+        <div v-if="isMod.value">
             <h2 class="font-bold leading-5 text-base mb-1 pb-1 border-b">
                 <span>Moderation</span>
             </h2>
             <ul class="flex flex-col space-y-2 py-2">
                 <li>
                     <NuxtLink
-                        :to="`/+${board.name}/mod/settings`"
+                        :to="`/+${board.value.name}/mod/settings`"
                         class="flex items-center"
                     >
                         <svg
@@ -297,7 +298,7 @@
                                 d="M6.793 15.793l-3.586 -3.586a1 1 0 0 1 0 -1.414l2.293 -2.293l.5 .5l3 -3l-.5 -.5l2.293 -2.293a1 1 0 0 1 1.414 0l3.586 3.586a1 1 0 0 1 0 1.414l-2.293 2.293l-.5 -.5l-3 3l.5 .5l-2.293 2.293a1 1 0 0 1 -1.414 0z"
                             ></path>
                         </svg>
-                        <span>Ban +{{ board.name }}</span>
+                        <span>Ban +{{ board.value.name }}</span>
                     </button>
                 </li>
             </ul>
@@ -308,7 +309,7 @@
                 <h2 class="font-bold leading-5 text-base">
                     <span>Moderators</span>
                 </h2>
-                <NuxtLink :to="`/+${board.name}/mod/mods`" class="text-sm"
+                <NuxtLink :to="`/+${board.value.name}/mod/mods`" class="text-sm"
                     >View all</NuxtLink
                 >
             </div>
@@ -316,7 +317,7 @@
                 class="flex flex-col mt-4 space-y-2 divide-y divide-gray-200/50"
             >
                 <li
-                    v-for="mod in mods.slice(0, 6)"
+                    v-for="mod in mods.value.slice(0, 6)"
                     :key="mod.person.id"
                     class="pt-2 first:pt-0"
                 >
@@ -352,8 +353,8 @@
                     </NuxtLink>
                 </li>
             </ul>
-            <NuxtLink v-if="mods.length > 7" :to="`/+${board.name}/mod/mods`"
-                >View {{ mods.length - 7 }} more</NuxtLink
+            <NuxtLink v-if="mods.value.length > 7" :to="`/+${board.value.name}/mod/mods`"
+                >View {{ mods.value.length - 7 }} more</NuxtLink
             >
         </div>
     </div>
@@ -361,7 +362,7 @@
 
 <script setup>
 // import { baseURL } from "@/server/constants";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
 import { useAPI } from "@/composables/api";
@@ -392,13 +393,15 @@ const props = defineProps({
     },
 });
 
-const board = boardStore.board;
-const isMod = board.myModPermissions !== 0;
-const mods = board.moderators;
+const board = computed(() => boardStore.board);
+const isMod = computed(() => board.value?.myModPermissions !== 0);
+const mods = computed(() => board.value?.moderators || []);
 
 const modSelf = async () => {
+    if (!board.value) return;
+
     modSelfPending.value = true;
-    const { data, error } = await useAPI(`/boards/${board.id}/mods`, {
+    const { data, error } = await useAPI(`/boards/${board.value.id}/mods`, {
         method: "post",
         body: {},
     });
@@ -407,7 +410,7 @@ const modSelf = async () => {
 
     if (data.value) {
         //userStore.addModdedBoard(boardStore.boardView);
-        router.push(`/+${board.name}/mod/mods`);
+        router.push(`/+${board.value.name}/mod/mods`);
     } else {
         console.error(error.value);
     }

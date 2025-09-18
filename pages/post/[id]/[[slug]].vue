@@ -9,9 +9,9 @@
                   <div class="col-span-full flex gap-6 sm:py-6">
                         <!-- Thread -->
                         <div class="relative w-full">
-                              <component v-if="post" :post="post" :comments="comments"
+                              <component v-if="post?.value" :post="post.value" :comments="comments"
                                     :is="canViewPost ? thread : threadRemoved" />
-                              <LazyContainersCommentSection v-if="post" :post="post" :comments="comments" />
+                              <LazyContainersCommentSection v-if="post?.value" :post="post.value" :comments="comments" />
                               <!-- Error -->
                               <div v-else class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
@@ -22,7 +22,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread :post="post" />
+                        <ContainersSidebarThread :post="post?.value" />
                   </div>
             </section>
       </main>
@@ -42,7 +42,12 @@ import { requireModPermission } from "@/composables/mod";
 const title = ref("Post");
 
 definePageMeta({
-      alias: ['/post/:id/:chunk?', '/+:board?/post/:id/:chunk?', '/+:board?/p/:id/:chunk/:comment?', '/p/:id/:chunk/:comment?', '/+:board?/post/:id/:chunk/:comment?', '/post/:id/:chunk/:comment?'],
+      alias: [
+            '/post/:id/:slug?',
+            '/p/:id/:slug?',
+            '/+:board/post/:id/:slug?',
+            '/+:board/p/:id/:slug?'
+      ],
       key: (route) => route.fullPath
 });
 
@@ -90,15 +95,28 @@ if (error.value && error.value.response) {
       })
 };
 
+// Also check if post is null/undefined
+if (!post || !post.value) {
+      throw createError({
+            status: 404,
+            statusText: 'Post not found.'
+      })
+};
+
+// Set board data in store if boards are enabled and post has board
+if (site.enableBoards && post?.value?.board) {
+    boardStore.setBoard(post.value.board);
+}
+
 // quick reference to comments
-let comments = post.comments;
+let comments = post?.value?.comments || [];
 
 // If boards are enabled, post.board is not null -> safe to assume not null
-title.value = `${post.title} ${site.enableBoards ? '| +' + post.board!.name : ''}`;
+title.value = `${post?.value?.title || 'Unknown Post'} ${site.enableBoards && post?.value?.board ? '| +' + post.value.board.name : ''}`;
 
 // if boards are enabled...
-if (site.enableBoards) {
-      const boardName = post.board!.name;
+if (site.enableBoards && post?.value?.board?.name) {
+      const boardName = post.value.board.name;
       const params = route.params ?? {};
       const hasBoard = params.hasOwnProperty("board");
       const boardInParams = typeof (params.board) === 'string' ? params.board : '';
@@ -106,11 +124,11 @@ if (site.enableBoards) {
       // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
-            router.push(`/+${boardName}/post/${post.id}/${post.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
+            router.push(`/+${boardName}/post/${post.value.id}/${post.value.titleSlug}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
       }
 } else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      router.push(`/post/${post.id}/${post.titleChunk}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
+      router.push(`/post/${post?.value?.id || 'unknown'}/${post?.value?.titleSlug || 'unknown'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
 }
 
 
@@ -123,7 +141,7 @@ const id = computed(() => {
 const type = computed(() => {
       return !!route.params?.comment ? 'comment' : 'post'
 })
-const sort = ref(route.query.sort);
+const sort = ref(route.query?.sort);
 
 const onCommentPublished = (comment: Comment) => {
       comments.unshift(comment);
@@ -131,7 +149,7 @@ const onCommentPublished = (comment: Comment) => {
 
 /*
  * Whether the user can see this post.
- * 
+ *
  * Admins: see everything
  * Mods: can see removed posts, deleted content is hidden
  * Logged in regular user: can view their own removed content only
@@ -147,11 +165,11 @@ const canViewPost = computed(() => {
       }
 
       // Own post
-      if (v && post.isRemoved && v.id === post.creatorId) {
+      if (v && post?.value?.isRemoved && v.id === post?.value?.creatorId) {
             return true;
       }
 
-      return !(post.isDeleted || post.isRemoved);
+      return !(post?.value?.isDeleted || post?.value?.isRemoved);
 });
 
 /*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params?.id);

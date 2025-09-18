@@ -78,40 +78,44 @@ console.log("success!");
 watch(
     () => boardStore.board,
     (newBoard) => {
-        // this can't happen server-side, so we can use `document` to manipulate colors
-        let r = document.querySelector(":root");
-        if (boardStore.hasBoard) {
-            r.style.setProperty(
-                "--color-primary",
-                boardStore.board.primaryColor,
-                "important",
-            );
-            r.style.setProperty(
-                "--color-secondary",
-                boardStore.board.secondaryColor,
-                "important",
-            );
-            r.style.setProperty(
-                "--color-primary-hover",
-                boardStore.board.hoverColor,
-                "important",
-            );
-        } else {
-            r.style.setProperty(
-                "--color-primary",
-                site.primaryColor,
-                "important",
-            );
-            r.style.setProperty(
-                "--color-secondary",
-                site.secondaryColor,
-                "important",
-            );
-            r.style.setProperty(
-                "--color-primary-hover",
-                site.hoverColor,
-                "important",
-            );
+        // DOM manipulation must be client-side only
+        if (process.client && typeof document !== 'undefined') {
+            let r = document.querySelector(":root");
+            if (r) {
+                if (boardStore.hasBoard) {
+                    r.style.setProperty(
+                        "--color-primary",
+                        boardStore.board.primaryColor,
+                        "important",
+                    );
+                    r.style.setProperty(
+                        "--color-secondary",
+                        boardStore.board.secondaryColor,
+                        "important",
+                    );
+                    r.style.setProperty(
+                        "--color-primary-hover",
+                        boardStore.board.hoverColor,
+                        "important",
+                    );
+                } else {
+                    r.style.setProperty(
+                        "--color-primary",
+                        site.primaryColor,
+                        "important",
+                    );
+                    r.style.setProperty(
+                        "--color-secondary",
+                        site.secondaryColor,
+                        "important",
+                    );
+                    r.style.setProperty(
+                        "--color-primary-hover",
+                        site.hoverColor,
+                        "important",
+                    );
+                }
+            }
         }
     },
 );
@@ -138,19 +142,21 @@ const NavbarLeft = defineAsyncComponent(
 
 // Expand image
 const getImages = () => {
-    const imageNodes = document.querySelectorAll(".img-expand");
-    // Loop through images and attach event listener
-    for (let i = 0; i < imageNodes.length; i++) {
-        imageNodes[i].addEventListener("click", (e) => {
-            modalStore.setModal({
-                modal: "ModalImage",
-                id: i,
-                isOpen: true,
-                options: {
-                    img: e.target,
-                },
+    if (process.client && typeof document !== 'undefined') {
+        const imageNodes = document.querySelectorAll(".img-expand");
+        // Loop through images and attach event listener
+        for (let i = 0; i < imageNodes.length; i++) {
+            imageNodes[i].addEventListener("click", (e) => {
+                modalStore.setModal({
+                    modal: "ModalImage",
+                    id: i,
+                    isOpen: true,
+                    options: {
+                        img: e.target,
+                    },
+                });
             });
-        });
+        }
     }
 };
 
@@ -159,54 +165,60 @@ const hasDragged = ref(false);
 const isDragging = ref(false);
 
 const dropzone = () => {
-    window.addEventListener("dragenter", (event) => {
-        // Check boolean to fix multiple events from invoking modalStore method.
-        // We cannot use pointer-events: none; until headless-ui supports portal root styling.
-        // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
-        if (!modalStore.isOpen) {
-            modalStore.setModal({
-                modal: "ModalDrop",
-                id: 1,
-                isOpen: true,
-            });
-        }
-        isDragging.value = true;
-    });
-    window.addEventListener("dragleave", (event) => {
-        event.preventDefault();
-        if (!isDragging.value) {
-            modalStore.closeModal();
+    if (process.client && typeof window !== 'undefined') {
+        window.addEventListener("dragenter", (event) => {
+            // Check boolean to fix multiple events from invoking modalStore method.
+            // We cannot use pointer-events: none; until headless-ui supports portal root styling.
+            // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
+            if (!modalStore.isOpen) {
+                modalStore.setModal({
+                    modal: "ModalDrop",
+                    id: 1,
+                    isOpen: true,
+                });
+            }
+            isDragging.value = true;
+        });
+        window.addEventListener("dragleave", (event) => {
+            event.preventDefault();
+            if (!isDragging.value) {
+                modalStore.closeModal();
+                isDragging.value = false;
+            }
+        });
+        window.addEventListener("dragover", (event) => {
+            event.preventDefault();
             isDragging.value = false;
-        }
-    });
-    window.addEventListener("dragover", (event) => {
-        event.preventDefault();
-        isDragging.value = false;
-    });
-    window.addEventListener("drop", (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        // Redirect to submit page with encoded image
-        const file = event.dataTransfer.files[0];
-        // Check for valid image file type and size
-        if (/\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 1000000) {
-            let reader = new FileReader();
-            reader.onload = () => {
-                sessionStorage.setItem("image", reader.result);
-                router.push("/submit");
-            };
-            reader.readAsDataURL(file);
-        } else {
-            toastStore.addNotification({
-                header: "Wrong format or size",
-                message: "Try a PNG, JPG and GIF up to 1MB.",
-                type: "error",
-            });
-        }
-        // Close modal
-        isDragging.value = false;
-        modalStore.closeModal();
-    });
+        });
+        window.addEventListener("drop", (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            // Redirect to submit page with encoded image
+            const file = event.dataTransfer?.files?.[0];
+            // Check for valid image file type and size
+            if (file && /\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 1000000) {
+                if (typeof FileReader !== 'undefined') {
+                    let reader = new FileReader();
+                    reader.onload = () => {
+                        if (process.client && typeof sessionStorage !== 'undefined') {
+                            sessionStorage.setItem("image", reader.result);
+                            router.push("/submit");
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                toastStore.addNotification({
+                    header: "Wrong format or size",
+                    message: "Try a PNG, JPG and GIF up to 1MB.",
+                    type: "error",
+                });
+            }
+            // Close modal
+            isDragging.value = false;
+            modalStore.closeModal();
+        });
+    }
 };
 
 // Watch for route changes

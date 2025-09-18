@@ -1,5 +1,6 @@
 import { ref, computed } from "vue";
 import { usePostsStore } from "@/stores/StorePosts";
+import { useAPI } from "@/composables/api";
 import type { Post, ListingType } from "@/types/types";
 
 /**
@@ -26,7 +27,7 @@ export function usePagination() {
         postsStore.posts = postsStore.posts.concat(result.data.value.listPosts);
         // posts.value = postsStore.posts;
       })
-      .catch(console.error)
+      .catch((err) => { if (process.dev) console.error(err); })
       .finally(() => (loading.value = false));
   };
 
@@ -48,9 +49,9 @@ export async function usePosts(listingType: ListingType) {
     listingType,
   });
 
-  console.log("getting posts...");
+  if (process.dev) console.log("getting posts...");
   if (error.value) {
-    console.error(JSON.stringify(error, null, 4));
+    if (process.dev) console.error(JSON.stringify(error, null, 4));
     throw createError({
       statusCode: 500,
       statusMessage: `Error occured while fetching posts: ${JSON.stringify(error, null, 4)}`,
@@ -149,48 +150,45 @@ export function usePreloadedPosts(posts: Post[], personId = null) {
 //   };
 // }
 
-// export async function getModQueue(query, type_) {
-//   // let page = 1;
-//   let items = ref([]);
-//   let totalCount = ref(0);
-//   let endpoints = {
-//     posts: "/mod/queue/posts",
-//     comments: "/mod/queue/comments",
-//   };
-//   async function request(query) {
-//     const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
-//       query: { ...query },
-//       key: "get_" + type_ + "_key",
-//     });
+export async function getModQueue(query: any, type_: string) {
+  // let page = 1;
+  let items = ref([]);
+  let totalCount = ref(0);
+  let endpoints = {
+    posts: "/mod/queue/posts",
+    comments: "/mod/queue/comments",
+  };
+  async function request(query: any) {
+    const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
+      query: { ...query },
+      key: "get_" + type_ + "_key",
+    });
 
-//     //console.info("console log");
+    if (data.value) {
+      items.value = [...items.value, ...data.value[type_]];
+      totalCount.value = data.value["total_count"];
+    }
 
-//     //console.log(`data fetched: ${JSON.stringify(data.value.posts, null, 4)}`);
-//     if (data.value) {
-//       items.value = [...items.value, ...data.value[type_]];
-//       totalCount.value = data.value["total_count"];
-//     }
+    return {
+      pending,
+      error,
+      refresh,
+    };
+  }
 
-//     return {
-//       pending,
-//       error,
-//       refresh,
-//     };
-//   }
+  async function paginate() {
+    // page++;
+    return request(query);
+  }
 
-//   async function paginate() {
-//     page++;
-//     return request(query);
-//   }
+  let { pending, error, refresh } = await request(query);
 
-//   let { pending, error, refresh } = await request(query);
-
-//   return {
-//     items,
-//     totalCount,
-//     paginate,
-//     pending,
-//     error,
-//     refresh,
-//   };
-// }
+  return {
+    items,
+    totalCount,
+    paginate,
+    pending,
+    error,
+    refresh,
+  };
+}

@@ -56,19 +56,19 @@ export const useLoggedInUser = defineStore("auth", {
               .then((resp) => {
                 const data = resp.data.value;
 
-                const moderates: BoardFragment[] = data.me.moderates.map((m) => m.board);
-                const joined: BoardFragment[] = data.me.joinedBoards;
+                const moderates: BoardFragment[] = data?.me?.moderates?.map((m) => m.board) ?? [];
+                const joined: BoardFragment[] = data?.me?.joinedBoards ?? [];
 
-                const user = data.me;
+                const user = data?.me;
                 //delete user.moderates;
                 //delete user.joined;
 
                 this.user = user;
                 this.joinedBoards = joined;
                 this.moddedBoards = moderates;
-                this.adminLevel = this.user!.adminLevel;
+                this.adminLevel = this.user?.adminLevel ?? null;
                 this.isAuthed = true;
-                this.unread = data.unreadMentionsCount + data.unreadRepliesCount;
+                this.unread = (data?.unreadMentionsCount ?? 0) + (data?.unreadRepliesCount ?? 0);
 
                 resolve(this.user);
               })
@@ -112,20 +112,20 @@ export const useLoggedInUser = defineStore("auth", {
               // Login successful - fetch user
               const me = useAsyncGql({ operation: 'getLoggedInUser' })
                 .then((resp) => {
-                  console.log("user fetched!");
+                  if (process.dev) console.log("user fetched!");
                   const data = resp.data.value;
 
-                  const moderates = data.me.moderates.map((m) => m.board);
-                  const joined = data.me.joinedBoards;
+                  const moderates = data?.me?.moderates?.map((m) => m.board) ?? [];
+                  const joined = data?.me?.joinedBoards ?? [];
 
-                  const user = data.me;
+                  const user = data?.me;
 
                   this.user = user;
                   this.joinedBoards = joined;
                   this.moddedBoards = moderates;
-                  this.adminLevel = this.user.adminLevel;
+                  this.adminLevel = this.user?.adminLevel ?? null;
                   this.isAuthed = true;
-                  this.unread = data.unreadMentionsCount + data.unreadRepliesCount;
+                  this.unread = (data?.unreadMentionsCount ?? 0) + (data?.unreadRepliesCount ?? 0);
 
                   resolve({
                     accountCreated,
@@ -151,16 +151,20 @@ export const useLoggedInUser = defineStore("auth", {
       });
     },
     addJoinedBoard(board: BoardFragment) {
-      this.joinedBoards!.push(board);
+      if (this.joinedBoards) {
+        this.joinedBoards.push(board);
+      }
     },
     removeJoinedBoard(id: number) {
-      this.joinedBoards = this.joinedBoards!.filter((board) => board.id !== id);
+      this.joinedBoards = (this.joinedBoards ?? []).filter((board) => board.id !== id);
     },
     addModdedBoard(board: BoardFragment) {
-      this.moddedBoards!.push(board);
+      if (this.moddedBoards) {
+        this.moddedBoards.push(board);
+      }
     },
     removeModdedBoard(id: number) {
-      this.moddedBoards = this.moddedBoards!.filter((board) => board.id !== id);
+      this.moddedBoards = (this.moddedBoards ?? []).filter((board) => board.id !== id);
     },
     logout() {
       this.user = null;

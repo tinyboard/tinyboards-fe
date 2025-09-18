@@ -31,10 +31,10 @@
         <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
       </svg>
       <div>
-        <strong>Pinned to +{{ board.name }}</strong>
+        <strong>Pinned to +{{ board?.name || post.board?.name }}</strong>
         <br />
         <p class="text-sm text-green-800">
-          This post was pinned to +{{ board.name }} by the board mods. Maybe you should read it.
+          This post was pinned to +{{ board?.name || post.board?.name }} by the board mods. Maybe you should read it.
         </p>
       </div>
     </div>
@@ -152,7 +152,7 @@
       <div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
         <!-- Title -->
         <NuxtLink :external="!!post.url"
-          :to="!!post.url ? post.url : `${site.enableBoards ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
+          :to="!!post.url ? post.url : `${site.enableBoards ? '/+' + (post.board?.name || '') : ''}/post/${post.id}/${post.titleChunk}`"
           :target="post.url ? '_blank' : null" class="text-lg md:text-xl font-medium dark:text-gray-100">
           {{ post.title }}
         </NuxtLink>
@@ -481,7 +481,7 @@ const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
 const site = useSiteStore();
 const board = boardStore.board;
-const modPermissions = board.myModPermissions;
+const modPermissions = board?.myModPermissions || 0;
 
 const isAuthed = userStore.isAuthed;
 

@@ -206,8 +206,10 @@ const yellowText = [
 
 const selectedText = ref(null);
 
-if (typeof window === "undefined") {
+if (process.client && typeof window !== "undefined") {
     selectedText.value = shuffle(yellowText)[0] ?? "It's Rails!";
+} else {
+    selectedText.value = "It's Rails!";
 }
 
 // Mobile menu

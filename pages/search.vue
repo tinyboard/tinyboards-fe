@@ -72,7 +72,7 @@
 					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								We could not find any {{ `${type}s` }} matching "{{ route.query.query }}"
+								We could not find any {{ `${type}s` }} matching "{{ route.query?.query }}"
 							</span>
 							<br/>
 							Try searching something else
@@ -82,7 +82,7 @@
 					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								There was an error fetching results for "{{ route.query.query }}".
+								There was an error fetching results for "{{ route.query?.query }}".
 							</span>
 							<br/>
 							Please try again
@@ -129,26 +129,26 @@
 	const preferCardView = useCookie('preferCardView') ?? false;
 
 	// Pagination
-	const page = computed(() => route.query.page || 1);
+	const page = computed(() => route.query?.page || 1);
 
 	const onPageChange = (page) => {
 		router.push(`${route.path}?page=${page}`)
 	};
 
 	// Search params.
-	const type = computed(() => route.query.type || 'post');
-	const text = ref(route.query.query);
-	const sort = ref(route.query.sort) || 'new';
+	const type = computed(() => route.query?.type || 'post');
+	const text = ref(route.query?.query);
+	const sort = ref(route.query?.sort) || 'new';
 	const hasNsfw = ref(false);
-	const limit = computed(() => route.query.limit || 5);
+	const limit = computed(() => route.query?.limit || 5);
 
 	// Posts & comments store.
 	const postStore = usePostsStore();
 
 	// Fetch search results.
-	const { data: results, pending, error, refresh } = await useAsyncQuery('searchContent', {
-		query: route.query.query || '',
-		type: type.value,
+	const { data: results, pending, error, refresh } = await useAsyncGql('searchContent', {
+		q: route.query?.query || '',
+		searchType: type.value.toUpperCase(),
 		page: page.value,
 		limit: limit.value
 	});
@@ -176,8 +176,8 @@
 
 	// Links for sub navbar.
 	const links = [
-		{ name: 'Posts', href: { query: { query: text.value, type: 'post' } } },
-		{ name: 'Comments', href: { query: { query: text.value, type: 'comment' } } },
+		{ name: 'Posts', href: { query: { query: text.value || '', type: 'post' } } },
+		{ name: 'Comments', href: { query: { query: text.value || '', type: 'comment' } } },
 		];
 
 	// Post sort options.

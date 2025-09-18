@@ -70,15 +70,15 @@
           </div>
           <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
-            <NuxtLink v-if="site.enableBoards && !boardPage" :to="`/+${post.board!.name}`" class="font-bold"
-              :style="{ 'color': 'rgb(' + post.board!.primaryColor + ')' }">
+            <NuxtLink v-if="site.enableBoards && !boardPage && post.board" :to="`/+${post.board.name}`" class="font-bold"
+              :style="{ 'color': post.board.primaryColor ? 'rgb(' + post.board.primaryColor + ')' : '' }">
               <div class="hidden md:flex space-x-2 items-center">
-                <img :src="post.board!.icon!" class="bg-white border p-[0.5px]"
+                <img v-if="post.board.icon" :src="post.board.icon" class="bg-white border p-[0.5px]"
                   :class="isCompact ? 'w-5 h-5' : 'w-8 h-8'" />
-                <p>{{ post.board!.title }}</p>
+                <p>{{ post.board?.title || post.board?.name || 'Unknown Board' }}</p>
               </div>
               <div class="block md:hidden">
-                <p>+{{ post.board!.name }}</p>
+                <p>+{{ post.board?.name || 'unknown' }}</p>
               </div>
             </NuxtLink>
             <!-- Admin Pin Icon -->
@@ -136,7 +136,7 @@
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle"
-            :to="`${site.enableBoards ? '/+' + post.board!.name : ''}/post/${post.id}/${post.titleChunk}`">
+            :to="`${site.enableBoards && post.board ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`">
             {{ post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
@@ -209,7 +209,7 @@
               </svg>
             </NuxtLink>
           </li>
-          <li v-if="(post.bodyHTML.length > 800 || post.bodyHTML.includes('<img')) && post.bodyHTML"
+          <li v-if="post.bodyHTML && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img'))"
             class="ml-6 hidden sm:list-item">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700"
               @click="isExpanded = !isExpanded">
@@ -239,7 +239,7 @@
             </button>
           </li>
           <li class="ml-3 sm:ml-6 list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + post.board!.name : ''}/post/${post.id}/${post.titleChunk}`"
+            <NuxtLink :to="`${site.enableBoards && post.board ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
@@ -458,7 +458,7 @@
         </svg>
       </button>-->
       <!-- Stretched link (card mode only) -->
-      <NuxtLink :to="`${site.enableBoards ? '/+' + post.board!.name : ''}/post/${post.id}/${post.titleChunk}`"
+      <NuxtLink :to="`${site.enableBoards && post.board ? '/+' + post.board.name : ''}/post/${post.id}/${post.titleChunk}`"
         class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
     <!-- Avatar - Desktop Only -->
@@ -538,7 +538,7 @@ const isAuthor = computed(() => {
   }
 });
 
-const creatorIsAdmin = props.post.creator?.adminLevel ?? 0 > 0;
+const creatorIsAdmin = (props.post.creator?.adminLevel ?? 0) > 0;
 
 // Admin
 /*const isAdmin = computed(() => {
@@ -590,7 +590,7 @@ const vote = async (type = 0) => {
       message: error.message || "Your vote failed to cast. Please try again.",
       type: "error",
     });
-    console.error(error);
+    if (process.dev) console.error(error);
   }
 };
 
@@ -621,7 +621,7 @@ const save = async () => {
       message: error.message || "Failed to save the post. Please try again.",
       type: "error",
     });
-    console.error(error);
+    if (process.dev) console.error(error);
   } finally {
     isSaveLoading.value = false;
   }

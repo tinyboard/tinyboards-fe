@@ -333,9 +333,12 @@ let hasFocusedBody = ref(false);
 
 // Set image and then destroy in storage.
 const setImage = () => {
-    if (!!sessionStorage.getItem("image")) {
-        image.value = sessionStorage.getItem("image");
-        sessionStorage.removeItem("image");
+    if (process.client && typeof sessionStorage !== 'undefined') {
+        const storedImage = sessionStorage.getItem("image");
+        if (storedImage) {
+            image.value = storedImage;
+            sessionStorage.removeItem("image");
+        }
     }
 };
 
@@ -354,7 +357,9 @@ const onFileChange = (e) => {
         const reader = new FileReader();
         reader.onloadend = () => {
             image.value = reader.result;
-            sessionStorage.removeItem("image");
+            if (process.client && typeof sessionStorage !== 'undefined') {
+                sessionStorage.removeItem("image");
+            }
         };
         reader.readAsDataURL(file);
     } else {
@@ -381,7 +386,7 @@ const preview = () => {
             },
         });
     } else {
-        console.error("No image to preview.");
+        if (process.dev) console.error("No image to preview.");
     }
 };
 
@@ -415,7 +420,7 @@ function submit() {
                     );
                 }
             } else {
-                console.error("Error: Failed to create post");
+                if (process.dev) console.error("Error: Failed to create post");
                 toast.addNotification({
                     header: "Failed to create post",
                     message: "An error occurred while creating the post.",
@@ -425,7 +430,7 @@ function submit() {
             }
         })
         .catch((e) => {
-            console.error("Error: " + e);
+            if (process.dev) console.error("Error: " + e);
             toast.addNotification({
                 header: "Network error",
                 message: "Failed to submit post due to a network error. Please try again.",

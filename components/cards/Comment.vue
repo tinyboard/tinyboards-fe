@@ -295,14 +295,14 @@
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/+' + comment.board.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/+' + comment.board.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -366,7 +366,7 @@ const site = useSiteStore();
 const boardStore = useBoardStore();
 // used for getting the parent post
 const postStore = usePostsStore();
-const modPermissions = boardStore.hasBoard ? boardStore.board!.myModPermissions : 0;
+const modPermissions = boardStore.hasBoard ? boardStore.board?.myModPermissions ?? 0 : 0;
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
@@ -455,14 +455,13 @@ const vote = async (type = 0) => {
       type: "error",
     });
     console.error(error);
-  //   }
-  // });
+  }
 };
 
 const score = computed(() => {
   // return comment.value.score + (comment.value.myVote + voteType.value === 0 ? 0 : voteType.value) || 0
   return comment.value!.score + voteType.value;
-})
+});
 
 // TODO: figure this out
 const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);

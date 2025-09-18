@@ -69,14 +69,14 @@
         <ul class="relative flex flex-grow flex-wrap comments-center space-x-4" v-show="!isCollapsed">
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/+' + comment.board.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards ? '/+' + comment.board!.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/+' + comment.board.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>

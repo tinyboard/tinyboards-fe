@@ -133,7 +133,7 @@ import type { Board } from "@/types/types";
 const props = defineProps<{
     board: Board;
 }>();
-const board = props.board!;
+const board = props.board;
 const isMod = board.myModPermissions !== 0;
 //const boardCounts = props.boardView.counts;
 

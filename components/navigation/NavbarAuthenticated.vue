@@ -381,7 +381,7 @@ const unread = ref(userStore.unread);
 const authCookie = useCookie("token").value;
 const { registerRefreshCallback } = useNotificationRefresh();
 
-const { data: notificationCounts, pending: notificationsPending, error: notificationError, refresh: refreshNotificationCounts } = await useAsyncQuery('GetNotificationCounts');
+const { data: notificationCounts, pending: notificationsPending, error: notificationError, refresh: refreshNotificationCounts } = await useAsyncGql({ operation: 'getNotifications' });
 
 // Register refresh callback for cross-component communication
 onMounted(() => {
@@ -450,9 +450,11 @@ const yellowText = [
 
 const selectedText = ref(null);
 
-if (typeof window === 'undefined') {
+if (process.client && typeof window !== 'undefined') {
 	selectedText.value = shuffle(yellowText)[0] ?? 'It\'s Rails!';
-};
+} else {
+	selectedText.value = 'It\'s Rails!';
+}
 
 // Mobile menu
 const isOpen = ref(false);
