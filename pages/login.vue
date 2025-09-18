@@ -56,7 +56,7 @@
 	const error = ref(false);
 	let reqError = false;
 
-	const redirectTo = useRoute().params?.redirect ?? "/feed";
+	const redirectTo = useRoute().query?.redirect ?? "/feed";
 
 	let userStore = useLoggedInUser();
 	let router = useRouter();

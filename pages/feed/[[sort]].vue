@@ -50,6 +50,32 @@
                     </div>
                     <!-- Posts -->
                     <LazyListsPosts v-if="hasPosts" :isCompact="!preferCardView" :isLoading="false" :hasError="error" />
+                    <!-- Private Instance Error -->
+                    <div v-else-if="error?.isPrivateInstance"
+                        class="px-4 py-24 text-center text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
+                        <div class="max-w-md mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto mb-4 text-gray-400" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                                <circle cx="12" cy="16" r="1"></circle>
+                                <path d="m8 11v-4a4 4 0 0 1 8 0v4"></path>
+                            </svg>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Private Instance</h3>
+                            <p class="mb-4">
+                                This is a private TinyBoards instance.
+                                <br />
+                                You need to log in to view posts and participate.
+                            </p>
+                            <div class="flex gap-3 justify-center">
+                                <NuxtLink to="/login" class="button primary">
+                                    Log in
+                                </NuxtLink>
+                                <NuxtLink to="/register" class="button secondary">
+                                    Sign up
+                                </NuxtLink>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Empty State -->
                     <div v-else-if="isHomeFeed"
                         class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">

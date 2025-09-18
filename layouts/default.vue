@@ -34,12 +34,14 @@ const boardStore = useBoardStore();
 
 const hasBoard = boardStore.hasBoard;
 const primaryColor = hasBoard
-    ? boardStore.board.primaryColor
-    : site.primaryColor;
+    ? boardStore.board?.primaryColor || "60, 105, 145"
+    : site.primaryColor || "60, 105, 145";
 const secondaryColor = hasBoard
-    ? boardStore.board.secondaryColor
-    : site.secondaryColor;
-const hoverColor = hasBoard ? boardStore.board.hoverColor : site.hoverColor;
+    ? boardStore.board?.secondaryColor || "96, 128, 63"
+    : site.secondaryColor || "96, 128, 63";
+const hoverColor = hasBoard
+    ? boardStore.board?.hoverColor || "54, 94, 129"
+    : site.hoverColor || "54, 94, 129";
 
 console.log("setting up head");
 useHead({
@@ -85,33 +87,33 @@ watch(
                 if (boardStore.hasBoard) {
                     r.style.setProperty(
                         "--color-primary",
-                        boardStore.board.primaryColor,
+                        boardStore.board?.primaryColor || "60, 105, 145",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-secondary",
-                        boardStore.board.secondaryColor,
+                        boardStore.board?.secondaryColor || "96, 128, 63",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-primary-hover",
-                        boardStore.board.hoverColor,
+                        boardStore.board?.hoverColor || "54, 94, 129",
                         "important",
                     );
                 } else {
                     r.style.setProperty(
                         "--color-primary",
-                        site.primaryColor,
+                        site.primaryColor || "60, 105, 145",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-secondary",
-                        site.secondaryColor,
+                        site.secondaryColor || "96, 128, 63",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-primary-hover",
-                        site.hoverColor,
+                        site.hoverColor || "54, 94, 129",
                         "important",
                     );
                 }

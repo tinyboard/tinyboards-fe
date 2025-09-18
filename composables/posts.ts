@@ -44,17 +44,93 @@ export function usePagination() {
 export async function usePosts(listingType: ListingType) {
   const postsStore = usePostsStore();
 
-  const { data, error } = await postsStore.fetchPosts({
-    // route,
-    listingType,
-  });
+  let data, error;
+
+  try {
+    const result = await postsStore.fetchPosts({
+      // route,
+      listingType,
+    });
+    data = result.data;
+    error = result.error;
+  } catch (gqlError) {
+    if (process.dev) console.error("Caught GraphQL error:", gqlError);
+
+    // Check if this is a GraphQL error with private instance message
+    const gqlErrorMessages = gqlError?.gqlErrors?.map(err => err.message).join(' ') || '';
+    const errorMessage = gqlError?.message || '';
+
+    const isPrivateInstanceError = gqlErrorMessages.includes('private instance') ||
+                                   gqlErrorMessages.includes('You need an account') ||
+                                   errorMessage.includes('private instance') ||
+                                   errorMessage.includes('You need an account');
+
+    if (isPrivateInstanceError) {
+      // Handle private instance gracefully - set empty posts and continue
+      postsStore.setPosts([]);
+
+      const queryParams = {
+        page: ref(postsStore.options.page),
+        limit: postsStore.options.limit,
+      };
+
+      const hasPosts = computed(() => false);
+      const { loading, loadMore } = usePagination();
+
+      return {
+        hasPosts,
+        error: { isPrivateInstance: true, message: gqlErrorMessages || errorMessage },
+        queryParams,
+        loadMore,
+        loading,
+      };
+    }
+
+    // Re-throw if not a private instance error
+    throw gqlError;
+  }
 
   if (process.dev) console.log("getting posts...");
   if (error.value) {
-    if (process.dev) console.error(JSON.stringify(error, null, 4));
+    if (process.dev) console.error(error.value);
+
+    // Check if this is a private instance error - don't make it fatal
+    // The actual GraphQL error is in the cause property
+    const errorCause = error.value?.cause || error.value;
+    const errorMessage = error.value?.message || '';
+    const gqlErrors = errorCause?.gqlErrors || error.value?.gqlErrors || [];
+    const gqlErrorMessages = gqlErrors.map(err => err.message).join(' ');
+
+    // First check gqlErrors as they are more reliable for GraphQL errors
+    const isPrivateInstanceError = gqlErrorMessages.includes('private instance') ||
+                                   gqlErrorMessages.includes('You need an account') ||
+                                   errorMessage.includes('private instance') ||
+                                   errorMessage.includes('You need an account');
+
+    if (isPrivateInstanceError) {
+      // Handle private instance gracefully - set empty posts and continue
+      postsStore.setPosts([]);
+
+      const queryParams = {
+        page: ref(postsStore.options.page),
+        limit: postsStore.options.limit,
+      };
+
+      const hasPosts = computed(() => false);
+      const { loading, loadMore } = usePagination();
+
+      return {
+        hasPosts,
+        error: { isPrivateInstance: true, message: gqlErrorMessages || errorMessage },
+        queryParams,
+        loadMore,
+        loading,
+      };
+    }
+
     throw createError({
       statusCode: 500,
-      statusMessage: `Error occured while fetching posts: ${JSON.stringify(error, null, 4)}`,
+      statusMessage: `Error occured while fetching posts: ${error.value?.message || 'Unknown error'}`,
       fatal: true,
     });
   }
