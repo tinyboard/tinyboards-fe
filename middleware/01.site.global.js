@@ -37,7 +37,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       variables: {
         shouldLoadSite: true,
         shouldLoadLoggedInUser: hasValidToken,
-        shouldLoadBoard: to.params?.hasOwnProperty("board") ?? false,
+        shouldLoadBoard: !!to.params?.board,
         boardName: to.params?.board,
       },
     });

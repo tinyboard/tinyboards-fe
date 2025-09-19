@@ -157,11 +157,13 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 const searchTerm = ref(route.query.search_term || "");
 
 // Fetch admin users
-const { data: members, pending, error, refresh } = await useAsyncQuery('listMembers', {
-    limit: limit.value,
-    page: page.value,
-    search: route.query.search_term || undefined
-}, {
+const { data: members, pending, error, refresh } = await useAsyncGql({
+    operation: 'listMembers',
+    variables: {
+        limit: limit.value,
+        page: page.value,
+        search: route.query.search_term || undefined
+    },
     transform: (data) => {
         // Filter to only show admin users
         if (data?.listMembers?.members) {

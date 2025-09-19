@@ -138,8 +138,12 @@ const links = [
 ];
 
 // Get notification counts using the correct queries
-const { data: userData, error: userError, pending: userPending } = await useAsyncQuery('getMe');
-const { data: messageCount, error: messageError, pending: messagePending } = await useAsyncQuery('GetUnreadMessageCount');
+const { data: userData, error: userError, pending: userPending } = await useAsyncGql({
+    operation: 'getMe'
+});
+const { data: messageCount, error: messageError, pending: messagePending } = await useAsyncGql({
+    operation: 'GetUnreadMessageCount'
+});
 
 // Handle GraphQL errors more gracefully
 if (userError.value && userError.value?.response) {

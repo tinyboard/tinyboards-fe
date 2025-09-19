@@ -395,53 +395,129 @@ const authCookie = useCookie("token").value;
 
 const isLoading = ref(false);
 
-function submit() {
+async function submit() {
     isLoading.value = true;
 
-    GqlCreatePost({
-        title: title.value,
-        board: boardName.value,
-        body: body.value,
-        link: url.value,
-        isNSFW: isNsfw.value,
-        file: !!image.value ? dataURLtoFile(image.value) : null
-    })
-        .then((data) => {
-            if (data.createPost) {
-                const post = data.createPost;
+    try {
+        const variables = {
+            title: title.value,
+            board: boardName.value,
+            body: body.value,
+            link: url.value,
+            isNSFW: isNsfw.value,
+            file: null  // This will be replaced by the multipart file
+        };
 
-                if (site.enableBoards) {
-                    navigateTo(
-                        `/b/${boardName.value}/p/${post.id}/${post.titleChunk}`
-                    );
-                } else {
-                    navigateTo(
-                        `/p/${post.id}/${post.titleChunk}`
-                    );
+        const createPostQuery = `
+            mutation createPost(
+                $title: String!
+                $board: String
+                $body: String
+                $link: String
+                $isNSFW: Boolean
+                $file: Upload
+            ) {
+                createPost(
+                    title: $title
+                    board: $board
+                    body: $body
+                    link: $link
+                    isNSFW: $isNSFW
+                    file: $file
+                ) {
+                    id
+                    title
+                    titleChunk
+                    url
+                    body
+                    bodyHTML
+                    score
+                    upvotes
+                    downvotes
+                    isNSFW
+                    isRemoved
+                    isDeleted
+                    isLocked
+                    creationDate
+                    updated
+                    isSaved
+                    myVote
+                    featuredLocal
+                    featuredBoard
+                    commentCount
+                    altText
+                    embedTitle
+                    embedDescription
+                    embedVideoUrl
+                    sourceUrl
+                    lastCrawlDate
+                    creator {
+                        id
+                        name
+                        displayName
+                        avatar
+                        isAdmin
+                        instance
+                        creationDate
+                        rep
+                        postCount
+                        commentCount
+                    }
+                    board {
+                        id
+                        name
+                        icon
+                    }
                 }
-            } else {
-                if (process.dev) console.error("Error: Failed to create post");
-                toast.addNotification({
-                    header: "Failed to create post",
-                    message: "An error occurred while creating the post.",
-                    type: "error",
-                    isVisibleOnRouteChange: true,
-                });
             }
-        })
-        .catch((e) => {
-            if (process.dev) console.error("Error: " + e);
+        `;
+
+        let result;
+        if (image.value) {
+            // Use multipart upload for files
+            const file = dataURLtoFile(image.value);
+            const response = await useGqlMultipart({
+                query: createPostQuery,
+                variables: variables,
+                files: { file: file }
+            });
+            result = response.data?.value || response;
+        } else {
+            // Use regular GraphQL for non-file posts
+            result = await GqlCreatePost(variables);
+        }
+        if (result.createPost) {
+            const post = result.createPost;
+
+            if (site.enableBoards) {
+                navigateTo(
+                    `/b/${boardName.value}/p/${post.id}/${post.titleChunk}`
+                );
+            } else {
+                navigateTo(
+                    `/p/${post.id}/${post.titleChunk}`
+                );
+            }
+        } else {
+            if (process.dev) console.error("Error: Failed to create post");
             toast.addNotification({
-                header: "Network error",
-                message: "Failed to submit post due to a network error. Please try again.",
+                header: "Failed to create post",
+                message: "An error occurred while creating the post.",
                 type: "error",
                 isVisibleOnRouteChange: true,
             });
-        })
-        .finally(() => {
-            isLoading.value = false;
+        }
+    } catch (e) {
+        if (process.dev) console.error("Error: " + e);
+        toast.addNotification({
+            header: "Network error",
+            message: "Failed to submit post due to a network error. Please try again.",
+            type: "error",
+            isVisibleOnRouteChange: true,
         });
-
+    } finally {
+        isLoading.value = false;
+    }
 }
 
 const links = [

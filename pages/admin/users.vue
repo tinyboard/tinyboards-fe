@@ -134,10 +134,13 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 const searchTerm = ref(route.query.search_term || "");
 
 // Fetch users
-const { data: members, pending, error, refresh } = await useAsyncQuery('listMembers', {
-	limit: limit.value,
-	page: page.value,
-	search: route.query.search_term || undefined
+const { data: members, pending, error, refresh } = await useAsyncGql({
+	operation: 'listMembers',
+	variables: {
+		limit: limit.value,
+		page: page.value,
+		search: route.query.search_term || undefined
+	}
 });
 
 const totalPages = computed(() => {

@@ -21,7 +21,7 @@
         <!-- Profile Actions -->
         <div v-if="isSelf" class="py-2 text-sm">
           <MenuItem disabled v-slot="{ active, close }">
-          <NuxtLink to="/settings/profile" @click="close()" class="group flex items-center w-full px-4 py-1.5"
+          <NuxtLink to="/settings/" @click="close()" class="group flex items-center w-full px-4 py-1.5"
             :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
               stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

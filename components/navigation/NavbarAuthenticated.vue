@@ -76,7 +76,7 @@
 					<!-- User Links -->
 					<div class="header-menu-profile ml-4 flex items-center space-x-2 md:ml-6">
 						<!-- Admin Tools Link -->
-						<NuxtLink v-if="v.is_admin" to="/admin"
+						<NuxtLink v-if="v && v.adminLevel > 0" to="/admin"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
 							title="Admin control panel">
 							<span class="sr-only">View admin tools</span>
@@ -232,7 +232,7 @@
 						<!-- Username -->
 						<p class="text-sm text-gray-900 leading-normal">
 							<strong>{{ v.name }}</strong>
-							<span v-if="v.is_admin" class="ml-1 badge badge-red">Admin</span>
+							<span v-if="v && v.adminLevel > 0" class="ml-1 badge badge-red">Admin</span>
 						</p>
 						<!-- User Reputation -->
 						<div class="flex items-center text-xs">
@@ -270,7 +270,7 @@
 				<span>Posts</span>
 			</NuxtLink>
 			<!-- My Settings Link -->
-			<NuxtLink to="/settings/profile"
+			<NuxtLink to="/settings/"
 				class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
 				@click="toggleDrawer">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
@@ -382,10 +382,14 @@ const authCookie = useCookie("token").value;
 const { registerRefreshCallback } = useNotificationRefresh();
 
 // Use getMe query which includes notification counts
-const { data: userData, pending: userPending, error: userError, refresh: refreshUserData } = await useAsyncQuery('getMe');
+const { data: userData, pending: userPending, error: userError, refresh: refreshUserData } = await useAsyncGql({
+    operation: 'getMe'
+});
 
 // Get unread message count separately
-const { data: messageCount, pending: messagesPending, error: messagesError, refresh: refreshMessageCount } = await useAsyncQuery('GetUnreadMessageCount');
+const { data: messageCount, pending: messagesPending, error: messagesError, refresh: refreshMessageCount } = await useAsyncGql({
+    operation: 'GetUnreadMessageCount'
+});
 
 // Register refresh callback for cross-component communication
 onMounted(() => {

@@ -72,7 +72,9 @@ definePageMeta({
 const toast = useToastStore();
 
 // Fetch site settings using GraphQL
-const { data, pending, error, refresh } = await useAsyncQuery('getSite');
+const { data, pending, error, refresh } = await useAsyncGql({
+    operation: 'getSite'
+});
 
 // Settings.
 const settings = ref({});

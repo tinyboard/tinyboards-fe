@@ -9,9 +9,9 @@
                   <div class="col-span-full flex gap-6 sm:py-6">
                         <!-- Thread -->
                         <div class="relative w-full">
-                              <component v-if="post?.value" :post="post.value" :comments="comments"
+                              <component v-if="staticPost" :post="staticPost" :comments="comments"
                                     :is="canViewPost ? thread : threadRemoved" />
-                              <LazyContainersCommentSection v-if="post?.value" :post="post.value" :comments="comments" />
+                              <LazyContainersCommentSection v-if="staticPost" :post="staticPost" :comments="comments" />
                               <!-- Error -->
                               <div v-else class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
@@ -22,7 +22,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread :post="post?.value" />
+                        <ContainersSidebarThread v-if="post?.value" :post="post.value" />
                   </div>
             </section>
       </main>
@@ -80,7 +80,32 @@ if (Number.isNaN(postID)) {
 }
 
 // Post
-let { post, error } = await usePost(postID);
+let { post, error, data } = await usePost(postID);
+
+// Use staticPost approach to avoid hydration issues with computed refs
+const staticPost = ref(null);
+watch(() => data.value, (newDataValue) => {
+  if (newDataValue?.post && !staticPost.value) {
+    const postData = { ...newDataValue.post };
+
+    // Fix media URLs to use correct backend domain/port
+    const config = useRuntimeConfig();
+    const backendUrl = `${config.public.useHttps ? 'https' : 'http'}://${config.public.domain}`;
+
+    if (postData.url && postData.url.includes('/media/')) {
+      // Extract just the media path and prepend correct backend URL
+      const mediaPath = postData.url.substring(postData.url.indexOf('/media/'));
+      postData.url = backendUrl + mediaPath;
+    }
+    if (postData.image && postData.image.includes('/media/')) {
+      // Extract just the media path and prepend correct backend URL
+      const mediaPath = postData.image.substring(postData.image.indexOf('/media/'));
+      postData.image = backendUrl + mediaPath;
+    }
+
+    staticPost.value = postData;
+  }
+}, { immediate: true });
 
 if (error.value && error.value.response) {
       throw createError({
@@ -118,11 +143,11 @@ if (site.enableBoards && post?.value?.board?.name) {
       // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
-            await navigateTo(`/b/${boardName}/p/${post.value.id}/${post.value.titleSlug}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+            await navigateTo(`/b/${boardName}/p/${post.value.id}/${post.value.titleChunk}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
       }
 } else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      await navigateTo(`/p/${post?.value?.id || 'unknown'}/${post?.value?.titleSlug || 'unknown'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+      await navigateTo(`/p/${post?.value?.id || 'unknown'}/${post?.value?.titleChunk || 'unknown'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
 }
 
 

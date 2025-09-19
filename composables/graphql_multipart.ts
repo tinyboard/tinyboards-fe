@@ -17,10 +17,13 @@ export async function useGqlMultipart(
 	}) {
 	const f = new FormData();
 
-	f.append("operations", JSON.stringify({
-		query: query.replace('\t', '').replace('\n', ''),
+	const cleanedQuery = query.replace(/\s+/g, ' ').trim();
+	const operations = {
+		query: cleanedQuery,
 		variables
-	}));
+	};
+
+	f.append("operations", JSON.stringify(operations));
 
 	// file map
 	let i = 0;
@@ -32,6 +35,7 @@ export async function useGqlMultipart(
 		f.append(i.toString(), file);
 		i++;
 	}
+
 	f.append("map", JSON.stringify(fileMap));
 
 	return useAPI('/graphql', {

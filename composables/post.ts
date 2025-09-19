@@ -12,7 +12,7 @@ import type { EditPostMutation } from "#gql";
  * @returns A `Promise` with either a `Post` object or a server error.
  */
 export async function usePost(id: number): Promise<{
-  post: Post;
+  post: any;
   error: any;
 }> {
   const route = useRoute();
@@ -31,20 +31,24 @@ export async function usePost(id: number): Promise<{
     topCommentId
   });
 
-  const post = data.value?.post;
+  // Create a computed ref that reacts to changes in data
+  const post = computed(() => {
+    const postData = data.value?.post;
 
-  commentsStore.setComments(post.comments);
-  // organize post comments into a tree
-  post.comments = treeComments(post.comments);
+    if (postData && postData.comments) {
+      commentsStore.setComments(postData.comments);
+      // organize post comments into a tree
+      postData.comments = treeComments(postData.comments);
+      postsStore.setPosts([postData]);
+    }
 
-  postsStore.setPosts([post]);
-  //console.log(comments);
-
-  //console.log(comments);
+    return postData;
+  });
 
   return {
     post,
-    error
+    error,
+    data  // Also return the raw data for debugging
   };
 }
 

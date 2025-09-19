@@ -231,10 +231,13 @@ export async function getModQueue(query: any, type_: string) {
   let totalCount = ref(0);
 
   async function request(query: any) {
-    const { data, pending, error, refresh } = await useAsyncQuery('getModerationQueue', {
-      limit: query.limit || 25,
-      page: query.page || 1,
-      type: type_
+    const { data, pending, error, refresh } = await useAsyncGql({
+      operation: 'getModerationQueue',
+      variables: {
+        limit: query.limit || 25,
+        page: query.page || 1,
+        type: type_
+      }
     });
 
     if (data.value?.getModerationQueue) {

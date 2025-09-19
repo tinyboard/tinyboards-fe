@@ -115,7 +115,7 @@ const {
   variables: {
     page: 1,
     limit: 8,
-    sort: 'creationDate',
+    sort: 'new',
     listingType: 'all'
   }
 });
@@ -131,9 +131,10 @@ const users = computed(() => {
         displayName: user.displayName,
         avatar: user.avatar,
         banner: user.banner || user.profileBackground,
-        bio: user.bio
-      },
-      creation_date: user.creationDate
+        bio: user.bio,
+        creation_date: user.creationDate,
+        is_admin: user.adminLevel > 0
+      }
     }))
   };
 });

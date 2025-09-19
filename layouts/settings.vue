@@ -44,10 +44,10 @@ const route = useRoute();
 const site = useSiteStore();
 const boardStore = useBoardStore();
 
-const isBoardActive = boardStore.board != {};
+const isBoardActive = boardStore.board && Object.keys(boardStore.board).length > 0;
 const board = isBoardActive ? boardStore.board : null;
-const boardName = isBoardActive ? board.name : "";
-const isMod = isBoardActive ? board.myModPermissions !== 0 : false;
+const boardName = isBoardActive ? board?.name : "";
+const isMod = isBoardActive ? board?.myModPermissions !== 0 : false;
 
 definePageMeta({
     isLeftNavbarDisabled: true,
@@ -61,7 +61,7 @@ definePageMeta({
 // });
 
 const profileLinks = [
-    { name: "Profile", href: "/settings/profile" },
+    { name: "Profile", href: "/settings/" },
     { name: "Account", href: "/settings/account" },
     { name: "Notifications", href: "/settings/notifications" },
     { name: "Content", href: "/settings/content" },
@@ -69,10 +69,10 @@ const profileLinks = [
 ];
 
 const boardLinks = [
-    { name: "General", href: `/+${boardName}/mod/settings` },
-    { name: "Appearance", href: `/+${boardName}/mod/appearance` },
-    { name: "Sidebar", href: `/+${boardName}/mod/sidebar` },
-    { name: "Mods", href: `/+${boardName}/mod/mods` },
-    { name: "Banned Users", href: `/+${boardName}/mod/bans` },
+    { name: "General", href: `/b/${boardName}/mod/settings` },
+    { name: "Appearance", href: `/b/${boardName}/mod/appearance` },
+    { name: "Sidebar", href: `/b/${boardName}/mod/sidebar` },
+    { name: "Mods", href: `/b/${boardName}/mod/mods` },
+    { name: "Banned Users", href: `/b/${boardName}/mod/bans` },
 ];
 </script>

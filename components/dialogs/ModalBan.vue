@@ -213,17 +213,19 @@ const ban = async () => {
         // Board-specific ban
         const result = await $fetch('#gql', {
           query: `
-            mutation banUserFromBoard($boardId: Int!, $userId: Int!, $reason: String, $expires: String) {
-              banUserFromBoard(boardId: $boardId, userId: $userId, reason: $reason, expires: $expires) {
+            mutation banUserFromBoard($input: BoardBanUserInput!) {
+              banUserFromBoard(input: $input) {
                 success
               }
             }
           `,
           variables: {
-            boardId,
-            userId,
-            reason: reason.value || 'breaking board rules',
-            expires: expirationDate
+            input: {
+              boardId,
+              userId,
+              reason: reason.value || 'breaking board rules',
+              expires: expirationDate
+            }
           }
         });
 
@@ -240,16 +242,18 @@ const ban = async () => {
         // Site-wide ban
         const result = await $fetch('#gql', {
           query: `
-            mutation banUser($userId: Int!, $reason: String, $expires: String) {
-              banUser(userId: $userId, reason: $reason, expires: $expires) {
+            mutation banUser($input: BanUserInput!) {
+              banUser(input: $input) {
                 success
               }
             }
           `,
           variables: {
-            userId,
-            reason: reason.value || `breaking ${site.name} rules`,
-            expires: expirationDate
+            input: {
+              userId,
+              reason: reason.value || `breaking ${site.name} rules`,
+              expires: expirationDate
+            }
           }
         });
 

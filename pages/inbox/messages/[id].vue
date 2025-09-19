@@ -148,10 +148,12 @@
 
 		try {
 			const result = await GqlSendMessage({
-				recipientId: recipientId.value,
-				subject: "Message", // Default subject
-				body: messageContent,
-				conversationId: conversationId.value
+				input: {
+					recipientId: recipientId.value,
+					subject: "Message", // Default subject
+					body: messageContent,
+					conversationId: conversationId.value
+				}
 			});
 
 			if (result?.sendMessage?.message) {
@@ -221,8 +223,10 @@
 		isEditingMessage.value = true;
 		try {
 			const result = await GqlEditMessage({
-				messageId: message.id,
-				body: editMessageText.value.trim()
+				input: {
+					messageId: message.id,
+					body: editMessageText.value.trim()
+				}
 			});
 
 			if (result?.editMessage?.message) {

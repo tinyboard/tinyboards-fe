@@ -121,7 +121,9 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch user settings using GraphQL
-const { data, pending, error, refresh } = await useAsyncQuery('getSettings');
+const { data, pending, error, refresh } = await useAsyncGql({
+	operation: 'getSettings'
+});
 
 // Settings.
 let settings = ref({});

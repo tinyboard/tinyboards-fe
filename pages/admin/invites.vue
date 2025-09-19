@@ -93,7 +93,9 @@ const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
 // Fetch site settings using GraphQL
-const { data: siteData, pending: sitePending, error: siteError } = await useAsyncQuery('getSite');
+const { data: siteData, pending: sitePending, error: siteError } = await useAsyncGql({
+	operation: 'getSite'
+});
 const site = computed(() => siteData.value?.site || {});
 
 // Pagination
@@ -101,9 +103,12 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch invites
-const { data: invitesData, pending: pendingInvites, error: errorInvites, refresh: refreshInvites } = await useAsyncQuery('listInvites', {
-	limit: limit.value,
-	page: page.value
+const { data: invitesData, pending: pendingInvites, error: errorInvites, refresh: refreshInvites } = await useAsyncGql({
+	operation: 'listInvites',
+	variables: {
+		limit: limit.value,
+		page: page.value
+	}
 });
 const invites = computed(() => invitesData.value?.listInvites || { invites: [], total_count: 0 });
 

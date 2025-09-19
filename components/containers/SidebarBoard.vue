@@ -7,7 +7,7 @@
         <!-- Create Post -->
         <NuxtLink
             v-if="!postPage"
-            :to="`/+${board.value.name}/submit`"
+            :to="`/b/${board.value.name}/submit`"
             class="flex items-center button primary"
         >
             <svg
@@ -78,7 +78,7 @@
             <ul class="flex flex-col space-y-2 py-2">
                 <li>
                     <NuxtLink
-                        :to="`/+${board.value.name}/mod/settings`"
+                        :to="`/b/${board.value.name}/mod/settings`"
                         class="flex items-center"
                     >
                         <svg
@@ -309,7 +309,7 @@
                 <h2 class="font-bold leading-5 text-base">
                     <span>Moderators</span>
                 </h2>
-                <NuxtLink :to="`/+${board.value.name}/mod/mods`" class="text-sm"
+                <NuxtLink :to="`/b/${board.value.name}/mod/mods`" class="text-sm"
                     >View all</NuxtLink
                 >
             </div>
@@ -353,7 +353,7 @@
                     </NuxtLink>
                 </li>
             </ul>
-            <NuxtLink v-if="mods.value.length > 7" :to="`/+${board.value.name}/mod/mods`"
+            <NuxtLink v-if="mods.value.length > 7" :to="`/b/${board.value.name}/mod/mods`"
                 >View {{ mods.value.length - 7 }} more</NuxtLink
             >
         </div>
@@ -410,7 +410,7 @@ const modSelf = async () => {
 
     if (data.value) {
         //userStore.addModdedBoard(boardStore.boardView);
-        router.push(`/+${board.value.name}/mod/mods`);
+        router.push(`/b/${board.value.name}/mod/mods`);
     } else {
         console.error(error.value);
     }

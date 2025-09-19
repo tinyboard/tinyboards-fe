@@ -78,9 +78,17 @@ if (error.value && error.value.response) {
 
 const user = userData.value?.user;
 
+if (!user) {
+    throw createError({
+        statusCode: 404,
+        statusMessage: "User not found",
+        fatal: true,
+    });
+}
+
 //postsStore.options.userId = user.id;
 
-const { loading, loadMore } = usePreloadedPosts(user.posts, user.id);
+const { loading, loadMore } = usePreloadedPosts(user.posts || [], user.id);
 
 if (user.isDeleted) {
     title.value = "Deleted Account";

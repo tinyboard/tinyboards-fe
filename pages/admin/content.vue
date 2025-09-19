@@ -101,7 +101,9 @@ const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data, pending, error, refresh } = await useAsyncQuery('getSite');
+const { data, pending, error, refresh } = await useAsyncGql({
+    operation: 'getSite'
+});
 
 // Settings.
 const settings = ref({});

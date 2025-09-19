@@ -467,8 +467,11 @@ const user = userStore.user;
 const isLoading = ref(false);
 
 // Fetch moderators using GraphQL
-const { data, pending, error, refresh } = await useAsyncQuery('getBoardModerators', {
-    boardId: board.id
+const { data, pending, error, refresh } = await useAsyncGql({
+    operation: 'getBoardModerators',
+    variables: {
+        boardId: board.id
+    }
 });
 
 const mods = computed(() => data.value?.getBoardModerators?.filter(mod => mod.inviteAccepted) || []);

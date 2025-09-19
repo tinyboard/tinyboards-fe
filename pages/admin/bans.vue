@@ -110,9 +110,12 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch banned users using the auto-generated GraphQL operation
-const { data: bans, pending, error, refresh } = await useAsyncQuery('listBannedUsers', {
-    limit: limit.value,
-    page: page.value
+const { data: bans, pending, error, refresh } = await useAsyncGql({
+    operation: 'listBannedUsers',
+    variables: {
+        limit: limit.value,
+        page: page.value
+    }
 });
 
 const totalPages = computed(() => {

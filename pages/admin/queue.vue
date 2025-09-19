@@ -297,13 +297,18 @@ const bulkActionLoading = ref(false);
 const selectedApplications = ref([]);
 
 // Fetch applications
-const { data: applications, pending, error, refresh } = await useAsyncQuery('listRegistrationApplications', {
-	limit: limit.value,
-	offset: (page.value - 1) * limit.value
+const { data: applications, pending, error, refresh } = await useAsyncGql({
+	operation: 'listRegistrationApplications',
+	variables: {
+		limit: limit.value,
+		offset: (page.value - 1) * limit.value
+	}
 });
 
 // Fetch application count
-const { data: countData } = await useAsyncQuery('registrationApplicationsCount');
+const { data: countData } = await useAsyncGql({
+	operation: 'registrationApplicationsCount'
+});
 const applicationCount = computed(() => countData.value?.registrationApplicationsCount || 0);
 
 // Mock data for now - these would come from API

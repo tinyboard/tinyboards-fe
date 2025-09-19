@@ -71,10 +71,13 @@ const unreadCount = ref(0);
 
 const type = ref(route.params?.type || 'replies');
 
-const { data: notifications, pending, error, refresh } = await useAsyncQuery('getNotifications', {
-	unreadOnly: type.value === 'unread',
-	limit: limit.value,
-	page: page.value
+const { data: notifications, pending, error, refresh } = await useAsyncGql({
+	operation: 'getNotifications',
+	variables: {
+		unreadOnly: type.value === 'unread',
+		limit: limit.value,
+		page: page.value
+	}
 });
 
 if (error.value && error.value.response) {

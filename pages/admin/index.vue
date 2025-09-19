@@ -211,9 +211,12 @@ const {
   pending,
   error,
   refresh,
-} = await useAsyncQuery('listMembers', {
-  limit: 5,
-  sort: 'MostReputation'
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    limit: 5,
+    sort: 'mostRep'
+  }
 });
 
 const {
@@ -221,9 +224,12 @@ const {
   pending: membersNewPending,
   error: membersNewError,
   refresh: membersNewRefresh,
-} = await useAsyncQuery('listMembers', {
-  limit: 5,
-  sort: 'New'
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    limit: 5,
+    sort: 'new'
+  }
 });
 
 const {
@@ -231,9 +237,12 @@ const {
   pending: membersPostsPending,
   error: membersPostsError,
   refresh: membersPostsRefresh,
-} = await useAsyncQuery('listMembers', {
-  limit: 5,
-  sort: 'MostPosts'
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    limit: 5,
+    sort: 'mostPosts'
+  }
 });
 
 // Fetch moderation statistics
@@ -242,5 +251,7 @@ const {
   pending: moderationStatsPending,
   error: moderationStatsError,
   refresh: moderationStatsRefresh,
-} = await useAsyncQuery('getModerationStats');
+} = await useAsyncGql({
+  operation: 'getModerationStats'
+});
 </script>

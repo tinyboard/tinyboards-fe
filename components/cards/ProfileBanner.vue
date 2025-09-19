@@ -116,7 +116,7 @@
 				<!-- Actions -->
 				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
 					<li v-if="isSelf">
-						<NuxtLink to="/settings/profile" class="button button-sm white">
+						<NuxtLink to="/settings/" class="button button-sm white">
 							Edit profile
 						</NuxtLink>
 					</li>

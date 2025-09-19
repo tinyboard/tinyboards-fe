@@ -86,7 +86,9 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch user data to get current notification settings
-const { data: userData, pending, error } = await useAsyncQuery('getMe');
+const { data: userData, pending, error } = await useAsyncGql({
+  operation: 'getMe'
+});
 
 // Initialize settings with default values
 let settings = ref({

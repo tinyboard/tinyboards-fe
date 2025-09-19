@@ -36,7 +36,7 @@
                 <div v-if="searchQuery !== ''" class="py-2 text-sm">
                     <MenuItem as="div" v-slot="{ active, close }">
                     <!-- Go to board - if search is active -->
-                    <NuxtLink :to="`/+${searchQuery}`" :class="[
+                    <NuxtLink :to="`/b/${searchQuery}`" :class="[
                         active
                             ? 'bg-gray-100 text-gray-900'
                             : 'text-gray-800',
@@ -104,7 +104,7 @@
                         <a @click="recentBoardsUnfiltered = []" class="cursor-pointer hover:underline">Clear</a>
                     </div>
                     <MenuItem as="div" v-slot="{ isActive, close }">
-                    <NuxtLink v-for="board in recentBoards" :key="board.name" :to="`/+${board.name}`" :class="[
+                    <NuxtLink v-for="board in recentBoards" :key="board.name" :to="`/b/${board.name}`" :class="[
                         isActive ? 'bg-gray-100' : 'hover:bg-gray-100',
                         'group flex items-center w-full px-4 py-1.5',
                     ]" @click="close">
@@ -124,7 +124,7 @@
                         Joined boards
                     </div>
                     <MenuItem as="div" v-slot="{ isActive, close }">
-                    <NuxtLink v-for="board in joinedBoards" :key="board.name" :to="`/+${board.name}`" :class="[
+                    <NuxtLink v-for="board in joinedBoards" :key="board.name" :to="`/b/${board.name}`" :class="[
                         isActive ? 'bg-gray-100' : 'hover:bg-gray-100',
                         'group flex items-center w-full px-4 py-1.5',
                     ]" @click="close">
@@ -146,7 +146,7 @@
                         Moderated boards
                     </div>
                     <MenuItem as="div" v-slot="{ isActive, close }">
-                    <NuxtLink v-for="board in moderatedBoards" :key="board.name" :to="`/+${board.name}`" :class="[
+                    <NuxtLink v-for="board in moderatedBoards" :key="board.name" :to="`/b/${board.name}`" :class="[
                         isActive ? 'bg-gray-100' : 'hover:bg-gray-100',
                         'group flex items-center w-full px-4 py-1.5',
                     ]" @click="close">

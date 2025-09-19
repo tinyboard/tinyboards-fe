@@ -202,7 +202,9 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings.
-const { data: siteData, pending, error, refresh } = await useAsyncQuery('getSite');
+const { data: siteData, pending, error, refresh } = await useAsyncGql({
+  operation: 'getSite'
+});
 const data = computed(() => ({ value: siteData.value?.site }));
 
 // Convert colors from rgb to hex

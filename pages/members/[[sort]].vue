@@ -209,14 +209,14 @@ const sort = computed(() => {
 
 // Map REST sort options to GraphQL enum values
 const gqlSortMap = {
-    "new": "creationDate",
-    "old": "creationDate",
-    "mostcomments": "commentCount",
-    "mostposts": "postCount",
-    "mostrep": "commentScore"
+    "new": "new",
+    "old": "old",
+    "mostcomments": "mostComments",
+    "mostposts": "mostPosts",
+    "mostrep": "mostRep"
 };
 
-const gqlSort = computed(() => gqlSortMap[sort.value] || "creationDate");
+const gqlSort = computed(() => gqlSortMap[sort.value] || "new");
 
 // Use GraphQL query instead of REST API
 const {

@@ -1,10 +1,9 @@
 enum UserSortType {
-  name
-  creationDate
-  postCount
-  commentCount
-  postScore
-  commentScore
+  new
+  old
+  mostRep
+  mostPosts
+  mostComments
 }
 
 enum UserListingType {

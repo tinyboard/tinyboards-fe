@@ -1,4 +1,4 @@
-mutation EditMessage($input: EditMessageInput!) {
+mutation editMessage($input: EditMessageInput!) {
   editMessage(input: $input) {
     message {
       id

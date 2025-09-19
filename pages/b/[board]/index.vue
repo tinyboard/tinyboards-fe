@@ -13,13 +13,13 @@
                 class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6"
             >
                 <!-- Banner -->
-                <LazyCardsBoardBanner
-                    v-if="route.params?.board"
-                    :board="board"
+                <CardsBoardBanner
+                    v-if="shouldShowBoardBanner"
+                    :board="board.value"
                     class="col-span-full"
                 />
                 <LazyCardsBanner
-                    v-else
+                    v-if="!route.params?.board"
                     title="Feed"
                     sub-title="Welcome to the awesome and exciting front page."
                     image-url="/img/artwork/front-page.jpeg"
@@ -41,11 +41,11 @@
                     >
                         <div class="text-center flex flex-col items-center">
                             <img
-                                :src="board?.icon || '/img/default-board-icon.png'"
+                                :src="board.value?.icon || '/img/default-board-icon.png'"
                                 class="bg-white p-[2px] border border-gray-300 w-32 h-32"
                             />
                             <h1 class="text-3xl text-gray-700 font-bold mt-4">
-                                Welcome to +{{ board?.name || 'Unknown Board' }}
+                                Welcome to +{{ board.value?.name || 'Unknown Board' }}
                             </h1>
                             <p class="text-md text-gray-500">
                                 Right now it's empty here. Let's get started by
@@ -53,8 +53,8 @@
                             </p>
                             <!-- Create Post -->
                             <NuxtLink
-                                v-if="!submitPage && board?.name"
-                                :to="`/+${board.name}/submit`"
+                                v-if="!submitPage && board.value?.name"
+                                :to="`/b/${board.value.name}/submit`"
                                 class="flex items-center button primary mt-4"
                             >
                                 <svg
@@ -184,25 +184,27 @@
                             </div>
                         </div>
                         <!-- Posts -->
-                        <LazyListsPosts
-                            v-if="hasPosts"
-                            :isCompact="!preferCardView"
-                            :isLoading="pending"
-                            :hasError="error"
-                        />
-                        <!-- Empty State -->
-                        <div
-                            v-else
-                            class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800"
-                        >
-                            <p>
-                                <span class="font-medium">
-                                    There are no posts
-                                </span>
-                                <br />
-                                but you can be the first...
-                            </p>
-                        </div>
+                        <ClientOnly>
+                            <LazyListsPosts
+                                v-if="hasPosts"
+                                :isCompact="!preferCardView"
+                                :isLoading="pending"
+                                :hasError="error"
+                            />
+                            <!-- Empty State -->
+                            <div
+                                v-else
+                                class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800"
+                            >
+                                <p>
+                                    <span class="font-medium">
+                                        There are no posts
+                                    </span>
+                                    <br />
+                                    but you can be the first...
+                                </p>
+                            </div>
+                        </ClientOnly>
                         <!-- Pagination -->
                         <LazyNavigationPaginate2
                             @paginate="loadMore"
@@ -232,6 +234,8 @@ import { getListing } from "@/composables/listing";
 // import { getBoard } from "@/composables/board";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { mapToListingType } from "@/types/types";
+import CardsBoardBanner from "@/components/cards/BoardBanner.vue";
 
 // Import sidebar components
 const Sidebar = defineAsyncComponent(
@@ -258,9 +262,14 @@ if (route.params?.board && !boardStore.hasBoard) {
 }
 
 //const boardView = boardStore.boardView;
-const board = boardStore.board || {};
+const board = computed(() => boardStore.board || {});
 //const boardCounts = boardView.counts;
-const moderators = board.moderators || [];
+const moderators = computed(() => board.value.moderators || []);
+
+// Computed property for banner display
+const shouldShowBoardBanner = computed(() => {
+    return route.params?.board && boardStore.hasBoard && board.value && board.value.id;
+});
 
 console.log("stores have been set up");
 
@@ -269,9 +278,9 @@ definePageMeta({
     title: "Board Listing",
 });
 
-const title = board?.is_removed
-    ? `+${board?.name || 'Unknown'}: Banned`
-    : `${board?.title ?? board?.name ?? 'Unknown Board'} (+${board?.name ?? 'unknown'})`;
+const title = computed(() => board.value?.is_removed
+    ? `+${board.value?.name || 'Unknown'}: Banned`
+    : `${board.value?.title ?? board.value?.name ?? 'Unknown Board'} (+${board.value?.name ?? 'unknown'})`);
 
 useHead({
     title,
@@ -312,8 +321,7 @@ const welcome = ref(route.query.hasOwnProperty("welcome"));
 
 // Posts
 const { hasPosts, error, queryParams, loadMore, loading } = await usePosts(
-    route,
-    "all",
+    mapToListingType("local")
 );
 /*const postsStore = usePostsStore();
 console.log("using posts store");
@@ -360,8 +368,8 @@ const totalPages = computed(() => {
     });*/
 
 // Links for sub navbar
-const links = [
-    { name: "Posts", href: `/+${board.name}` },
-    { name: "About", href: `/+${board.name}/sidebar` },
-];
+const links = computed(() => [
+    { name: "Posts", href: `/b/${board.value?.name}` },
+    { name: "About", href: `/b/${board.value?.name}/sidebar` },
+]);
 </script>

@@ -278,12 +278,8 @@ const isMod = board.myModPermissions !== 0;
 const isAdmin = requirePermission("boards");
 const isLoading = ref(false);
 
-// GraphQL mutations
-const { mutate: addSelfAsModerator } = useMutation('adminAddSelfAsMod');
-const { mutate: removeSelfAsModerator } = useMutation('adminRemoveSelfAsMod');
-const { mutate: banBoardMutation } = useMutation('adminBanBoard');
-const { mutate: unbanBoardMutation } = useMutation('adminUnbanBoard');
-const { mutate: excludeBoardMutation } = useMutation('excludeBoardFromAll');
+// Use the auto-generated GraphQL client functions from nuxt-graphql-client
+const { $gql } = useNuxtApp();
 
 // Methods
 const addSelfAsMod = async () => {
@@ -291,14 +287,16 @@ const addSelfAsMod = async () => {
     
     try {
         isLoading.value = true;
-        const result = await addSelfAsModerator({
-            board_id: board.id,
-            permissions: null // Full permissions by default
+        const result = await $gql.mutation({
+            adminAddSelfAsMod: {
+                boardId: board.id,
+                permissions: null // Full permissions by default
+            }
         });
-        
-        if (result.data) {
+
+        if (result.adminAddSelfAsMod) {
             // Update local board store
-            boardStore.updateBoard(result.data.adminAddSelfAsMod);
+            boardStore.updateBoard(result.adminAddSelfAsMod);
             toast.addNotification({
                 header: 'Success',
                 message: `You are now a moderator of +${board.name}`,
@@ -322,13 +320,15 @@ const removeSelfAsMod = async () => {
     
     try {
         isLoading.value = true;
-        const result = await removeSelfAsModerator({
-            board_id: board.id
+        const result = await $gql.mutation({
+            adminRemoveSelfAsMod: {
+                boardId: board.id
+            }
         });
-        
-        if (result.data) {
+
+        if (result.adminRemoveSelfAsMod) {
             // Update local board store
-            boardStore.updateBoard(result.data.adminRemoveSelfAsMod);
+            boardStore.updateBoard(result.adminRemoveSelfAsMod);
             toast.addNotification({
                 header: 'Success',
                 message: `You are no longer a moderator of +${board.name}`,
@@ -357,15 +357,17 @@ const banBoard = async () => {
     
     try {
         isLoading.value = true;
-        const result = await banBoardMutation({
-            board_id: board.id,
-            public_reason: publicReason,
-            admin_notes: adminNotes || null
+        const result = await $gql.mutation({
+            adminBanBoard: {
+                boardId: board.id,
+                publicReason: publicReason,
+                adminNotes: adminNotes || null
+            }
         });
-        
-        if (result.data) {
+
+        if (result.adminBanBoard) {
             // Update local board store
-            boardStore.updateBoard(result.data.adminBanBoard);
+            boardStore.updateBoard(result.adminBanBoard);
             toast.addNotification({
                 header: 'Board Banned',
                 message: `+${board.name} has been banned`,
@@ -393,13 +395,15 @@ const unbanBoard = async () => {
     
     try {
         isLoading.value = true;
-        const result = await unbanBoardMutation({
-            board_id: board.id
+        const result = await $gql.mutation({
+            adminUnbanBoard: {
+                boardId: board.id
+            }
         });
-        
-        if (result.data) {
+
+        if (result.adminUnbanBoard) {
             // Update local board store
-            boardStore.updateBoard(result.data.adminUnbanBoard);
+            boardStore.updateBoard(result.adminUnbanBoard);
             toast.addNotification({
                 header: 'Board Unbanned',
                 message: `+${board.name} has been unbanned`,
@@ -430,14 +434,16 @@ const toggleBoardFromAll = async () => {
     
     try {
         isLoading.value = true;
-        const result = await excludeBoardMutation({
-            board_id: board.id,
-            exclude: exclude
+        const result = await $gql.mutation({
+            excludeBoardFromAll: {
+                boardId: board.id,
+                exclude: exclude
+            }
         });
-        
-        if (result.data) {
+
+        if (result.excludeBoardFromAll) {
             // Update local board store
-            boardStore.updateBoard(result.data.excludeBoardFromAll);
+            boardStore.updateBoard(result.excludeBoardFromAll);
             toast.addNotification({
                 header: 'Board Updated',
                 message: `+${board.name} will ${exclude ? 'not appear' : 'appear'} in /all feed`,

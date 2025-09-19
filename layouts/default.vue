@@ -32,18 +32,33 @@ const route = useRoute();
 const router = useRouter();
 const boardStore = useBoardStore();
 
+// Helper function to convert hex to RGB
+function hexToRgb(hex) {
+    if (!hex) return null;
+    // Remove # if present
+    hex = hex.replace('#', '');
+    if (hex.length !== 6) return null;
+
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    return `${r}, ${g}, ${b}`;
+}
+
 const hasBoard = boardStore.hasBoard;
 const primaryColor = hasBoard
-    ? boardStore.board?.primaryColor || "60, 105, 145"
+    ? hexToRgb(boardStore.board?.primaryColor) || "60, 105, 145"
     : site.primaryColor || "60, 105, 145";
 const secondaryColor = hasBoard
-    ? boardStore.board?.secondaryColor || "96, 128, 63"
+    ? hexToRgb(boardStore.board?.secondaryColor) || "96, 128, 63"
     : site.secondaryColor || "96, 128, 63";
 const hoverColor = hasBoard
-    ? boardStore.board?.hoverColor || "54, 94, 129"
+    ? hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129"
     : site.hoverColor || "54, 94, 129";
 
 console.log("setting up head");
+
 useHead({
     bodyAttrs: {
         class: useCookie("theme", { default: () => "" }),
@@ -87,17 +102,17 @@ watch(
                 if (boardStore.hasBoard) {
                     r.style.setProperty(
                         "--color-primary",
-                        boardStore.board?.primaryColor || "60, 105, 145",
+                        hexToRgb(boardStore.board?.primaryColor) || "60, 105, 145",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-secondary",
-                        boardStore.board?.secondaryColor || "96, 128, 63",
+                        hexToRgb(boardStore.board?.secondaryColor) || "96, 128, 63",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-primary-hover",
-                        boardStore.board?.hoverColor || "54, 94, 129",
+                        hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129",
                         "important",
                     );
                 } else {

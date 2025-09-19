@@ -112,7 +112,7 @@
                 </ul>
                 <NuxtLink
                     v-if="mods.length > 7"
-                    :to="`/+${board.name}/mod/mods`"
+                    :to="`/b/${board.name}/mod/mods`"
                     >View {{ mods.length - 7 }} more</NuxtLink
                 >
             </div>
@@ -162,7 +162,7 @@ useHead({
 
 // Links for sub navbar
 const links = [
-    { name: "Posts", href: `/+${board.name}` },
-    { name: "About", href: `/+${board.name}/sidebar` },
+    { name: "Posts", href: `/b/${board.name}` },
+    { name: "About", href: `/b/${board.name}/sidebar` },
 ];
 </script>
