@@ -412,11 +412,11 @@ function submit() {
 
                 if (site.enableBoards) {
                     navigateTo(
-                        `/+${boardName.value}/post/${post.id}/${post.titleChunk}`,
+                        `/b/${boardName.value}/p/${post.id}/${post.titleChunk}`
                     );
                 } else {
                     navigateTo(
-                        `/post/${post.id}/${post.titleChunk}`,
+                        `/p/${post.id}/${post.titleChunk}`
                     );
                 }
             } else {

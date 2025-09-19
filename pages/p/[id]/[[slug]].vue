@@ -118,11 +118,11 @@ if (site.enableBoards && post?.value?.board?.name) {
       // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
-            router.push(`/+${boardName}/post/${post.value.id}/${post.value.titleSlug}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
+            await navigateTo(`/b/${boardName}/p/${post.value.id}/${post.value.titleSlug}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
       }
 } else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      router.push(`/post/${post?.value?.id || 'unknown'}/${post?.value?.titleSlug || 'unknown'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`);
+      await navigateTo(`/p/${post?.value?.id || 'unknown'}/${post?.value?.titleSlug || 'unknown'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
 }
 
 

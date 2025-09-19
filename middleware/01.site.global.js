@@ -17,7 +17,18 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (process.server) {
     const cookieHeader = useNuxtApp().ssrContext?.event.req.headers["cookie"] || "";
     cookies = cookie.parse(cookieHeader);
+  } else {
+    // Client-side cookie access
+    const tokenCookie = useCookie('token');
+    if (tokenCookie.value) {
+      cookies.token = tokenCookie.value;
+    }
   }
+
+  // Validate token format if present
+  const hasValidToken = cookies.token &&
+    typeof cookies.token === 'string' &&
+    cookies.token.length > 10; // Basic validation
 
   // Use the original initApp query with improved error handling
   try {
@@ -25,7 +36,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       operation: 'initApp',
       variables: {
         shouldLoadSite: true,
-        shouldLoadLoggedInUser: process.server && cookies["token"] !== undefined,
+        shouldLoadLoggedInUser: hasValidToken,
         shouldLoadBoard: to.params?.hasOwnProperty("board") ?? false,
         boardName: to.params?.board,
       },

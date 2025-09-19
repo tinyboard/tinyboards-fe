@@ -8,6 +8,22 @@ const tls = require("tls");
 const process = require("process");
 tls.DEFAULT_ECDH_CURVE = "auto";
 
+// Environment validation and endpoint construction
+function validateEnvVar(name: string, fallback?: string): string {
+  const value = process.env[name];
+  if (!value && !fallback) {
+    throw new Error(`Required environment variable ${name} is not set`);
+  }
+  return value || fallback || '';
+}
+
+function constructGraphQLEndpoint(): string {
+  const domain = validateEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536');
+  const useHttps = validateEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true';
+  const protocol = useHttps ? 'https' : 'http';
+  return `${protocol}://${domain}/api/v2/graphql`;
+}
+
 export default defineNuxtConfig({
   // alias: {
   //   pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",
@@ -61,7 +77,7 @@ export default defineNuxtConfig({
     // Hybrid rendering for feeds
     "/feed/**": {
       ssr: true,
-      experimentalNoScripts: true // Remove hydration overhead
+      headers: { 'Cache-Control': 's-maxage=300' }
     },
 
     // SPA for admin interfaces
@@ -75,7 +91,7 @@ export default defineNuxtConfig({
     },
 
     // Board pages with SSR for SEO
-    "/+**": {
+    "/b/**": {
       ssr: true,
       headers: { 'Cache-Control': 's-maxage=300' }
     },
@@ -89,14 +105,14 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      domain: "",
-      use_https: true,
-      GQL_HOST: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
+      domain: validateEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
+      use_https: validateEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
+      GQL_HOST: constructGraphQLEndpoint(),
     },
   },
 
   'graphql-client': {
-    schema: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
+    schema: constructGraphQLEndpoint(),
     tokenStorage: {
       name: 'token',
       mode: 'cookie'

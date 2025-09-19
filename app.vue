@@ -13,7 +13,7 @@ console.log(`Hi from ${route.path}`);
 onMounted(() => {
   // Redirect to submit page when pasting URL
   if (process.client && typeof document !== 'undefined') {
-    document.addEventListener('paste', function (event) {
+    document.addEventListener('paste', async function (event) {
       const isNothingFocused = document.activeElement === document.body;
 
       if (isNothingFocused) {
@@ -22,12 +22,10 @@ onMounted(() => {
         const url = new RegExp('^(?:[a-z]+:)?//', 'i');
 
         if (clipText && url.test(clipText) && route.name !== 'submit' && !board) {
-          console.log('pasted')
-          router.push(`/submit?url=${clipText}`)
+          await navigateTo(`/submit?url=${encodeURIComponent(clipText)}`)
         }
         else if (clipText && url.test(clipText) && route.name !== 'submit' && !!board) {
-          console.log('pasted')
-          router.push(`/+${board}/submit?url=${clipText}`)
+          await navigateTo(`/submit?url=${encodeURIComponent(clipText)}&board=${board}`)
         }
       }
     });

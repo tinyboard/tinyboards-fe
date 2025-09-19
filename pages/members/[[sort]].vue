@@ -191,8 +191,6 @@ const site = useSiteStore();
 // });
 
 import { useRoute } from "vue-router";
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 const router = useRouter();
@@ -209,17 +207,54 @@ const sort = computed(() => {
     return sorts.includes(route.params?.sort) ? route.params?.sort : "new";
 });
 
+// Map REST sort options to GraphQL enum values
+const gqlSortMap = {
+    "new": "creationDate",
+    "old": "creationDate",
+    "mostcomments": "commentCount",
+    "mostposts": "postCount",
+    "mostrep": "commentScore"
+};
+
+const gqlSort = computed(() => gqlSortMap[sort.value] || "creationDate");
+
+// Use GraphQL query instead of REST API
 const {
-    data: members,
+    data: membersData,
     pending,
     error,
     refresh,
-} = await useAPI("/members", {
-    query: {
-        sort: sort.value,
-        limit: limit.value,
+} = await useAsyncGql({
+    operation: 'listMembers',
+    variables: {
         page: page.value,
-    },
+        limit: limit.value,
+        sort: gqlSort.value,
+        listingType: 'all'
+    }
+});
+
+// Transform data to match expected structure
+const members = computed(() => {
+    if (!membersData.value?.listUsers) return null;
+
+    return {
+        members: membersData.value.listUsers.map(user => ({
+            person: {
+                name: user.name,
+                displayName: user.displayName,
+                avatar: user.avatar,
+                banner: user.banner || user.profileBackground,
+                bio: user.bio
+            },
+            counts: {
+                rep: user.rep,
+                post_count: user.postCount,
+                comment_count: user.commentCount
+            },
+            creation_date: user.creationDate
+        }))
+    };
 });
 
 if (error.value && error.value.response) {

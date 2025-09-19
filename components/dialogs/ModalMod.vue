@@ -336,28 +336,54 @@ const submit = async () => {
     //const isAdmin = props.options.user.is_admin;
     const username = props.options.user?.name || target.value;
 
-    const apiRoute = (function () {
-        if (mode.value === "add") {
-            // Addoing mod
-            return `/boards/${board.id}/mods`;
-        } else {
-            // Removing or editing mod
-            return `/boards/${board.id}/mods/${props.options.user.id}`;
-        }
-    })();
+    let data, error;
 
-    const requestBody = {};
-    if (mode.value !== "remove") {
-        requestBody["permissions"] = permissionCode.value;
+    if (mode.value === "add") {
+        // Use GraphQL mutation for adding moderators
+        try {
+            // First, we need to get the user ID by username
+            const userResponse = await $fetch('#gql', {
+                query: `
+                    query getUserByName($name: String!) {
+                        userProfile(name: $name) {
+                            id
+                        }
+                    }
+                `,
+                variables: { name: target.value }
+            });
 
-        if (mode.value === "add") {
-            requestBody["username"] = target.value;
+            if (userResponse?.userProfile?.id) {
+                const result = await GqlAddModerator({
+                    boardId: board.id,
+                    userId: userResponse.userProfile.id,
+                    permissions: permissionCode.value
+                });
+                data = { value: result };
+                error = null;
+            } else {
+                throw new Error('User not found');
+            }
+        } catch (e) {
+            error = { value: e };
+            data = null;
         }
+    } else {
+        // Keep REST API for remove/update operations (not yet implemented in GraphQL)
+        const apiRoute = `/boards/${board.id}/mods/${props.options.user.id}`;
+        const requestBody = {};
+
+        if (mode.value !== "remove") {
+            requestBody["permissions"] = permissionCode.value;
+        }
+
+        const result = await useAPI(apiRoute, {
+            body: requestBody,
+            method: METHODS[mode.value],
+        });
+        data = result.data;
+        error = result.error;
     }
-    let { data, error } = await useAPI(apiRoute, {
-        body: requestBody,
-        method: METHODS[mode.value],
-    });
     if (data.value) {
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));

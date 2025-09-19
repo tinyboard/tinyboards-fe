@@ -6,6 +6,14 @@ import { useAPI } from "@/composables/api";
 import Cookies from 'js-cookie';
 import type { BoardFragment, Person } from "@/types/types";
 
+// Cookie configuration for secure token storage
+const TOKEN_COOKIE_OPTIONS = {
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+  expires: 7, // 7 days
+  httpOnly: false // Must be false for client-side access
+};
+
 interface UserStore {
   user: Person | null,
   unread: number | null,
@@ -48,7 +56,10 @@ export const useLoggedInUser = defineStore("auth", {
         // Obtain auth token
         GqlLogin({ usernameOrEmail: nameOrEmail, password })
           .then((data) => {
-            Cookies.set('token', data.login.token);
+            if (!data.login.token) {
+              throw new Error('No token received from login');
+            }
+            Cookies.set('token', data.login.token, TOKEN_COOKIE_OPTIONS);
             this.token = data.login.token;
 
             // Login successful - fetch user
@@ -106,8 +117,11 @@ export const useLoggedInUser = defineStore("auth", {
 
             if (accountCreated) {
               // Account created = no approval required => fetch the user we just created
-              Cookies.set('token', token);
-              this.token = token!; // token exists because accountCreated is true => safe !
+              if (!token) {
+                throw new Error('No token received from registration');
+              }
+              Cookies.set('token', token, TOKEN_COOKIE_OPTIONS);
+              this.token = token;
 
               // Login successful - fetch user
               const me = useAsyncGql({ operation: 'getLoggedInUser' })
@@ -173,6 +187,8 @@ export const useLoggedInUser = defineStore("auth", {
       this.adminLevel = null;
       this.joinedBoards = [];
       this.moddedBoards = [];
+      // Ensure cookie is properly removed
+      Cookies.remove('token', { path: '/', domain: window.location.hostname });
     },
   },
 });
