@@ -381,13 +381,18 @@ const unread = ref(userStore.unread);
 const authCookie = useCookie("token").value;
 const { registerRefreshCallback } = useNotificationRefresh();
 
-const { data: notificationCounts, pending: notificationsPending, error: notificationError, refresh: refreshNotificationCounts } = await useAsyncGql({ operation: 'getNotifications' });
+// Use getMe query which includes notification counts
+const { data: userData, pending: userPending, error: userError, refresh: refreshUserData } = await useAsyncQuery('getMe');
+
+// Get unread message count separately
+const { data: messageCount, pending: messagesPending, error: messagesError, refresh: refreshMessageCount } = await useAsyncQuery('GetUnreadMessageCount');
 
 // Register refresh callback for cross-component communication
 onMounted(() => {
 	const unregister = registerRefreshCallback(() => {
 		if (authCookie) {
-			refreshNotificationCounts();
+			refreshUserData();
+			refreshMessageCount();
 		}
 	});
 
@@ -398,10 +403,11 @@ onMounted(() => {
 
 // Calculate total unread count from all notification types
 const unreadTotal = computed(() => {
-	if (!notificationCounts.value || notificationError.value) return 0;
-	return (notificationCounts.value.unreadRepliesCount || 0) +
-		   (notificationCounts.value.unreadMentionsCount || 0) +
-		   (notificationCounts.value.getUnreadMessageCount || 0);
+	if (!userData.value || userError.value) return 0;
+	const messageCountValue = messageCount.value?.getUnreadMessageCount || 0;
+	return (userData.value.unreadRepliesCount || 0) +
+		   (userData.value.unreadMentionsCount || 0) +
+		   messageCountValue;
 });
 
 // Update unread count when data changes
@@ -410,9 +416,9 @@ watch(unreadTotal, (newTotal) => {
 }, { immediate: true });
 
 // Handle notification count fetch errors silently (don't break the navbar)
-watch(notificationError, (error) => {
-	if (error) {
-		console.warn('Failed to load notification counts:', error);
+watch([userError, messagesError], ([userErr, msgErr]) => {
+	if (userErr || msgErr) {
+		console.warn('Failed to load notification counts:', userErr || msgErr);
 		unread.value = 0; // Reset to 0 on error
 	}
 });
@@ -426,7 +432,8 @@ watch(route, (to, from) => {
 
 		// Refresh if navigating to/from notification-related pages or after creating content
 		if (isNotificationRoute(to.path) || isNotificationRoute(from?.path || '')) {
-			refreshNotificationCounts();
+			refreshUserData();
+			refreshMessageCount();
 		}
 	}
 });

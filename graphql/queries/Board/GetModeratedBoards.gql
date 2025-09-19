@@ -1,0 +1,38 @@
+query getModeratedBoards($userId: Int, $limit: Int, $page: Int) {
+  getModeratedBoards(userId: $userId, limit: $limit, page: $page) {
+    totalCount
+    boards {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      isNSFW
+      creationDate
+      updated
+      isRemoved
+      isBanned
+      banReason
+      publicBanReason
+      bannedBy
+      bannedAt
+      primaryColor
+      secondaryColor
+      hoverColor
+      sidebar
+      sidebarHTML
+      isHidden
+      excludeFromAll
+      postCount
+      subscribers
+      commentCount
+      usersActiveDay
+      usersActiveWeek
+      usersActiveMonth
+      usersActiveHalfYear
+      myModPermissions
+      subscribedType
+    }
+  }
+}

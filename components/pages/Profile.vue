@@ -75,11 +75,11 @@
                         >
                             <MenusSort
                                 :sorts="
-                                    type === 'post' ? postSorts : commentSorts
+                                    type === 'comment' ? commentSorts : postSorts
                                 "
                             />
                             <div
-                                v-if="type === 'post'"
+                                v-if="type === 'post' || type === 'saved'"
                                 class="ml-auto flex space-x-2"
                             >
                                 <button
@@ -167,16 +167,26 @@
                         </div>
                         <!-- Posts -->
                         <LazyListsPosts
-                            v-if="user.posts?.length"
+                            v-if="type === 'post' && user.posts?.length"
+                            :posts="user.posts"
                             :isCompact="!preferCardView"
                             :isLoading="pending"
                             :hasError="error"
                         />
                         <!-- Comments -->
                         <LazyListsComments
-                            v-else-if="user.comments?.length"
+                            v-else-if="type === 'comment' && user.comments?.length"
+                            :comments="user.comments"
                             mode="list"
                             :cards="true"
+                        />
+                        <!-- Saved Posts -->
+                        <LazyListsPosts
+                            v-else-if="type === 'saved' && user.savedPosts?.length"
+                            :posts="user.savedPosts"
+                            :isCompact="!preferCardView"
+                            :isLoading="pending"
+                            :hasError="error"
                         />
                         <div
                             v-else
@@ -184,11 +194,13 @@
                         >
                             <p>
                                 <span class="font-medium">
-                                    {{ user.name }} has made no
-                                    {{ posts ? "posts" : "comments" }}
+                                    {{ user.name }}
+                                    <template v-if="type === 'saved'">has no saved posts</template>
+                                    <template v-else>has made no {{ type === 'post' ? "posts" : "comments" }}</template>
                                 </span>
                                 <br />
-                                They must not be that interesting
+                                <template v-if="type === 'saved'">Start saving posts to see them here</template>
+                                <template v-else>They must not be that interesting</template>
                             </p>
                         </div>
                         <!-- Pagination -->
@@ -335,6 +347,13 @@ const links = [
         name: `Comments (${user.commentCount})`,
         href: `/@${route.params?.username}/comments`,
     },
+    // Only show saved posts tab for the user's own profile
+    ...(isSelf.value ? [
+        {
+            name: "Saved Posts",
+            href: `/@${route.params?.username}/saved`,
+        }
+    ] : []),
 ];
 </script>
 

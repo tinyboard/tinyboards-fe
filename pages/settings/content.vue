@@ -9,20 +9,17 @@
 			<!-- Form -->
 			<form @submit.prevent="onSubmit" @submit="submitSettings()">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
-					<!-- NSFW -->
+					<!-- Placeholder for future content settings -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<p class="text-base font-bold leading-6 text-gray-900">NSFW</p>
+							<p class="text-base font-bold leading-6 text-gray-900">Content preferences</p>
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<div class="flex items-center text-sm">
-								<InputsSwitch :isEnabled="settings.show_nsfw" @enabled="settings.show_nsfw = !settings.show_nsfw"/>
-								<label class="ml-2 font-medium text-gray-900">Show NSFW content</label>
-							</div>
-							<p class="mt-2 text-sm text-gray-500">
-								Show adult content marked "not safe for work".
+							<p class="text-sm text-gray-500">
+								Content-related settings have been moved to the
+								<NuxtLink to="/settings/notifications" class="text-primary hover:underline">Notifications</NuxtLink> page.
 							</p>
 						</div>
 					</div>
@@ -67,22 +64,22 @@
 	// Submit settings.
 	const submitSettings = async () => {
 		isLoading.value = true;
-		const { mutate } = useMutation('updateUserSettings');
-		
+
 		try {
-			const result = await mutate({
-				input: {
-					showNSFW: settings.value.show_nsfw
-				}
+			// Since content settings have been moved to notifications page,
+			// this just shows a success message for now
+			toast.addNotification({
+				header: 'Settings saved',
+				message: 'Your content settings have been processed.',
+				type: 'success'
 			});
-			
-			if (result.data) {
-				// Show success toast.
-				toast.addNotification({header:'Settings saved',message:'Your account settings were updated!',type:'success'});
-			}
 		} catch (error) {
 			// Show error toast.
-			toast.addNotification({header:'Saving failed',message:'Your settings have failed to save.',type:'error'});
+			toast.addNotification({
+				header: 'Saving failed',
+				message: 'Your settings have failed to save.',
+				type: 'error'
+			});
 			// Log the error.
 			console.error(error);
 		} finally {

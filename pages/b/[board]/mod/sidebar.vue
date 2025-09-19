@@ -92,7 +92,6 @@
 import { ref } from "vue";
 import { useToastStore } from "@/stores/StoreToast";
 import { useBoardStore } from "@/stores/StoreBoard";
-import { useAPI } from "@/composables/api";
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -113,37 +112,64 @@ const toast = useToastStore();
 
 const isLoading = ref(false);
 
-const submitSettings = () => {
+const submitSettings = async () => {
     isLoading.value = true;
-    useAPI(`/boards/${board.id}`, {
-        method: "put",
-        body: {
-            sidebar: settings.value.sidebar,
-        },
-    })
-        .then(({ data, error }) => {
-            if (data.value) {
-                // Show success toast.
-                toast.addNotification({
-                    header: "Settings saved",
-                    message: "Board settings were updated!",
-                    type: "success",
-                });
 
-                // window.location.reload(true);
-            } else {
-                // Show error toast.
-                toast.addNotification({
-                    header: "Saving failed",
-                    message: "Board settings have failed to save.",
-                    type: "error",
-                });
-                // Log the error.
-                console.error(error.value);
+    try {
+        const result = await $fetch('#gql', {
+            query: `
+                mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
+                    updateBoardSettings(input: $input) {
+                        board {
+                            id
+                            name
+                            title
+                            description
+                            sidebar
+                            sidebarHTML
+                        }
+                    }
+                }
+            `,
+            variables: {
+                input: {
+                    id: board.id,
+                    sidebar: settings.value.sidebar
+                }
             }
-        })
-        .finally(() => {
-            isLoading.value = false;
         });
+
+        if (result.updateBoardSettings?.board) {
+            // Show success toast.
+            toast.addNotification({
+                header: "Settings saved",
+                message: "Board sidebar was updated!",
+                type: "success",
+            });
+
+            // Update the board store with new data
+            boardStore.setBoard({
+                ...board,
+                sidebar: result.updateBoardSettings.board.sidebar,
+                sidebarHTML: result.updateBoardSettings.board.sidebarHTML
+            });
+
+            // Refresh settings to reflect changes
+            settings.value.sidebar = result.updateBoardSettings.board.sidebar;
+        } else {
+            throw new Error('Failed to update board sidebar');
+        }
+    } catch (error) {
+        // Show error toast.
+        toast.addNotification({
+            header: "Saving failed",
+            message: "Board sidebar failed to save.",
+            type: "error",
+        });
+        // Log the error.
+        console.error(error);
+    } finally {
+        isLoading.value = false;
+    }
 };
 </script>

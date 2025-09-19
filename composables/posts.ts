@@ -227,22 +227,24 @@ export function usePreloadedPosts(posts: Post[], personId = null) {
 // }
 
 export async function getModQueue(query: any, type_: string) {
-  // let page = 1;
   let items = ref([]);
   let totalCount = ref(0);
-  let endpoints = {
-    posts: "/mod/queue/posts",
-    comments: "/mod/queue/comments",
-  };
+
   async function request(query: any) {
-    const { data, pending, error, refresh } = await useAPI(endpoints[type_], {
-      query: { ...query },
-      key: "get_" + type_ + "_key",
+    const { data, pending, error, refresh } = await useAsyncQuery('getModerationQueue', {
+      limit: query.limit || 25,
+      page: query.page || 1,
+      type: type_
     });
 
-    if (data.value) {
-      items.value = [...items.value, ...data.value[type_]];
-      totalCount.value = data.value["total_count"];
+    if (data.value?.getModerationQueue) {
+      const queueData = data.value.getModerationQueue;
+      if (type_ === 'posts' && queueData.posts) {
+        items.value = [...items.value, ...queueData.posts];
+      } else if (type_ === 'comments' && queueData.comments) {
+        items.value = [...items.value, ...queueData.comments];
+      }
+      totalCount.value = queueData.totalCount || 0;
     }
 
     return {
@@ -253,7 +255,6 @@ export async function getModQueue(query: any, type_: string) {
   }
 
   async function paginate() {
-    // page++;
     return request(query);
   }
 

@@ -1,0 +1,5 @@
+mutation unbanUserFromBoard($boardId: Int!, $userId: Int!) {
+  unbanUserFromBoard(boardId: $boardId, userId: $userId) {
+    success
+  }
+}

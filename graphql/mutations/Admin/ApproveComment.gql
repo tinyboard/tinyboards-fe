@@ -1,0 +1,5 @@
+mutation approveComment($commentId: Int!) {
+  approveComment(commentId: $commentId) {
+    success
+  }
+}

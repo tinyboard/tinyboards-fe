@@ -63,7 +63,9 @@ definePageMeta({
 const profileLinks = [
     { name: "Profile", href: "/settings/profile" },
     { name: "Account", href: "/settings/account" },
+    { name: "Notifications", href: "/settings/notifications" },
     { name: "Content", href: "/settings/content" },
+    { name: "Hidden", href: "/settings/hidden" },
 ];
 
 const boardLinks = [

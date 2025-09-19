@@ -72,6 +72,13 @@
 				<NuxtLink v-if="postLink" :to="postLink" class="text-primary hover:underline">
 					View
 				</NuxtLink>
+				<!-- Individual notification actions -->
+				<template v-if="!notification.isRead">
+					<span class="font-black text-gray-400">·</span>
+					<button @click="markAsRead" class="text-primary hover:underline" :disabled="isMarkingRead">
+						{{ isMarkingRead ? 'Marking...' : 'Mark as read' }}
+					</button>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -79,6 +86,8 @@
 
 <script lang="ts" setup>
 import { formatDate } from "@/utils/formatDate";
+import { useToastStore } from "@/stores/StoreToast";
+import { useNotificationRefresh } from '@/composables/notificationRefresh';
 
 interface NotificationCreator {
 	name: string;
@@ -122,6 +131,14 @@ const props = defineProps<{
 	notification: Notification;
 }>();
 
+const emit = defineEmits<{
+	'marked-read': [notificationId: number];
+}>();
+
+const toast = useToastStore();
+const { refreshNotificationCounts } = useNotificationRefresh();
+const isMarkingRead = ref(false);
+
 // Get the creator from either the comment or post
 const creator = computed((): NotificationCreator | null => {
 	return props.notification.comment?.creator || props.notification.post?.creator || null;
@@ -136,4 +153,43 @@ const postLink = computed((): string => {
 	}
 	return '#';
 });
+
+// Mark individual notification as read
+const { mutate: markNotificationsReadMutation } = useMutation('markNotificationsRead');
+
+const markAsRead = async () => {
+	isMarkingRead.value = true;
+
+	try {
+		const result = await markNotificationsReadMutation({
+			notificationIds: [props.notification.id],
+			markAll: false
+		});
+
+		if (result.data?.markNotificationsRead?.success) {
+			// Emit event to parent component to update the notification
+			emit('marked-read', props.notification.id);
+
+			// Refresh notification counts in navbar and other components
+			refreshNotificationCounts();
+
+			toast.addNotification({
+				header: 'Marked as read',
+				message: 'Notification marked as read.',
+				type: 'success'
+			});
+		} else {
+			throw new Error('Failed to mark notification as read');
+		}
+	} catch (error) {
+		console.error('Error marking notification as read:', error);
+		toast.addNotification({
+			header: 'Failed to mark as read',
+			message: error.message || 'Unable to mark notification as read.',
+			type: 'error'
+		});
+	} finally {
+		isMarkingRead.value = false;
+	}
+};
 </script>

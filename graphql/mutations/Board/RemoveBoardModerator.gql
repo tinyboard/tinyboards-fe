@@ -1,0 +1,31 @@
+mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+  removeBoardModerator(boardId: $boardId, userId: $userId) {
+    success
+    board {
+      id
+      name
+      title
+      moderators {
+        id
+        boardId
+        userId
+        permissions
+        rank
+        inviteAccepted
+        inviteAcceptedDate
+        creationDate
+        user {
+          id
+          name
+          displayName
+          avatar
+          banner
+          bio
+          creationDate
+          isAdmin
+          isBanned
+        }
+      }
+    }
+  }
+}

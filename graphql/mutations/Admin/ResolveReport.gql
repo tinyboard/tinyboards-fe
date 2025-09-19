@@ -1,0 +1,5 @@
+mutation resolveReport($reportId: Int!, $action: String!) {
+  resolveReport(reportId: $reportId, action: $action) {
+    success
+  }
+}

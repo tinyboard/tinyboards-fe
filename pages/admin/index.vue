@@ -47,6 +47,40 @@
         </div>
         <!-- Divider -->
         <hr class="mt-6 mb-4" />
+        <!-- Moderation Stats -->
+        <div v-if="moderationStats?.getModerationStats" class="mb-6">
+          <h3 class="mb-2 text-gray-500 text-sm font-medium uppercase">
+            Moderation Statistics
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center">
+              <div class="p-3 border bg-red-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-red-600">{{ moderationStats.getModerationStats.pendingReports }}</strong>
+                <p class="mt-1 text-red-500 text-xs font-medium uppercase">Pending Reports</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="p-3 border bg-yellow-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-yellow-600">{{ moderationStats.getModerationStats.bannedUsers }}</strong>
+                <p class="mt-1 text-yellow-500 text-xs font-medium uppercase">Banned Users</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="p-3 border bg-blue-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-blue-600">{{ moderationStats.getModerationStats.removedPosts }}</strong>
+                <p class="mt-1 text-blue-500 text-xs font-medium uppercase">Removed Posts</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="p-3 border bg-green-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-green-600">{{ moderationStats.getModerationStats.totalModerationActions }}</strong>
+                <p class="mt-1 text-green-500 text-xs font-medium uppercase">Total Actions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Divider -->
+        <hr class="mt-6 mb-4" />
         <!-- Secondary Stats -->
         <div class="grid grid-cols-2 gap-4">
           <!-- Top 5 Members -->
@@ -201,4 +235,12 @@ const {
   limit: 5,
   sort: 'MostPosts'
 });
+
+// Fetch moderation statistics
+const {
+  data: moderationStats,
+  pending: moderationStatsPending,
+  error: moderationStatsError,
+  refresh: moderationStatsRefresh,
+} = await useAsyncQuery('getModerationStats');
 </script>

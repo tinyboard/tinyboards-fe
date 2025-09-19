@@ -67,7 +67,6 @@
 import { ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { useBoardStore } from '@/stores/StoreBoard';
-import { useAPI } from "@/composables/api";
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -88,31 +87,79 @@ const toast = useToastStore();
 
 const isLoading = ref(false);
 
-const submitSettings = () => {
+const submitSettings = async () => {
 	isLoading.value = true;
-	useAPI(`/boards/${board.id}`, {
-		method: "put",
-		body: {
-			"name": settings.value.name,
-			"title": settings.value.title,
-			"description": settings.value.description
-		}
-	})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Settings saved', message: 'Board settings were updated!', type: 'success' });
 
-				window.location.reload(true);
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Saving failed', message: 'Board settings have failed to save.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
+	try {
+		const result = await $fetch('#gql', {
+			query: `
+				mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
+					updateBoardSettings(input: $input) {
+						board {
+							id
+							name
+							title
+							description
+							icon
+							banner
+							isNSFW
+							creationDate
+							updated
+							isRemoved
+							isBanned
+							banReason
+							publicBanReason
+							bannedBy
+							bannedAt
+							primaryColor
+							secondaryColor
+							hoverColor
+							sidebar
+							sidebarHTML
+							isHidden
+							excludeFromAll
+							postCount
+							subscribers
+							commentCount
+							usersActiveDay
+							usersActiveWeek
+							usersActiveMonth
+							usersActiveHalfYear
+							myModPermissions
+							subscribedType
+						}
+					}
+				}
+			`,
+			variables: {
+				input: {
+					id: board.id,
+					name: settings.value.name,
+					title: settings.value.title,
+					description: settings.value.description
+				}
 			}
-		})
-		.finally(() => {
-			isLoading.value = false;
 		});
+
+		if (result.updateBoardSettings?.board) {
+			// Show success toast.
+			toast.addNotification({ header: 'Settings saved', message: 'Board settings were updated!', type: 'success' });
+
+			// Update the board store with new data
+			boardStore.setBoard(result.updateBoardSettings.board);
+
+			// Refresh settings to reflect changes
+			settings.value = JSON.parse(JSON.stringify(result.updateBoardSettings.board));
+		} else {
+			throw new Error('Failed to update board settings');
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ header: 'Saving failed', message: 'Board settings have failed to save.', type: 'error' });
+		// Log the error.
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

@@ -1,0 +1,5 @@
+mutation approvePost($postId: Int!) {
+  approvePost(postId: $postId) {
+    success
+  }
+}

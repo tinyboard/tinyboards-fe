@@ -164,43 +164,92 @@ const target = ref('');
 const password = ref('');
 
 const transfer = async () => {
-    await useAPI('/admin/add_admin', {
-        body: {
-            username: target.value,
-            level: PERMISSIONS['owner'],
-            password: password.value
-        },
-        method: "post"
-    })
-        .then(({ data }) => {
-            if (data.value) {
-                // Parse response.
-                /*data = JSON.parse(JSON.stringify(data.value));
-                console.log(data);*/
-                // Show success toast.
-                setTimeout(() => {
-                    window.location.reload(true);
-
-                    toast.addNotification({
-                        header: "Ownership transfered",
-                        message: 'So long!',
-                        type: 'success'
-                    });
-                }, 400);
-            } else {
-                // Show error toast.
-                setTimeout(() => {
-                    toast.addNotification({
-                        header: "Failed to transfer ownership",
-                        message: "Something went wrong. Try again a bit later.",
-                        type: 'error'
-                    });
-                }, 400);
-            };
-        })
-        .finally(() => {
-            // Close the modal.
-            modalStore.closeModal();
+    try {
+        // First, get the user ID by username
+        const userResponse = await $fetch('#gql', {
+            query: `
+                query getUserByName($name: String!) {
+                    userProfile(name: $name) {
+                        id
+                    }
+                }
+            `,
+            variables: { name: target.value }
         });
+
+        if (!userResponse?.userProfile?.id) {
+            throw new Error('User not found');
+        }
+
+        // Note: This assumes we're transferring board ownership, not site ownership
+        // If this is for site ownership transfer, we'd need a different mutation
+        const result = await $fetch('#gql', {
+            query: `
+                mutation transferBoardOwnership($boardId: Int!, $userId: Int!) {
+                    transferBoardOwnership(boardId: $boardId, userId: $userId) {
+                        success
+                        board {
+                            id
+                            name
+                            title
+                            moderators {
+                                id
+                                boardId
+                                userId
+                                permissions
+                                rank
+                                inviteAccepted
+                                inviteAcceptedDate
+                                creationDate
+                                user {
+                                    id
+                                    name
+                                    displayName
+                                    avatar
+                                    banner
+                                    bio
+                                    creationDate
+                                    isAdmin
+                                    isBanned
+                                }
+                            }
+                        }
+                    }
+                }
+            `,
+            variables: {
+                boardId: props.options?.boardId || 1, // This should be passed from the modal options
+                userId: userResponse.userProfile.id
+            }
+        });
+
+        if (result.transferBoardOwnership?.success) {
+            // Show success toast
+            setTimeout(() => {
+                window.location.reload(true);
+
+                toast.addNotification({
+                    header: "Ownership transferred",
+                    message: 'So long!',
+                    type: 'success'
+                });
+            }, 400);
+        } else {
+            throw new Error('Transfer operation failed');
+        }
+    } catch (error) {
+        console.error('Error transferring ownership:', error);
+        // Show error toast
+        setTimeout(() => {
+            toast.addNotification({
+                header: "Failed to transfer ownership",
+                message: "Something went wrong. Try again a bit later.",
+                type: 'error'
+            });
+        }, 400);
+    } finally {
+        // Close the modal
+        modalStore.closeModal();
+    }
 };
 </script>

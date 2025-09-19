@@ -137,27 +137,34 @@ const links = [
 	{ name: 'Messages', href: '/inbox/messages' },
 ];
 
-const { data: notificationCounts, error: err, pending: notificationsPending } = await useAsyncQuery('GetNotificationCounts');
+// Get notification counts using the correct queries
+const { data: userData, error: userError, pending: userPending } = await useAsyncQuery('getMe');
+const { data: messageCount, error: messageError, pending: messagePending } = await useAsyncQuery('GetUnreadMessageCount');
 
 // Handle GraphQL errors more gracefully
-if (err.value && err.value?.response) {
-	console.error('Failed to load notification counts:', err.value);
+if (userError.value && userError.value?.response) {
+	console.error('Failed to load user notification counts:', userError.value);
+	// Don't throw a fatal error, just log it and show 0 counts
+}
+
+if (messageError.value && messageError.value?.response) {
+	console.error('Failed to load message counts:', messageError.value);
 	// Don't throw a fatal error, just log it and show 0 counts
 }
 
 const unreadReplies = computed(() => {
-	if (err.value || !notificationCounts.value) return 0;
-	return notificationCounts.value?.unreadRepliesCount || 0;
+	if (userError.value || !userData.value) return 0;
+	return userData.value?.unreadRepliesCount || 0;
 });
 
 const unreadMentions = computed(() => {
-	if (err.value || !notificationCounts.value) return 0;
-	return notificationCounts.value?.unreadMentionsCount || 0;
+	if (userError.value || !userData.value) return 0;
+	return userData.value?.unreadMentionsCount || 0;
 });
 
 const unreadMessages = computed(() => {
-	if (err.value || !notificationCounts.value) return 0;
-	return notificationCounts.value?.getUnreadMessageCount || 0;
+	if (messageError.value || !messageCount.value) return 0;
+	return messageCount.value?.getUnreadMessageCount || 0;
 });
 </script>
 

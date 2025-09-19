@@ -1,0 +1,60 @@
+query getModerationQueue($limit: Int, $page: Int, $type: String) {
+  getModerationQueue(limit: $limit, page: $page, type: $type) {
+    posts {
+      id
+      title
+      body
+      url
+      creationDate
+      author {
+        id
+        name
+        displayName
+        avatar
+      }
+      board {
+        id
+        name
+        displayName
+      }
+      reports {
+        id
+        reason
+        resolved
+        createdBy {
+          id
+          name
+          displayName
+        }
+        creationDate
+      }
+    }
+    comments {
+      id
+      body
+      creationDate
+      author {
+        id
+        name
+        displayName
+        avatar
+      }
+      post {
+        id
+        title
+      }
+      reports {
+        id
+        reason
+        resolved
+        createdBy {
+          id
+          name
+          displayName
+        }
+        creationDate
+      }
+    }
+    totalCount
+  }
+}

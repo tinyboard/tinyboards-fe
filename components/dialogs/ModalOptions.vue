@@ -210,6 +210,7 @@ const isRemoved = computed(() => {
     return props.type == 'post' ? props.options.object.post.is_removed : props.options.object.comment.is_removed;
 })
 
+
 const postId = computed(() => {
     return props.type == 'comment' ? props.options.object.post.id : undefined;
 })
@@ -269,6 +270,7 @@ const confirmRemoveOrApprove = approve => {
         }
     });
 };
+
 
 // Ban & Unban
 const confirmBan = () => {

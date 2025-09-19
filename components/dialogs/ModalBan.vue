@@ -137,10 +137,9 @@ watch(
 const ban = async () => {
   if (isLoading.value) return;
 
-  // For now, if we don't have a user ID but have a username/target, we'll need to show an error
-  // This suggests the GraphQL API might need to be updated to accept usernames or we need a way to resolve them
   const userId = props.options.user?.id;
   const username = props.options.user?.name || target.value;
+  const boardId = props.options.boardId; // For board-specific bans
 
   if (!userId && !username) {
     toast.addNotification({
@@ -154,15 +153,55 @@ const ban = async () => {
   isLoading.value = true;
 
   try {
-    const { $gql } = useNuxtApp();
-
     if (isBanned.value) {
-      // For unbanning, we need to check if there's an unban mutation or if we should use a different approach
-      // Since there doesn't appear to be an unban mutation, this might need backend API updates
-      // For now, we'll show an error suggesting this needs to be implemented
-      throw new Error('Unbanning via GraphQL is not yet implemented. Please use the admin panel or contact the development team.');
+      // Unban user
+      if (boardId) {
+        // Board-specific unban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation unbanUserFromBoard($boardId: Int!, $userId: Int!) {
+              unbanUserFromBoard(boardId: $boardId, userId: $userId) {
+                success
+              }
+            }
+          `,
+          variables: { boardId, userId }
+        });
+
+        if (result.unbanUserFromBoard?.success) {
+          toast.addNotification({
+            header: `${username} unbanned`,
+            message: 'The user has been successfully unbanned from this board.',
+            type: 'success'
+          });
+        } else {
+          throw new Error('Board unban operation was not successful');
+        }
+      } else {
+        // Site-wide unban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation unbanUser($userId: Int!) {
+              unbanUser(userId: $userId) {
+                success
+              }
+            }
+          `,
+          variables: { userId }
+        });
+
+        if (result.unbanUser?.success) {
+          toast.addNotification({
+            header: `${username} unbanned`,
+            message: 'The user has been successfully unbanned.',
+            type: 'success'
+          });
+        } else {
+          throw new Error('Unban operation was not successful');
+        }
+      }
     } else {
-      // Calculate expiration date if not permanent
+      // Ban user
       let expirationDate = null;
       if (!permanent.value) {
         const expiration = new Date();
@@ -170,43 +209,70 @@ const ban = async () => {
         expirationDate = expiration.toISOString();
       }
 
-      const result = await $gql.mutation({
-        banUser: {
-          __args: {
-            userId: userId,
-            reason: reason.value || `breaking ${site.name} rules`,
+      if (boardId) {
+        // Board-specific ban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation banUserFromBoard($boardId: Int!, $userId: Int!, $reason: String, $expires: String) {
+              banUserFromBoard(boardId: $boardId, userId: $userId, reason: $reason, expires: $expires) {
+                success
+              }
+            }
+          `,
+          variables: {
+            boardId,
+            userId,
+            reason: reason.value || 'breaking board rules',
             expires: expirationDate
-          },
-          success: true
-        }
-      });
+          }
+        });
 
-      if (result.banUser?.success) {
-        // Show success toast
-        setTimeout(() => {
+        if (result.banUserFromBoard?.success) {
           toast.addNotification({
             header: `${username} banned`,
-            message: 'Reload the page to see changes.',
+            message: 'The user has been successfully banned from this board.',
             type: 'success'
           });
-        }, 400);
+        } else {
+          throw new Error('Board ban operation was not successful');
+        }
       } else {
-        throw new Error('Ban operation was not successful');
+        // Site-wide ban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation banUser($userId: Int!, $reason: String, $expires: String) {
+              banUser(userId: $userId, reason: $reason, expires: $expires) {
+                success
+              }
+            }
+          `,
+          variables: {
+            userId,
+            reason: reason.value || `breaking ${site.name} rules`,
+            expires: expirationDate
+          }
+        });
+
+        if (result.banUser?.success) {
+          toast.addNotification({
+            header: `${username} banned`,
+            message: 'The user has been successfully banned.',
+            type: 'success'
+          });
+        } else {
+          throw new Error('Ban operation was not successful');
+        }
       }
     }
   } catch (error) {
     console.error('Error with ban operation:', error);
-    // Show error toast
-    setTimeout(() => {
-      toast.addNotification({
-        header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
-        message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
-        type: 'error'
-      });
-    }, 400);
+    toast.addNotification({
+      header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
+      message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
+      type: 'error'
+    });
   } finally {
     isLoading.value = false;
-    // Close the modal
     modalStore.closeModal();
   }
 };

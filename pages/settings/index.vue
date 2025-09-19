@@ -183,23 +183,8 @@ const imageStore = useImageStore();
 
 //const v = userStore.user;
 
-const SAVE_SETTINGS_QUERY = `
-    mutation saveSettings(
-    $displayName: String,
-    $bio: String,
-    $avatar: Upload,
-    $banner: Upload,
-    $profileBackground: Upload
-    ) {
-    updateSettings(
-    displayName: $displayName,
-    bio: $bio,
-    avatar: $avatar,
-    banner: $banner,
-    profileBackground: $profileBackground
-    ) { id }
-    }
- `;
+// Use the updateUserSettings operation for multipart uploads
+const UPDATE_SETTINGS_MUTATION = 'updateUserSettings';
 
 const settings = ref({});
 const { data } = await useAsyncGql({ operation: 'getSettings' });
@@ -359,30 +344,41 @@ const submitSettings = async () => {
 		imageStore.purgeBackground();
 	}
 
-	useGqlMultipart({
-		query: SAVE_SETTINGS_QUERY,
-		variables: {
-			displayName: settings.value.displayName,
-			bio: settings.value.bio,
-			avatar: null,
-			banner: null,
-			profileBackground: null
-		},
-		files
-	}).then(({ data }) => {
-		isLoading.value = false;
-		if (!!data.value.data) {
+	try {
+		const { data: result } = await useGqlMultipart({
+			operation: UPDATE_SETTINGS_MUTATION,
+			variables: {
+				displayName: settings.value.displayName,
+				bio: settings.value.bio,
+				avatar: null,
+				banner: null,
+				profileBackground: null
+			},
+			files
+		});
+
+		if (result.value?.updateSettings) {
+			toast.addNotification({
+				header: "Settings saved",
+				message: "Your profile settings have been updated successfully.",
+				type: "success"
+			});
+			// Refresh the page to show updated images
 			window.location.reload(true);
 		} else {
-			console.error("Error: " + data.value.errors[0].message);
-			toast.addNotification({
-				header: "Failed to save settings",
-				message: data.value.errors[0].message,
-				type: "error",
-				isVisibleOnRouteChange: true
-			});
+			throw new Error("Failed to update settings");
 		}
-	});
+	} catch (error) {
+		console.error("Error saving settings:", error);
+		toast.addNotification({
+			header: "Failed to save settings",
+			message: error.message || "Your settings have failed to save.",
+			type: "error",
+			isVisibleOnRouteChange: true
+		});
+	} finally {
+		isLoading.value = false;
+	}
 };
 
 </script>

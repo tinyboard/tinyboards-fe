@@ -96,59 +96,92 @@
     const id = props.id;
 
     try {
-      const { $gql } = useNuxtApp();
       let result;
 
-      if (type === 'post') {
-        result = await $gql.mutation({
-          setPostRemoved: {
-            __args: {
-              id: id,
-              value: !props.options.approve
-            },
-            id: true,
-            isRemoved: true
-          }
-        });
-      } else {
-        result = await $gql.mutation({
-          setCommentRemoved: {
-            __args: {
-              id: id,
-              value: !props.options.approve
-            },
-            id: true,
-            isRemoved: true
-          }
-        });
-      }
-
-      const mutationKey = type === 'post' ? 'setPostRemoved' : 'setCommentRemoved';
-      if (result[mutationKey]) {
-        // Show success toast
-        setTimeout(() => {
-          toast.addNotification({
-            header:`${type} ${props.options.approve ? 'approved' : 'removed'}.`,
-            message:`The ${type} was ${props.options.approve ? 'approved' : 'removed'}.`,
-            type:'success'
+      if (props.options.approve) {
+        // Use approve mutations
+        if (type === 'post') {
+          result = await $fetch('#gql', {
+            query: `
+              mutation approvePost($postId: Int!) {
+                approvePost(postId: $postId) {
+                  success
+                }
+              }
+            `,
+            variables: { postId: id }
           });
-        }, 400);
+        } else {
+          result = await $fetch('#gql', {
+            query: `
+              mutation approveComment($commentId: Int!) {
+                approveComment(commentId: $commentId) {
+                  success
+                }
+              }
+            `,
+            variables: { commentId: id }
+          });
+        }
+
+        const mutationKey = type === 'post' ? 'approvePost' : 'approveComment';
+        if (result[mutationKey]?.success) {
+          toast.addNotification({
+            header: `${type} approved`,
+            message: `The ${type} was successfully approved.`,
+            type: 'success'
+          });
+        } else {
+          throw new Error(`Failed to approve ${type}`);
+        }
       } else {
-        throw new Error(`Failed to update ${type} removal status`);
+        // Use existing removal mutations
+        const { $gql } = useNuxtApp();
+
+        if (type === 'post') {
+          result = await $gql.mutation({
+            setPostRemoved: {
+              __args: {
+                id: id,
+                value: true
+              },
+              id: true,
+              isRemoved: true
+            }
+          });
+        } else {
+          result = await $gql.mutation({
+            setCommentRemoved: {
+              __args: {
+                id: id,
+                value: true
+              },
+              id: true,
+              isRemoved: true
+            }
+          });
+        }
+
+        const mutationKey = type === 'post' ? 'setPostRemoved' : 'setCommentRemoved';
+        if (result[mutationKey]) {
+          toast.addNotification({
+            header: `${type} removed`,
+            message: `The ${type} was successfully removed.`,
+            type: 'success'
+          });
+        } else {
+          throw new Error(`Failed to remove ${type}`);
+        }
       }
     } catch (error) {
-      console.error(`Error updating ${type} removal status:`, error);
-      // Show error toast
-      setTimeout(() => {
-        toast.addNotification({
-          header:'Operation failed',
-          message:`Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
-          type:'error'
-        });
-      }, 400);
+      console.error(`Error with ${type} operation:`, error);
+      toast.addNotification({
+        header: 'Operation failed',
+        message: `Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
+        type: 'error'
+      });
     } finally {
       isLoading.value = false;
-      // Close the modal
       modalStore.closeModal();
     }
   };

@@ -91,21 +91,23 @@
 
     isDeleting.value = true;
     const type = props.type;
-    const id = type === 'post' ? item.value.post.id : item.value.comment.id;
 
     try {
       if (type === 'post') {
         // Use GraphQL mutation for post removal
-        const { setPostRemoved } = await GqlSetPostRemoved({
-          id: id,
+        const { mutate } = useMutation('setPostRemoved');
+        const result = await mutate({
+          id: props.id,
           value: true
         });
 
-        if (setPostRemoved) {
+        if (result.data?.setPostRemoved) {
           // Update state
-          postsStore.updatePost(id, {
-            isRemoved: true
-          });
+          if (postsStore.updatePost) {
+            postsStore.updatePost(props.id, {
+              isRemoved: result.data.setPostRemoved.isRemoved
+            });
+          }
 
           // Show success toast
           toast.addNotification({
@@ -116,16 +118,19 @@
         }
       } else {
         // Use GraphQL mutation for comment removal
-        const { setCommentRemoved } = await GqlSetCommentRemoved({
-          id: id,
+        const { mutate } = useMutation('setCommentRemoved');
+        const result = await mutate({
+          id: props.id,
           value: true
         });
 
-        if (setCommentRemoved) {
+        if (result.data?.setCommentRemoved) {
           // Update state
-          commentsStore.updateComment(id, {
-            isRemoved: true
-          });
+          if (commentsStore.updateComment) {
+            commentsStore.updateComment(props.id, {
+              isRemoved: result.data.setCommentRemoved.isRemoved
+            });
+          }
 
           // Show success toast
           toast.addNotification({
@@ -140,7 +145,7 @@
       // Show error toast
       toast.addNotification({
         header: 'Deletion failed',
-        message: `Failed to delete ${type}. Please try again.`,
+        message: error.message || `Failed to delete ${type}. Please try again.`,
         type: 'error'
       });
     } finally {

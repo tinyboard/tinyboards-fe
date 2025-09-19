@@ -20,7 +20,7 @@
 				<!-- Notification -->
 				<li v-for="(notification, i) in notifications" :key="notification.id || i" class="p-2.5 sm:p-4"
 					:class="{ 'bg-gray-100': notification.isRead }">
-					<LazyCardsNotificationItem :notification="notification" />
+					<LazyCardsNotificationItem :notification="notification" @marked-read="onNotificationMarkedRead" />
 				</li>
 			</ul>
 			<!-- Loading State -->
@@ -148,6 +148,19 @@ const markRead = async () => {
 		console.error('Error marking notifications as read:', error);
 	} finally {
 		isLoading.value = false;
+	}
+};
+
+// Handle individual notification marked as read
+const onNotificationMarkedRead = (notificationId: number) => {
+	if (notifications.value) {
+		const notificationIndex = notifications.value.findIndex(n => n.id === notificationId);
+		if (notificationIndex !== -1) {
+			// Update the notification to mark it as read
+			notifications.value[notificationIndex].isRead = true;
+			// Recalculate unread count
+			calculateUnreadCount();
+		}
 	}
 };
 

@@ -115,17 +115,17 @@
             <ul v-if="mods?.length" class="flex flex-col">
                 <li
                     v-for="modView in mods"
-                    :key="modView.moderator.id"
+                    :key="modView.user.id"
                     class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
                     :class="
-                        modView.moderator.is_banned
+                        modView.user.isBanned
                             ? 'bg-red-100 hover:bg-red-200'
                             : 'odd:bg-gray-50 hover:bg-gray-100'
                     "
                 >
                     <NuxtLink
                         external
-                        :to="`/@${modView.moderator.name}`"
+                        :to="`/@${modView.user.name}`"
                         target="_blank"
                         class="col-span-2"
                     >
@@ -133,17 +133,17 @@
                             <div
                                 class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
                                 :class="
-                                    modView.moderator.is_banned
+                                    modView.user.isBanned
                                         ? 'hover:bg-red-300'
                                         : 'hover:bg-gray-200'
                                 "
                             >
                                 <img
-                                    :src="modView.moderator.avatar"
+                                    :src="modView.user.avatar"
                                     class="w-8 h-8 rounded-sm"
                                 />
                                 <p class="text-primary font-semibold">
-                                    {{ modView.moderator.name }}
+                                    {{ modView.user.name }}
                                 </p>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
                     <div class="col-span-1 flex items-center">
                         {{
                             format(
-                                parseISO(modView.mod_meta.invite_accepted_date),
+                                parseISO(modView.inviteAcceptedDate),
                                 "yyyy MMM. dd",
                             )
                         }}
@@ -159,20 +159,20 @@
                     <div class="col-span-1 flex items-center">
                         {{
                             createModPermissionString(
-                                modView.mod_meta.permissions,
+                                modView.permissions,
                             )
                         }}
                     </div>
                     <div
                         v-if="
-                            hasFullPermissions && myRank < modView.mod_meta.rank
+                            hasFullPermissions && myRank < modView.rank
                         "
                         class="col-span-2 flex justify-end space-x-2"
                     >
                         <button
                             @click="() => setModModal(modView, false)"
                             class="px-1 text-gray-500 hover:text-blue-600"
-                            :title="`Edit permissions for @${modView.moderator.name}`"
+                            :title="`Edit permissions for @${modView.user.name}`"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -203,7 +203,7 @@
                         <button
                             @click="() => setModModal(modView, true)"
                             class="px-1 text-gray-500 hover:text-red-600"
-                            :title="`Remove @${modView.moderator.name} as mod`"
+                            :title="`Remove @${modView.user.name} as mod`"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -300,17 +300,17 @@
                 <ul class="flex flex-col">
                     <li
                         v-for="modView in pendingMods"
-                        :key="modView.moderator.id"
+                        :key="modView.user.id"
                         class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
                         :class="
-                            modView.moderator.is_banned
+                            modView.user.isBanned
                                 ? 'bg-red-100 hover:bg-red-200'
                                 : 'odd:bg-gray-50 hover:bg-gray-100'
                         "
                     >
                         <NuxtLink
                             external
-                            :to="`/@${modView.moderator.name}`"
+                            :to="`/@${modView.user.name}`"
                             target="_blank"
                             class="col-span-2"
                         >
@@ -318,17 +318,17 @@
                                 <div
                                     class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
                                     :class="
-                                        modView.moderator.is_banned
+                                        modView.user.isBanned
                                             ? 'hover:bg-red-300'
                                             : 'hover:bg-gray-200'
                                     "
                                 >
                                     <img
-                                        :src="modView.moderator.avatar"
+                                        :src="modView.user.avatar"
                                         class="w-8 h-8 rounded-sm"
                                     />
                                     <p class="text-primary font-semibold">
-                                        {{ modView.moderator.name }}
+                                        {{ modView.user.name }}
                                     </p>
                                 </div>
                             </div>
@@ -336,7 +336,7 @@
                         <div class="col-span-1 flex items-center">
                             {{
                                 format(
-                                    parseISO(modView.mod_meta.creation_date),
+                                    parseISO(modView.creationDate),
                                     "yyyy MMM. dd",
                                 )
                             }}
@@ -344,21 +344,21 @@
                         <div class="col-span-1 flex items-center break-words">
                             {{
                                 createModPermissionString(
-                                    modView.mod_meta.permissions,
+                                    modView.permissions,
                                 )
                             }}
                         </div>
                         <div
                             v-if="
                                 hasFullPermissions &&
-                                myRank < modView.mod_meta.rank
+                                myRank < modView.rank
                             "
                             class="col-span-2 flex justify-end space-x-2"
                         >
                             <button
                                 @click="() => setModModal(modView, false)"
                                 class="px-1 text-gray-500 hover:text-blue-600"
-                                :title="`Edit permissions for @${modView.moderator.name}`"
+                                :title="`Edit permissions for @${modView.user.name}`"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -389,7 +389,7 @@
                             <button
                                 @click="() => setModModal(modView, true)"
                                 class="px-1 text-gray-500 hover:text-red-600"
-                                :title="`Revoke mod invite to @${modView.moderator.name}`"
+                                :title="`Revoke mod invite to @${modView.user.name}`"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -425,8 +425,6 @@
 
 <script setup>
 import { computed, ref } from "vue";
-// import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useModalStore } from "@/stores/StoreModal";
@@ -468,19 +466,22 @@ const user = userStore.user;
 // For resolving invite
 const isLoading = ref(false);
 
-// Fetch users
-const { data, pending, error, refresh } = await useAPI(
-    `/boards/${board.id}/mods`,
-    {
-        method: "get",
-        key: `mod_fetch_${board.id}`,
-    },
-);
+// Fetch moderators using GraphQL
+const { data, pending, error, refresh } = await useAsyncQuery('getBoardModerators', {
+    boardId: board.id
+});
 
-const mods = data.value.mods;
-const pendingMods = data.value.pending_mods;
-const isInvited = data.value.has_pending_invite;
-const myRank = data.value.my_mod_rank;
+const mods = computed(() => data.value?.getBoardModerators?.filter(mod => mod.inviteAccepted) || []);
+const pendingMods = computed(() => data.value?.getBoardModerators?.filter(mod => !mod.inviteAccepted) || []);
+const isInvited = computed(() => {
+    if (!user?.id) return false;
+    return pendingMods.value.some(mod => mod.user.id === user.id);
+});
+const myRank = computed(() => {
+    if (!user?.id) return 999;
+    const myMod = mods.value.find(mod => mod.user.id === user.id);
+    return myMod ? myMod.rank : 999;
+});
 
 function setModModal(modView = null, isRemoving = false) {
     const options = {
@@ -488,9 +489,9 @@ function setModModal(modView = null, isRemoving = false) {
     };
 
     if (modView !== null) {
-        options["user"] = modView.moderator;
-        options["modPerms"] = modView.mod_meta.permissions;
-        options["hasAcceptedInvite"] = modView.mod_meta.invite_accepted;
+        options["user"] = modView.user;
+        options["modPerms"] = modView.permissions;
+        options["hasAcceptedInvite"] = modView.inviteAccepted;
     }
 
     modalStore.setModal({
@@ -503,22 +504,73 @@ function setModModal(modView = null, isRemoving = false) {
 
 async function resolveInvite(accept) {
     isLoading.value = true;
-    const { data, error } = await useAPI(
-        accept
-            ? `/boards/${board.id}/mods`
-            : `/boards/${board.id}/mods/${user.id}`,
-        {
-            body: {},
-            method: accept ? "POST" : "DELETE",
-        },
-    );
 
-    if (data.value) {
-        window.location.reload(true);
-    } else {
-        console.error(JSON.stringify(error.value, null, 4));
+    try {
+        if (accept) {
+            // Accept moderator invite by adding ourselves as moderator
+            const result = await $fetch('#gql', {
+                query: `
+                    mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+                        addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
+                            success
+                        }
+                    }
+                `,
+                variables: {
+                    boardId: board.id,
+                    userId: user.id,
+                    permissions: 0 // Accept with existing permissions
+                }
+            });
+
+            if (result.addModerator?.success) {
+                // Refresh moderator data
+                refresh();
+                toast.addNotification({
+                    header: 'Invite accepted',
+                    message: 'You are now a moderator!',
+                    type: 'success'
+                });
+            } else {
+                throw new Error('Failed to accept invite');
+            }
+        } else {
+            // Decline invite by removing ourselves as moderator
+            const result = await $fetch('#gql', {
+                query: `
+                    mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+                        removeBoardModerator(boardId: $boardId, userId: $userId) {
+                            success
+                        }
+                    }
+                `,
+                variables: {
+                    boardId: board.id,
+                    userId: user.id
+                }
+            });
+
+            if (result.removeBoardModerator?.success) {
+                // Refresh moderator data
+                refresh();
+                toast.addNotification({
+                    header: 'Invite declined',
+                    message: 'You have declined the moderator invite.',
+                    type: 'success'
+                });
+            } else {
+                throw new Error('Failed to decline invite');
+            }
+        }
+    } catch (error) {
+        console.error('Error resolving invite:', error);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Failed to process the invite. Please try again.',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
     }
-
-    isLoading.value = false;
 }
 </script>

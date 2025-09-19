@@ -1,0 +1,14 @@
+query getReports($type: String!, $targetId: Int!, $unresolvedOnly: Boolean) {
+  getReports(type: $type, targetId: $targetId, unresolvedOnly: $unresolvedOnly) {
+    id
+    reason
+    resolved
+    creationDate
+    createdBy {
+      id
+      name
+      displayName
+      avatar
+    }
+  }
+}
