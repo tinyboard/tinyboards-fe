@@ -155,18 +155,16 @@ const postLink = computed((): string => {
 });
 
 // Mark individual notification as read
-const { mutate: markNotificationsReadMutation } = useMutation('markNotificationsRead');
-
 const markAsRead = async () => {
 	isMarkingRead.value = true;
 
 	try {
-		const result = await markNotificationsReadMutation({
+		const result = await GqlMarkNotificationsRead({
 			notificationIds: [props.notification.id],
 			markAll: false
 		});
 
-		if (result.data?.markNotificationsRead?.success) {
+		if (result.markNotificationsRead?.success) {
 			// Emit event to parent component to update the notification
 			emit('marked-read', props.notification.id);
 

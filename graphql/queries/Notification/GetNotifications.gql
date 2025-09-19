@@ -1,13 +1,5 @@
-query getNotifications(
-  $unreadOnly: Boolean,
-  $page: Int,
-  $limit: Int
-) {
-  getNotifications(
-    unreadOnly: $unreadOnly,
-    page: $page,
-    limit: $limit
-  ) {
+query getNotifications {
+  getNotifications {
     id
     kind
     isRead

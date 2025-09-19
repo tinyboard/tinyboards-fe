@@ -1,16 +1,13 @@
 query listBannedUsers($page: Int, $limit: Int) {
   listBannedUsers(page: $page, limit: $limit) {
     persons {
-      person {
-        id
-        name
-        displayName
-        avatar
-        isAdmin
-        isBanned
-        creationDate
-        unbanDate
-      }
+      id
+      name
+      displayName
+      avatar
+      isAdmin
+      isBanned
+      creationDate
     }
     totalCount
   }

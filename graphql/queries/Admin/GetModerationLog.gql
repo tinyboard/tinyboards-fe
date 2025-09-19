@@ -1,18 +1,13 @@
-query getModerationLog($limit: Int, $page: Int, $actionType: String) {
-  getModerationLog(limit: $limit, page: $page, actionType: $actionType) {
-    id
-    actionType
-    targetId
-    targetType
-    reason
-    moderator {
+query getModerationLog($limit: Int, $actionType: String) {
+  getModerationLog(limit: $limit, actionType: $actionType) {
+    entries {
       id
-      name
-      displayName
-      avatar
+      actionType
+      moderatorId
+      targetId
+      reason
+      createdAt
     }
-    creationDate
-    details
+    totalCount
   }
-  totalCount
 }

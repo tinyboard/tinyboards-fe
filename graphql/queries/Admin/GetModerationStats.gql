@@ -1,17 +1,6 @@
 query getModerationStats {
   getModerationStats {
     pendingReports
-    resolvedReports
     bannedUsers
-    removedPosts
-    removedComments
-    totalModerationActions
-    dailyStats {
-      date
-      reports
-      bans
-      removals
-      approvals
-    }
   }
 }

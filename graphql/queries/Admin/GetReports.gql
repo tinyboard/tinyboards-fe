@@ -1,14 +1,13 @@
-query getReports($type: String!, $targetId: Int!, $unresolvedOnly: Boolean) {
-  getReports(type: $type, targetId: $targetId, unresolvedOnly: $unresolvedOnly) {
+query getPostReports($resolvedOnly: Boolean, $limit: Int) {
+  getPostReports(resolvedOnly: $resolvedOnly, limit: $limit) {
     id
     reason
     resolved
     creationDate
-    createdBy {
-      id
-      name
-      displayName
-      avatar
-    }
+    creatorId
+    postId
+    originalPostTitle
+    originalPostBody
+    originalPostUrl
   }
 }

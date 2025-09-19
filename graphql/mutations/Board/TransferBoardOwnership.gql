@@ -1,32 +1,5 @@
-mutation transferBoardOwnership($boardId: Int!, $userId: Int!) {
-  transferBoardOwnership(boardId: $boardId, userId: $userId) {
+mutation transferBoardOwnership($boardId: Int!, $newOwnerId: Int!) {
+  transferBoardOwnership(boardId: $boardId, newOwnerId: $newOwnerId) {
     success
-    board {
-      id
-      name
-      title
-      description
-      moderators {
-        id
-        boardId
-        userId
-        permissions
-        rank
-        inviteAccepted
-        inviteAcceptedDate
-        creationDate
-        user {
-          id
-          name
-          displayName
-          avatar
-          banner
-          bio
-          creationDate
-          isAdmin
-          isBanned
-        }
-      }
-    }
   }
 }

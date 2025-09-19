@@ -1,5 +1,7 @@
-mutation banUser($userId: Int!, $reason: String, $expires: String) {
-  banUser(userId: $userId, reason: $reason, expires: $expires) {
+mutation banUser($input: BanUserInput!) {
+  banUser(input: $input) {
     success
+    banId
+    message
   }
 }

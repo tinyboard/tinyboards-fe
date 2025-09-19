@@ -1,24 +1,7 @@
-mutation banUserFromBoard($boardId: Int!, $userId: Int!, $reason: String, $expires: String) {
-  banUserFromBoard(boardId: $boardId, userId: $userId, reason: $reason, expires: $expires) {
+mutation banUserFromBoard($input: BoardBanUserInput!) {
+  banUserFromBoard(input: $input) {
     success
-    ban {
-      id
-      boardId
-      userId
-      reason
-      expires
-      creationDate
-      user {
-        id
-        name
-        displayName
-        avatar
-        banner
-        bio
-        creationDate
-        isAdmin
-        isBanned
-      }
-    }
+    banId
+    message
   }
 }

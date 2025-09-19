@@ -44,7 +44,7 @@
 	</NuxtLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // import { baseURL } from '@/server/constants';
 import { formatDate } from "@/utils/formatDate";
 import { useToastStore } from "@/stores/StoreToast";
@@ -75,7 +75,7 @@ const { data: notifications, pending, error, refresh } = await useAsyncQuery('ge
 	unreadOnly: type.value === 'unread',
 	limit: limit.value,
 	page: page.value
-})
+});
 
 if (error.value && error.value.response) {
 	throw createError({
@@ -106,14 +106,13 @@ const isLoading = ref(false);
 
 const markRead = async () => {
 	isLoading.value = true;
-	const { mutate } = useMutation('markNotificationsRead');
 
 	try {
-		const result = await mutate({
+		const result = await GqlMarkNotificationsRead({
 			markAll: true
 		});
 
-		if (result.data?.markNotificationsRead?.success) {
+		if (result.markNotificationsRead?.success) {
 			// Update local notifications to be marked as read
 			if (notifications.value) {
 				notifications.value = notifications.value.map(notification => ({
@@ -152,7 +151,7 @@ const markRead = async () => {
 };
 
 // Handle individual notification marked as read
-const onNotificationMarkedRead = (notificationId: number) => {
+const onNotificationMarkedRead = (notificationId) => {
 	if (notifications.value) {
 		const notificationIndex = notifications.value.findIndex(n => n.id === notificationId);
 		if (notificationIndex !== -1) {

@@ -2,16 +2,10 @@ mutation toggleBotAccount($isBot: Boolean!) {
   toggleBotAccount(isBot: $isBot)
 }
 
-mutation updateNotificationSettings(
-  $emailNotificationsEnabled: Boolean
-  $showBots: Boolean
-  $showNsfw: Boolean
-) {
-  updateNotificationSettings(
-    emailNotificationsEnabled: $emailNotificationsEnabled
-    showBots: $showBots
-    showNsfw: $showNsfw
-  )
+mutation updateNotificationSettings($input: UpdateNotificationSettingsInput!) {
+  updateNotificationSettings(input: $input) {
+    success
+  }
 }
 
 mutation updateInterfaceSettings(
