@@ -69,14 +69,14 @@
         <ul class="relative flex flex-grow flex-wrap comments-center space-x-4" v-show="!isCollapsed">
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards && comment.board ? '/+' + comment.board.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards && comment.board ? '/+' + comment.board.name : ''}/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -90,7 +90,7 @@
         <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
         <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
-          :to="`/post/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
+          :to="`/p/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>

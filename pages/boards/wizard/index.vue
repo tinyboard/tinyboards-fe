@@ -71,7 +71,7 @@ const isLoading = ref(false);
 }*/
 
 definePageMeta({
-    alias: ['/boards/create', '/create_board', '/+!wizard', '/+!new', '/abracadabra'],
+    alias: ['/boards/create', '/create_board', '/abracadabra'],
     layout: false,
     isScrollDisabled: true,
     'hasAuthRequired': true,

@@ -92,7 +92,7 @@ const board = boardStore.board;
 
 definePageMeta({
     hasAuthRequired: true,
-    alias: ['/+:board/mod/banned', '/+:board/mod/b'],
+    alias: ['/b/:board/mod/banned', '/b/:board/mod/b'],
     isLeftNavbarDisabled: true,
     permissionRequired: "users",
 });

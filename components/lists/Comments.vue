@@ -5,16 +5,16 @@
             <div v-if="cards" class="bg-white border border-gray-200 p-4 mb-4 rounded">
                 <div class="mb-2 text-gray-700" v-if="site.enableBoards">
                     <NuxtLink
-                        :to="`/+${comment.board.name}/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
+                        :to="`/b/${comment.board.name}/p/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
                         class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
                     </NuxtLink>
                     in
-                    <NuxtLink :to="`/+${comment.board.name}`" class="text-blue-600 hover:text-blue-700 hover:underline">
-                        +{{ comment.board.name }}</NuxtLink>
+                    <NuxtLink :to="`/b/${comment.board.name}`" class="text-blue-600 hover:text-blue-700 hover:underline">
+                        b/{{ comment.board.name }}</NuxtLink>
                 </div>
                 <div class="mb-2 text-gray-700" v-else>
                     <NuxtLink
-                        :to="`/post/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
+                        :to="`/p/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
                         class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
                     </NuxtLink>
                 </div>

@@ -219,7 +219,7 @@ const postId = computed(() => {
 const permalink = computed(() => {
     const base = `${config.public.use_https ? "https" : "http"}://${config.public.domain}`;
 
-    return props.type == 'post' ? base + `/p/${props.id}` : base + `/post/${postId.value}/${props.id}`;
+    return props.type == 'post' ? base + `/p/${props.id}` : base + `/p/${postId.value}/${props.id}`;
 })
 
 // Copy link

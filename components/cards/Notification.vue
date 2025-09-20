@@ -72,11 +72,11 @@ const replies = ref([] as Comment[]);
 // Contextual link
 const context = computed(() => {
 	if (!!props.notification.parentId) {
-		return `/post/${props.notification.post.id}/${props.notification.parentId}`
+		return `/p/${props.notification.post.id}/${props.notification.parentId}`
 	} else if (!!props.notification.id) {
-		return `/post/${props.notification.post.id}/${props.notification.id}`
+		return `/p/${props.notification.post.id}/${props.notification.id}`
 	} else {
-		return `/post/${props.notification.post.id}`
+		return `/p/${props.notification.post.id}`
 	}
 });
 

@@ -50,9 +50,9 @@
 					</NuxtLink>
 					<span v-else class="font-bold">[System]</span>
 					created a post in
-					<span class="font-medium">+{{ notification.post.board?.name }}</span>
+					<span class="font-medium">b/{{ notification.post.board?.name }}</span>
 				</p>
-				<NuxtLink :to="`/post/${notification.post.id}`" class="font-medium text-blue-600 hover:underline">
+				<NuxtLink :to="`/p/${notification.post.id}`" class="font-medium text-blue-600 hover:underline">
 					{{ notification.post.title }}
 				</NuxtLink>
 				<div v-if="notification.post.body" class="prose prose-sm max-w-none mt-1" v-html="notification.post.body"></div>
@@ -147,9 +147,9 @@ const creator = computed((): NotificationCreator | null => {
 // Generate the link to the post/comment
 const postLink = computed((): string => {
 	if (props.notification.comment) {
-		return `/post/${props.notification.comment.post.id}/${props.notification.comment.id}`;
+		return `/p/${props.notification.comment.post.id}/${props.notification.comment.id}`;
 	} else if (props.notification.post) {
-		return `/post/${props.notification.post.id}`;
+		return `/p/${props.notification.post.id}`;
 	}
 	return '#';
 });

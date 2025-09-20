@@ -533,7 +533,7 @@ const logout = () => {
 		methods: {
 			...mapActions("persist", ["logout"]),
 			createPost() {
-				if (this.$route.path.startsWith === '/+') {
+				if (this.$route.path.startsWith('/b/')) {
 					this.$store.commit('create/TOGGLE_POST_CREATION_MODAL', {show: true})
 				} else {
 					this.$router.push('/create/post')
