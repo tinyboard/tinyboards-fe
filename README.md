@@ -480,8 +480,9 @@ npx vue-tsc --noEmit
 
 ### Development Testing
 ```bash
-# Start backend (in tinyboards directory)
-cd ../tinyboards && cargo run
+# Start backend (clone from GitHub if needed)
+git clone https://github.com/tinyboard/tinyboards
+cd tinyboards && cargo run
 
 # Start frontend (in tinyboards-fe directory)
 npm run dev
@@ -608,12 +609,12 @@ This project is licensed under the GNU Affero General Public License v3.0 - see 
 
 ## Related Projects
 
-- **[TinyBoards Backend](../README.md)** - Rust/GraphQL backend API
-- **[TinyBoards API Documentation](../docs/README.md)** - Complete API reference
+- **[TinyBoards Backend](https://github.com/tinyboard/tinyboards)** - Rust/GraphQL backend API
+- **[TinyBoards API Documentation](https://github.com/tinyboard/tinyboards/tree/master/docs)** - Complete API reference
 
 ## Support
 
-- 📚 **Backend Documentation**: Check the [`../docs/`](../docs/) directory
+- 📚 **Backend Documentation**: Check the [TinyBoards docs](https://github.com/tinyboard/tinyboards/tree/master/docs) directory
 - 🐛 **Bug Reports**: Open an issue on GitHub
 - 💬 **Discussions**: Use GitHub Discussions for questions
 - 📧 **Security Issues**: Email security concerns privately
