@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 interface ModalOptions {
   modal: string | null;
   id: number | null;
-  contentType: string | null;
+  contentType?: string | null;
   isOpen: boolean;
   options?: { [key: string]: any } // additional options that can be passed onto the modal
 }

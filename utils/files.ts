@@ -1,8 +1,14 @@
 /** Convert a data URL to a File object. */
-export const dataURLtoFile = (dataURL: string): File => {
-  const type = dataURL.split(";")[0].slice(5);
+export const dataURLtoFile = (dataURL: string | ArrayBuffer): File => {
+  let dataURLStr: string;
+  if (typeof dataURL === "string") {
+    dataURLStr = dataURL;
+  } else {
+    dataURLStr = Buffer.from(dataURL).toString();
+  }
+  const type = dataURLStr.split(";")[0].slice(5);
 
-  const arr = dataURL.split(",");
+  const arr = dataURLStr.split(",");
   const bstr = atob(arr[arr.length - 1]);
   let n = bstr.length;
   let u8arr = new Uint8Array(n);
