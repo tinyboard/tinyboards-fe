@@ -153,6 +153,11 @@ const props = defineProps({
                 key: "newComments",
                 href: { params: { sort: "newcomments" } },
             },
+            {
+                name: "Controversial",
+                key: "controversial",
+                href: { params: { sort: "controversial" } },
+            },
         ],
     },
 });

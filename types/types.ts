@@ -148,6 +148,8 @@ export function mapToSortType(sort: string, fallback: SortType = SortType.Hot): 
             return SortType.MostComments;
         case "newcomments":
             return SortType.NewComments;
+        case "controversial":
+            return SortType.Controversial;
         default:
             return fallback;
     }

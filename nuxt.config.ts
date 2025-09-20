@@ -25,6 +25,14 @@ function constructGraphQLEndpoint(): string {
 }
 
 export default defineNuxtConfig({
+  // Reduce verbose logging in development
+  devtools: { enabled: false },
+
+  // Reduce console noise
+  nitro: {
+    logLevel: process.env.NODE_ENV === 'development' ? 1 : 0,
+  },
+
   // alias: {
   //   pinia: "/node_modules/@pinia/nuxt/node_modules/pinia/dist/pinia.mjs",
   // },
