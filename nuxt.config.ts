@@ -49,8 +49,7 @@ function getGraphQLConfig() {
 }
 
 export default defineNuxtConfig({
-  // Reduce verbose logging in development
-  devtools: { enabled: false },
+  devtools: { enabled: true },
 
   // Reduce console noise
   nitro: {
@@ -163,7 +162,13 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tsconfigPaths()],
     server: {
-      allowedHosts: ["localhost"],
+      allowedHosts: ["localhost", "tinyboards.test"],
+      hmr: {
+        port: 3000,
+        clientPort: 3000,
+        host: 'localhost',
+        protocol: 'ws'
+      }
       // fs: {
       //   cachedChecks: false,
       // },
