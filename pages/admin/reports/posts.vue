@@ -75,6 +75,13 @@ const postsStore = usePostsStore();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
+// Use existing moderation queue implementation
+// TODO: When backend GraphQL schema includes getPostReports query, replace with:
+// const { data, pending, error, refresh } = await useAsyncQuery('getPostReports', {
+//   limit: limit.value,
+//   page: page.value
+// });
+
 const { items, totalCount, paginate, pending, error, refresh } = await getModQueue({
 	limit: limit.value,
 	page: page.value
@@ -94,4 +101,5 @@ const posts = postsStore.posts;
 const totalPages = computed(() => {
 	return Math.ceil(totalCount.value / limit.value || 1);
 });
+
 </script>

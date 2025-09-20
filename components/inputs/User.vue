@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useApi } from '@/composables/api';
+// import { useAPI } from '@/composables/api';
 import {
     Combobox,
     ComboboxInput,
@@ -82,13 +82,31 @@ watch(
             params["is_banned"] = false;
         }
 
-        const { data, pending, error, refresh } = await useApi("/members", {
-            query: params,
-            method: "get",
-            key: `user_fetch_${params.search_term}_${params.limit}_`
+        // Use GraphQL query instead of REST API
+        const { data, pending, error, refresh } = await useAsyncGql({
+            operation: 'listMembers',
+            variables: {
+                page: params.page,
+                limit: params.limit,
+                searchTerm: params.search_term,
+                listingType: 'all',
+                sort: 'name'
+            }
         });
 
-        users.value = data.value.members;
+        // Transform GraphQL response to match expected format
+        if (data.value?.listUsers) {
+            users.value = data.value.listUsers.map(user => ({
+                person: {
+                    name: user.name,
+                    displayName: user.displayName,
+                    avatar: user.avatar,
+                    bio: user.bio
+                }
+            }));
+        } else {
+            users.value = [];
+        }
     }
 )
 

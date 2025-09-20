@@ -89,6 +89,12 @@ const modalCrop = defineAsyncComponent(
 const modalOptions = defineAsyncComponent(
     () => import("@/components/dialogs/ModalOptions"),
 );
+const modalApplicationView = defineAsyncComponent(
+    () => import("@/components/dialogs/ModalApplicationView"),
+);
+const modalApplicationDeny = defineAsyncComponent(
+    () => import("@/components/dialogs/ModalApplicationDeny"),
+);
 
 // Object lookup to select modal.
 const components = {
@@ -109,5 +115,7 @@ const components = {
     ModalThemes: modalThemes,
     ModalCrop: modalCrop,
     ModalOptions: modalOptions,
+    ModalApplicationView: modalApplicationView,
+    ModalApplicationDeny: modalApplicationDeny,
 };
 </script>

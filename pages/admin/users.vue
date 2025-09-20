@@ -37,25 +37,25 @@
 				</span>
 			</div>
 			<!-- Rows -->
-			<ul v-if="members?.members.length" class="flex flex-col">
-				<li v-for="v in members.members" :key="v.person.id"
+			<ul v-if="members?.listMembers?.members?.length" class="flex flex-col">
+				<li v-for="v in members.listMembers.members" :key="v.id"
 					class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
-					:class="v.person.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
-					<NuxtLink external :to="`/@${v.person.name}`" target="_blank" class="col-span-3">
+					:class="v.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
+					<NuxtLink external :to="`/@${v.name}`" target="_blank" class="col-span-3">
 						<div class="flex grow-0">
 							<div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
-								:class="v.person.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
-								<img :src="v.person.avatar" class="w-8 h-8 rounded-sm" />
-								<p class="text-primary font-semibold">{{ v.person.name }}</p>
+								:class="v.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
+								<img :src="v.avatar" class="w-8 h-8 rounded-sm" />
+								<p class="text-primary font-semibold">{{ v.name }}</p>
 							</div>
 						</div>
 					</NuxtLink>
 					<div class="col-span-1 flex items-center">
-						{{ format(parseISO(v.person.creation_date), 'yyyy MMM. dd') }}
+						{{ format(parseISO(v.creation_date), 'yyyy MMM. dd') }}
 					</div>
-					<div v-if="v.person.is_banned" class="col-span-2 flex justify-end">
-						<button @click="() => confirmUnban(v.person)" class="px-1 text-gray-500 hover:text-green-600"
-							:title="`Unban @${v.person.name}`">
+					<div v-if="v.is_banned" class="col-span-2 flex justify-end">
+						<button @click="() => confirmUnban(v)" class="px-1 text-gray-500 hover:text-green-600"
+							:title="`Unban @${v.name}`">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
 								viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
 								stroke-linecap="round" stroke-linejoin="round">
@@ -66,9 +66,9 @@
 							</svg>
 						</button>
 					</div>
-					<div v-else-if="!v.person.is_admin" class="col-span-2 flex justify-end">
-						<button @click="() => confirmBan(v.person)" class="px-1 text-gray-500 hover:text-red-600"
-							:title="`Ban @${v.person.name}`">
+					<div v-else-if="v.admin_level === 0" class="col-span-2 flex justify-end">
+						<button @click="() => confirmBan(v)" class="px-1 text-gray-500 hover:text-red-600"
+							:title="`Ban @${v.name}`">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
 								viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
 								stroke-linecap="round" stroke-linejoin="round">
@@ -102,8 +102,6 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
@@ -125,7 +123,7 @@ const toast = useToastStore();
 const modalStore = useModalStore();
 
 // Fetch site settings
-//const { data: site, pending, error, refresh } = await useApi("/admin/site");
+//const { data: site, pending, error, refresh } = await useAPI("/admin/site");
 const site = useSiteStore();
 
 // Pagination
@@ -136,32 +134,23 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 const searchTerm = ref(route.query.search_term || "");
 
 // Fetch users
-const { data: members, pending, error, refresh } = await useApi("/members", {
-	query: {
+const { data: members, pending, error, refresh } = await useAsyncGql({
+	operation: 'listMembers',
+	variables: {
 		limit: limit.value,
 		page: page.value,
-		...route.query
-	},
-	method: "get",
+		search: route.query.search_term || undefined
+	}
 });
 
 const totalPages = computed(() => {
-	return (members.value.total_count / limit.value) || 1;
+	return Math.ceil((members.value?.listMembers?.total_count || 0) / limit.value) || 1;
 })
 
 watch(
 	() => route.query.page,
 	async newPage => {
-		const { data: newMembers } = await useApi("/members", {
-			query: {
-				limit: limit.value,
-				page: page.value,
-				...route.query
-			},
-			method: "get",
-		});
-
-		members.value = newMembers.value;
+		await refresh();
 	}
 )
 
@@ -172,16 +161,7 @@ watch(
 		const query = JSON.parse(JSON.stringify(route.query));
 		query.search_term = newSearch;
 		router.replace({ query });
-		const { data: newMembers } = await useApi("/members", {
-			query: {
-				limit: limit.value,
-				page: page.value,
-				search_term: newSearch,
-			},
-			method: "get",
-		});
-
-		members.value = newMembers.value;
+		await refresh();
 	}
 )
 

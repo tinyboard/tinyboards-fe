@@ -1,27 +1,19 @@
 <template>
   <div>
-    <p v-if="route.meta.hasRepliesDisabled" class="mb-1 flex space-x-[4px]">
-      <NuxtLink class="font-semibold" :href="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}/${comment.id}?context=2`">
-        {{ item.post.title }}
-      </NuxtLink>
-      <p class="text-gray-600" v-if="site.enableBoards">in</p>
-      <NuxtLink v-if="site.enableBoards" :href="`/+${item.board.name}`">
-        +{{ item.board.name }}
-      </NuxtLink>
-    </p>
-    <div :id="comment.id" class="comment group flex relative" :class="{
-      'opacity-60 hover:opacity-100 focus:opacity-100 items-center':
+    <div :id="comment.id.toString()" class="comment group flex relative" :class="{
+      'opacity-60 hover:opacity-100 focus:opacity-100 comments-center':
         isCollapsed,
     }" style="scroll-margin-top: 7rem;">
       <!-- Stretched Click Area -->
       <div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer"
         @click="isCollapsed = !isCollapsed"></div>
       <!-- Comment -->
-      <div class="relative flex flex-col flex-shrink-0 items-center mr-2">
+      <div class="relative flex flex-col flex-shrink-0 comments-center mr-2">
         <!-- User Avatar -->
-        <NuxtLink v-if="item.creator"
-          :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`" class="z-10">
-          <img loading="lazy" :src="item.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
+        <NuxtLink v-if="comment.creator"
+          :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`"
+          class="z-10">
+          <img loading="lazy" :src="comment.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
             class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 rounded" />
         </NuxtLink>
         <!-- Comment Collapse Bar -->
@@ -29,30 +21,31 @@
           v-show="!isCollapsed"></div>
       </div>
       <!-- User Details -->
-      <div class="flex-grow" :class="{ 'flex items-center': isCollapsed }">
-        <div :class="{ 'flex flex-grow items-center leading-none': isCollapsed }">
-          <div class="flex items-center min-h-[24px] sm:min-h-[36px]">
+      <div class="flex-grow" :class="{ 'flex comments-center': isCollapsed }">
+        <div :class="{ 'flex flex-grow comments-center leading-none': isCollapsed }">
+          <div class="flex comments-center min-h-[24px] sm:min-h-[36px] items-center">
             <div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <NuxtLink v-if="item.creator"
-                :to="`/@${item.creator.name}${item.creator.instance ? '@' + item.creator.instance : ''}`"
-                class="flex items-center text-sm">
-                <strong>{{ item.creator.name }}</strong>
-                <span v-if="item.creator.instance">@{{ item.creator.instance }}</span>
+              <NuxtLink v-if="comment.creator"
+                :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`"
+                class="flex comments-center text-sm">
+                <strong>{{ comment.creator.displayName ?? comment.creator.name }}</strong>
+                <span v-if="comment.creator.instance">@{{ comment.creator.instance }}</span>
                 <!-- Role -->
-                <span v-if="item.creator.is_admin" class="ml-1 badge badge-red">Admin</span>
+                <span v-if="comment.creator.isAdmin" class="ml-1 badge badge-red">Admin</span>
+                <span v-if="isOP" class="ml-1 badge badge-blue">OP</span>
               </NuxtLink>
               <!-- Parent Context Link -->
-              <!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex items-center align-middle text-gray-400 hover:text-gray-600">
+              <!--<NuxtLink v-if="comment.parent_id" :to="`#${comment.parent_id}`" v-show="!isCollapsed" class="flex comments-center align-middle text-gray-400 hover:text-gray-600">
 								<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 								   <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1"></path>
 								</svg>
 								<span>"parent author"</span>
 							</NuxtLink>-->
-              <span v-show="!isCollapsed" class="flex items-center space-x-2">
+              <span v-show="!isCollapsed" class="flex comments-center space-x-2">
                 <!-- Timestamp -->
-                <span :title="comment.creation_date">{{
-                  formatDate(new Date(comment.creation_date), false)
+                <span :title="comment.creationDate">{{
+                  formatDate(new Date(comment.creationDate), false)
                 }} <span class="hidden sm:inline">ago</span>
                 </span>
 
@@ -68,32 +61,34 @@
                       <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
                       <path d="M16 5l3 3"></path>
                     </svg>
-                    <span class="hidden sm:inline">Edited</span> {{ formatDate(new Date(comment.updated), false) }} <span
-                      class="hidden sm:inline">ago</span>
+                    <span class="hidden sm:inline">Edited</span> {{ formatDate(new Date(comment.updated), false) }}
+                    <span class="hidden sm:inline">ago</span>
                   </span>
                 </span>
               </span>
               <!-- Score -->
-              <span :title="`+${item.counts.upvotes} | -${item.counts.downvotes}`"
-                class="hidden sm:flex items-center space-x-2">
+              <span :title="`+${comment.upvotes} | -${comment.downvotes}`"
+                class="hidden sm:flex comments-center space-x-2">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
                   {{ score }}
-                  {{ score ** 2 === 1 ? "pt" : "pts" }}
+                  {{ score === 1 ? "pt" : "pts" }}
                 </span>
               </span>
               <!-- Reply Count -->
-              <span v-show="isCollapsed && item.replies.length" class="flex items-center space-x-2">
+              <span v-show="isCollapsed && comment.replies?.length" class="flex comments-center space-x-2">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
-                  {{ item.replies.length }}
-                  {{ item.replies.length === 1 ? "reply" : "replies" }}
+                  {{ comment.replies?.length }}
+                  {{ comment.replies?.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
-              <span class="ml-2 text-red-500 text-xs" v-if="item.comment.is_removed && canMod" title="Removed comment">
-                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
-                  stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <span class="ml-2 text-red-600 text-xs" v-if="comment.isRemoved && canMod"
+                title="Comment removed by moderator or admin">
+                <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="20" height="20"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                  stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path
                     d="M13.593 19.855a9.96 9.96 0 0 1 -5.893 -.855l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c2.128 1.816 3.053 4.363 2.693 6.813">
@@ -101,12 +96,14 @@
                   <path d="M22 22l-5 -5"></path>
                   <path d="M17 22l5 -5"></path>
                 </svg>
+                <span class="hidden sm:inline">Removed</span>
               </span>
-              <span class="ml-2 text-yellow-500 text-xs" v-else-if="item.comment.is_deleted && canMod"
-                title="Deleted comment">
-                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
-                  stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <span class="ml-2 text-yellow-600 text-xs" v-else-if="comment.isDeleted && canMod"
+                title="Comment deleted by its creator">
+                <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="16" height="16"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                  stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M4 7l16 0"></path>
                   <path d="M10 11l0 6"></path>
@@ -114,17 +111,32 @@
                   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                 </svg>
+                <span class="hidden sm:inline">Deleted</span>
               </span>
+              <span class="ml-2 text-green-600 text-xs" v-else-if="comment.isPinned"
+                title="Comment pinned by moderators">
+                <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="24" height="24"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6" />
+                  <path d="M12 16l0 5" />
+                  <path d="M8 4l8 0" />
+                </svg>
+                <span class="hidden sm:inline">Pinned</span>
+              </span>
+              <!-- TODO: comment reports -->
               <!-- Report count -->
-              <span class="ml-2 text-orange-400 font-bold text-xs" v-if="item.report_count"
-                :title="`${item.report_count} report(s)`">
+              <span class="ml-2 text-orange-400 font-bold text-xs"
+                v-if="false" :title="`??? report(s)`">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" width="20" height="20" viewBox="0 0 24 24"
                   stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                   <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16"></path>
                 </svg>
-                {{ item.report_count }}
+                ???
               </span>
             </div>
           </div>
@@ -132,25 +144,25 @@
           <LazyInputsEdit v-if="isEditing" :id="comment.id" :body="comment.body" type="comment" @hasEdited="onHasEdited"
             @closed="isEditing = false" />
           <!-- Comment Text Body -->
-          <div class="comment-body"
-            :class="canMod && item.comment.is_removed ? 'bg-red-400 bg-opacity-40' : 'bg-white dark:bg-gray-800'"
-            v-show="!isCollapsed && !isEditing" v-html="comment.body_html"></div>
+          <div :id="`comment-text-${comment.id}`" class="comment-body target:bg-primary target:bg-opacity-10" :class="{
+            'bg-red-400 bg-opacity-40': canMod && comment.isRemoved,
+            'bg-yellow-400 bg-opacity-40': canMod && comment.isDeleted
+          }" v-show="!isCollapsed && !isEditing" v-html="comment.bodyHTML"></div>
         </div>
         <!-- Comment Reports -->
-        <div v-if="item.report_count" class="mb-2">
-          <CardsReports :id="item.comment.id" type="comment" />
+        <div v-if="false" class="mb-2">
+          <CardsReports :id="comment.id" type="comment" />
         </div>
         <!-- Comment Actions -->
-        <ul class="relative flex flex-grow flex-wrap items-center space-x-4" v-show="!isCollapsed && !isEditing">
+        <ul class="relative flex flex-grow flex-wrap comments-center space-x-4" v-show="!isCollapsed && !isEditing">
           <li>
             <!-- If logged in, allow upvoting -->
             <button v-if="isAuthed" class="text-xs font-medium" :class="[
-              { 'cursor-not-allowed': item.post.is_deleted },
               voteType === 1
                 ? 'upvoted text-primary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
-            ]" @click="vote(1)" :disabled="item.post.is_deleted">
-              <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }}</span>
+            ]" @click="vote(1)">
+              <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }} ({{ upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -160,8 +172,9 @@
               </svg>
             </button>
             <!-- Else, redirect to login -->
-            <NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Upvote</span>
+            <NuxtLink v-else to="/login"
+              class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+              <span class="hidden sm:inline">Upvote ({{ comment.upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -171,24 +184,23 @@
               </svg>
             </NuxtLink>
           </li>
-          <li class="list-item sm:hidden text-md font-bold">
+          <li class="list-comment sm:hidden text-md font-bold">
             <span :class="{
               'text-primary': voteType === 1,
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ item.counts.score + voteType }}
+              {{ comment.score + voteType }}
             </span>
           </li>
           <li>
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" class="text-xs font-medium" :class="[
-              { 'cursor-not-allowed': item.post.is_deleted },
               voteType === -1
                 ? 'downvoted text-secondary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
-            ]" @click="vote(-1)" :disabled="item.post.is_deleted">
-              <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }}</span>
+            ]" @click="vote(-1)">
+              <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }} ({{ downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -198,8 +210,9 @@
               </svg>
             </button>
             <!-- Else, redirect to login -->
-            <NuxtLink v-else to="/login" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Downvote</span>
+            <NuxtLink v-else to="/login"
+              class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
+              <span class="hidden sm:inline">Downvote ({{ comment.downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -209,15 +222,12 @@
               </svg>
             </NuxtLink>
           </li>
-          <li v-if="isAuthed &&
-            !route.meta.hasRepliesDisabled &&
-            !item.post.locked &&
-            !item.post.is_deleted
-            ">
+          <li v-if="isAuthed && !route.meta.hasRepliesDisabled">
             <button @click="isReplying = true"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 14l-4 -4l4 -4"></path>
                 <path d="M5 10h11a4 4 0 1 1 0 8h-1"></path>
@@ -228,8 +238,9 @@
           <li v-if="isAuthed && isAuthor">
             <button @click="isEditing = !isEditing"
               class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
-                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
                 <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
@@ -239,10 +250,11 @@
             </button>
           </li>
           <li v-if="isAuthed && !isAuthor">
-            <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400" @click="save">
-              <svg v-if="isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24" height="24"
-                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                stroke-linejoin="round">
+            <button class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
+              @click="save" :disabled="isSaving">
+              <svg v-if="isSaved" xmlns="http://www.w3.org/2000/svg" class="sm:hidden w-6 h-6" width="24"
+                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M3 3l18 18"></path>
                 <path d="M17 17v3l-5 -3l-5 3v-13m1.178 -2.818c.252 -.113 .53 -.176 .822 -.176h6a2 2 0 0 1 2 2v7">
@@ -254,11 +266,12 @@
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path d="M9 4h6a2 2 0 0 1 2 2v14l-5 -3l-5 3v-14a2 2 0 0 1 2 -2"></path>
               </svg>
-              <span class="hidden sm:inline">{{ isSaved ? "Unsave" : "Save" }}</span>
+              <span class="hidden sm:inline">{{ isSaving ? 'Saving...' : (isSaved ? "Unsave" : "Save") }}</span>
             </button>
           </li>
           <li class="sm:hidden">
-            <button @click="openOptions" class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+            <button @click="openOptions"
+              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24"
                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -268,58 +281,61 @@
               </svg>
             </button>
           </li>
-          <li v-if="isAuthed && isAuthor" class="hidden sm:list-item">
+          <li v-if="isAuthed && isAuthor" class="hidden sm:inline sm:list-comment">
             <button @click="confirmDelete"
-              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              class="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400">
               Delete
             </button>
           </li>
-          <li v-if="isAuthed && !isAuthor" class="hidden sm:list-item">
+          <li v-if="isAuthed && !isAuthor" class="hidden sm:inline sm:list-comment">
             <button @click="confirmReport"
-              class="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400">
+              class="text-xs font-medium text-gray-500 hover:text-yellow-600 dark:text-gray-400">
               Report
             </button>
           </li>
-          <li class="hidden sm:list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}/${item.comment.id}`"
+          <li class="hidden sm:inline sm:list-comment">
+            <NuxtLink
+              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
-          <li class="hidden sm:list-item">
-            <NuxtLink :to="`${site.enableBoards ? '/+' + item.board.name : ''}/post/${item.post.id}/${item.post.title_chunk}/${item.comment.id}?context=3`"
+          <li class="hidden sm:inline sm:list-comment">
+            <NuxtLink
+              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
           </li>
-          <li v-if="canMod && !item.comment.is_removed" class="hidden sm:list-item">
+          <li v-if="canMod && !(comment.isRemoved || comment.isDeleted)" class="hidden sm:inline sm:list-comment">
             <button @click="() => confirmRemoveOrApprove(false)"
-              class="text-xs font-medium text-red-500 hover:text-red-700 dark:text-red-400">
+              class="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400">
               Remove
             </button>
           </li>
-          <li v-if="canMod && (item.report_count || item.comment.is_removed)" class="hidden sm:list-item">
+          <li v-if="canMod && comment.isRemoved" class="hidden sm:inline sm:list-comment">
             <button @click="() => confirmRemoveOrApprove(true)"
-              class="text-xs font-medium text-green-500 hover:text-green-700 dark:text-green-400">
+              class="text-xs font-medium text-gray-500 hover:text-green-600 dark:text-gray-400">
               Approve
             </button>
           </li>
         </ul>
         <!-- Write Form -->
         <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
-          <img loading="lazy" :src="userStore.user.avatar" alt="avatar"
+          <img loading="lazy" :src="userStore.user!.avatar!" alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white" />
-          <LazyInputsComment :post-id="item.comment.post_id" :parent-id="item.comment.id" @closed="isReplying = false"
+          <LazyInputsComment :post-id="comment.postId" :parent-id="comment.id" @closed="isReplying = false"
             @comment-published="onCommentPublished" />
         </div>
         <!-- Replies -->
-        <LazyListsComments v-if="!route.meta.hasRepliesDisabled &&
-          item.replies.length &&
+        <!--<LazyListsComments v-if="!route.meta.hasRepliesDisabled &&
+          comment.replyCount &&
           level <= limit
-          " v-show="!isCollapsed" :comments="item.replies" :offset="offset" class="relative" />
+          " v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />-->
+        <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
-        <NuxtLink v-if="item.replies.length && level > limit" v-show="!isCollapsed"
-          :to="`/post/${item.post.id}/${item.post.title_chunk}/${comment.id}`"
+        <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
+          :to="`/p/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>
@@ -328,18 +344,19 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 // import { baseURL } from "@/server/constants";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { useCommentsStore } from "@/stores/StoreComments";
+import { usePostsStore } from "@/stores/StorePosts";
 import { useSiteStore } from "@/stores/StoreSite";
 import { formatDate } from "@/utils/formatDate";
-import { useApi } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
+import type { Comment, Post, PostFragment } from "@/types/types";
 
 const route = useRoute();
 
@@ -347,91 +364,115 @@ const modalStore = useModalStore();
 const toast = useToastStore();
 const site = useSiteStore();
 const boardStore = useBoardStore();
-const modPermissions = boardStore.modPermissions;
+// used for getting the parent post
+const postStore = usePostsStore();
+const modPermissions = boardStore.hasBoard ? boardStore.board?.myModPermissions ?? 0 : 0;
 
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
 
 const authCookie = useCookie("token").value;
 
-const props = defineProps({
-  item: Object,
-  offset: {
-    type: Number,
-    default: 0,
-  },
-  limit: {
-    type: Number,
-    default: 3,
-  },
-});
+// const props = defineProps({
+//   comment: TComment,
+//   offset: {
+//     type: Number,
+//     default: 0,
+//   },
+//   limit: {
+//     type: Number,
+//     default: 3,
+//   },
+// });
 
-const item = ref(props.item);
-const comment = ref(props.item.comment);
+const props = defineProps<{
+  comment: Comment;
+  offset?: number;
+  limit?: number;
+}>();
 
-const commentsStore = useCommentsStore();
-commentsStore.comments.push(props.item);
+//const comment = ref(props.comment);
+const comment = ref(props.comment);
+const offset = props.offset ?? 0;
+const limit = props.limit ?? 0;
+//const commentsStore = useCommentsStore();
+//commentsStore.comments.push(props.comment);
 
 const isReplying = ref(false);
 const isCollapsed = ref(false);
 
 // take comment level and subtract offset (depth) to get relative level
 const level = computed(() => {
-  return comment.value.level - props.offset;
+  return comment.value!.level - offset;
 });
 
-const onCommentPublished = (comment) => {
+// in some queries, we request the parent post
+// if we don't, it can be obtained from the post store (in post pages, it's the only post in the store)
+const parentPost: PostFragment | undefined = comment.value.post ?? postStore.getPost(comment.value.postId);
+
+const onCommentPublished = (newComment: Comment) => {
   // Append reply to list of replies.
-  item.value.replies.unshift(comment);
+  comment.value!.replies!.unshift({
+    ...newComment,
+    replies: []
+  });
+
   // Close the reply form.
   toggleReplying();
   // Navigate to comment if replies are hidden.
   if (route.meta.hasRepliesDisabled) {
     navigateTo(
-      `/post/${item.value.post.id}/${comment.comment.parent_id}/#${comment.comment.id}`
+      `/p/${comment.value!.postId}/${comment.value!.parentId}/#${comment.value!.id}`
     );
   }
 };
 
 // Vote
-const voteType = ref(item.value.my_vote);
+const voteType = ref(comment.value!.myVote);
 const vote = async (type = 0) => {
+  const previousVote = voteType.value;
   voteType.value = voteType.value === type ? 0 : type;
 
-  await useApi(`/comments/${comment.value.id}/vote`, {
-    method: "post",
-    body: {
-      score: voteType,
-    },
-  }).then(({ data, error }) => {
-    if (data.value) {
-      data = JSON.parse(JSON.stringify(data.value));
-      console.log(data);
-    } else {
-      // Revert failed vote & show error toast.
-      setTimeout(() => {
-        voteType.value = item.value.my_vote;
-        toast.addNotification({
-          header: "Vote failed",
-          message: "Your vote failed to cast. Please try again.",
-          type: "error",
-        });
-      }, 400);
-      // Log the error.
-      console.log(error.value);
+  try {
+    const { mutate } = useMutation('voteOnComment');
+    const result = await mutate({
+      id: comment.value!.id,
+      voteType: voteType.value
+    });
+    
+    if (result.data?.voteOnComment) {
+      // Update comment score from response
+      if (comment.value!.score !== undefined) {
+        comment.value!.score = result.data.voteOnComment.score;
+      }
     }
-  });
+  } catch (error) {
+    // Revert failed vote & show error toast
+    voteType.value = previousVote;
+    toast.addNotification({
+      header: "Vote failed",
+      message: error.message || "Your vote failed to cast. Please try again.",
+      type: "error",
+    });
+    console.error(error);
+  }
 };
 
 const score = computed(() => {
-  // return item.value.counts.score + (item.value.my_vote + voteType.value === 0 ? 0 : voteType.value) || 0
-  return item.value.counts.score + voteType.value;
-})
+  // return comment.value.score + (comment.value.myVote + voteType.value === 0 ? 0 : voteType.value) || 0
+  return comment.value!.score + voteType.value;
+});
+
+// TODO: figure this out
+const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);
+
+const upvotes = computed(() => voteType.value == 1 ? comment.value.upvotes + 1 : comment.value.upvotes);
+const downvotes = computed(() => voteType.value == -1 ? comment.value.downvotes + 1 : comment.value.downvotes);
 
 // Author
 const isAuthor = computed(() => {
-  if (userStore.user && item.value.creator) {
-    return userStore.user.name === item.value.creator.name;
+  if (userStore.user && comment.value.creator) {
+    return userStore.user.name === comment.value.creator.name;
   } else {
     return false;
   }
@@ -442,41 +483,54 @@ const canMod = requirePermission("content") || requireModPermission(modPermissio
 
 // Edit
 const isEditing = ref(false);
-const onHasEdited = (payload) => {
+const onHasEdited = (payload: {
+  newBody: string;
+  newBodyHTML: string;
+}) => {
   // Update comment with saved edits.
-  comment.value = payload.comment_view.comment;
+  comment.value.body = payload.newBody;
+  comment.value.bodyHTML = payload.newBodyHTML;
 };
 
 // Save
-const isSaved = ref(comment.value.saved);
+const isSaved = ref(comment.value.isSaved);
+const isSaving = ref(false);
+
 const save = async () => {
+  const previousSaved = isSaved.value;
   isSaved.value = !isSaved.value;
-  await useApi(`/comment/${comment.value.id}/save`, {
-    method: "post",
-    body: {
-      save: isSaved.value,
-    }
-  }).then(({ data, error }) => {
-    if (data.value) {
+  isSaving.value = true;
+
+  try {
+    const { mutate } = useMutation('saveComment');
+    const result = await mutate({
+      commentId: comment.value.id,
+      save: isSaved.value
+    });
+
+    if (result.data?.saveComment) {
+      // Update comment save status from response
+      comment.value.isSaved = result.data.saveComment.isSaved;
+      isSaved.value = result.data.saveComment.isSaved;
+
       toast.addNotification({
         header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,
         message: `Comment ${isSaved.value ? 'saved' : 'unsaved'} successfully.`,
         type: "success",
       });
-    } else {
-      // Revert failed save & show error toast.
-      setTimeout(() => {
-        isSaved.value = !isSaved.value;
-        toast.addNotification({
-          header: "Save failed",
-          message: `Failed to ${isSaved.value ? 'saved' : 'unsaved'} comment. Please try again.`,
-          type: "error",
-        });
-      }, 400);
-      // Log the error.
-      console.error(error.value);
     }
-  });
+  } catch (error) {
+    // Revert failed save & show error toast
+    isSaved.value = previousSaved;
+    toast.addNotification({
+      header: "Save failed",
+      message: error.message || `Failed to ${!previousSaved ? 'save' : 'unsave'} comment. Please try again.`,
+      type: "error",
+    });
+    console.error(error);
+  } finally {
+    isSaving.value = false;
+  }
 };
 
 // Delete
@@ -500,7 +554,7 @@ const confirmReport = () => {
 };
 
 // Remove
-const confirmRemoveOrApprove = approve => {
+const confirmRemoveOrApprove = (approve: boolean) => {
   modalStore.setModal({
     modal: "ModalRemoveOrApprove",
     id: comment.value.id,
@@ -520,7 +574,7 @@ const openOptions = () => {
     contentType: "comment",
     isOpen: true,
     options: {
-      object: item
+      object: comment
     }
   });
 };

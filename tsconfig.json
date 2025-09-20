@@ -1,4 +1,20 @@
 {
   // https://v3.nuxtjs.org/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitThis": true,
+    "module": "ESNext",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "#gql/*": [
+        "./.nuxt/gql/*"
+      ],
+      "#gql": [
+        "./.nuxt/gql/index.d.ts"
+      ]
+    }
+  }
 }

@@ -4,10 +4,14 @@
 			<!-- Page Heading & Description -->
 			<div>
 				<h3 class="text-lg font-medium leading-6 text-gray-900">Invites</h3>
-				<p class="mt-1 text-sm text-gray-600">Here is a list of active invites to your tinyboard. Click the trash
-					button to revoke.</p>
+				<p class="mt-1 text-sm text-gray-600">
+					Manage invite codes for your tinyboard. 
+					<span v-if="site.registration_mode === 'InviteOnlyAdmin'">Only admins can create invites.</span>
+					<span v-else-if="site.registration_mode === 'InviteOnlyUser'">Admins and users can create invites.</span>
+					<span v-else>Invites are not currently required for registration.</span>
+				</p>
 			</div>
-			<button v-if="site.site_mode === 'InviteMode'" @click="createInvite"
+			<button v-if="site.registration_mode === 'InviteOnlyAdmin' || site.registration_mode === 'InviteOnlyUser'" @click="createInvite"
 				class="ml-auto flex items-center button green">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-2" viewBox="0 0 24 24" stroke-width="2"
 					stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -74,8 +78,6 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 
 const route = useRoute();
@@ -90,21 +92,25 @@ definePageMeta({
 const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
-// Fetch site settings
-const { data: site, pending, error, refresh } = await useApi("/admin/site");
+// Fetch site settings using GraphQL
+const { data: siteData, pending: sitePending, error: siteError } = await useAsyncGql({
+	operation: 'getSite'
+});
+const site = computed(() => siteData.value?.site || {});
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch invites
-const { data: invites, pendingInvites, errorInvites, refresh: refreshInvites } = await useApi("/admin/invite", {
-	query: {
+const { data: invitesData, pending: pendingInvites, error: errorInvites, refresh: refreshInvites } = await useAsyncGql({
+	operation: 'listInvites',
+	variables: {
 		limit: limit.value,
 		page: page.value
-	},
-	method: "get",
+	}
 });
+const invites = computed(() => invitesData.value?.listInvites || { invites: [], total_count: 0 });
 
 const totalPages = computed(() => {
 	return (invites.value.total_count / limit.value) || 1;
@@ -113,49 +119,63 @@ const totalPages = computed(() => {
 // Create invite
 const isLoading = ref(false);
 
-const createInvite = () => {
+const createInvite = async () => {
 	isLoading.value = true;
-	useApi('/admin/invite', {
-		method: "post",
-		body: {},
-	})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Refetch invites.
-				refreshInvites();
-				// Show success toast.
-				toast.addNotification({ header: 'Invite created', message: 'A fresh invite code was created!', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Failed creating invite', message: 'Please try again.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	
+	try {
+		const { mutate } = useMutation('createInvite');
+		const result = await mutate();
+		
+		if (result.data?.createInvite?.inviteCode) {
+			// Refetch invites.
+			refreshInvites();
+			// Show success toast with invite code
+			toast.addNotification({ 
+				header: 'Invite created', 
+				message: `Invite code: ${result.data.createInvite.inviteCode}`, 
+				type: 'success' 
+			});
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ 
+			header: 'Failed creating invite', 
+			message: error.message || 'Please try again.', 
+			type: 'error' 
 		});
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 
-const deleteInvite = (invite) => {
+const deleteInvite = async (invite) => {
 	isLoading.value = true;
-	useApi(`/admin/invite/${invite}`, {
-		method: "delete",
-		body: {}
-	})
-		.then(({ data, error }) => {
-			if (!error.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Invite deleted', message: 'The invite code was deleted.', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Failed deleting invite', message: 'Please try again.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	
+	try {
+		const { mutate } = useMutation('deleteInvite');
+		const result = await mutate({ inviteId: invite });
+		
+		if (result.data?.deleteInvite?.success) {
+			// Refetch invites
+			refreshInvites();
+			// Show success toast
+			toast.addNotification({ 
+				header: 'Invite deleted', 
+				message: 'The invite code was deleted.', 
+				type: 'success' 
+			});
+		}
+	} catch (error) {
+		// Show error toast
+		toast.addNotification({ 
+			header: 'Failed deleting invite', 
+			message: error.message || 'Please try again.', 
+			type: 'error' 
 		});
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

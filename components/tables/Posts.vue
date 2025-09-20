@@ -83,7 +83,7 @@
               <!-- Title -->
               <NuxtLink
                 class="text-base font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
-                :to="`/post/${item.post.id}`"
+                :to="`/p/${item.post.id}`"
               >
                 {{ item.post.title }}
               </NuxtLink>

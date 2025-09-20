@@ -1,0 +1,19 @@
+query getBoardBannedUsers($boardId: Int!, $limit: Int, $page: Int) {
+  getBoardBannedUsers(boardId: $boardId, limit: $limit, page: $page) {
+    id
+    boardId
+    banDate
+    expires
+    user {
+      id
+      name
+      displayName
+      avatar
+      banner
+      bio
+      creationDate
+      isAdmin
+      isBanned
+    }
+  }
+}

@@ -24,8 +24,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button" :class="props.options.isLocked ? 'green' : 'red'" @click="lockItem">
-                  Yes, {{ props.options.isLocked ? 'unlock' : 'lock' }} this post.
+                <button class="button" :class="props.options.isLocked ? 'green' : 'red'" @click="lockItem" :disabled="isLoading">
+                  {{ isLoading ? 'Processing...' : `Yes, ${props.options.isLocked ? 'unlock' : 'lock'} this post.` }}
                 </button>
               </div>
             </DialogPanel>
@@ -38,11 +38,9 @@
 
 <script setup>
   import { ref } from 'vue'
-  // import { baseURL } from "@/server/constants";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
-  import { useApi } from '@/composables/api';
   import {
     TransitionRoot,
     TransitionChild,
@@ -66,23 +64,32 @@
   });
 
   const modalStore = useModalStore();
-
-  // Lock
   const toast = useToastStore();
 
+  // Loading state
+  const isLoading = ref(false);
+
   const lockItem = async () => {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
     const id = props.id;
-    await useApi(`/posts/${id}/locked`,
-      {
-        method: "PATCH",
-        body: {
-          value: !props.options.isLocked
+
+    try {
+      const { $gql } = useNuxtApp();
+      const result = await $gql.mutation({
+        setPostLocked: {
+          __args: {
+            id: id,
+            value: !props.options.isLocked
+          },
+          id: true,
+          isLocked: true
         }
-      }
-    )
-    .then(({ data }) => {
-      if (data.value) {
-        // Show success toast.
+      });
+
+      if (result.setPostLocked) {
+        // Show success toast
         setTimeout(() => {
           toast.addNotification({
             header:`Post ${props.options.isLocked ? 'unlocked' : 'locked'}.`,
@@ -91,19 +98,22 @@
           });
         }, 400);
       } else {
-        // Show error toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header:`${props.options.isLocked ? 'Unlocking' : 'Locking'} failed`,
-            message:`Failed to ${props.options.isLocked ? 'unlock' : 'lock'} the post. Please try again.`,
-            type:'error'
-          });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
+        throw new Error('Failed to update post lock status');
+      }
+    } catch (error) {
+      console.error('Error updating post lock status:', error);
+      // Show error toast
+      setTimeout(() => {
+        toast.addNotification({
+          header:`${props.options.isLocked ? 'Unlocking' : 'Locking'} failed`,
+          message:`Failed to ${props.options.isLocked ? 'unlock' : 'lock'} the post. Please try again.`,
+          type:'error'
+        });
+      }, 400);
+    } finally {
+      isLoading.value = false;
+      // Close the modal
       modalStore.closeModal();
-    });
+    }
   };
 </script>

@@ -67,12 +67,12 @@
 					<!-- Posts -->
                <LazyListsPosts v-if="type !== 'comment' && posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<LazyListsComments v-else-if="results.comments?.length" :comments="results.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<LazyListsComments v-else-if="results?.searchContent?.comments?.length" :comments="results.searchContent.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
 					<!-- Empty State -->
 					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								We could not find any {{ `${type}s` }} matching "{{ route.query.query }}"
+								We could not find any {{ `${type}s` }} matching "{{ route.query?.query }}"
 							</span>
 							<br/>
 							Try searching something else
@@ -82,7 +82,7 @@
 					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								There was an error fetching results for "{{ route.query.query }}".
+								There was an error fetching results for "{{ route.query?.query }}".
 							</span>
 							<br/>
 							Please try again
@@ -101,8 +101,6 @@
 </template>
 
 <script setup>
-	// import { baseURL } from '@/server/constants';
-	import { useApi } from "@/composables/api";
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { useCommentsStore } from '@/stores/StoreComments';
 	import { useSiteStore } from '@/stores/StoreSite';
@@ -131,35 +129,32 @@
 	const preferCardView = useCookie('preferCardView') ?? false;
 
 	// Pagination
-	const page = computed(() => route.query.page || 1);
+	const page = computed(() => route.query?.page || 1);
 
 	const onPageChange = (page) => {
 		router.push(`${route.path}?page=${page}`)
 	};
 
 	// Search params.
-	const type = computed(() => route.query.type || 'post');
-	const text = ref(route.query.query);
-	const sort = ref(route.query.sort) || 'new';
+	const type = computed(() => route.query?.type || 'post');
+	const text = ref(route.query?.query);
+	const sort = ref(route.query?.sort) || 'new';
 	const hasNsfw = ref(false);
-	const limit = computed(() => route.query.limit || 5);
+	const limit = computed(() => route.query?.limit || 5);
 
 	// Posts & comments store.
 	const postStore = usePostsStore();
 
 	// Fetch search results.
-	const { data: results, pending, error, refresh } = await useApi("/search", {
-		query: {
-			type: type.value,
-			query: route.query.query,
-			sort: route.query.sort,
-			is_nsfw: false,
-			limit: limit.value
-		}
+	const { data: results, pending, error, refresh } = await useAsyncGql('searchContent', {
+		q: route.query?.query || '',
+		searchType: type.value.toUpperCase(),
+		page: page.value,
+		limit: limit.value
 	});
 
-	postStore.posts = results.value.posts;
-	const posts = postStore.posts;
+	const posts = computed(() => results.value?.searchContent?.posts || []);
+	postStore.posts = posts.value;
 
 	const totalPages = computed(() => {
 		if (type.value === 'post') {
@@ -181,8 +176,8 @@
 
 	// Links for sub navbar.
 	const links = [
-		{ name: 'Posts', href: { query: { query: text.value, type: 'post' } } },
-		{ name: 'Comments', href: { query: { query: text.value, type: 'comment' } } },
+		{ name: 'Posts', href: { query: { query: text.value || '', type: 'post' } } },
+		{ name: 'Comments', href: { query: { query: text.value || '', type: 'comment' } } },
 		];
 
 	// Post sort options.

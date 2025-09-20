@@ -56,24 +56,29 @@
 	const error = ref(false);
 	let reqError = false;
 
+	const redirectTo = useRoute().query?.redirect ?? "/feed";
+
 	let userStore = useLoggedInUser();
 	let router = useRouter();
+
+	//const login = () => {};
 
 	// reqError may seem redundant - it is - it's a workaround to fix a really weird bug with changes I make to error.value in catch not persisting?
 	function login() {
 		reqError = false;
 		error.value = reqError;
 		isLoading.value = true;
+		console.log("hi");
 
 		userStore.login({
 			nameOrEmail: nameOrEmail.value,
 			password: password.value
 		})
 		.then(data => {
-			Cookies.set('token', data.jwt);
-			router.push("/feed");
+			router.push(redirectTo);
 		})
 		.catch(error => {
+			console.error(`whoops: ${error}`)
 			reqError = true;
 		})
 		.finally(() => {

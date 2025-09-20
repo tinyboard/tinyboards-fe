@@ -155,7 +155,7 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { usePostsStore } from '@/stores/StorePosts';
-import { useApi } from '@/composables/api';
+import { useAPI } from '@/composables/api';
 import {
     TransitionRoot,
     TransitionChild,
@@ -210,6 +210,7 @@ const isRemoved = computed(() => {
     return props.type == 'post' ? props.options.object.post.is_removed : props.options.object.comment.is_removed;
 })
 
+
 const postId = computed(() => {
     return props.type == 'comment' ? props.options.object.post.id : undefined;
 })
@@ -218,7 +219,7 @@ const postId = computed(() => {
 const permalink = computed(() => {
     const base = `${config.public.use_https ? "https" : "http"}://${config.public.domain}`;
 
-    return props.type == 'post' ? base + `/p/${props.id}` : base + `/post/${postId.value}/${props.id}`;
+    return props.type == 'post' ? base + `/p/${props.id}` : base + `/p/${postId.value}/${props.id}`;
 })
 
 // Copy link
@@ -269,6 +270,7 @@ const confirmRemoveOrApprove = approve => {
         }
     });
 };
+
 
 // Ban & Unban
 const confirmBan = () => {

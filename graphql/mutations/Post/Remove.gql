@@ -1,0 +1,6 @@
+mutation setPostRemoved($id: Int!, $value: Boolean!) {
+  setPostRemoved(id: $id, value: $value) {
+    id
+    isRemoved
+  }
+}

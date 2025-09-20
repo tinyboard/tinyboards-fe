@@ -1,0 +1,13 @@
+query userFollowers($userId: Int!) {
+  userFollowers(userId: $userId) {
+    id
+    name
+    displayName
+    avatar
+    banner
+    bio
+    creationDate
+    isAdmin
+    isBanned
+  }
+}

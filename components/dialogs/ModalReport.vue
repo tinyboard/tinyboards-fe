@@ -24,8 +24,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   Cancel
                 </button>
-                <button class="button primary" :disabled="reason.trim() === ''" @click="submitReport">
-                  Report this {{ type ?? 'post' }}
+                <button class="button primary" :disabled="reason.trim() === '' || isLoading" @click="submitReport">
+                  {{ isLoading ? 'Submitting...' : `Report this ${type ?? 'post'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -38,8 +38,6 @@
 
 <script setup>
   import { ref } from 'vue'
-  // import { baseURL } from "@/server/constants";
-  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import {
@@ -67,51 +65,75 @@
   });
 
   const modalStore = useModalStore();
-
-  // Deletion
-  const authCookie = useCookie("token").value;
   const toast = useToastStore();
 
   const reason = ref("");
 
+  // Loading state
+  const isLoading = ref(false);
+
   const submitReport = async () => {
+    if (isLoading.value || reason.value.trim() === '') return;
+
+    isLoading.value = true;
     const type = props.type;
     const id = props.id;
 
-    await useApi(`/${type}/${id}/reports`, {
-      method: "post",
-      body: {
-        //[`${type}_id`]: id,
-        reason: reason.value
+    try {
+      const { $gql } = useNuxtApp();
+      let result;
+
+      if (type === 'post') {
+        result = await $gql.mutation({
+          reportPost: {
+            __args: {
+              postId: id,
+              reason: reason.value.trim()
+            },
+            success: true,
+            reportId: true
+          }
+        });
+      } else {
+        result = await $gql.mutation({
+          reportComment: {
+            __args: {
+              commentId: id,
+              reason: reason.value.trim()
+            },
+            success: true,
+            reportId: true
+          }
+        });
       }
-    })
-    .then(({ data }) => {
-      if (data.value) {
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
+
+      const mutationKey = type === 'post' ? 'reportPost' : 'reportComment';
+      if (result[mutationKey]?.success) {
+        // Show success toast
         setTimeout(() => {
           toast.addNotification({
             header:`${type} reported!`,
             message:`Your report has been received.`,
-            type:'error'
+            type:'success'
           });
         }, 400);
       } else {
-        // Show error toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header:'Report failed',
-            message:`Failed to report the ${type}. Please try again.`,
-            type:'error'
-          });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
+        throw new Error(`Failed to report ${type}`);
+      }
+    } catch (error) {
+      console.error(`Error reporting ${type}:`, error);
+      // Show error toast
+      setTimeout(() => {
+        toast.addNotification({
+          header:'Report failed',
+          message:`Failed to report the ${type}. Please try again.`,
+          type:'error'
+        });
+      }, 400);
+    } finally {
+      isLoading.value = false;
+      // Close the modal
       modalStore.closeModal();
-    });
+    }
   };
 </script>

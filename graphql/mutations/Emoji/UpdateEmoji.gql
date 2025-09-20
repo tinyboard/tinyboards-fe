@@ -1,0 +1,32 @@
+mutation updateEmoji(
+  $emojiId: Int!,
+  $shortcode: String,
+  $imageFile: Upload,
+  $altText: String,
+  $category: String,
+  $isActive: Boolean
+) {
+  updateEmoji(
+    emojiId: $emojiId,
+    input: {
+      shortcode: $shortcode,
+      imageFile: $imageFile,
+      altText: $altText,
+      category: $category,
+      isActive: $isActive
+    }
+  ) {
+    id
+    shortcode
+    imageUrl
+    altText
+    category
+    creationDate
+    updated
+    boardId
+    createdByUserId
+    isActive
+    usageCount
+    emojiScope
+  }
+}

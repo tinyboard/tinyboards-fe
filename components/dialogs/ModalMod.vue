@@ -219,7 +219,7 @@
 <script setup>
 import { ref } from "vue";
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 import { useBoardStore } from "@/stores/StoreBoard";
@@ -298,7 +298,7 @@ const toast = useToastStore();
 
 // Board
 const boardStore = useBoardStore();
-const board = boardStore.boardView.board;
+const board = boardStore.board;
 
 // Mode
 const mode = computed(() => {
@@ -333,51 +333,119 @@ const BUTTON_TEXT = {
 };
 
 const submit = async () => {
-    //const isAdmin = props.options.user.is_admin;
     const username = props.options.user?.name || target.value;
 
-    const apiRoute = (function () {
-        if (mode.value === "add") {
-            // Addoing mod
-            return `/boards/${board.id}/mods`;
-        } else {
-            // Removing or editing mod
-            return `/boards/${board.id}/mods/${props.options.user.id}`;
-        }
-    })();
-
-    const requestBody = {};
-    if (mode.value !== "remove") {
-        requestBody["permissions"] = permissionCode.value;
+    try {
+        let result;
 
         if (mode.value === "add") {
-            requestBody["username"] = target.value;
+            // First, get the user ID by username
+            const userResponse = await $fetch('#gql', {
+                query: `
+                    query getUserByName($name: String!) {
+                        userProfile(name: $name) {
+                            id
+                        }
+                    }
+                `,
+                variables: { name: target.value }
+            });
+
+            if (!userResponse?.userProfile?.id) {
+                throw new Error('User not found');
+            }
+
+            // Add moderator using GraphQL
+            result = await $fetch('#gql', {
+                query: `
+                    mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+                        addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
+                            success
+                            board {
+                                id
+                                name
+                                title
+                                moderators {
+                                    user {
+                                        name
+                                        displayName
+                                        avatar
+                                    }
+                                    permissions
+                                    rank
+                                }
+                            }
+                        }
+                    }
+                `,
+                variables: {
+                    boardId: board.id,
+                    userId: userResponse.userProfile.id,
+                    permissions: permissionCode.value
+                }
+            });
+
+            if (!result.addModerator?.success) {
+                throw new Error('Failed to add moderator');
+            }
+        } else if (mode.value === "remove") {
+            // Remove moderator using GraphQL
+            result = await $fetch('#gql', {
+                query: `
+                    mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+                        removeBoardModerator(boardId: $boardId, userId: $userId) {
+                            success
+                        }
+                    }
+                `,
+                variables: {
+                    boardId: board.id,
+                    userId: props.options.user.id
+                }
+            });
+
+            if (!result.removeBoardModerator?.success) {
+                throw new Error('Failed to remove moderator');
+            }
+        } else if (mode.value === "update") {
+            // Update moderator permissions using GraphQL
+            result = await $fetch('#gql', {
+                query: `
+                    mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+                        addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
+                            success
+                        }
+                    }
+                `,
+                variables: {
+                    boardId: board.id,
+                    userId: props.options.user.id,
+                    permissions: permissionCode.value
+                }
+            });
+
+            if (!result.addModerator?.success) {
+                throw new Error('Failed to update moderator permissions');
+            }
         }
-    }
-    let { data, error } = await useApi(apiRoute, {
-        body: requestBody,
-        method: METHODS[mode.value],
-    });
-    if (data.value) {
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
+
+        // Show success toast
         toast.addNotification({
             header: `Moderator ${MESSAGE[mode.value]}`,
             message: "Reload the page to see changes.",
             type: "success",
         });
-    } else {
-        //console.error(JSON.stringify(error.value, null, 4));
-        // Show error toast.
+    } catch (error) {
+        console.error('Error with moderator operation:', error);
+        // Show error toast
         toast.addNotification({
-            header: "An error occured.",
+            header: "An error occurred.",
             message: "Something went wrong on our end. Please try again.",
             type: "error",
         });
     }
-    // Close the modal.
+
+    // Close the modal
     modalStore.closeModal();
 };
 </script>

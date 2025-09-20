@@ -1,0 +1,19 @@
+query GetConversations {
+  listConversations {
+    otherUser {
+      id
+      name
+      displayName
+      avatar
+    }
+    lastMessage {
+      id
+      title
+      body
+      published
+      updated
+    }
+    unreadCount
+    lastActivity
+  }
+}

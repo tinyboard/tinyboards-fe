@@ -1,0 +1,139 @@
+enum SortType {
+  active
+  hot
+  new
+  old
+  topDay
+  topWeek
+  topMonth
+  topYear
+  topAll
+  mostComments
+  newComments
+}
+
+enum CommentSortType {
+  hot
+  top
+  new
+  old
+}
+
+query userProfile(
+  $username: String!
+  $sort: SortType
+  $page: Int
+  $limit: Int
+  $includeBoard: Boolean!
+  $withPosts: Boolean!
+  $withComments: Boolean!
+) {
+  user(name: $username) {
+    id
+    name
+    displayName
+    instance
+    avatar
+    banner
+    profileBackground
+    bio
+    bioHTML
+    creationDate
+    adminLevel
+    postCount
+    commentCount
+    postScore
+    commentScore
+    rep
+    isBanned
+    isAdmin
+    posts(limit: $limit, sort: $sort, page: $page) @include(if: $withPosts) {
+      id
+      titleChunk
+      title
+      url
+      bodyHTML
+      creatorId
+      isRemoved
+      isDeleted
+      isLocked
+      isNSFW
+      featuredBoard
+      featuredLocal
+      score
+      myVote
+      commentCount
+      creationDate
+      updated
+      myModPermissions
+      altText
+      embedTitle
+      embedDescription
+      embedVideoUrl
+      sourceUrl
+      lastCrawlDate
+      creator {
+        id
+        name
+        instance
+        adminLevel
+        displayName
+        avatar
+      }
+      board @include(if: $includeBoard) {
+        id
+        name
+        title
+        icon
+        primaryColor
+      }
+    }
+    comments(limit: $limit, page: $page) @include(if: $withComments) {
+      id
+      postId
+      body
+      bodyHTML
+      isRemoved
+      isLocked
+      isDeleted
+      creationDate
+      updated
+      score
+      upvotes
+      downvotes
+      myVote
+      isSaved
+      level
+      post {
+        id
+        creatorId
+        title
+        titleChunk
+        isDeleted
+        isLocked
+        creatorId
+      }
+      board @include(if: $includeBoard) {
+        name
+        title
+        myModPermissions
+      }
+      creator {
+        id
+        name
+        displayName
+        instance
+        isAdmin
+        avatar
+      }
+    }
+    moderates @include(if: $includeBoard) {
+      board {
+        name
+        title
+        icon
+        subscribers
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+query getBoard($name: String!) {
+  board(name: $name) {
+    id
+    name
+    title
+    description
+    creationDate
+    updated
+    isDeleted
+    isNSFW
+    isHidden
+    icon
+    banner
+    isRemoved
+    banReason
+    primaryColor
+    secondaryColor
+    hoverColor
+    sidebar
+    sidebarHTML
+    isBanned
+    publicBanReason
+    bannedBy
+    bannedAt
+    excludeFromAll
+    subscribers
+    postCount
+    commentCount
+    usersActiveDay
+    usersActiveWeek
+    usersActiveMonth
+    usersActiveHalfYear
+    subscribedType
+    myModPermissions
+    moderators {
+      user {
+        id
+        name
+        displayName
+        avatar
+      }
+    }
+  }
+}

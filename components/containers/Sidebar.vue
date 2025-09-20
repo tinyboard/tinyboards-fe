@@ -92,7 +92,7 @@
 // import { baseURL } from "@/server/constants";
 import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
@@ -104,13 +104,39 @@ const isAuthed = userStore.isAuthed;
 const canCreateBoard = (!site.boardCreationAdminOnly && isAuthed) || (site.boardCreationAdminOnly && requirePermission("boards"));
 
 // Define spotlight users
+// Use GraphQL query instead of REST API
 const {
-  data: users,
+  data: usersData,
   pending,
   error,
   refresh,
-} = await useApi("/members", {
-  query: { sort: "new", limit: 8 },
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    page: 1,
+    limit: 8,
+    sort: 'new',
+    listingType: 'all'
+  }
+});
+
+// Transform GraphQL response to match expected format
+const users = computed(() => {
+  if (!usersData.value?.listUsers) return { members: [] };
+
+  return {
+    members: usersData.value.listUsers.map(user => ({
+      person: {
+        name: user.name,
+        displayName: user.displayName,
+        avatar: user.avatar,
+        banner: user.banner || user.profileBackground,
+        bio: user.bio,
+        creation_date: user.creationDate,
+        is_admin: user.adminLevel > 0
+      }
+    }))
+  };
 });
 
 // TO-DO

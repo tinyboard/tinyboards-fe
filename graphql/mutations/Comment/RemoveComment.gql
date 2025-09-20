@@ -1,0 +1,6 @@
+mutation setCommentRemoved($id: Int!, $value: Boolean!) {
+  setCommentRemoved(id: $id, value: $value) {
+    id
+    isRemoved
+  }
+}

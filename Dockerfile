@@ -1,29 +1,50 @@
-# Dockerfile
-FROM node:18.6.0-alpine
+# Multi-stage Dockerfile for production
+FROM node:18.6.0-alpine as base
 
-# create destination directory
-RUN mkdir -p /usr/src/app/.nuxt
-WORKDIR /usr/src/app
-COPY package.json /usr/src/app/
-#FROM BASE AS BUILD
-# update and install dependency
-RUN apk update && apk upgrade
-RUN apk add git
-RUN npm install -g npm@8.19.2
-RUN npm i 
-#--only=production && \
-#    npm cache clean --force
+# Security: Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nuxtjs
 
-# copy the app, note .dockerignore
-COPY . /usr/src/app
-#RUN npm i
-#RUN npm i --only=production && \
-#    npm cache clean --force
+# Install dependencies in a separate stage
+FROM base as deps
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Build stage
+FROM base as builder
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
+COPY . .
+
+# Set build-time environment variables
+ARG NUXT_PUBLIC_DOMAIN
+ARG NUXT_PUBLIC_USE_HTTPS
+ENV NUXT_PUBLIC_DOMAIN=$NUXT_PUBLIC_DOMAIN
+ENV NUXT_PUBLIC_USE_HTTPS=$NUXT_PUBLIC_USE_HTTPS
+
 RUN npm run build
+
+# Production stage
+FROM base as runner
+WORKDIR /app
+
+# Copy built application
+COPY --from=builder --chown=nuxtjs:nodejs /app/.output /app/.output
+COPY --from=deps --chown=nuxtjs:nodejs /app/node_modules /app/node_modules
+
+# Security: Use non-root user
+USER nuxtjs
 
 EXPOSE 3000
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/ || exit 1
+
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
+ENV NODE_ENV=production
 
-CMD [ "npx", "nuxi", "start" ]
+CMD ["node", ".output/server/index.mjs"]

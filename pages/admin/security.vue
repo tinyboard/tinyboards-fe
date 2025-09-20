@@ -7,8 +7,18 @@
 				<p class="mt-1 text-sm text-gray-600">Adjust the level of gatekeeping. For configuring what can or cannot be
 					posted, go to <NuxtLink to="/admin/content">Content Settings</NuxtLink>.</p>
 			</div>
+			<!-- Loading state for initial data fetch -->
+			<div v-if="pending" class="flex justify-center items-center p-8">
+				<div class="loading-spinner">Loading security settings...</div>
+			</div>
+
+			<!-- Error state for initial data fetch -->
+			<div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-4">
+				<p class="text-red-800">Failed to load security settings: {{ error.message }}</p>
+			</div>
+
 			<!-- Form -->
-			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
+			<form v-else @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Registration -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
@@ -23,7 +33,7 @@
 									<input id="open-radio" aria-describedby="open-radio-text" type="radio"
 										name="invite-mode"
 										class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-										value="OpenMode" v-model="settings.site_mode">
+										value="OpenMode" v-model="settings.registrationMode">
 								</div>
 								<div class="ml-2 text-sm">
 									<label for="open-radio"
@@ -37,7 +47,7 @@
 								<div class="flex items-center h-5">
 									<input id="app-radio" aria-describedby="app-radio-text" type="radio" name="invite-mode"
 										class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-										value="ApplicationMode" v-model="settings.site_mode">
+										value="ApplicationMode" v-model="settings.registrationMode">
 								</div>
 								<div class="ml-2 text-sm">
 									<label for="app-radio"
@@ -52,7 +62,7 @@
 									<input id="invite-radio" aria-describedby="invite-radio-text" type="radio"
 										name="invite-mode"
 										class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-										value="InviteMode" v-model="settings.site_mode">
+										value="InviteMode" v-model="settings.registrationMode">
 								</div>
 								<div class="ml-2 text-sm">
 									<label for="invite-radio"
@@ -65,7 +75,7 @@
 						</ul>
 					</div>
 					<!-- Invite settings -->
-					<!--<div v-if="settings.site_mode === 'InviteMode'" class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+					<!--<div v-if="settings.registration_mode === 'InviteMode'" class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<div class="md:col-span-1">
 							<label class="text-base font-bold leading-6 text-gray-900">Who may create invite links?</label>
 						</div>
@@ -103,8 +113,8 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.email_verification_required"
-									@enabled="settings.email_verification_required = !settings.email_verification_required" />
+								<InputsSwitch id="nsfw" :isEnabled="settings.requireEmailVerification"
+									@enabled="settings.requireEmailVerification = !settings.requireEmailVerification" />
 								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Require email
 									verification</label>
 							</div>
@@ -122,8 +132,8 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.private_instance"
-									@enabled="settings.private_instance = !settings.private_instance" />
+								<InputsSwitch id="nsfw" :isEnabled="settings.privateInstance"
+									@enabled="settings.privateInstance = !settings.privateInstance" />
 								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Enable private
 									mode</label>
 							</div>
@@ -155,7 +165,7 @@
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
-					<button type="submit" class="button primary" :class="{ 'loading': isLoading }" :disabled="isLoading">
+					<button type="submit" class="button primary" :class="{ 'loading': isLoading }" :disabled="isLoading || pending">
 						Save
 					</button>
 				</div>
@@ -165,10 +175,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-// import { baseURL } from "@/server/constants";
+import { ref, computed } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
-import { useApi } from "@/composables/api";
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -180,53 +188,123 @@ definePageMeta({
 });
 
 const toast = useToastStore();
-const authCookie = useCookie("token").value;
 
-// Fetch site settings.
-const { data, pending, error, refresh } = await useApi("/admin/site");
+// Fetch site settings using GraphQL
+const { data: siteData, pending, error, refresh } = await useAsyncGql({
+    operation: 'getSite'
+});
+const data = computed(() => ({ value: siteData.value?.site }));
 
 // Settings.
 const settings = ref({});
 
-if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
+if (data.value.value) {
+	const siteData = { ...JSON.parse(JSON.stringify(data.value.value)) };
+
+	// Map GraphQL fields to form fields and add computed properties
+	settings.value = {
+		...siteData,
+		// Add a computed disable_registrations field based on openRegistration
+		disable_registrations: !siteData.openRegistration && siteData.registrationMode !== 'ApplicationMode' && siteData.registrationMode !== 'InviteMode'
+	};
 };
 
 // Submit settings.
 const isLoading = ref(false);
 
-const submitSettings = () => {
+const submitSettings = async () => {
 	isLoading.value = true;
-	useApi('/admin/site', {
-		method: "put",
-		body: {
-			"name": settings.value.name,
-			"description": settings.value.description,
-			"enable_downvotes": settings.value.enable_downvotes,
-			"site_mode": settings.value.site_mode,
-			"enable_nsfw": settings.value.enable_nsfw,
-			"application_question": settings.value.application_question,
-			"private_instance": settings.value.private_instance,
-			"email_verification_required": settings.value.email_verification_required,
-			"icon": settings.value.icon,
-			"primary_color": settings.value.primary_color,
-			"secondary_color": settings.value.secondary_color,
-			"hover_color": settings.value.hover_color
+
+	try {
+		const { mutate } = useMutation('updateSiteConfig');
+
+		// Map the field names to GraphQL field names
+		const input = {
+			// Keep existing site info
+			name: settings.value.name,
+			description: settings.value.description,
+			icon: settings.value.icon,
+			primaryColor: settings.value.primaryColor,
+			secondaryColor: settings.value.secondaryColor,
+			hoverColor: settings.value.hoverColor,
+
+			// Security-related settings
+			registrationMode: settings.value.registrationMode,
+			requireEmailVerification: settings.value.requireEmailVerification,
+			privateInstance: settings.value.privateInstance,
+
+			// Handle disable registrations by setting appropriate registration mode
+			openRegistration: !settings.value.disable_registrations && settings.value.registrationMode === 'OpenMode',
+			inviteOnly: settings.value.registrationMode === 'InviteMode',
+			requireApplication: settings.value.registrationMode === 'ApplicationMode',
+			applicationQuestion: settings.value.applicationQuestion,
+
+			// Keep other existing settings to prevent overwrites
+			enableDownvotes: settings.value.enableDownvotes,
+			enableNSFW: settings.value.enableNSFW,
+			boardCreationAdminOnly: settings.value.boardCreationAdminOnly,
+			defaultTheme: settings.value.defaultTheme,
+			defaultPostListingType: settings.value.defaultPostListingType,
+			defaultAvatar: settings.value.defaultAvatar,
+			legalInformation: settings.value.legalInformation,
+			hideModlogModNames: settings.value.hideModlogModNames,
+			applicationEmailAdmins: settings.value.applicationEmailAdmins,
+			captchaEnabled: settings.value.captchaEnabled,
+			captchaDifficulty: settings.value.captchaDifficulty,
+			reportsEmailAdmins: settings.value.reportsEmailAdmins,
+			welcomeMessage: settings.value.welcomeMessage,
+			boardsEnabled: settings.value.boardsEnabled,
+			boardCreationMode: settings.value.boardCreationMode,
+			trustedUserMinReputation: settings.value.trustedUserMinReputation,
+			trustedUserMinAccountAgeDays: settings.value.trustedUserMinAccountAgeDays,
+			trustedUserManualApproval: settings.value.trustedUserManualApproval,
+			trustedUserMinPosts: settings.value.trustedUserMinPosts,
+			allowedPostTypes: settings.value.allowedPostTypes,
+			enableNSFWTagging: settings.value.enableNSFWTagging,
+			wordFilterEnabled: settings.value.wordFilterEnabled,
+			filteredWords: settings.value.filteredWords,
+			wordFilterAppliesToPosts: settings.value.wordFilterAppliesToPosts,
+			wordFilterAppliesToComments: settings.value.wordFilterAppliesToComments,
+			wordFilterAppliesToUsernames: settings.value.wordFilterAppliesToUsernames,
+			linkFilterEnabled: settings.value.linkFilterEnabled,
+			bannedDomains: settings.value.bannedDomains,
+			approvedImageHosts: settings.value.approvedImageHosts,
+			imageEmbedHostsOnly: settings.value.imageEmbedHostsOnly
+		};
+
+		const result = await mutate({ input });
+
+		if (result?.data?.updateSiteConfig) {
+			// Show success toast.
+			toast.addNotification({
+				header: 'Settings saved',
+				message: 'Site security settings were updated!',
+				type: 'success'
+			});
+			// Refresh the data to show updated values
+			await refresh();
+		} else {
+			throw new Error('Update failed');
 		}
-	})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Saving failed', message: 'Site settings have failed to save.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	} catch (error) {
+		// Show error toast with more specific error message
+		let errorMessage = 'Site security settings have failed to save.';
+
+		if (error?.graphqlErrors && error.graphqlErrors.length > 0) {
+			errorMessage = error.graphqlErrors[0].message;
+		} else if (error?.message) {
+			errorMessage = error.message;
+		}
+
+		toast.addNotification({
+			header: 'Saving failed',
+			message: errorMessage,
+			type: 'error'
 		});
+		// Log the error for debugging
+		console.error('Error saving security settings:', error);
+	} finally {
+		isLoading.value = false;
+	}
 };
 </script>

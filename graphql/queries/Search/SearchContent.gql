@@ -1,0 +1,82 @@
+query searchContent(
+  $q: String!,
+  $searchType: SearchType,
+  $sort: SortType,
+  $listingType: ListingType,
+  $boardId: Int,
+  $creatorId: Int,
+  $page: Int,
+  $limit: Int
+) {
+  searchContent(
+    q: $q,
+    searchType: $searchType,
+    sort: $sort,
+    listingType: $listingType,
+    boardId: $boardId,
+    creatorId: $creatorId,
+    page: $page,
+    limit: $limit
+  ) {
+    posts {
+      id
+      title
+      body
+      creationDate
+      altText
+      embedTitle
+      embedDescription
+      embedVideoUrl
+      sourceUrl
+      lastCrawlDate
+      creator {
+        name
+        displayName
+        avatar
+      }
+      board {
+        name
+        title
+      }
+      myVote
+      upvotes
+      downvotes
+    }
+    comments {
+      id
+      body
+      creationDate
+      creator {
+        name
+        displayName
+        avatar
+      }
+      post {
+        id
+        title
+      }
+      myVote
+      upvotes
+      downvotes
+    }
+    users {
+      name
+      displayName
+      avatar
+      creationDate
+      postCount
+      commentCount
+    }
+    boards {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      subscribers
+      postCount
+      isNSFW
+    }
+  }
+}

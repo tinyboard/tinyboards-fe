@@ -14,7 +14,7 @@
 					<button class="ml-4 button button-sm gray" @click="markRead" :disabled="unreadCount === 0 || isLoading">
 						&#10003; Mark all read
 					</button>
-					<button v-if="route.params.id" class="ml-2 flex items-center button button-sm gray" @click="markRead"
+					<button v-if="route.params?.id" class="ml-2 flex items-center button button-sm gray" @click="markRead"
 						:disabled="unreadCount === 0 || isLoading">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -31,7 +31,10 @@
 			</div>
 			<div class="grid grid-cols-12 h-full sm:overflow-hidden">
 				<ul class="col-span-12 md:col-span-12 h-full divide-y md:border-r sm:overflow-y-auto">
-					<li v-for="(conversation, i) in conversations" :key="i">
+					<li v-if="conversations.length === 0" class="p-4 text-center text-gray-500">
+						No conversations found.
+					</li>
+					<li v-for="(conversation, i) in conversations" :key="conversation.id || i">
 						<!--<NuxtLink :to="`/inbox/messages`" custom v-slot="{ href, navigate, isActive }">
 							<a @click="navigate" class="flex p-2.5 hover:bg-gray-100 shadow-inner-white"
 								:class="{ 'bg-gray-100': isActive }">-->
@@ -101,10 +104,10 @@
 </template>
 
 <script setup>
-// import { baseURL } from '@/server/constants';
-import { useApi } from "@/composables/api";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
+import { useToastStore } from "@/stores/StoreToast";
+import { GqlGetConversations, GqlGetUnreadMessageCount, GqlMarkConversationRead } from "#gql";
 import { ref } from 'vue';
 
 definePageMeta({
@@ -112,48 +115,87 @@ definePageMeta({
 });
 
 const route = useRoute();
-
-const authCookie = useCookie("token").value;
-
 const userStore = useLoggedInUser();
 const site = useSiteStore();
+const toast = useToastStore();
 
-const isLoading = ref(true);
+const isLoading = ref(false);
+const conversations = ref([]);
+const unreadCount = ref(0);
 
-const { data, pending, error, refresh } = await useApi('/messages', {
-	query: {
-		limit: 25,
-		page: 1,
-	}
-})
-
-isLoading.value = false;
-
-const conversations = data.value.messages;
-const unreadCount = ref(data.value.unread);
-
-const markRead = () => {
-	isLoading.value = true;
-	useApi(`/notifications/messages/mark_read`, {
-		method: "post",
-		body: {}
-	})
-		.then(({ data, error }) => {
-			if (!error.value) {
-				unreadCount.value = 0;
-				// Show success toast.
-				toast.addNotification({ header: 'Marked all read', message: `All messages marked as read.`, type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Failed to mark all read', message: 'Please try again.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+// Fetch conversations using GraphQL
+const fetchConversations = async () => {
+	try {
+		const conversationsResult = await GqlGetConversations({
+			limit: 25,
+			page: 1
 		});
+
+		if (conversationsResult?.getConversations) {
+			conversations.value = conversationsResult.getConversations.conversations || [];
+		}
+
+		// Fetch unread count
+		const unreadResult = await GqlGetUnreadMessageCount();
+		if (unreadResult?.getUnreadMessageCount) {
+			unreadCount.value = unreadResult.getUnreadMessageCount.count || 0;
+		}
+	} catch (error) {
+		console.error('Error fetching conversations:', error);
+		toast.addNotification({
+			header: 'Error loading messages',
+			message: 'Unable to load conversations. Please try again.',
+			type: 'error'
+		});
+	}
 };
+
+// Mark all conversations as read
+const markRead = async () => {
+	if (unreadCount.value === 0) return;
+
+	isLoading.value = true;
+	try {
+		const result = await GqlMarkConversationRead({
+			conversationId: null // null means mark all as read
+		});
+
+		if (result?.markConversationRead?.success) {
+			unreadCount.value = 0;
+			// Update conversations to mark them as read
+			conversations.value = conversations.value.map(conv => ({
+				...conv,
+				notif: { ...conv.notif, read: true }
+			}));
+
+			toast.addNotification({
+				header: 'Marked all read',
+				message: 'All messages marked as read.',
+				type: 'success'
+			});
+		} else {
+			toast.addNotification({
+				header: 'Failed to mark all read',
+				message: 'Please try again.',
+				type: 'error'
+			});
+		}
+	} catch (error) {
+		console.error('Error marking conversations as read:', error);
+		toast.addNotification({
+			header: 'Failed to mark all read',
+			message: 'Please try again.',
+			type: 'error'
+		});
+	} finally {
+		isLoading.value = false;
+	}
+};
+
+// Load conversations on mount
+onMounted(() => {
+	fetchConversations();
+});
 </script>
 
 <style scoped>

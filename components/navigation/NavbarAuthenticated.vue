@@ -5,18 +5,24 @@
 				<div class="flex flex-grow items-center">
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
-						<div v-if="boardStore.boardActive" class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
+						<div v-if="boardStore.boardActive"
+							class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
 							<NuxtLink to="/feed">
-								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
+								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon"
+									class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							</NuxtLink>
-							<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 								<path d="M9 6l6 6l-6 6" />
 							</svg>
-							<NuxtLink :to="`/+${boardStore.boardView.board.name}`" class="font-bold text-lg text-white">+{{ boardStore.boardView.board.name }}</NuxtLink>
+							<NuxtLink :to="`/+${boardStore.board.name}`" class="font-bold text-lg text-white">+{{
+								boardStore.boardView.board.name }}</NuxtLink>
 						</div>
 						<NuxtLink v-else to="/feed" class="header-brand font-bold text-lg text-white">
-							<img id="navbar-icon" :src="site.icon" class="inline-block mr-2 max-w-[32px] max-h-[32px]"/>
+							<img id="navbar-icon" :src="site.icon"
+								class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							<span>{{ site.name }}</span>
 						</NuxtLink>
 						<span class="absolute -right-5 -bottom-1 flashing-text font-mono">
@@ -24,11 +30,12 @@
 						</span>
 					</div>
 					<!-- Main Navigation Links -->
-					<div v-if="!site.enableBoards" class="header-menu-main hidden md:block w-1/3 ml-8">
+					<MenusBoardNavigator v-if="site.enableBoards" class="ml-8 hidden md:block" />
+					<div v-else class="header-menu-main hidden md:block w-1/3 ml-8">
 						<ul class="flex">
 							<li class="header-menu-item flex items-center text-sm leading-5" v-for="link in links"
 								:key="link.name">
-								<NuxtLink :to="link.href" custom v-slot="{ href, navigate, isActive }">
+								<NuxtLink :to="link.href" custom v-slot="{ navigate, isActive }">
 									<a :href="link.href" @click.prevent="navigate(link.href)"
 										:class="[isActive ? 'text-white bg-black/10 shadow-inner-xs' : 'text-white/70 hover:text-white', 'px-4 py-2 font-bold rounded']">
 										{{ link.name }}
@@ -44,8 +51,8 @@
 						<form class="header-search-form group relative" @submit.prevent="search">
 							<div class="absolute left-3 top-2">
 								<button class="text-white/20 hover:text-white" type="submit">
-									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-										stroke="currentColor" class="w-5 h-5">
+									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+										stroke-width="2" stroke="currentColor" class="w-5 h-5">
 										<path stroke-linecap="round" stroke-linejoin="round"
 											d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
 									</svg>
@@ -69,7 +76,7 @@
 					<!-- User Links -->
 					<div class="header-menu-profile ml-4 flex items-center space-x-2 md:ml-6">
 						<!-- Admin Tools Link -->
-						<NuxtLink v-if="v.is_admin" to="/admin"
+						<NuxtLink v-if="v && v.adminLevel > 0" to="/admin"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
 							title="Admin control panel">
 							<span class="sr-only">View admin tools</span>
@@ -110,17 +117,19 @@
 							</span>
 						</NuxtLink>
 						<!-- Profile Dropdown -->
-						<MenusProfile :user="v" :counts="counts" :unread="unread" />
+						<MenusProfile :user="v" :unread="unread" />
 					</div>
 				</div>
 				<div class="-mr-1 flex space-x-2 md:hidden">
 					<!-- Admin Tools Link -->
-					<NuxtLink v-if="v.is_admin" to="/admin" class="inline-flex items-center justify-center p-1 text-white">
+					<NuxtLink v-if="v.adminLevel > 0" to="/admin"
+						class="inline-flex items-center justify-center p-1 text-white">
 						<span class="sr-only">View admin tools</span>
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-							<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3">
+							<path
+								d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3">
 							</path>
 						</svg>
 					</NuxtLink>
@@ -169,7 +178,8 @@
 		<!-- Mobile Menu -->
 		<transition enter-class="opacity-0" enter-active-class="duration-300 ease-out" enter-to-class="opacity-100"
 			leave-class="opacity-100" leave-active-class="duration-200 ease-in" leave-to-class="opacity-0">
-			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen" class="fixed inset-0 bg-black/80">
+			<div @click="isOpen = false" @keydown.esc="isOpen = false" v-show="isOpen"
+				class="fixed inset-0 bg-black/80">
 			</div>
 		</transition>
 		<aside
@@ -204,9 +214,9 @@
 					placeholder="Search posts, @users and +boards" />
 				<div v-show="text" class="absolute" style="top: 9px; right: 0.625rem;">
 					<button class="text-gray-300" @click="text = null">
-						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24" viewBox="0 0 24 24"
-							stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-							stroke-linejoin="round">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" width="24" height="24"
+							viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+							stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							<circle cx="12" cy="12" r="9"></circle>
 							<path d="M10 10l4 4m0 -4l-4 4"></path>
@@ -222,13 +232,13 @@
 						<!-- Username -->
 						<p class="text-sm text-gray-900 leading-normal">
 							<strong>{{ v.name }}</strong>
-							<span v-if="v.is_admin" class="ml-1 badge badge-red">Admin</span>
+							<span v-if="v && v.adminLevel > 0" class="ml-1 badge badge-red">Admin</span>
 						</p>
 						<!-- User Reputation -->
 						<div class="flex items-center text-xs">
 							<span class="text-yellow-500">&#9733;&nbsp;</span>
 							<span class="text-gray-600">
-								{{ counts.rep ?? 0 }} reputation
+								{{ v.rep ?? 0 }} reputation
 							</span>
 						</div>
 					</div>
@@ -260,7 +270,7 @@
 				<span>Posts</span>
 			</NuxtLink>
 			<!-- My Settings Link -->
-			<NuxtLink to="/settings/profile"
+			<NuxtLink to="/settings/"
 				class="group flex items-center w-full px-4 py-1.5 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
 				@click="toggleDrawer">
 				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
@@ -334,10 +344,11 @@
 
 <script setup>
 // import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
+import { useAPI } from "@/composables/api";
 import { useSiteStore } from '@/stores/StoreSite.js';
 import { useLoggedInUser } from '@/stores/StoreAuth';
-import { useBoardStore } from '@/stores/StoreBoard.js';
+import { useBoardStore } from '~/stores/StoreBoard.js';
+import { useNotificationRefresh } from '@/composables/notificationRefresh';
 import { shuffle } from "@/utils/shuffleArray";
 import Cookies from 'js-cookie';
 
@@ -363,21 +374,72 @@ const search = () => {
 };
 
 const v = userStore.user;
-const counts = userStore.counts;
+//const counts = userStore.counts;
 const unread = ref(userStore.unread);
 
 // Notifications count
 const authCookie = useCookie("token").value;
+const { registerRefreshCallback } = useNotificationRefresh();
 
-const fetchNotifcationCount = () => {
-	useApi("/notifications/unread")
-		.then(({ data }) => {
-			unread.value = data.value.total_count
-		})
-};
+// Use getMe query which includes notification counts
+const { data: userData, pending: userPending, error: userError, refresh: refreshUserData } = await useAsyncGql({
+    operation: 'getMe'
+});
 
-watch(route, (to) => {
-	fetchNotifcationCount()
+// Get unread message count separately
+const { data: messageCount, pending: messagesPending, error: messagesError, refresh: refreshMessageCount } = await useAsyncGql({
+    operation: 'GetUnreadMessageCount'
+});
+
+// Register refresh callback for cross-component communication
+onMounted(() => {
+	const unregister = registerRefreshCallback(() => {
+		if (authCookie) {
+			refreshUserData();
+			refreshMessageCount();
+		}
+	});
+
+	onUnmounted(() => {
+		unregister();
+	});
+});
+
+// Calculate total unread count from all notification types
+const unreadTotal = computed(() => {
+	if (!userData.value || userError.value) return 0;
+	const messageCountValue = messageCount.value?.getUnreadMessageCount || 0;
+	return (userData.value.unreadRepliesCount || 0) +
+		   (userData.value.unreadMentionsCount || 0) +
+		   messageCountValue;
+});
+
+// Update unread count when data changes
+watch(unreadTotal, (newTotal) => {
+	unread.value = newTotal;
+}, { immediate: true });
+
+// Handle notification count fetch errors silently (don't break the navbar)
+watch([userError, messagesError], ([userErr, msgErr]) => {
+	if (userErr || msgErr) {
+		console.warn('Failed to load notification counts:', userErr || msgErr);
+		unread.value = 0; // Reset to 0 on error
+	}
+});
+
+// Only refresh notification counts when navigating to/from inbox or notification-related pages
+watch(route, (to, from) => {
+	// Only refresh if we have an auth cookie and route change is relevant to notifications
+	if (authCookie) {
+		const notificationRoutes = ['/inbox', '/submit'];
+		const isNotificationRoute = (path) => notificationRoutes.some(route => path.startsWith(route));
+
+		// Refresh if navigating to/from notification-related pages or after creating content
+		if (isNotificationRoute(to.path) || isNotificationRoute(from?.path || '')) {
+			refreshUserData();
+			refreshMessageCount();
+		}
+	}
 });
 
 // Define sub-navigation menu links
@@ -399,9 +461,11 @@ const yellowText = [
 
 const selectedText = ref(null);
 
-if (typeof window === 'undefined') {
+if (process.client && typeof window !== 'undefined') {
 	selectedText.value = shuffle(yellowText)[0] ?? 'It\'s Rails!';
-};
+} else {
+	selectedText.value = 'It\'s Rails!';
+}
 
 // Mobile menu
 const isOpen = ref(false);
@@ -469,7 +533,7 @@ const logout = () => {
 		methods: {
 			...mapActions("persist", ["logout"]),
 			createPost() {
-				if (this.$route.path.startsWith === '/+') {
+				if (this.$route.path.startsWith('/b/')) {
 					this.$store.commit('create/TOGGLE_POST_CREATION_MODAL', {show: true})
 				} else {
 					this.$router.push('/create/post')

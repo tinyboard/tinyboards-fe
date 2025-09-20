@@ -1,0 +1,58 @@
+mutation createBoard($input: CreateBoardInput!) {
+  createBoard(input: $input) {
+    board {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      isNSFW
+      creationDate
+      updated
+      isRemoved
+      isBanned
+      banReason
+      publicBanReason
+      bannedBy
+      bannedAt
+      primaryColor
+      secondaryColor
+      hoverColor
+      sidebar
+      sidebarHTML
+      isHidden
+      excludeFromAll
+      postCount
+      subscribers
+      commentCount
+      usersActiveDay
+      usersActiveWeek
+      usersActiveMonth
+      usersActiveHalfYear
+      myModPermissions
+      subscribedType
+      moderators {
+        id
+        boardId
+        userId
+        permissions
+        rank
+        inviteAccepted
+        inviteAcceptedDate
+        creationDate
+        user {
+          id
+          name
+          displayName
+          avatar
+          creationDate
+          isAdmin
+          rep
+          postCount
+          commentCount
+        }
+      }
+    }
+  }
+}

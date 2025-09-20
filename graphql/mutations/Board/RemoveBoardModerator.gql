@@ -1,0 +1,5 @@
+mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+  removeBoardModerator(boardId: $boardId, userId: $userId) {
+    success
+  }
+}

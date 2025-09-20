@@ -1,0 +1,36 @@
+mutation editPost(
+  $id: Int!
+  $body: String!
+) {
+  editPost(
+    id: $id
+    body: $body
+  ) {
+    id
+    title
+    titleChunk
+    url
+    body
+    bodyHTML
+    score
+    upvotes
+    downvotes
+    isNSFW
+    isRemoved
+    isDeleted
+    isLocked
+    creationDate
+    updated
+    isSaved
+    myVote
+    featuredLocal
+    featuredBoard
+    commentCount
+    altText
+    embedTitle
+    embedDescription
+    embedVideoUrl
+    sourceUrl
+    lastCrawlDate
+  }
+}

@@ -1,0 +1,5 @@
+mutation resolvePostReport($reportId: Int!) {
+  resolvePostReport(reportId: $reportId) {
+    success
+  }
+}

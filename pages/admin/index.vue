@@ -47,6 +47,40 @@
         </div>
         <!-- Divider -->
         <hr class="mt-6 mb-4" />
+        <!-- Moderation Stats -->
+        <div v-if="moderationStats?.getModerationStats" class="mb-6">
+          <h3 class="mb-2 text-gray-500 text-sm font-medium uppercase">
+            Moderation Statistics
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="text-center">
+              <div class="p-3 border bg-red-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-red-600">{{ moderationStats.getModerationStats.pendingReports }}</strong>
+                <p class="mt-1 text-red-500 text-xs font-medium uppercase">Pending Reports</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="p-3 border bg-yellow-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-yellow-600">{{ moderationStats.getModerationStats.bannedUsers }}</strong>
+                <p class="mt-1 text-yellow-500 text-xs font-medium uppercase">Banned Users</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="p-3 border bg-blue-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-blue-600">{{ moderationStats.getModerationStats.removedPosts }}</strong>
+                <p class="mt-1 text-blue-500 text-xs font-medium uppercase">Removed Posts</p>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="p-3 border bg-green-50 rounded-md shadow-inner-white">
+                <strong class="text-2xl text-green-600">{{ moderationStats.getModerationStats.totalModerationActions }}</strong>
+                <p class="mt-1 text-green-500 text-xs font-medium uppercase">Total Actions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Divider -->
+        <hr class="mt-6 mb-4" />
         <!-- Secondary Stats -->
         <div class="grid grid-cols-2 gap-4">
           <!-- Top 5 Members -->
@@ -55,24 +89,24 @@
               Top Scoring Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li v-for="(member, i) in members.members.slice(0, 5)" :key="member.person.id"
+              <li v-for="(member, i) in members?.listMembers?.members?.slice(0, 5)" :key="member.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
-                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
+                  <NuxtLink :to="`/@${member.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.person.name
+                      member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">Admin</span>
+                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
                       {{
-                        member.counts.post_score + member.counts.comment_score
+                        (member.post_score || 0) + (member.comment_score || 0)
                       }}
                     </p>
                   </div>
@@ -86,23 +120,23 @@
               Top Posting Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li v-for="(member, i) in membersPosts.members.slice(0, 5)" :key="member.person.id"
+              <li v-for="(member, i) in membersPosts?.listMembers?.members?.slice(0, 5)" :key="member.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
-                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
+                  <NuxtLink :to="`/@${member.name}`" class="ml-3 w-3/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.person.name
+                      member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">Admin</span>
+                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
-                      {{ member.counts.post_count }}
+                      {{ member.post_count || 0 }}
                     </p>
                   </div>
                 </div>
@@ -120,19 +154,19 @@
               Newest Members
             </h3>
             <ul class="flex flex-col border rounded-md overflow-hidden shadow-inner-white">
-              <li v-for="(member, i) in members.members.slice(0, 5)" :key="member.person.id"
+              <li v-for="(member, i) in membersNew?.listMembers?.members?.slice(0, 5)" :key="member.id"
                 class="bg-white odd:bg-gray-50 border-b last:border-0">
                 <div class="flex items-center px-3 py-1">
                   <p class="font-bold text-lg text-gray-300 text-right">
                     #{{ i + 1 }}
                   </p>
-                  <NuxtLink :to="`/@${member.person.name}`" class="ml-3 w-2/4 flex flex-shrink-0 items-center">
-                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.person.avatar" />
+                  <NuxtLink :to="`/@${member.name}`" class="ml-3 w-2/4 flex flex-shrink-0 items-center">
+                    <img class="p-0.5 w-7 h-7 object-cover" :src="member.avatar" />
                     <strong class="ml-2 text-gray-900 text-sm truncate">{{
-                      member.person.name
+                      member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.person.is_admin" class="ml-1 badge badge-red">
+                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">
                       Admin
                     </span>
                   </NuxtLink>
@@ -140,7 +174,7 @@
                     <p class="text-gray-400 text-sm font-medium uppercase">
                       {{
                         format(
-                          parseISO(member.person.creation_date),
+                          parseISO(member.creation_date),
                           "MMM dd, yyyy"
                         )
                       }}
@@ -158,8 +192,6 @@
 
 <script setup>
 import { ref } from "vue";
-// import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
 import { format, parseISO } from "date-fns";
 
 definePageMeta({
@@ -173,35 +205,53 @@ definePageMeta({
     'isLeftNavbarDisabled': true
 });
 
-// Settings
-// Fetch members by sort
+// Fetch members using GraphQL
 const {
   data: members,
   pending,
   error,
   refresh,
-} = await useApi("/members", {
-  query: { sort: "mostrep" },
-  limit: 5,
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    limit: 5,
+    sort: 'mostRep'
+  }
 });
 
 const {
   data: membersNew,
-  membersNewPending,
-  membersNewError,
-  membersNewRefresh,
-} = await useApi("/members", {
-  query: { sort: "new" },
-  limit: 5,
+  pending: membersNewPending,
+  error: membersNewError,
+  refresh: membersNewRefresh,
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    limit: 5,
+    sort: 'new'
+  }
 });
 
 const {
   data: membersPosts,
-  membersPostsPending,
-  membersPostsError,
-  membersPostsRefresh,
-} = await useApi("/members", {
-  query: { sort: "mostposts" },
-  limit: 5,
+  pending: membersPostsPending,
+  error: membersPostsError,
+  refresh: membersPostsRefresh,
+} = await useAsyncGql({
+  operation: 'listMembers',
+  variables: {
+    limit: 5,
+    sort: 'mostPosts'
+  }
+});
+
+// Fetch moderation statistics
+const {
+  data: moderationStats,
+  pending: moderationStatsPending,
+  error: moderationStatsError,
+  refresh: moderationStatsRefresh,
+} = await useAsyncGql({
+  operation: 'getModerationStats'
 });
 </script>

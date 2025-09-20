@@ -1,0 +1,35 @@
+query getLoggedInUser {
+  me {
+    id
+    name
+    displayName
+    isBanned
+    unbanDate
+    avatar
+    adminLevel
+    rep
+    postScore
+    commentScore
+    postCount
+    commentCount
+    creationDate
+    joinedBoards {
+      id
+      icon
+      name
+      title
+      subscribers
+    }
+    moderates {
+      board {
+        id
+        icon
+        name
+        title
+        subscribers
+      }
+    }
+  }
+  unreadRepliesCount
+  unreadMentionsCount
+}

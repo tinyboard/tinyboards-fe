@@ -1,51 +1,115 @@
+import cookie from "cookie";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useBoardStore } from "@/stores/StoreBoard";
-import { useApi } from "@/composables/api";
+import { usePostsStore } from "@/stores/StorePosts";
+import { useCommentsStore } from "@/stores/StoreComments";
+import { useLoggedInUser } from "@/stores/StoreAuth";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const nuxtApp = useNuxtApp();
   const siteStore = useSiteStore();
   const boardStore = useBoardStore();
-  const route = useRoute();
-  //console.log("fetch site...");
+  const userStore = useLoggedInUser();
+  const postsStore = usePostsStore();
+  const commentsStore = useCommentsStore();
 
+  // Get cookies safely for SSR
+  let cookies = {};
   if (process.server) {
-    await useApi("/admin/site").then(({ data, error }) => {
-      if (data.value) {
-        siteStore.siteMode = data.value.site_mode;
-        siteStore.name = data.value.name;
-        siteStore.description = data.value.description;
-        siteStore.icon = data.value.icon;
-        siteStore.primaryColor = data.value.primary_color;
-        siteStore.secondaryColor = data.value.secondary_color;
-        siteStore.hoverColor = data.value.hover_color;
-        siteStore.enableDownvotes = data.value.enable_downvotes;
-        siteStore.enableNSFW = data.value.enable_nsfw;
-        siteStore.applicationQuestion = data.value.application_question;
-        siteStore.isPrivate = data.value.private_instance;
-        siteStore.enableBoards = data.value.boards_enabled;
-        siteStore.boardCreationAdminOnly = data.value.board_creation_admin_only;
-        siteStore.requireEmailVerification =
-          data.value.require_email_verification;
-      } else {
-        //console.log(JSON.stringify(error.value, null, 4));
-        if (error.value.statusCode === 502) {
-          throw createError({
-            statusCode: 502,
-            statusMessage: "Couldn't fetch data from the server. If you're the owner of this instance, please make sure that your server is running.",
-            fatal: true,
-          });
-        } else {
-          console.log(error.value);
-        }
-      }
-    });
+    const cookieHeader = useNuxtApp().ssrContext?.event.req.headers["cookie"] || "";
+    cookies = cookie.parse(cookieHeader);
+  } else {
+    // Client-side cookie access
+    const tokenCookie = useCookie('token');
+    if (tokenCookie.value) {
+      cookies.token = tokenCookie.value;
+    }
   }
 
-  console.log(`middleware, route changed to ${to.fullPath}`);
-  if (siteStore.enableBoards && to.params.hasOwnProperty("board")) {
-    await boardStore.load({ name: to.params.board });
-  } else if (boardStore.boardActive) {
-    boardStore.clear();
+  // Validate token format if present
+  const hasValidToken = cookies.token &&
+    typeof cookies.token === 'string' &&
+    cookies.token.length > 10; // Basic validation
+
+  // Use the original initApp query with improved error handling
+  try {
+    const { data, error } = await useAsyncGql({
+      operation: 'initApp',
+      variables: {
+        shouldLoadSite: true,
+        shouldLoadLoggedInUser: hasValidToken,
+        shouldLoadBoard: !!to.params?.board,
+        boardName: to.params?.board,
+      },
+    });
+
+    if (error.value && error.value.response) {
+      // Handle GraphQL errors gracefully
+      if (process.dev) {
+        console.warn('GraphQL error in middleware:', error.value);
+      }
+      // Don't throw, just continue with empty data
+    }
+
+    if (data.value && data.value.site) {
+      siteStore.name = data.value.site?.name ?? '';
+      siteStore.description = data.value.site?.description ?? '';
+      siteStore.icon = data.value.site?.icon ?? '';
+      siteStore.primaryColor = data.value.site?.primaryColor ?? '';
+      siteStore.secondaryColor = data.value.site?.secondaryColor ?? '';
+      siteStore.hoverColor = data.value.site?.hoverColor ?? '';
+      siteStore.enableDownvotes = data.value.site?.enableDownvotes ?? false;
+      siteStore.enableNSFW = data.value.site?.enableNSFW ?? false;
+      siteStore.applicationQuestion = data.value.site?.applicationQuestion ?? '';
+      siteStore.isPrivate = data.value.site?.privateInstance ?? false;
+      siteStore.enableBoards = data.value.site?.boardsEnabled ?? false;
+      siteStore.boardCreationAdminOnly = data.value.site?.boardCreationAdminOnly ?? false;
+      siteStore.requireEmailVerification = data.value.site?.requireEmailVerification ?? false;
+      siteStore.requireApplication = data.value.site?.requireApplication ?? false;
+      siteStore.inviteOnly = data.value.site?.inviteOnly ?? false;
+    }
+
+    if (data.value && data.value.me) {
+      userStore.user = data.value.me;
+      userStore.unread = (data.value.unreadRepliesCount || 0) + (data.value.unreadMentionsCount || 0);
+      userStore.token = cookies["token"];
+      userStore.isAuthed = true;
+      userStore.adminLevel = data.value.me.adminLevel;
+      userStore.joinedBoards = data.value.me.joinedBoards;
+      userStore.moddedBoards = data.value.me?.moderates?.map((m) => m.board) ?? [];
+    }
+
+    if (data.value && data.value.board) {
+      boardStore.setBoard(data.value.board);
+
+      const recentBoards = useCookie("recentBoards");
+      if (!recentBoards.value) {
+        recentBoards.value = [];
+      }
+
+      if ((recentBoards.value ?? []).filter((b) => b?.name == data.value.board?.name).length == 0) {
+        recentBoards.value.unshift({
+          name: data.value.board?.name ?? '',
+          title: data.value.board?.title ?? '',
+          icon: data.value.board?.icon ?? '',
+        });
+        recentBoards.value = recentBoards.value.slice(0, 5);
+      } else {
+        recentBoards.value = (recentBoards.value ?? []).filter((b) => b?.name != data.value.board?.name);
+        recentBoards.value.unshift({
+          name: data.value.board?.name ?? '',
+          title: data.value.board?.title ?? '',
+          icon: data.value.board?.icon ?? '',
+        });
+      }
+    }
+  } catch (error) {
+    // Handle any other errors gracefully
+    if (process.dev) {
+      console.warn('Error in middleware:', error);
+    }
   }
+
+  // Clear posts and comments on route change
+  postsStore.clear();
+  commentsStore.setComments([]);
 });

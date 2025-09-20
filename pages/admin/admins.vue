@@ -14,11 +14,11 @@
             </form>
         </div>
 
-        <div v-if="user.adminLevel > 0"
+        <div v-if="user?.adminLevel > 0"
             class="flex justify-between items-center align-middle bg-white dark:bg-gray-600 px-4 py-2 rounded">
             <p class="text-gray-700 text-sm font-semibold">You are {{ requireOwnerPerms() ? 'the owner' : `an
                 admin` }} of {{
-                    site.name
+                    site?.name || 'the site'
                 }}.</p>
             <div class="flex space-x-2">
                 <button v-if="!requireOwnerPerms()" class="ml-auto flex items-center button red" @click="() => modalStore.setModal({
@@ -59,27 +59,27 @@
                 </span>
             </div>
             <!-- Rows -->
-            <ul v-if="members?.members.length" class="flex flex-col">
-                <li v-for="v in members.members" :key="v.person.id"
+            <ul v-if="members?.listMembers?.members?.length" class="flex flex-col">
+                <li v-for="v in members.listMembers.members" :key="v?.id || Math.random()"
                     class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
-                    :class="v.person.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
-                    <NuxtLink external :to="`/@${v.person.name}`" target="_blank" class="col-span-3">
+                    :class="v?.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
+                    <NuxtLink external :to="`/@${v?.name || 'unknown'}`" target="_blank" class="col-span-3">
                         <div class="flex grow-0">
                             <div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
-                                :class="v.person.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
-                                <img :src="v.person.avatar" class="w-8 h-8 rounded-sm" />
-                                <p class="text-primary font-semibold">{{ v.person.name }}</p>
+                                :class="v?.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
+                                <img :src="v?.avatar || '/img/default-avatar.png'" class="w-8 h-8 rounded-sm" />
+                                <p class="text-primary font-semibold">{{ v?.name || 'Unknown User' }}</p>
                             </div>
                         </div>
                     </NuxtLink>
                     <div class="col-span-1 flex items-center">
-                        {{ createPermissionString(v.person.admin_level) }}
+                        {{ createPermissionString(v?.admin_level || 0) }}
                     </div>
-                    <div v-if="(requireOwnerPerms() && v.person.id != user.user.id) || (requireFullPerms() && v.person.admin_level < user.adminLevel)"
+                    <div v-if="(requireOwnerPerms() && v?.id != user?.user?.id) || (requireFullPerms() && (v?.admin_level || 0) < (user?.adminLevel || 0))"
                         class="col-span-2 flex justify-end space-x-2">
-                        <button @click="() => openManageModal(v.person, false)"
+                        <button @click="() => openManageModal(v, false)"
                             class="px-1 text-gray-500 hover:text-blue-600"
-                            :title="`Edit permissions for @${v.person.name}`">
+                            :title="`Edit permissions for @${v?.name || 'user'}`">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -89,8 +89,8 @@
                                 <path d="M16 5l3 3" />
                             </svg>
                         </button>
-                        <button @click="() => openManageModal(v.person, true)" class="px-1 text-gray-500 hover:text-red-600"
-                            :title="`Remove @${v.person.name} as admin`">
+                        <button @click="() => openManageModal(v, true)" class="px-1 text-gray-500 hover:text-red-600"
+                            :title="`Remove @${v?.name || 'user'} as admin`">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -123,8 +123,6 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
@@ -148,7 +146,7 @@ const modalStore = useModalStore();
 const user = useLoggedInUser();
 
 // Fetch site settings
-//const { data: site, pending, error, refresh } = await useApi("/admin/site");
+//const { data: site, pending, error, refresh } = await useAPI("/admin/site");
 const site = useSiteStore();
 
 // Pagination
@@ -158,37 +156,46 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 // Search
 const searchTerm = ref(route.query.search_term || "");
 
-// Fetch users
-const { data: members, pending, error, refresh } = await useApi("/members", {
-    query: {
+// Fetch admin users
+const { data: members, pending, error, refresh } = await useAsyncGql({
+    operation: 'listMembers',
+    variables: {
         limit: limit.value,
         page: page.value,
-        is_admin: true,
-        ...route.query
+        search: route.query.search_term || undefined
     },
-    method: "get",
-    key: `admin_fetch_${page.value}_${limit.value}`
+    transform: (data) => {
+        // Filter to only show admin users
+        if (data?.listMembers?.members) {
+            return {
+                ...data,
+                listMembers: {
+                    ...data.listMembers,
+                    members: data.listMembers.members.filter(member => member?.admin_level > 0)
+                }
+            };
+        }
+        return data;
+    }
 });
 
+// Handle GraphQL errors
+if (error.value) {
+    throw createError({
+        statusCode: 500,
+        statusMessage: 'Failed to load admin users',
+        fatal: true
+    });
+}
+
 const totalPages = computed(() => {
-    return (members.value.total_count / limit.value) || 1;
+    return Math.ceil((members.value?.listMembers?.total_count || 0) / limit.value) || 1;
 })
 
 watch(
     () => route.query.page,
     async newPage => {
-        const { data: newMembers } = await useApi("/members", {
-            query: {
-                limit: limit.value,
-                page: page.value,
-                is_admin: true,
-                ...route.query
-            },
-            method: "get",
-            key: `admin_fetch_next_page_${page.value}_${limit.value}`
-        });
-
-        members.value = newMembers.value;
+        await refresh();
     }
 )
 
@@ -199,18 +206,7 @@ watch(
         const query = JSON.parse(JSON.stringify(route.query));
         query.search_term = newSearch;
         router.replace({ query });
-        const { data: newMembers } = await useApi("/members", {
-            query: {
-                limit: limit.value,
-                page: page.value,
-                is_admin: true,
-                search_term: newSearch,
-            },
-            method: "get",
-            key: `admin_search_${newSearch}_${limit.value}_${page.value}`
-        });
-
-        members.value = newMembers.value;
+        await refresh();
     }
 )
 

@@ -1,0 +1,30 @@
+mutation createEmoji(
+  $shortcode: String!,
+  $imageFile: Upload!,
+  $altText: String!,
+  $category: String!,
+  $boardId: Int,
+  $emojiScope: String
+) {
+  createEmoji(input: {
+    shortcode: $shortcode,
+    imageFile: $imageFile,
+    altText: $altText,
+    category: $category,
+    boardId: $boardId,
+    emojiScope: $emojiScope
+  }) {
+    id
+    shortcode
+    imageUrl
+    altText
+    category
+    creationDate
+    updated
+    boardId
+    createdByUserId
+    isActive
+    usageCount
+    emojiScope
+  }
+}

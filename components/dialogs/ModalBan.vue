@@ -73,8 +73,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="ban" :disabled="!options.user && target == ''">
-                  Yes, {{ isBanned ? 'unban' : 'ban' }} {{ options.user?.name ?? 'user' }}
+                <button class="button red" @click="ban" :disabled="(!options.user && target == '') || isLoading">
+                  {{ isLoading ? 'Processing...' : `Yes, ${isBanned ? 'unban' : 'ban'} ${options.user?.name ?? 'user'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -87,8 +87,6 @@
 
 <script setup>
 import { ref } from 'vue'
-// import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
@@ -125,10 +123,10 @@ const duration = ref(3);
 const permanent = ref(false);
 
 const isBanned = computed(() => props.options.user?.is_banned || props.options.unban);
-
-// Removal
-const authCookie = useCookie("token").value;
 const toast = useToastStore();
+
+// Loading state
+const isLoading = ref(false);
 
 // debugging
 watch(
@@ -136,54 +134,150 @@ watch(
   newValue => console.log(newValue)
 );
 
-// returns the timestamp of the date when the ban expires
-/*const expiryTimestamp = () => {
-  if (permanent.value || props.options.user.is_banned) {
-    return null;
-  } else {
-    return Math.floor(Date.now() / 1000) + duration.value * 60 * 60 * 24;
-  }
-}*/
-
 const ban = async () => {
-  //const isBanned = props.options.user.is_banned;
+  if (isLoading.value) return;
+
+  const userId = props.options.user?.id;
   const username = props.options.user?.name || target.value;
-  await useApi('/admin/ban', {
-    body: {
-      "username": username,
-      "banned": !isBanned.value,
-      "reason": reason.value ?? `breaking ${site.name} rules`,
-      "duration_days": (permanent.value || isBanned.value) ? null : duration.value
-    },
-    method: "post"
-  })
-    .then(({ data }) => {
-      if (data.value) {
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
-        setTimeout(() => {
+  const boardId = props.options.boardId; // For board-specific bans
+
+  if (!userId && !username) {
+    toast.addNotification({
+      header: 'Ban failed',
+      message: 'User ID is required for banning operations.',
+      type: 'error'
+    });
+    return;
+  }
+
+  isLoading.value = true;
+
+  try {
+    if (isBanned.value) {
+      // Unban user
+      if (boardId) {
+        // Board-specific unban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation unbanUserFromBoard($boardId: Int!, $userId: Int!) {
+              unbanUserFromBoard(boardId: $boardId, userId: $userId) {
+                success
+              }
+            }
+          `,
+          variables: { boardId, userId }
+        });
+
+        if (result.unbanUserFromBoard?.success) {
           toast.addNotification({
-            header: `${username} ${isBanned.value ? 'unbanned' : 'banned'}`,
-            message: 'Reload the page to see changes.',
+            header: `${username} unbanned`,
+            message: 'The user has been successfully unbanned from this board.',
             type: 'success'
           });
-        }, 400);
+        } else {
+          throw new Error('Board unban operation was not successful');
+        }
       } else {
-        // Show error toast.
-        setTimeout(() => {
+        // Site-wide unban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation unbanUser($userId: Int!) {
+              unbanUser(userId: $userId) {
+                success
+              }
+            }
+          `,
+          variables: { userId }
+        });
+
+        if (result.unbanUser?.success) {
           toast.addNotification({
-            header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
-            message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
-            type: 'error'
+            header: `${username} unbanned`,
+            message: 'The user has been successfully unbanned.',
+            type: 'success'
           });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
-      modalStore.closeModal();
+        } else {
+          throw new Error('Unban operation was not successful');
+        }
+      }
+    } else {
+      // Ban user
+      let expirationDate = null;
+      if (!permanent.value) {
+        const expiration = new Date();
+        expiration.setDate(expiration.getDate() + duration.value);
+        expirationDate = expiration.toISOString();
+      }
+
+      if (boardId) {
+        // Board-specific ban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation banUserFromBoard($input: BoardBanUserInput!) {
+              banUserFromBoard(input: $input) {
+                success
+              }
+            }
+          `,
+          variables: {
+            input: {
+              boardId,
+              userId,
+              reason: reason.value || 'breaking board rules',
+              expires: expirationDate
+            }
+          }
+        });
+
+        if (result.banUserFromBoard?.success) {
+          toast.addNotification({
+            header: `${username} banned`,
+            message: 'The user has been successfully banned from this board.',
+            type: 'success'
+          });
+        } else {
+          throw new Error('Board ban operation was not successful');
+        }
+      } else {
+        // Site-wide ban
+        const result = await $fetch('#gql', {
+          query: `
+            mutation banUser($input: BanUserInput!) {
+              banUser(input: $input) {
+                success
+              }
+            }
+          `,
+          variables: {
+            input: {
+              userId,
+              reason: reason.value || `breaking ${site.name} rules`,
+              expires: expirationDate
+            }
+          }
+        });
+
+        if (result.banUser?.success) {
+          toast.addNotification({
+            header: `${username} banned`,
+            message: 'The user has been successfully banned.',
+            type: 'success'
+          });
+        } else {
+          throw new Error('Ban operation was not successful');
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error with ban operation:', error);
+    toast.addNotification({
+      header: `${isBanned.value ? 'Unban' : 'Ban'} failed`,
+      message: `Failed to ${isBanned.value ? 'unban' : 'ban'} the user. Please try again.`,
+      type: 'error'
     });
+  } finally {
+    isLoading.value = false;
+    modalStore.closeModal();
+  }
 };
 </script>

@@ -1,0 +1,13 @@
+query getModerationLog($limit: Int, $actionType: String) {
+  getModerationLog(limit: $limit, actionType: $actionType) {
+    entries {
+      id
+      actionType
+      moderatorId
+      targetId
+      reason
+      createdAt
+    }
+    totalCount
+  }
+}

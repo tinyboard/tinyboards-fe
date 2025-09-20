@@ -1,0 +1,7 @@
+mutation banUserFromBoard($input: BoardBanUserInput!) {
+  banUserFromBoard(input: $input) {
+    success
+    banId
+    message
+  }
+}

@@ -71,16 +71,16 @@ const isLoading = ref(false);
 }*/
 
 definePageMeta({
-    alias: ['/boards/create', '/create_board', '/+!wizard', '/+!new', '/abracadabra'],
+    alias: ['/boards/create', '/create_board', '/abracadabra'],
     layout: false,
     isScrollDisabled: true,
     'hasAuthRequired': true,
     /*middleware: [
         function (to, from) {
             const MAX_PAGE = 4;
-            const page = to.params.page;
+            const page = to.params?.page;
 
-            if (page > 1 && (from.name !== 'boards-wizard-page' || page === from.params.page)) {
+            if (page > 1 && (from.name !== 'boards-wizard-page' || page === from.params?.page)) {
                 return createError({
                     statusCode: 400,
                     statusMessage: "You must start from the beginning.",
@@ -175,33 +175,48 @@ const next = () => {
             }
         }
 
-        const { data, pending, error, refresh } = await useApi('/boards', {
-            method: "post",
-            body: {
-                "name": board.name,
-                "title": board.displayName,
-                "description": board.description,
-                "primary_color": toRGB(board.primaryColor),
-                "secondary_color": toRGB(board.secondaryColor),
-                "hover_color": toRGB(board.hoverColor),
-                "icon": icon,
-                "banner": banner
+        try {
+            // Use GraphQL mutation for board creation
+            const { createBoard: boardResponse } = await GqlCreateBoard({
+                input: {
+                    name: board.name,
+                    title: board.displayName,
+                    description: board.description,
+                    primaryColor: toRGB(board.primaryColor),
+                    secondaryColor: toRGB(board.secondaryColor),
+                    hoverColor: toRGB(board.hoverColor),
+                    icon: icon,
+                    banner: banner
+                }
+            });
+
+            if (boardResponse?.board) {
+                const name = board.name;
+                board.clear();
+
+                // Add to user's joined and modded boards
+                userStore.addJoinedBoard(boardResponse.board);
+                userStore.addModdedBoard(boardResponse.board);
+
+                // Show success message
+                toast.addNotification({
+                    header: 'Board created!',
+                    message: `Successfully created +${name}`,
+                    type: 'success'
+                });
+
+                // Navigate to the newly created board
+                router.push(`/+${name}?welcome=true`);
+            } else {
+                throw new Error('Board creation returned null response');
             }
-        });
-
-        if (data.value) {
-            const name = board.name;
-            board.clear();
-            userStore.addJoinedBoard(data.value["board_view"]);
-            userStore.addModdedBoard(data.value["board_view"]);
-            // go to the newly created board
-            router.push(`/+${name}?welcome=true`);
-        } else {
-            toast.addNotification({header:'Creation failed',message:'Failed to create board :(',type:'error'});
-
-            // Log the error.
-            console.error(error.value);
-
+        } catch (error) {
+            console.error('Board creation error:', error);
+            toast.addNotification({
+                header: 'Creation failed',
+                message: 'Failed to create board. Please try again.',
+                type: 'error'
+            });
             isLoading.value = false;
         }
     };

@@ -1,30 +1,34 @@
 import { defineStore } from 'pinia';
+import type { Comment } from '@/types/types';
+
+interface CommentStore {
+  comments: Comment[]
+}
 
 export const useCommentsStore = defineStore('comments', {
   // State
-  state: () => {
-    return { 
+  state: (): CommentStore => {
+    return {
       comments: []
     }
   },
   // Getters
   getters: {
-    getComment: (state) => (id: number | string): number => {
-      id = Number(id);
-      for (let i = 0; i < state.comments.length; i++) {
-        if (state.comments[i].comment.id === id) {
-          return state.comments[i]
-        }
-      }
+    /** A function that looks up a comment based on its ID */
+    getComment: (state) => {
+      return (id: number): Comment | undefined => state.comments.find((comment: Comment) => comment.id === id);
     }
   },
   // Actions
   actions: {
-    updateComment(id, options) {
+    setComments(comments: Comment[]) {
+      this.comments = comments;
+    },
+    updateComment(id: number, options: { [key: string]: any }) {
       for (let i = 0; i < this.comments.length; i++) {
-        if (this.comments[i].comment.id === id) {
-          this.comments[i].comment = {
-            ...this.comments[i].comment,
+        if (this.comments[i].id === id) {
+          this.comments[i] = {
+            ...this.comments[i],
             ...options
           };
         }

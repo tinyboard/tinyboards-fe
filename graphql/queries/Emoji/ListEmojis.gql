@@ -1,0 +1,28 @@
+query listEmojis(
+  $boardId: Int,
+  $scope: EmojiScope,
+  $activeOnly: Boolean,
+  $limit: Int,
+  $offset: Int
+) {
+  listEmojis(input: {
+    boardId: $boardId,
+    scope: $scope,
+    activeOnly: $activeOnly,
+    limit: $limit,
+    offset: $offset
+  }) {
+    id
+    shortcode
+    imageUrl
+    altText
+    category
+    creationDate
+    updated
+    boardId
+    createdByUserId
+    isActive
+    usageCount
+    emojiScope
+  }
+}

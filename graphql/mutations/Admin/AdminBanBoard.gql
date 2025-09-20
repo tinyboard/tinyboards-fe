@@ -1,0 +1,17 @@
+mutation adminBanBoard($boardId: Int!, $publicReason: String!, $adminNotes: String) {
+  adminBanBoard(boardId: $boardId, publicReason: $publicReason, adminNotes: $adminNotes) {
+    id
+    name
+    title
+    description
+    icon
+    banner
+    isNSFW
+    creationDate
+    isBanned
+    excludeFromAll
+    myModPermissions
+    postCount
+    subscribers
+  }
+}

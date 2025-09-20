@@ -56,6 +56,45 @@
 							</div>
 						</div>
 					</div>
+					<!-- Account Deactivation -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-red-800">Danger Zone</label>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<div class="border border-red-200 rounded-lg p-4 bg-red-50">
+								<h4 class="text-lg font-semibold text-red-800 mb-2">Delete Account</h4>
+								<p class="text-sm text-red-700 mb-4">
+									Once you delete your account, there is no going back. Please be certain.
+								</p>
+								<div class="flex flex-col space-y-3">
+									<div>
+										<label for="delete-password" class="block text-sm font-bold text-red-800">
+											Enter your password to confirm deletion
+										</label>
+										<input
+											type="password"
+											id="delete-password"
+											name="delete-password"
+											class="mt-1 form-input gray border-red-300 focus:border-red-500 focus:ring-red-500"
+											placeholder="Enter your password"
+											v-model="deletePassword"
+										/>
+									</div>
+									<button
+										@click="deleteAccount"
+										type="button"
+										class="button red w-fit"
+										:class="{ 'loading': isDeletingAccount }"
+										:disabled="isDeletingAccount || !deletePassword?.trim()">
+										{{ isDeletingAccount ? 'Deleting Account...' : 'Delete My Account' }}
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
@@ -70,8 +109,6 @@
 
 <script setup>
 import { ref } from 'vue';
-// import { baseURL } from "@/server/constants";
-import { useApi } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 
 definePageMeta({
@@ -83,14 +120,16 @@ definePageMeta({
 const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
-// Fetch user settings.
-const { data, pending, error, refresh } = await useApi("/settings");
+// Fetch user settings using GraphQL
+const { data, pending, error, refresh } = await useAsyncGql({
+	operation: 'getSettings'
+});
 
 // Settings.
 let settings = ref({});
 
 if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value.settings.settings)) };
+	settings.value = { ...JSON.parse(JSON.stringify(data.value.me)) };
 }
 
 const isLoading = ref(false);
@@ -98,33 +137,129 @@ const isLoading = ref(false);
 const password = ref(null);
 const newPassword = ref(null);
 const confirmPassword = ref(null);
+const deletePassword = ref(null);
+const isDeletingAccount = ref(false);
 
 const hasPassword = computed(() => {
 	return !!password.value || !!newPassword.value || !!confirmPassword.value;
 })
 
-// Submit settings.
-const submitSettings = () => {
+// Submit settings and password change
+const { mutate: updateSettings } = useMutation('updateUserSettings');
+const { mutate: updatePasswordMutation } = useMutation('updatePassword');
+const { mutate: deleteAccountMutation } = useMutation('deleteAccount');
+
+const submitSettings = async () => {
 	isLoading.value = true;
-	useApi('/settings', {
-		method: "put",
-		body: {
-			"email": settings.value.email
-		}
-	})
-		.then(({ data, error }) => {
-			if (data.value) {
-				// Show success toast.
-				toast.addNotification({ header: 'Settings saved', message: 'Your account settings were updated!', type: 'success' });
-			} else {
-				// Show error toast.
-				toast.addNotification({ header: 'Saving failed', message: 'Your settings have failed to save.', type: 'error' });
-				// Log the error.
-				console.error(error.value);
-			}
-		})
-		.finally(() => {
-			isLoading.value = false;
+	
+	try {
+		// Update user settings first
+		const settingsResult = await updateSettings({
+			email: settings.value.email,
+			displayName: settings.value.displayName,
+			bio: settings.value.bio
 		});
+		
+		if (settingsResult.data) {
+			// Update password if provided
+			if (hasPassword.value) {
+				if (newPassword.value !== confirmPassword.value) {
+					throw new Error('New passwords do not match');
+				}
+				
+				if (newPassword.value.length < 8) {
+					throw new Error('Password must be at least 8 characters long');
+				}
+				
+				const passwordResult = await updatePasswordMutation({
+					oldPassword: password.value,
+					newPassword: newPassword.value
+				});
+				
+				if (passwordResult.data?.updatePassword?.success) {
+					// Clear password fields
+					password.value = null;
+					newPassword.value = null;
+					confirmPassword.value = null;
+					
+					toast.addNotification({ 
+						header: 'Settings saved', 
+						message: 'Your account settings and password were updated!', 
+						type: 'success' 
+					});
+				}
+			} else {
+				toast.addNotification({ 
+					header: 'Settings saved', 
+					message: 'Your account settings were updated!', 
+					type: 'success' 
+				});
+			}
+		}
+	} catch (error) {
+		// Show error toast.
+		toast.addNotification({ 
+			header: 'Saving failed', 
+			message: error.message || 'Your settings have failed to save.', 
+			type: 'error' 
+		});
+		// Log the error.
+		console.error(error);
+	} finally {
+		isLoading.value = false;
+	}
+};
+
+// Delete account function
+const deleteAccount = async () => {
+	if (!deletePassword.value?.trim()) {
+		toast.addNotification({
+			header: 'Password required',
+			message: 'Please enter your password to confirm account deletion.',
+			type: 'error'
+		});
+		return;
+	}
+
+	// Show confirmation dialog
+	if (!confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')) {
+		return;
+	}
+
+	isDeletingAccount.value = true;
+
+	try {
+		const result = await deleteAccountMutation({
+			password: deletePassword.value
+		});
+
+		if (result?.data?.deleteAccount?.success) {
+			toast.addNotification({
+				header: 'Account deleted',
+				message: result.data.deleteAccount.message || 'Your account has been successfully deleted.',
+				type: 'success'
+			});
+
+			// Clear authentication and redirect to home
+			const authCookie = useCookie("token");
+			authCookie.value = null;
+
+			// Redirect to home page after a short delay
+			setTimeout(() => {
+				navigateTo('/');
+			}, 2000);
+		} else {
+			throw new Error(result?.data?.deleteAccount?.message || 'Failed to delete account');
+		}
+	} catch (error) {
+		console.error('Error deleting account:', error);
+		toast.addNotification({
+			header: 'Deletion failed',
+			message: error.message || 'Failed to delete your account. Please try again.',
+			type: 'error'
+		});
+	} finally {
+		isDeletingAccount.value = false;
+	}
 };
 </script>

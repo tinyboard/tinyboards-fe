@@ -1,0 +1,39 @@
+query getBoardSettings($boardId: Int!) {
+  getBoardSettings(boardId: $boardId) {
+    board {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      isNSFW
+      creationDate
+      updated
+      isRemoved
+      isBanned
+      banReason
+      publicBanReason
+      bannedBy
+      bannedAt
+      primaryColor
+      secondaryColor
+      hoverColor
+      sidebar
+      sidebarHTML
+      isHidden
+      excludeFromAll
+      postCount
+      subscribers
+      commentCount
+      usersActiveDay
+      usersActiveWeek
+      usersActiveMonth
+      usersActiveHalfYear
+      myModPermissions
+      subscribedType
+    }
+    isOwner
+    moderatorPermissions
+  }
+}

@@ -210,7 +210,7 @@
 					</NuxtLink>
 				</li>
 				<li v-if="userPerms" class="relative">
-					<NuxtLink to="/admin/applications" custom v-slot="{ href, navigate, isActive }">
+					<NuxtLink to="/admin/queue" custom v-slot="{ href, navigate, isActive }">
 						<a :href="href" @click="navigate" class="flex items-center px-4 py-2.5 rounded-md font-bold" :class="isActive ? 'text-primary bg-primary bg-opacity-20 shadow-inner-white' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-transparent'">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

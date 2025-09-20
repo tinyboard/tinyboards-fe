@@ -1,0 +1,113 @@
+enum CommentSortType {
+  hot
+  top
+  new
+  old
+}
+
+query getPost(
+  $id: Int!
+  $sort: CommentSortType
+  $topCommentId: Int
+  $context: Int
+  $search: String
+  $withBoard: Boolean!
+) {
+  post(id: $id) {
+    id
+    title
+    titleChunk
+    url
+    body
+    bodyHTML
+    image
+    creatorId
+    score
+    upvotes
+    downvotes
+    isNSFW
+    isRemoved
+    isDeleted
+    isLocked
+    creationDate
+    updated
+    isSaved
+    myVote
+    featuredLocal
+    featuredBoard
+    commentCount
+    myModPermissions
+    altText
+    embedTitle
+    embedDescription
+    embedVideoUrl
+    sourceUrl
+    lastCrawlDate
+    creator {
+      id
+      name
+      displayName
+      avatar
+      adminLevel
+      instance
+      creationDate
+      rep
+      postCount
+      commentCount
+    }
+    board @include(if: $withBoard) {
+      id
+      name
+      title
+      icon
+      primaryColor
+      secondaryColor
+      hoverColor
+    }
+    comments(
+      topCommentId: $topCommentId
+      sort: $sort
+      context: $context
+      search: $search
+    ) {
+      id
+      parentId
+      postId
+      body
+      bodyHTML
+      creatorId
+      isRemoved
+      isDeleted
+      isLocked
+      isPinned
+      score
+      upvotes
+      downvotes
+      replyCount
+      creationDate
+      updated
+      myVote
+      isSaved
+      level
+      creator {
+        id
+        name
+        displayName
+        avatar
+        isAdmin
+        instance
+      }
+      board @include(if: $withBoard) {
+        id
+        name
+        icon
+      }
+      post {
+        id
+        title
+        titleChunk
+        creatorId
+      }
+    }
+  }
+}

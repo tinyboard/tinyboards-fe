@@ -1,0 +1,35 @@
+query getModeratedBoards($limit: Int, $page: Int) {
+  getModeratedBoards(limit: $limit, page: $page) {
+    id
+    name
+    title
+    description
+    icon
+    banner
+    isNSFW
+    creationDate
+    updated
+    isRemoved
+    isBanned
+    banReason
+    publicBanReason
+    bannedBy
+    bannedAt
+    primaryColor
+    secondaryColor
+    hoverColor
+    sidebar
+    sidebarHTML
+    isHidden
+    excludeFromAll
+    postCount
+    subscribers
+    commentCount
+    usersActiveDay
+    usersActiveWeek
+    usersActiveMonth
+    usersActiveHalfYear
+    myModPermissions
+    subscribedType
+  }
+}

@@ -27,8 +27,8 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button :class="props.options.approve ? 'button green' : 'button red'" @click="toggleItemRemove">
-                  Yes, {{ props.options.approve ? 'approve' : 'remove' }} this {{ type ?? 'post' }}
+                <button :class="props.options.approve ? 'button green' : 'button red'" @click="toggleItemRemove" :disabled="isLoading">
+                  {{ isLoading ? 'Processing...' : `Yes, ${props.options.approve ? 'approve' : 'remove'} this ${type ?? 'post'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -41,8 +41,6 @@
 
 <script setup>
   import { ref } from 'vue'
-  // import { baseURL } from "@/server/constants";
-  import { useApi } from '@/composables/api';
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -77,6 +75,7 @@
   const modalStore = useModalStore();
   const postsStore = usePostsStore();
   const commentsStore = useCommentsStore();
+  const toast = useToastStore();
 
   const item = computed(() => {
     if (props.type === 'post') {
@@ -86,58 +85,104 @@
     }
   });
 
-  // Removal
-  const authCookie = useCookie("token").value;
-  const toast = useToastStore();
+  // Loading state
+  const isLoading = ref(false);
 
   const toggleItemRemove = async () => {
+    if (isLoading.value) return;
+
+    isLoading.value = true;
     const type = props.type;
     const id = props.id;
-    await useApi(`/${type === 'post' ? 'post' : 'comment'}s/${id}/removed`, {
-      body: {
-          //"target_id": id,
-          "reason": "Violating community rules.",
-          "value": !props.options.approve
-      },
-      method: "PATCH",
-    })
-    .then(({ data }) => {
-      if (data.value) {
-        // Update state.
-        /*if (type === 'post') {
-          postsStore.updatePost(id, {
-            is_removed: !props.options.approve
+
+    try {
+      let result;
+
+      if (props.options.approve) {
+        // Use approve mutations
+        if (type === 'post') {
+          result = await $fetch('#gql', {
+            query: `
+              mutation approvePost($postId: Int!) {
+                approvePost(postId: $postId) {
+                  success
+                }
+              }
+            `,
+            variables: { postId: id }
           });
         } else {
-          commentsStore.updateComment(id, {
-            is_removed: !props.options.approve
-          }); 
-        };*/
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header:`${type} ${props.options.approve ? 'approved' : 'removed'}.`,
-            message:`The ${type} was ${props.options.approve ? 'approved' : 'removed'}.`,
-            type:'success'
+          result = await $fetch('#gql', {
+            query: `
+              mutation approveComment($commentId: Int!) {
+                approveComment(commentId: $commentId) {
+                  success
+                }
+              }
+            `,
+            variables: { commentId: id }
           });
-        }, 400);
+        }
+
+        const mutationKey = type === 'post' ? 'approvePost' : 'approveComment';
+        if (result[mutationKey]?.success) {
+          toast.addNotification({
+            header: `${type} approved`,
+            message: `The ${type} was successfully approved.`,
+            type: 'success'
+          });
+        } else {
+          throw new Error(`Failed to approve ${type}`);
+        }
       } else {
-        // Show error toast.
-        setTimeout(() => {
-          toast.addNotification({
-            header:'Operation failed',
-            message:`Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
-            type:'error'
+        // Use existing removal mutations
+        const { $gql } = useNuxtApp();
+
+        if (type === 'post') {
+          result = await $gql.mutation({
+            setPostRemoved: {
+              __args: {
+                id: id,
+                value: true
+              },
+              id: true,
+              isRemoved: true
+            }
           });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
+        } else {
+          result = await $gql.mutation({
+            setCommentRemoved: {
+              __args: {
+                id: id,
+                value: true
+              },
+              id: true,
+              isRemoved: true
+            }
+          });
+        }
+
+        const mutationKey = type === 'post' ? 'setPostRemoved' : 'setCommentRemoved';
+        if (result[mutationKey]) {
+          toast.addNotification({
+            header: `${type} removed`,
+            message: `The ${type} was successfully removed.`,
+            type: 'success'
+          });
+        } else {
+          throw new Error(`Failed to remove ${type}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error with ${type} operation:`, error);
+      toast.addNotification({
+        header: 'Operation failed',
+        message: `Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
+        type: 'error'
+      });
+    } finally {
+      isLoading.value = false;
       modalStore.closeModal();
-    });
+    }
   };
 </script>

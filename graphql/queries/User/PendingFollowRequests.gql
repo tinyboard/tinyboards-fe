@@ -1,0 +1,13 @@
+query pendingFollowRequests {
+  pendingFollowRequests {
+    id
+    name
+    displayName
+    avatar
+    banner
+    bio
+    creationDate
+    isAdmin
+    isBanned
+  }
+}

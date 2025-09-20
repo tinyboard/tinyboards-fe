@@ -24,8 +24,12 @@
                 <button type="button" class="button gray" @click="modalStore.closeModal">
                   No, cancel
                 </button>
-                <button class="button red" @click="deleteItem">
-                  Yes, delete this {{ type ?? 'post' }}
+                <button
+                  class="button red"
+                  @click="deleteItem"
+                  :disabled="isDeleting"
+                >
+                  {{ isDeleting ? 'Deleting...' : `Yes, delete this ${type ?? 'post'}` }}
                 </button>
               </div>
             </DialogPanel>
@@ -38,8 +42,6 @@
 
 <script setup>
   import { computed, ref } from 'vue'
-  // import { baseURL } from "@/server/constants";
-  import { useApi } from "@/composables/api";
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
@@ -81,54 +83,75 @@
   });
 
   // Deletion
-  const authCookie = useCookie("token").value;
   const toast = useToastStore();
+  const isDeleting = ref(false);
 
   const deleteItem = async () => {
+    if (isDeleting.value) return;
+
+    isDeleting.value = true;
     const type = props.type;
-    const id = type === 'post' ? item.value.post.id : item.value.comment.id;
-    await useApi(`/${type}s/${id}`, {
-      body: {
-        "deleted": true
-      },
-      method: "delete",
-    })
-    .then(({ data }) => {
-      if (data.value) {
-        // Update state.
-        if (type === 'post') {
-          postsStore.updatePost(id, {
-            is_deleted: true
-          });
-        } else {
-          commentsStore.updateComment(id, {
-            is_deleted: true
-          });
-        };
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        // Show success toast.
-        setTimeout(() => {
+
+    try {
+      if (type === 'post') {
+        // Use GraphQL mutation for post removal
+        const { mutate } = useMutation('setPostRemoved');
+        const result = await mutate({
+          id: props.id,
+          value: true
+        });
+
+        if (result.data?.setPostRemoved) {
+          // Update state
+          if (postsStore.updatePost) {
+            postsStore.updatePost(props.id, {
+              isRemoved: result.data.setPostRemoved.isRemoved
+            });
+          }
+
+          // Show success toast
           toast.addNotification({
-            header:`${type} deleted!`,
-            message:`Your ${type} was removed forever.`,
-            type:'success'
+            header: 'Post deleted!',
+            message: 'Your post was removed successfully.',
+            type: 'success'
           });
-        }, 400);
+        }
       } else {
-        // Show error toast.
-        setTimeout(() => {
+        // Use GraphQL mutation for comment removal
+        const { mutate } = useMutation('setCommentRemoved');
+        const result = await mutate({
+          id: props.id,
+          value: true
+        });
+
+        if (result.data?.setCommentRemoved) {
+          // Update state
+          if (commentsStore.updateComment) {
+            commentsStore.updateComment(props.id, {
+              isRemoved: result.data.setCommentRemoved.isRemoved
+            });
+          }
+
+          // Show success toast
           toast.addNotification({
-            header:'Deletion failed',
-            message:`Failed to delete ${type}. Please try again.`,
-            type:'error'
+            header: 'Comment deleted!',
+            message: 'Your comment was removed successfully.',
+            type: 'success'
           });
-        }, 400);
-      };
-    })
-    .finally(() => {
-      // Close the modal.
+        }
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      // Show error toast
+      toast.addNotification({
+        header: 'Deletion failed',
+        message: error.message || `Failed to delete ${type}. Please try again.`,
+        type: 'error'
+      });
+    } finally {
+      isDeleting.value = false;
+      // Close the modal
       modalStore.closeModal();
-    });
+    }
   };
 </script>

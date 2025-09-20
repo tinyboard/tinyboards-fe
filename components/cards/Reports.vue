@@ -40,7 +40,6 @@
 
 <script setup>
 	import { ref } from "vue";
-	import { useApi } from "@/composables/api";
 
 	const props = defineProps({
 		type: {
@@ -59,19 +58,43 @@
 	async function toggleOpen() {
 		open.value = !open.value;
 		if (reports.value.length === 0) {
-			await useApi(`${props.type}/reports`, {
-				query: {
-					[`${props.type}_id`]: props.id,
-					unresolved_only: true
+			try {
+				const result = await $fetch('#gql', {
+					query: `
+						query getReports($type: String!, $targetId: Int!, $unresolvedOnly: Boolean) {
+							getReports(type: $type, targetId: $targetId, unresolvedOnly: $unresolvedOnly) {
+								id
+								reason
+								resolved
+								creationDate
+								createdBy {
+									id
+									name
+									displayName
+									avatar
+								}
+							}
+						}
+					`,
+					variables: {
+						type: props.type,
+						targetId: props.id,
+						unresolvedOnly: true
+					}
+				});
+
+				if (result?.getReports) {
+					reports.value = result.getReports.map(report => ({
+						data: {
+							id: report.id,
+							reason: report.reason
+						},
+						creator: report.createdBy
+					}));
 				}
-			})
-			.then(({ data, error }) => {
-				if (data.value) {
-					reports.value = data.value.reports;
-				} else {
-					console.log(error.value);
-				}
-			}) 
+			} catch (error) {
+				console.error('Error fetching reports:', error);
+			}
 		}
 	}
 </script>
