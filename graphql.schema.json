@@ -1,0 +1,35 @@
+{
+  "data": {
+    "__schema": {
+      "queryType": { "name": "Query" },
+      "mutationType": { "name": "Mutation" },
+      "subscriptionType": null,
+      "types": [
+        {
+          "kind": "OBJECT",
+          "name": "Query",
+          "fields": [
+            {
+              "name": "dummy",
+              "type": { "kind": "SCALAR", "name": "String" }
+            }
+          ]
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Mutation",
+          "fields": [
+            {
+              "name": "dummy",
+              "type": { "kind": "SCALAR", "name": "String" }
+            }
+          ]
+        },
+        {
+          "kind": "SCALAR",
+          "name": "String"
+        }
+      ]
+    }
+  }
+}

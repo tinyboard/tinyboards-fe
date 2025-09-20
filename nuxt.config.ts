@@ -24,6 +24,30 @@ function constructGraphQLEndpoint(): string {
   return `${protocol}://${domain}/api/v2/graphql`;
 }
 
+// GraphQL configuration with fallback support
+function getGraphQLConfig() {
+  const path = require('path');
+
+  if (process.env.SKIP_GQL_GENERATE === 'true') {
+    // During build, use a local schema file to prevent connection attempts
+    return {
+      schema: path.resolve(__dirname, 'schema.graphql'),
+      tokenStorage: {
+        name: 'token',
+        mode: 'cookie'
+      }
+    };
+  }
+
+  return {
+    schema: constructGraphQLEndpoint(),
+    tokenStorage: {
+      name: 'token',
+      mode: 'cookie'
+    }
+  };
+}
+
 export default defineNuxtConfig({
   // Reduce verbose logging in development
   devtools: { enabled: false },
@@ -119,13 +143,7 @@ export default defineNuxtConfig({
     },
   },
 
-  'graphql-client': {
-    schema: constructGraphQLEndpoint(),
-    tokenStorage: {
-      name: 'token',
-      mode: 'cookie'
-    }
-  },
+  'graphql-client': getGraphQLConfig(),
 
   /*apollo: {
     clients: {
