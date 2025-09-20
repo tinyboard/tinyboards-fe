@@ -1,5 +1,5 @@
 # Simplified Dockerfile to avoid cache issues
-FROM node:18.6.0-alpine
+FROM node:22-alpine
 
 # Set working directory
 WORKDIR /app
