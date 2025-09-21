@@ -14,8 +14,9 @@ FULL_IMAGE_NAME="$DOCKERHUB_USER/$IMAGE_NAME:$TAG"
 echo "🚀 Building and pushing TinyBoards Frontend to Docker Hub..."
 echo "   Image: $FULL_IMAGE_NAME"
 
-# Build the image with generic build args (will be overridden at runtime)
+# Build the image with real GraphQL generation from local backend
 echo "🔨 Building Docker image..."
+echo "📡 Note: This build requires the TinyBoards backend to be running locally on port 8536"
 docker build \
     --build-arg NUXT_PUBLIC_DOMAIN=localhost:8536 \
     --build-arg NUXT_PUBLIC_USE_HTTPS=false \

@@ -87,8 +87,7 @@ Configure your `.env` file:
 NUXT_PUBLIC_DOMAIN=localhost:8536
 NUXT_PUBLIC_USE_HTTPS=false
 
-# GraphQL Configuration (optional)
-SKIP_GQL_GENERATE=false
+# GraphQL Configuration is automatic
 
 # Development settings
 NODE_ENV=development
@@ -346,7 +345,6 @@ NUXT_PUBLIC_USE_HTTPS=false                    # Use HTTPS (true/false)
 
 # Development settings
 NODE_ENV=development                           # Environment mode
-SKIP_GQL_GENERATE=false                        # Skip GraphQL generation
 
 # Optional: Custom GraphQL endpoint
 NUXT_PUBLIC_GRAPHQL_ENDPOINT=http://localhost:8536/api/v2/graphql

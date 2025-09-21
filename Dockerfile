@@ -1,16 +1,6 @@
-# Stage 1 - Create a dummy schema for build
-FROM alpine:latest AS schema-generator
-WORKDIR /schema
-
-# Create a minimal GraphQL schema for build
-RUN echo '{"data":{"__schema":{"queryType":{"name":"Query"},"mutationType":{"name":"Mutation"},"subscriptionType":null,"types":[{"kind":"OBJECT","name":"Query","description":null,"fields":[{"name":"dummy","description":null,"args":[],"type":{"kind":"SCALAR","name":"String","ofType":null},"isDeprecated":false,"deprecationReason":null}],"inputFields":null,"interfaces":[],"enumValues":null,"possibleTypes":null},{"kind":"OBJECT","name":"Mutation","description":null,"fields":[{"name":"dummy","description":null,"args":[],"type":{"kind":"SCALAR","name":"String","ofType":null},"isDeprecated":false,"deprecationReason":null}],"inputFields":null,"interfaces":[],"enumValues":null,"possibleTypes":null},{"kind":"SCALAR","name":"String","description":null,"fields":null,"inputFields":null,"interfaces":null,"enumValues":null,"possibleTypes":null},{"kind":"SCALAR","name":"Upload","description":null,"fields":null,"inputFields":null,"interfaces":null,"enumValues":null,"possibleTypes":null}],"directives":[]}}}' > /schema/schema.json
-
-# Stage 2 - Frontend builder
-FROM node:22-alpine AS frontend-builder
+# Frontend builder
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Copy schema from previous stage
-COPY --from=schema-generator /schema/schema.json ./schema.json
 
 # Set build-time environment variables
 ARG NUXT_PUBLIC_DOMAIN
@@ -26,55 +16,51 @@ RUN npm ci
 # Copy frontend source code
 COPY . .
 
-# Copy the comprehensive schema to be available at runtime
-COPY schema.graphql ./.nuxt/gql/schema.graphql
+# Install curl for backend connectivity testing
+RUN apk add --no-cache curl
 
-# Ensure scripts directory exists and is executable
-RUN chmod +x scripts/start.sh 2>/dev/null || true
+# Test backend connectivity and build with real GraphQL generation
+RUN echo "🔍 Testing backend connectivity..." && \
+    if [ -z "$NUXT_PUBLIC_DOMAIN" ]; then \
+        echo "❌ ERROR: NUXT_PUBLIC_DOMAIN build arg is required"; \
+        echo "💡 FIX: Add --build-arg NUXT_PUBLIC_DOMAIN=your-domain.com"; \
+        exit 1; \
+    fi && \
+    PROTOCOL=$([ "$NUXT_PUBLIC_USE_HTTPS" = "true" ] && echo "https" || echo "http") && \
+    # Use Docker bridge gateway for localhost during builds \
+    if echo "$NUXT_PUBLIC_DOMAIN" | grep -q "localhost"; then \
+        # Try Docker bridge gateway first (works with BuildKit) \
+        DOCKER_GATEWAY=$(ip route | awk '/default/ { print $3 }' | head -1) && \
+        BUILD_DOMAIN=$(echo "$NUXT_PUBLIC_DOMAIN" | sed "s/localhost/$DOCKER_GATEWAY/g") && \
+        echo "🔧 Converting localhost to Docker gateway: $BUILD_DOMAIN" && \
+        # Update environment variables for Nuxt build \
+        export NUXT_PUBLIC_DOMAIN="$BUILD_DOMAIN"; \
+    else \
+        BUILD_DOMAIN="$NUXT_PUBLIC_DOMAIN"; \
+    fi && \
+    ENDPOINT="$PROTOCOL://$BUILD_DOMAIN/api/v2/graphql" && \
+    echo "🌐 Testing: $ENDPOINT" && \
+    if ! curl -f -s -m 10 -X POST -H "Content-Type: application/json" -d '{"query":"query{__schema{queryType{name}}}"}' "$ENDPOINT" >/dev/null 2>&1; then \
+        echo "❌ ERROR: Cannot connect to TinyBoards backend at $ENDPOINT"; \
+        echo "💡 FIX: Make sure your backend is running and accessible"; \
+        echo "💡 FIX: Check that NUXT_PUBLIC_USE_HTTPS is set correctly (true/false)"; \
+        echo "💡 FIX: Verify your backend is serving GraphQL at /api/v2/graphql"; \
+        echo "💡 FIX: If backend is on localhost, ensure it's listening on 0.0.0.0:8536"; \
+        exit 1; \
+    fi && \
+    echo "✅ Backend accessible, building with real GraphQL schema..." && \
+    npm run build
 
-# Build the application using local schema files instead of API connection
-RUN SKIP_GQL_GENERATE=true npm run build
-
-# Ensure schema is available in the output
-RUN mkdir -p .output/schema && cp schema.graphql .output/schema/
-
-# Stage 4 - Final runtime image
-FROM node:22-alpine AS runtime
+# Final runtime image
+FROM node:22-alpine
 WORKDIR /app
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nuxtjs
 
-# Copy built application
-COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/.output ./.output
-COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/package.json ./package.json
-COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/schema.graphql ./schema.graphql
-COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/nuxt.config.ts ./nuxt.config.ts
-
-# Install curl for backend connectivity checks and create startup script
-RUN apk add --no-cache curl bash && \
-    echo '#!/bin/bash' > /usr/local/bin/start.sh && \
-    echo 'set -e' >> /usr/local/bin/start.sh && \
-    echo 'echo "🚀 Starting TinyBoards Frontend..."' >> /usr/local/bin/start.sh && \
-    echo 'if [ -z "$NUXT_PUBLIC_DOMAIN" ]; then' >> /usr/local/bin/start.sh && \
-    echo '  echo "❌ Error: NUXT_PUBLIC_DOMAIN required"; exit 1' >> /usr/local/bin/start.sh && \
-    echo 'fi' >> /usr/local/bin/start.sh && \
-    echo 'echo "📋 Domain: $NUXT_PUBLIC_DOMAIN"' >> /usr/local/bin/start.sh && \
-    echo 'PROTOCOL=${NUXT_PUBLIC_USE_HTTPS:-"false"}' >> /usr/local/bin/start.sh && \
-    echo 'if [ "$PROTOCOL" = "true" ]; then PROTOCOL="https"; else PROTOCOL="http"; fi' >> /usr/local/bin/start.sh && \
-    echo 'ENDPOINT="$PROTOCOL://$NUXT_PUBLIC_DOMAIN/api/v2/graphql"' >> /usr/local/bin/start.sh && \
-    echo 'echo "🔄 Testing backend connection: $ENDPOINT"' >> /usr/local/bin/start.sh && \
-    echo 'if curl -f -s -m 10 "$ENDPOINT" >/dev/null 2>&1 || curl -f -s -m 10 -X POST -H "Content-Type: application/json" -d "{\"query\":\"query{__schema{queryType{name}}}\"}" "$ENDPOINT" >/dev/null 2>&1; then' >> /usr/local/bin/start.sh && \
-    echo '  echo "✅ Backend accessible, regenerating GraphQL types..."' >> /usr/local/bin/start.sh && \
-    echo '  unset SKIP_GQL_GENERATE' >> /usr/local/bin/start.sh && \
-    echo '  npx nuxt prepare --no-generate 2>/dev/null || echo "⚠️  GraphQL regeneration failed, using build-time schema"' >> /usr/local/bin/start.sh && \
-    echo 'else' >> /usr/local/bin/start.sh && \
-    echo '  echo "⚠️  Backend not accessible, using build-time schema"' >> /usr/local/bin/start.sh && \
-    echo 'fi' >> /usr/local/bin/start.sh && \
-    echo 'echo "🎯 Starting application..."' >> /usr/local/bin/start.sh && \
-    echo 'exec node .output/server/index.mjs' >> /usr/local/bin/start.sh && \
-    chmod +x /usr/local/bin/start.sh
+# Copy built application only
+COPY --from=builder --chown=nuxtjs:nodejs /app/.output ./.output
 
 # Switch to non-root user
 USER nuxtjs
@@ -92,4 +78,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Start the application
-CMD ["/usr/local/bin/start.sh"]
+CMD ["node", ".output/server/index.mjs"]
