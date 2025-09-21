@@ -13,8 +13,8 @@ WORKDIR /app
 COPY --from=schema-generator /schema/schema.json ./schema.json
 
 # Set build-time environment variables
-ARG NUXT_PUBLIC_DOMAIN=localhost:8536
-ARG NUXT_PUBLIC_USE_HTTPS=false
+ARG NUXT_PUBLIC_DOMAIN
+ARG NUXT_PUBLIC_USE_HTTPS
 ENV NUXT_PUBLIC_DOMAIN=$NUXT_PUBLIC_DOMAIN
 ENV NUXT_PUBLIC_USE_HTTPS=$NUXT_PUBLIC_USE_HTTPS
 ENV NODE_ENV=production
@@ -47,6 +47,14 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/.output ./.output
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/package.json ./package.json
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/schema.graphql ./schema.graphql
+COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/scripts ./scripts
+COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/nuxt.config.ts ./nuxt.config.ts
+
+# Install curl for backend connectivity checks
+RUN apk add --no-cache curl
+
+# Make startup script executable
+RUN chmod +x scripts/start.sh
 
 # Switch to non-root user
 USER nuxtjs
@@ -64,4 +72,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Start the application
-CMD ["node", ".output/server/index.mjs"]
+CMD ["./scripts/start.sh"]

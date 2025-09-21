@@ -17,9 +17,20 @@ function validateEnvVar(name: string, fallback?: string): string {
   return value || fallback || '';
 }
 
+function validateProdEnvVar(name: string, fallback?: string): string {
+  const value = process.env[name];
+
+  // In production, require explicit values
+  if (process.env.NODE_ENV === 'production' && !value) {
+    throw new Error(`Required production environment variable ${name} is not set`);
+  }
+
+  return value || fallback || '';
+}
+
 function constructGraphQLEndpoint(): string {
-  const domain = validateEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536');
-  const useHttps = validateEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true';
+  const domain = validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536');
+  const useHttps = validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true';
   const protocol = useHttps ? 'https' : 'http';
   return `${protocol}://${domain}/api/v2/graphql`;
 }
@@ -181,8 +192,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      domain: validateEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
-      use_https: validateEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
+      domain: validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
+      use_https: validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
       GQL_HOST: constructGraphQLEndpoint(),
     },
   },
