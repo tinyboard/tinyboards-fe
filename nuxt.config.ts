@@ -27,25 +27,62 @@ function constructGraphQLEndpoint(): string {
 // GraphQL configuration with fallback support
 function getGraphQLConfig() {
   const path = require('path');
+  const fs = require('fs');
+
+  const localSchemaPath = path.resolve(__dirname, 'schema.graphql');
+  const apiEndpoint = constructGraphQLEndpoint();
 
   if (process.env.SKIP_GQL_GENERATE === 'true') {
-    // During build, use a local schema file to prevent connection attempts
+    // During build: use local schema file and generate types from it
     return {
-      schema: path.resolve(__dirname, 'schema.graphql'),
+      schema: localSchemaPath,
       tokenStorage: {
         name: 'token',
         mode: 'cookie'
+      },
+      codegen: {
+        skipDocumentsValidation: true,
+        respectGitIgnore: false,
+        generates: {
+          '.nuxt/gql/': {
+            preset: 'client',
+            config: {
+              useTypeImports: true
+            }
+          }
+        }
       }
     };
   }
 
-  return {
-    schema: constructGraphQLEndpoint(),
+  // At runtime: intelligent schema loading
+  const config = {
     tokenStorage: {
       name: 'token',
       mode: 'cookie'
+    },
+    codegen: {
+      skipDocumentsValidation: true,
+      respectGitIgnore: false,
+      generates: {
+        '.nuxt/gql/': {
+          preset: 'client',
+          config: {
+            useTypeImports: true
+          }
+        }
+      }
     }
   };
+
+  // Try API endpoint first, with fallback to local schema
+  if (fs.existsSync(localSchemaPath)) {
+    config.schema = [apiEndpoint, localSchemaPath];
+  } else {
+    config.schema = apiEndpoint;
+  }
+
+  return config;
 }
 
 export default defineNuxtConfig({
@@ -83,8 +120,12 @@ export default defineNuxtConfig({
   devServerHandlers: [],
   modern: true,
 
-  modules: ["@nuxtjs/tailwindcss", //"@nuxtjs/i18n",
-    "nuxt-graphql-client", "@pinia/nuxt"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    //"@nuxtjs/i18n",
+    ...(process.env.SKIP_GQL_GENERATE === 'true' ? [] : ["nuxt-graphql-client"]),
+    "@pinia/nuxt"
+  ],
 
   /*pinia: {
     storesDirs: ['./stores/**']
@@ -92,8 +133,10 @@ export default defineNuxtConfig({
 
   //i18n: {},
   routeRules: {
-    // Static prerendered pages
-    "/help/**": {
+    // Static prerendered pages (disabled during build)
+    "/help/**": process.env.SKIP_GQL_GENERATE === 'true' ? {
+      ssr: false
+    } : {
       static: true,
       prerender: true,
       headers: { 'Cache-Control': 's-maxage=86400' }
@@ -127,8 +170,10 @@ export default defineNuxtConfig({
       headers: { 'Cache-Control': 's-maxage=300' }
     },
 
-    // Static homepage redirect
-    "/": {
+    // Static homepage redirect (disabled prerender during build)
+    "/": process.env.SKIP_GQL_GENERATE === 'true' ? {
+      redirect: "/feed"
+    } : {
       redirect: "/feed",
       prerender: true
     }
@@ -142,7 +187,7 @@ export default defineNuxtConfig({
     },
   },
 
-  'graphql-client': getGraphQLConfig(),
+  ...(process.env.SKIP_GQL_GENERATE === 'true' ? {} : { 'graphql-client': getGraphQLConfig() }),
 
   /*apollo: {
     clients: {
@@ -161,6 +206,12 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tsconfigPaths()],
+    resolve: {
+      alias: process.env.SKIP_GQL_GENERATE === 'true' ? {
+        '#gql/default': require('path').resolve(__dirname, 'build-mocks/default.ts'),
+        '#gql': require('path').resolve(__dirname, 'build-mocks/gql.ts')
+      } : {}
+    },
     server: {
       allowedHosts: ["localhost", "tinyboards.test"],
       hmr: {

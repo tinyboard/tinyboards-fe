@@ -1,7 +1,5 @@
 # configuration for VSCode graphql extension
 # Schema URL should match your environment configuration
 # Update this to match your actual backend URL
-schema:
-  - "http://localhost:8536/api/v2/graphql"  # Development
-  - "https://your-production-domain.com/api/v2/graphql"  # Production
+schema: "./schema.graphql"  # Local schema file for build and development
 documents: "**/*.{graphql,gql,js,ts,jsx,tsx}"

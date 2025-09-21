@@ -1,9 +1,375 @@
+scalar Upload
+scalar DateTime
+scalar JSON
+
 type Query {
-  dummy: String
+  # Site information
+  site: Site
+
+  # User queries
+  me: User
+  user(name: String!): User
+  listUsers(
+    page: Int
+    limit: Int
+    sort: UserSortType
+    searchTerm: String
+    listingType: UserListingType
+  ): [User!]!
+
+  # Board queries
+  board(name: String!): Board
+  listBoards(
+    sort: SortType
+    page: Int
+    limit: Int
+    searchTerm: String
+    listingType: ListingType
+    searchTitleAndDesc: Boolean
+    bannedBoards: Boolean
+  ): [Board!]!
+
+  # Notification counts
+  unreadRepliesCount: Int!
+  unreadMentionsCount: Int!
+
+  # Post queries
+  posts(
+    sort: SortType
+    page: Int
+    limit: Int
+    boardName: String
+    listingType: ListingType
+  ): [Post!]!
+
+  post(id: Int!): Post
+
+  # Comment queries
+  comments(
+    postId: Int
+    parentId: Int
+    sort: SortType
+    page: Int
+    limit: Int
+  ): [Comment!]!
 }
 
 type Mutation {
-  dummy: String
+  # Authentication
+  register(input: RegisterInput!): AuthPayload!
+  login(input: LoginInput!): AuthPayload!
+  logout: Boolean!
+
+  # Board management
+  createBoard(input: CreateBoardInput!): Board!
+  editBoard(input: EditBoardInput!): Board!
+  deleteBoard(boardId: Int!): Boolean!
+  subscribeToBoard(boardId: Int!): Boolean!
+  unsubscribeFromBoard(boardId: Int!): Boolean!
+  banUserFromBoard(input: BoardBanUserInput!): BanResult!
+  transferBoardOwnership(boardId: Int!, newOwnerId: Int!): MutationResult!
+  unblockBoard(boardId: Int!): Boolean!
+
+  # Post management
+  createPost(input: CreatePostInput!): Post!
+  editPost(input: EditPostInput!): Post!
+  deletePost(postId: Int!): Boolean!
+
+  # Comment management
+  createComment(input: CreateCommentInput!): Comment!
+  editComment(input: EditCommentInput!): Comment!
+  deleteComment(commentId: Int!): Boolean!
+
+  # Voting
+  votePost(postId: Int!, score: Int!): Boolean!
+  voteComment(commentId: Int!, score: Int!): Boolean!
 }
 
-scalar Upload
+type Site {
+  id: Int!
+  name: String!
+  description: String
+  icon: String
+  primaryColor: String
+  secondaryColor: String
+  hoverColor: String
+  enableDownvotes: Boolean!
+  enableNSFW: Boolean!
+  boardCreationAdminOnly: Boolean!
+  requireEmailVerification: Boolean!
+  requireApplication: Boolean!
+  applicationQuestion: String
+  privateInstance: Boolean!
+  inviteOnly: Boolean!
+  openRegistration: Boolean!
+  registrationMode: String!
+  defaultTheme: String!
+  defaultPostListingType: String!
+  defaultAvatar: String
+  legalInformation: String
+  hideModlogModNames: Boolean!
+  applicationEmailAdmins: Boolean!
+  captchaEnabled: Boolean!
+  captchaDifficulty: String!
+  creationDate: DateTime!
+  updated: DateTime
+  reportsEmailAdmins: Boolean!
+  welcomeMessage: String
+  boardsEnabled: Boolean!
+  boardCreationMode: String!
+  trustedUserMinReputation: Int!
+  trustedUserMinAccountAgeDays: Int!
+  trustedUserManualApproval: Boolean!
+  trustedUserMinPosts: Int!
+  allowedPostTypes: [String!]!
+  enableNSFWTagging: Boolean!
+  wordFilterEnabled: Boolean!
+  filteredWords: [String!]!
+  wordFilterAppliesToPosts: Boolean!
+  wordFilterAppliesToComments: Boolean!
+  wordFilterAppliesToUsernames: Boolean!
+  linkFilterEnabled: Boolean!
+  bannedDomains: [String!]!
+  approvedImageHosts: [String!]!
+  imageEmbedHostsOnly: Boolean!
+}
+
+type User {
+  id: Int!
+  name: String!
+  displayName: String
+  avatar: String
+  adminLevel: Int!
+  instance: String
+  creationDate: DateTime!
+  rep: Int!
+  postCount: Int!
+  commentCount: Int!
+  postScore: Int!
+  commentScore: Int!
+  isBanned: Boolean!
+  isDeleted: Boolean!
+  unbanDate: DateTime
+  bio: String
+  profileBackground: String
+  banner: String
+  joinedBoards: [BoardMembership!]!
+  moderates: [BoardModeration!]!
+}
+
+type Board {
+  id: Int!
+  name: String!
+  title: String!
+  description: String
+  creationDate: DateTime!
+  updated: DateTime
+  isDeleted: Boolean!
+  isNSFW: Boolean!
+  isHidden: Boolean!
+  icon: String
+  banner: String
+  isRemoved: Boolean!
+  banReason: String
+  primaryColor: String
+  secondaryColor: String
+  hoverColor: String
+  sidebar: String
+  sidebarHTML: String
+  isBanned: Boolean!
+  publicBanReason: String
+  bannedBy: String
+  bannedAt: DateTime
+  excludeFromAll: Boolean!
+  subscribers: Int!
+  postCount: Int!
+  commentCount: Int!
+  usersActiveDay: Int!
+  usersActiveWeek: Int!
+  usersActiveMonth: Int!
+  usersActiveHalfYear: Int!
+  subscribedType: SubscribedType
+  myModPermissions: JSON
+  moderators: [BoardModerator!]!
+}
+
+type Post {
+  id: Int!
+  title: String!
+  body: String
+  url: String
+  creationDate: DateTime!
+  updated: DateTime
+  isDeleted: Boolean!
+  isRemoved: Boolean!
+  isLocked: Boolean!
+  isStickied: Boolean!
+  isNSFW: Boolean!
+  score: Int!
+  upvotes: Int!
+  downvotes: Int!
+  commentCount: Int!
+  board: Board!
+  creator: User!
+  myVote: Int
+}
+
+type Comment {
+  id: Int!
+  body: String!
+  creationDate: DateTime!
+  updated: DateTime
+  isDeleted: Boolean!
+  isRemoved: Boolean!
+  score: Int!
+  upvotes: Int!
+  downvotes: Int!
+  post: Post!
+  creator: User!
+  parent: Comment
+  children: [Comment!]!
+  myVote: Int
+}
+
+type BoardMembership {
+  icon: String
+  name: String!
+  title: String!
+  subscribers: Int!
+}
+
+type BoardModeration {
+  board: BoardMembership!
+}
+
+type BoardModerator {
+  user: User!
+}
+
+type AuthPayload {
+  jwt: String!
+  user: User!
+}
+
+type BanResult {
+  success: Boolean!
+  banId: Int
+  message: String
+}
+
+type MutationResult {
+  success: Boolean!
+  message: String
+}
+
+enum UserSortType {
+  new
+  old
+  mostRep
+  mostPosts
+  mostComments
+}
+
+enum UserListingType {
+  all
+  admins
+  banned
+}
+
+enum SortType {
+  active
+  hot
+  new
+  old
+  topDay
+  topWeek
+  topMonth
+  topYear
+  topAll
+  mostComments
+  newComments
+}
+
+enum ListingType {
+  all
+  subscribed
+  local
+  moderated
+}
+
+enum SubscribedType {
+  subscribed
+  not_subscribed
+  pending
+}
+
+input RegisterInput {
+  username: String!
+  email: String!
+  password: String!
+  passwordVerify: String!
+  showNSFW: Boolean
+  captchaUuid: String
+  captchaAnswer: String
+}
+
+input LoginInput {
+  usernameOrEmail: String!
+  password: String!
+  captchaUuid: String
+  captchaAnswer: String
+}
+
+input CreateBoardInput {
+  name: String!
+  title: String!
+  description: String
+  icon: String
+  banner: String
+  isNSFW: Boolean
+}
+
+input EditBoardInput {
+  id: Int!
+  title: String
+  description: String
+  icon: String
+  banner: String
+  isNSFW: Boolean
+  sidebar: String
+}
+
+input BoardBanUserInput {
+  boardId: Int!
+  userId: Int!
+  reason: String
+  removeContent: Boolean
+  expires: DateTime
+}
+
+input CreatePostInput {
+  title: String!
+  body: String
+  url: String
+  boardId: Int!
+  isNSFW: Boolean
+}
+
+input EditPostInput {
+  id: Int!
+  title: String
+  body: String
+  url: String
+  isNSFW: Boolean
+}
+
+input CreateCommentInput {
+  body: String!
+  postId: Int!
+  parentId: Int
+}
+
+input EditCommentInput {
+  id: Int!
+  body: String!
+}
