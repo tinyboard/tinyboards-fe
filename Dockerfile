@@ -29,6 +29,9 @@ COPY . .
 # Copy the comprehensive schema to be available at runtime
 COPY schema.graphql ./.nuxt/gql/schema.graphql
 
+# Ensure scripts directory exists and is executable
+RUN chmod +x scripts/start.sh 2>/dev/null || true
+
 # Build the application using local schema files instead of API connection
 RUN SKIP_GQL_GENERATE=true npm run build
 
@@ -47,14 +50,31 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/.output ./.output
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/package.json ./package.json
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/schema.graphql ./schema.graphql
-COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/scripts ./scripts
 COPY --from=frontend-builder --chown=nuxtjs:nodejs /app/nuxt.config.ts ./nuxt.config.ts
 
-# Install curl for backend connectivity checks
-RUN apk add --no-cache curl
-
-# Make startup script executable
-RUN chmod +x scripts/start.sh
+# Install curl for backend connectivity checks and create startup script
+RUN apk add --no-cache curl bash && \
+    echo '#!/bin/bash' > /usr/local/bin/start.sh && \
+    echo 'set -e' >> /usr/local/bin/start.sh && \
+    echo 'echo "🚀 Starting TinyBoards Frontend..."' >> /usr/local/bin/start.sh && \
+    echo 'if [ -z "$NUXT_PUBLIC_DOMAIN" ]; then' >> /usr/local/bin/start.sh && \
+    echo '  echo "❌ Error: NUXT_PUBLIC_DOMAIN required"; exit 1' >> /usr/local/bin/start.sh && \
+    echo 'fi' >> /usr/local/bin/start.sh && \
+    echo 'echo "📋 Domain: $NUXT_PUBLIC_DOMAIN"' >> /usr/local/bin/start.sh && \
+    echo 'PROTOCOL=${NUXT_PUBLIC_USE_HTTPS:-"false"}' >> /usr/local/bin/start.sh && \
+    echo 'if [ "$PROTOCOL" = "true" ]; then PROTOCOL="https"; else PROTOCOL="http"; fi' >> /usr/local/bin/start.sh && \
+    echo 'ENDPOINT="$PROTOCOL://$NUXT_PUBLIC_DOMAIN/api/v2/graphql"' >> /usr/local/bin/start.sh && \
+    echo 'echo "🔄 Testing backend connection: $ENDPOINT"' >> /usr/local/bin/start.sh && \
+    echo 'if curl -f -s -m 10 "$ENDPOINT" >/dev/null 2>&1 || curl -f -s -m 10 -X POST -H "Content-Type: application/json" -d "{\"query\":\"query{__schema{queryType{name}}}\"}" "$ENDPOINT" >/dev/null 2>&1; then' >> /usr/local/bin/start.sh && \
+    echo '  echo "✅ Backend accessible, regenerating GraphQL types..."' >> /usr/local/bin/start.sh && \
+    echo '  unset SKIP_GQL_GENERATE' >> /usr/local/bin/start.sh && \
+    echo '  npx nuxt prepare --no-generate 2>/dev/null || echo "⚠️  GraphQL regeneration failed, using build-time schema"' >> /usr/local/bin/start.sh && \
+    echo 'else' >> /usr/local/bin/start.sh && \
+    echo '  echo "⚠️  Backend not accessible, using build-time schema"' >> /usr/local/bin/start.sh && \
+    echo 'fi' >> /usr/local/bin/start.sh && \
+    echo 'echo "🎯 Starting application..."' >> /usr/local/bin/start.sh && \
+    echo 'exec node .output/server/index.mjs' >> /usr/local/bin/start.sh && \
+    chmod +x /usr/local/bin/start.sh
 
 # Switch to non-root user
 USER nuxtjs
@@ -72,4 +92,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Start the application
-CMD ["/app/scripts/start.sh"]
+CMD ["/usr/local/bin/start.sh"]

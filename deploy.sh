@@ -17,8 +17,8 @@ echo "   Image: $FULL_IMAGE_NAME"
 # Build the image with generic build args (will be overridden at runtime)
 echo "🔨 Building Docker image..."
 docker build \
-    --build-arg NUXT_PUBLIC_DOMAIN=placeholder \
-    --build-arg NUXT_PUBLIC_USE_HTTPS=true \
+    --build-arg NUXT_PUBLIC_DOMAIN=localhost:8536 \
+    --build-arg NUXT_PUBLIC_USE_HTTPS=false \
     -t $IMAGE_NAME \
     -t $FULL_IMAGE_NAME .
 
