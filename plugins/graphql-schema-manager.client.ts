@@ -5,12 +5,16 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   const config = useRuntimeConfig();
 
+  // Construct GraphQL endpoint from runtime config
+  const protocol = config.public.use_https ? 'https' : 'http';
+  const gqlEndpoint = `${protocol}://${config.public.domain}/api/v2/graphql`;
+
   // Create a basic GraphQL client for runtime when module wasn't loaded during build
   const createGraphQLClient = () => {
     const client = {
       async request(query: string, variables?: any) {
         try {
-          const response = await fetch(config.public.GQL_HOST, {
+          const response = await fetch(gqlEndpoint, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -45,7 +49,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   // Function to check if backend is available
   const checkBackendAvailability = async () => {
     try {
-      const response = await fetch(`${config.public.GQL_HOST}`, {
+      const response = await fetch(gqlEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: 'query { __schema { queryType { name } } }' })

@@ -35,12 +35,32 @@ function constructGraphQLEndpoint(): string {
   return `${protocol}://${domain}/api/v2/graphql`;
 }
 
+function constructInternalGraphQLEndpoint(): string {
+  // Use internal backend URL if provided (for Docker deployments)
+  const internalBackend = process.env.NUXT_INTERNAL_BACKEND_URL;
+  if (internalBackend) {
+    return `${internalBackend}/api/v2/graphql`;
+  }
+  // Fallback to external endpoint
+  return constructGraphQLEndpoint();
+}
+
 // GraphQL configuration
 function getGraphQLConfig() {
-  const apiEndpoint = constructGraphQLEndpoint();
+  // Use build-time endpoint for schema generation only
+  const buildTimeEndpoint = constructGraphQLEndpoint();
 
   return {
-    schema: apiEndpoint,
+    schema: buildTimeEndpoint,
+    // Use internal endpoint for server-side requests, external for client-side
+    clients: {
+      default: {
+        // Client-side endpoint (external domain)
+        host: constructGraphQLEndpoint(),
+        // Server-side endpoint (internal Docker network)
+        serverHost: constructInternalGraphQLEndpoint(),
+      }
+    },
     tokenStorage: {
       name: 'token',
       mode: 'cookie'
@@ -154,8 +174,10 @@ export default defineNuxtConfig({
     public: {
       domain: validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
       use_https: validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
-      GQL_HOST: constructGraphQLEndpoint(),
+      // GQL_HOST will be constructed dynamically from domain + use_https at runtime
     },
+    // Private runtime config (server-side only)
+    internalBackendUrl: process.env.NUXT_INTERNAL_BACKEND_URL,
   },
 
   'graphql-client': getGraphQLConfig(),
