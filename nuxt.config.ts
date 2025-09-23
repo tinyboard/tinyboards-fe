@@ -44,7 +44,14 @@ function getGraphQLConfig() {
 
   return {
     schema: buildTimeEndpoint,
-    // Let nuxt-graphql-client use GQL_HOST environment variable for runtime endpoint
+    // Configure different endpoints for client vs server
+    clients: {
+      default: {
+        // Client-side endpoint (external domain with HTTPS)
+        host: constructGraphQLEndpoint(),
+        // Server-side endpoint will be set via GQL_HOST environment variable
+      }
+    },
     tokenStorage: {
       name: 'token',
       mode: 'cookie'
@@ -172,8 +179,8 @@ export default defineNuxtConfig({
     public: {
       domain: validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
       use_https: validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
-      // Client-side GraphQL endpoint
-      GQL_HOST: constructGraphQLEndpoint(),
+      // Client-side GraphQL endpoint (external domain for browser)
+      GQL_HOST: process.env.NUXT_PUBLIC_GQL_HOST || constructGraphQLEndpoint(),
     },
     // Server-side GraphQL endpoint (from environment variable)
     // This will be set by GQL_HOST environment variable in docker-compose
