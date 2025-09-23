@@ -1,5 +1,6 @@
+import { useLoggedInUser } from '@/stores/StoreAuth';
+
 export default defineNuxtPlugin(async () => {
-  const { useLoggedInUser } = await import('@/stores/StoreAuth');
   const userStore = useLoggedInUser();
 
   // Only run on client side and if not already authenticated

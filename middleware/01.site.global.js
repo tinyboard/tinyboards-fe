@@ -32,6 +32,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Use the original initApp query with improved error handling
   try {
+    if (process.dev) {
+      console.log(`🔍 Middleware GraphQL request [${process.server ? 'SSR' : 'Client'}] for initApp`);
+    }
+
     const { data, error } = await useAsyncGql({
       operation: 'initApp',
       variables: {
