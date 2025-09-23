@@ -360,7 +360,11 @@ async function submit() {
             result = response.data?.value || response;
         } else {
             // Use regular GraphQL for non-file posts
-            result = await GqlCreatePost(variables);
+            const response = await useAsyncGql({
+                operation: 'createPost',
+                variables
+            });
+            result = response.data.value;
         }
         if (result.createPost) {
             const post = result.createPost;

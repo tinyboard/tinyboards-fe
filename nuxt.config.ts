@@ -147,6 +147,13 @@ export default defineNuxtConfig({
       ssr: false,
       index: false
     },
+    // SPA for auth pages to avoid SSR redirect issues
+    "/login": {
+      ssr: false
+    },
+    "/register": {
+      ssr: false
+    },
 
     // Board pages with SSR for SEO
     "/b/**": {

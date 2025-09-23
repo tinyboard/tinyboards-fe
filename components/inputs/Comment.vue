@@ -75,13 +75,17 @@ const inputHandler = (e: KeyboardEvent) => {
 
 // Submit comment
 function submitComment() {
-	GqlCreateComment({
-		replyToPostId: props.postId,
-		replyToCommentId: props.parentId,
-		body: body.value,
-		withBoard: site.enableBoards
+	useAsyncGql({
+		operation: 'createComment',
+		variables: {
+			replyToPostId: props.postId,
+			replyToCommentId: props.parentId,
+			body: body.value,
+			withBoard: site.enableBoards
+		}
 	})
-		.then((resp) => {
+		.then((response) => {
+			const resp = response.data.value;
 			emit('commentPublished', resp.createComment);
 			// save comment to comments store
 			commentsStore.comments.push(resp.createComment);

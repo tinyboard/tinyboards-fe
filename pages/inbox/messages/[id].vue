@@ -282,9 +282,13 @@
 		if (!confirm('Are you sure you want to delete this message?')) return;
 
 		try {
-			const result = await GqlDeleteMessage({
-				messageId: message.id
+			const response = await useAsyncGql({
+				operation: 'deleteMessage',
+				variables: {
+					messageId: message.id
+				}
 			});
+			const result = response.data.value;
 
 			if (result?.deleteMessage?.success) {
 				// Remove the message from the local array

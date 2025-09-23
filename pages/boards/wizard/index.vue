@@ -177,18 +177,22 @@ const next = () => {
 
         try {
             // Use GraphQL mutation for board creation
-            const { createBoard: boardResponse } = await GqlCreateBoard({
-                input: {
-                    name: board.name,
-                    title: board.displayName,
-                    description: board.description,
-                    primaryColor: toRGB(board.primaryColor),
-                    secondaryColor: toRGB(board.secondaryColor),
-                    hoverColor: toRGB(board.hoverColor),
-                    icon: icon,
-                    banner: banner
+            const response = await useAsyncGql({
+                operation: 'createBoard',
+                variables: {
+                    input: {
+                        name: board.name,
+                        title: board.displayName,
+                        description: board.description,
+                        primaryColor: toRGB(board.primaryColor),
+                        secondaryColor: toRGB(board.secondaryColor),
+                        hoverColor: toRGB(board.hoverColor),
+                        icon: icon,
+                        banner: banner
+                }
                 }
             });
+            const { createBoard: boardResponse } = response.data.value;
 
             if (boardResponse?.board) {
                 const name = board.name;

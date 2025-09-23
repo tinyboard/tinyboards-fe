@@ -159,10 +159,14 @@ const markAsRead = async () => {
 	isMarkingRead.value = true;
 
 	try {
-		const result = await GqlMarkNotificationsRead({
-			notificationIds: [props.notification.id],
-			markAll: false
+		const response = await useAsyncGql({
+			operation: 'markNotificationsRead',
+			variables: {
+				notificationIds: [props.notification.id],
+				markAll: false
+			}
 		});
+		const result = response.data.value;
 
 		if (result.markNotificationsRead?.success) {
 			// Emit event to parent component to update the notification

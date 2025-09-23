@@ -54,8 +54,12 @@ export const useLoggedInUser = defineStore("auth", {
       const { $client } = useNuxtApp();
       return new Promise((resolve, reject) => {
         // Obtain auth token
-        GqlLogin({ usernameOrEmail: nameOrEmail, password })
-          .then((data) => {
+        useAsyncGql({
+          operation: 'login',
+          variables: { usernameOrEmail: nameOrEmail, password }
+        })
+          .then((response) => {
+            const data = response.data.value;
             if (!data.login.token) {
               throw new Error('No token received from login');
             }
@@ -111,8 +115,12 @@ export const useLoggedInUser = defineStore("auth", {
       applicationSubmitted: boolean;
     }> {
       return new Promise((resolve, reject) => {
-        GqlRegister({ username, email, password, inviteCode, applicationAnswer: answer })
-          .then((resp) => {
+        useAsyncGql({
+          operation: 'register',
+          variables: { username, email, password, inviteCode, applicationAnswer: answer }
+        })
+          .then((response) => {
+            const resp = response.data.value;
             const { token, accountCreated, applicationSubmitted } = resp.register;
 
             if (accountCreated) {
@@ -187,8 +195,13 @@ export const useLoggedInUser = defineStore("auth", {
       this.adminLevel = null;
       this.joinedBoards = [];
       this.moddedBoards = [];
-      // Ensure cookie is properly removed
-      Cookies.remove('token', { path: '/', domain: window.location.hostname });
+      // Ensure cookie is properly removed (only on client)
+      if (process.client) {
+        Cookies.remove('token', { path: '/', domain: window.location.hostname });
+      } else {
+        // Server-side fallback
+        Cookies.remove('token', { path: '/' });
+      }
     },
   },
 });

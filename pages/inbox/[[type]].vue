@@ -111,9 +111,13 @@ const markRead = async () => {
 	isLoading.value = true;
 
 	try {
-		const result = await GqlMarkNotificationsRead({
-			markAll: true
+		const response = await useAsyncGql({
+			operation: 'markNotificationsRead',
+			variables: {
+				markAll: true
+			}
 		});
+		const result = response.data.value;
 
 		if (result.markNotificationsRead?.success) {
 			// Update local notifications to be marked as read
