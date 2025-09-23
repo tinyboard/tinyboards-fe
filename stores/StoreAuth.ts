@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 // import { baseURL } from "@/server/constants";
 import { useAPI } from "@/composables/api";
+import { useDirectGraphQLRequest } from "@/composables/useGraphQL";
 //import { LOGIN_QUERY } from "@/graphql/mutations/Auth";
 //import { ME_QUERY } from "@/graphql/queries/Me";
 import Cookies from 'js-cookie';
@@ -53,11 +54,15 @@ export const useLoggedInUser = defineStore("auth", {
     }) {
       const { $client } = useNuxtApp();
       return new Promise((resolve, reject) => {
-        // Obtain auth token
-        useAsyncGql({
-          operation: 'login',
-          variables: { usernameOrEmail: nameOrEmail, password }
-        })
+        // Obtain auth token using direct GraphQL request to ensure correct endpoint
+        useDirectGraphQLRequest(`
+          mutation Login($usernameOrEmail: String!, $password: String!) {
+            login(usernameOrEmail: $usernameOrEmail, password: $password) {
+              token
+              registration_application_required
+            }
+          }
+        `, { usernameOrEmail: nameOrEmail, password })
           .then((response) => {
             const data = response.data.value;
             if (!data.login.token) {
@@ -67,7 +72,21 @@ export const useLoggedInUser = defineStore("auth", {
             this.token = data.login.token;
 
             // Login successful - fetch user
-            const me = useAsyncGql({ operation: 'getLoggedInUser' })
+            const me = useDirectGraphQLRequest(`
+              query GetLoggedInUser {
+                me {
+                  id
+                  username
+                  display_name
+                  avatar
+                  boards_moderating {
+                    id
+                    name
+                  }
+                  is_admin
+                }
+              }
+            `)
               .then((resp) => {
                 const data = resp.data.value;
 
@@ -115,10 +134,15 @@ export const useLoggedInUser = defineStore("auth", {
       applicationSubmitted: boolean;
     }> {
       return new Promise((resolve, reject) => {
-        useAsyncGql({
-          operation: 'register',
-          variables: { username, email, password, inviteCode, applicationAnswer: answer }
-        })
+        useDirectGraphQLRequest(`
+          mutation Register($username: String!, $email: String!, $password: String!, $inviteCode: String, $applicationAnswer: String) {
+            register(username: $username, email: $email, password: $password, inviteCode: $inviteCode, applicationAnswer: $applicationAnswer) {
+              token
+              accountCreated
+              applicationSubmitted
+            }
+          }
+        `, { username, email, password, inviteCode, applicationAnswer: answer })
           .then((response) => {
             const resp = response.data.value;
             const { token, accountCreated, applicationSubmitted } = resp.register;
@@ -132,7 +156,21 @@ export const useLoggedInUser = defineStore("auth", {
               this.token = token;
 
               // Login successful - fetch user
-              const me = useAsyncGql({ operation: 'getLoggedInUser' })
+              const me = useDirectGraphQLRequest(`
+              query GetLoggedInUser {
+                me {
+                  id
+                  username
+                  display_name
+                  avatar
+                  boards_moderating {
+                    id
+                    name
+                  }
+                  is_admin
+                }
+              }
+            `)
                 .then((resp) => {
                   if (process.dev) console.log("user fetched!");
                   const data = resp.data.value;

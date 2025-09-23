@@ -19,11 +19,10 @@ COPY . .
 # Install curl for backend connectivity testing
 RUN apk add --no-cache curl
 
-# Prepare application (skip build - will build at runtime when backend is available)
-RUN echo "🔍 Preparing frontend application..." && \
-    echo "📡 GraphQL endpoint: $NUXT_PUBLIC_DOMAIN" && \
-    echo "⚠️  Build will happen at runtime when backend is accessible" && \
-    npm run postinstall
+# Generate GraphQL schema and build application
+RUN echo "🔍 Building frontend application with GraphQL generation..." && \
+    npm run postinstall && \
+    npm run build
 
 # Final runtime image
 FROM node:22-alpine
@@ -34,13 +33,12 @@ RUN apk add --no-cache curl && \
     addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nuxtjs
 
-# Copy source code and dependencies for runtime build
-COPY --from=builder --chown=nuxtjs:nodejs /app ./
-# Copy startup script
-COPY --chown=nuxtjs:nodejs scripts/start.sh ./start.sh
-RUN chmod +x ./start.sh
+# Copy built application and dependencies
+COPY --from=builder --chown=nuxtjs:nodejs /app/.output ./.output
+COPY --from=builder --chown=nuxtjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nuxtjs:nodejs /app/node_modules ./node_modules
 
-# Ensure nuxtjs user owns the entire app directory and can write to it
+# Ensure nuxtjs user owns the entire app directory
 RUN chown -R nuxtjs:nodejs /app && \
     chmod -R 755 /app
 
@@ -59,5 +57,5 @@ ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
-# Start the application using startup script
-CMD ["./start.sh"]
+# Start the pre-built application
+CMD ["node", ".output/server/index.mjs"]

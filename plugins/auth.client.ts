@@ -1,4 +1,5 @@
 import { useLoggedInUser } from '@/stores/StoreAuth';
+import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
 
 export default defineNuxtPlugin(async () => {
   const userStore = useLoggedInUser();
@@ -11,9 +12,24 @@ export default defineNuxtPlugin(async () => {
     if (token.value) {
       try {
         console.log('Initializing auth from token...');
-        const { data, error } = await useAsyncGql({
-          operation: 'getLoggedInUser'
-        });
+        const { data, error } = await useDirectGraphQLRequest(`
+          query GetLoggedInUser {
+            me {
+              id
+              username
+              display_name
+              avatar
+              boards_moderating {
+                id
+                name
+              }
+              is_admin
+              adminLevel
+            }
+            unreadMentionsCount
+            unreadRepliesCount
+          }
+        `);
 
         if (data.value?.me && !error.value) {
           console.log('Auth initialization successful');

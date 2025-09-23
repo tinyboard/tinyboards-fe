@@ -39,23 +39,31 @@ function constructGraphQLEndpoint(): string {
 
 // GraphQL configuration
 function getGraphQLConfig() {
-  // Use build-time endpoint for schema generation only
   const buildTimeEndpoint = constructGraphQLEndpoint();
+  const externalEndpoint = process.env.GQL_HOST || buildTimeEndpoint;
+  const internalEndpoint = process.env.NUXT_INTERNAL_GQL_HOST || 'http://tinyboards:8536/api/v2/graphql';
+
+  console.log('🔧 GraphQL Config:');
+  console.log('  Build-time endpoint (schema):', buildTimeEndpoint);
+  console.log('  External endpoint (client):', externalEndpoint);
+  console.log('  Internal endpoint (server):', internalEndpoint);
 
   return {
-    schema: buildTimeEndpoint,
-    // Configure different endpoints for client vs server
     clients: {
       default: {
-        // Client-side endpoint (external domain with HTTPS)
-        host: constructGraphQLEndpoint(),
-        // Server-side endpoint will be set via GQL_HOST environment variable
+        // Schema introspection for build-time codegen
+        schema: buildTimeEndpoint,
+        introspectionHost: buildTimeEndpoint,
+        // Primary host for server-side and fallback
+        host: externalEndpoint,
       }
     },
     tokenStorage: {
       name: 'token',
       mode: 'cookie'
     },
+    proxyCookies: true,
+    proxyHeaders: true,
     autoImport: true,
     functionPrefix: '',
     codegen: {
@@ -179,11 +187,13 @@ export default defineNuxtConfig({
     public: {
       domain: validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
       use_https: validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
-      // Client-side GraphQL endpoint (external domain for browser)
-      GQL_HOST: process.env.NUXT_PUBLIC_GQL_HOST || constructGraphQLEndpoint(),
+      // Make GraphQL endpoint available to client-side
+      GQL_HOST: process.env.NUXT_PUBLIC_GQL_HOST || process.env.GQL_HOST || constructGraphQLEndpoint(),
     },
-    // Server-side GraphQL endpoint (from environment variable)
-    // This will be set by GQL_HOST environment variable in docker-compose
+    // GraphQL endpoint for server-side
+    GQL_HOST: process.env.GQL_HOST || constructGraphQLEndpoint(),
+    // Internal GraphQL endpoint for server-side requests
+    NUXT_INTERNAL_GQL_HOST: process.env.NUXT_INTERNAL_GQL_HOST || 'http://tinyboards:8536/api/v2/graphql',
   },
 
   'graphql-client': getGraphQLConfig(),

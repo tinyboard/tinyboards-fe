@@ -9,39 +9,18 @@ export function useGraphQLEndpoint() {
 
   const getEndpoint = () => {
     if (process.server) {
-      // Server-side: prefer internal endpoint
-      if (config.GQL_HOST) {
-        if (process.dev) {
-          console.log(`🔍 Server GraphQL endpoint: ${config.GQL_HOST}`);
-        }
-        return config.GQL_HOST;
+      // Server-side: use internal endpoint for better performance
+      const internalEndpoint = config.NUXT_INTERNAL_GQL_HOST || 'http://tinyboards:8536/api/v2/graphql';
+      if (process.dev) {
+        console.log(`🔍 Server GraphQL endpoint: ${internalEndpoint}`);
       }
-
-      const internalUrl = config.INTERNAL_BACKEND_URL;
-      if (internalUrl) {
-        const endpoint = `${internalUrl}/api/v2/graphql`;
-        if (process.dev) {
-          console.log(`🔍 Server GraphQL endpoint (from env): ${endpoint}`);
-        }
-        return endpoint;
-      }
-
-      // Production fallback
-      if (process.env.NODE_ENV === 'production') {
-        const endpoint = 'http://tinyboards:8536/api/v2/graphql';
-        if (process.dev) {
-          console.log(`🔍 Server GraphQL endpoint (production fallback): ${endpoint}`);
-        }
-        return endpoint;
-      }
+      return internalEndpoint;
     }
 
-    // Client-side: use external endpoint
-    const endpoint = config.public.GQL_HOST;
-    if (process.dev && process.client) {
-      console.log(`🔍 Client GraphQL endpoint: ${endpoint}`);
-    }
-    return endpoint;
+    // Client-side: always use external endpoint
+    const clientEndpoint = config.public.GQL_HOST;
+    console.log(`🔍 Client GraphQL endpoint: ${clientEndpoint}`);
+    return clientEndpoint;
   };
 
   return {
@@ -92,7 +71,6 @@ export async function useGraphQLRequest(operation: string, variables?: any, opti
  */
 export async function useDirectGraphQLRequest(query: string, variables?: any) {
   const { endpoint, isServerSide } = useGraphQLEndpoint();
-  const config = useRuntimeConfig();
 
   // Prepare headers
   const headers: Record<string, string> = {
@@ -114,9 +92,7 @@ export async function useDirectGraphQLRequest(query: string, variables?: any) {
     }
   }
 
-  if (process.dev) {
-    console.log(`🚀 Direct GraphQL Request [${isServerSide ? 'SSR' : 'Client'}] to: ${endpoint}`);
-  }
+  console.log(`🚀 Direct GraphQL Request [${isServerSide ? 'SSR' : 'Client'}] to: ${endpoint}`);
 
   try {
     const response = await fetch(endpoint, {
@@ -147,9 +123,7 @@ export async function useDirectGraphQLRequest(query: string, variables?: any) {
       pending: ref(false)
     };
   } catch (error) {
-    if (process.dev) {
-      console.error(`💥 Direct GraphQL Request Failed [${isServerSide ? 'SSR' : 'Client'}]:`, error);
-    }
+    console.error(`💥 Direct GraphQL Request Failed [${isServerSide ? 'SSR' : 'Client'}]:`, error);
 
     return {
       data: ref(null),
