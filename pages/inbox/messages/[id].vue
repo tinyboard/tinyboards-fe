@@ -87,7 +87,6 @@
 <script setup>
 	import { useToastStore } from "@/stores/StoreToast";
 	import { useLoggedInUser } from "@/stores/StoreAuth";
-	import { GqlGetConversation, GqlSendMessage, GqlEditMessage, GqlDeleteMessage } from "#gql";
 
 	const route = useRoute();
 	const toast = useToastStore();
@@ -103,14 +102,17 @@
 		if (!conversationId.value) return;
 
 		try {
-			const result = await GqlGetConversation({
-				conversationId: conversationId.value,
-				limit: 50,
-				page: 1
+			const { data: result } = await useAsyncGql({
+				operation: 'GetConversation',
+				variables: {
+					userId: conversationId.value,
+					limit: 50,
+					offset: 0
+				}
 			});
 
-			if (result?.getConversation?.messages) {
-				localMessages.value = result.getConversation.messages;
+			if (result.value?.getConversation) {
+				localMessages.value = result.value.getConversation;
 			}
 		} catch (error) {
 			console.error('Error fetching conversation:', error);
@@ -147,18 +149,21 @@
 		const messageContent = text.value.trim();
 
 		try {
-			const result = await GqlSendMessage({
-				input: {
-					recipientId: recipientId.value,
-					subject: "Message", // Default subject
-					body: messageContent,
-					conversationId: conversationId.value
+			const { data: result } = await useAsyncGql({
+				operation: 'sendMessage',
+				variables: {
+					input: {
+						recipientId: recipientId.value,
+						subject: "Message", // Default subject
+						body: messageContent,
+						conversationId: conversationId.value
+					}
 				}
 			});
 
-			if (result?.sendMessage?.message) {
+			if (result.value?.sendMessage?.message) {
 				// Add the new message to the local list
-				localMessages.value.unshift(result.sendMessage.message);
+				localMessages.value.unshift(result.value.sendMessage.message);
 				text.value = '';
 
 				// Scroll to bottom
@@ -222,14 +227,17 @@
 
 		isEditingMessage.value = true;
 		try {
-			const result = await GqlEditMessage({
-				input: {
-					messageId: message.id,
-					body: editMessageText.value.trim()
+			const { data: result } = await useAsyncGql({
+				operation: 'editMessage',
+				variables: {
+					input: {
+						messageId: message.id,
+						body: editMessageText.value.trim()
+					}
 				}
 			});
 
-			if (result?.editMessage?.message) {
+			if (result.value?.editMessage?.message) {
 				// Update the message in the local array
 				const messageIndex = localMessages.value.findIndex(m => m.id === message.id);
 				if (messageIndex !== -1) {

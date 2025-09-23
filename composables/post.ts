@@ -3,7 +3,6 @@ import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
 import { ref } from "vue";
 import type { Comment, Post } from "@/types/types";
-import type { EditPostMutation } from "#gql";
 
 /**
  * Retrieve a post from the backend, and organize its comments into a tree stucture.
@@ -67,14 +66,24 @@ export async function editPost(id: number, newBody: string): Promise<{
   body: string;
   bodyHTML: string;
 }> {
-  return new Promise((resolve, reject) => {
-    GqlEditPost({ id, body: newBody })
-      .then((editPostResponse: EditPostMutation) => {
-        resolve({
-          body: editPostResponse.editPost.body,
-          bodyHTML: editPostResponse.editPost.bodyHTML
-        })
-      })
-      .catch(reject)
-  });
+  try {
+    const { data } = await useAsyncGql({
+      operation: 'editPost',
+      variables: {
+        id,
+        body: newBody
+      }
+    });
+
+    if (data.value?.editPost) {
+      return {
+        body: data.value.editPost.body,
+        bodyHTML: data.value.editPost.bodyHTML
+      };
+    }
+
+    throw new Error('No data returned from editPost mutation');
+  } catch (error) {
+    throw error;
+  }
 }

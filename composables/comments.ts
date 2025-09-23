@@ -1,7 +1,6 @@
 import { ref } from "vue";
 
 import { useAPI } from "@/composables/api";
-import type { EditCommentMutation } from "#gql";
 
 export async function usePostComments(id, query = {}) {
   const {
@@ -67,14 +66,24 @@ export async function editComment(id: number, newBody: string): Promise<{
   body: string;
   bodyHTML: string;
 }> {
-  return new Promise((resolve, reject) => {
-    GqlEditComment({ id, body: newBody })
-      .then((editCommentResponse: EditCommentMutation) => {
-        resolve({
-          body: editCommentResponse.editComment.body,
-          bodyHTML: editCommentResponse.editComment.bodyHTML
-        })
-      })
-      .catch(reject)
-  });
+  try {
+    const { data } = await useAsyncGql({
+      operation: 'editComment',
+      variables: {
+        id,
+        body: newBody
+      }
+    });
+
+    if (data.value?.editComment) {
+      return {
+        body: data.value.editComment.body,
+        bodyHTML: data.value.editComment.bodyHTML
+      };
+    }
+
+    throw new Error('No data returned from editComment mutation');
+  } catch (error) {
+    throw error;
+  }
 }

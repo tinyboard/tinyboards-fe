@@ -180,7 +180,6 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { onFileChange } from "@/composables/images";
 import { useGqlMultipart } from "@/composables/graphql_multipart";
-import { GqlFollowUser, GqlUnfollowUser, GqlIsFollowingUser } from "#gql";
 import type { Person } from "@/types/types";
 
 const userStore = useLoggedInUser();
@@ -259,8 +258,13 @@ const checkFollowStatus = async () => {
     }
 
     try {
-        const result = await GqlIsFollowingUser({ userId: props.user.id });
-        isFollowing.value = result.isFollowingUser;
+        const { data: result } = await useAsyncGql({
+            operation: 'isFollowingUser',
+            variables: {
+                userId: props.user.id
+            }
+        });
+        isFollowing.value = result.value?.isFollowingUser || false;
         followStatusChecked.value = true;
     } catch (error) {
         console.error('Error checking follow status:', error);
@@ -279,8 +283,13 @@ const toggleFollow = async () => {
     try {
         if (isFollowing.value) {
             // Unfollow user
-            const result = await GqlUnfollowUser({ userId: props.user.id });
-            if (result.unfollowUser) {
+            const { data: result } = await useAsyncGql({
+                operation: 'unfollowUser',
+                variables: {
+                    userId: props.user.id
+                }
+            });
+            if (result.value?.unfollowUser) {
                 isFollowing.value = false;
                 toast.addNotification({
                     header: "User unfollowed",
@@ -290,8 +299,13 @@ const toggleFollow = async () => {
             }
         } else {
             // Follow user
-            const result = await GqlFollowUser({ userId: props.user.id });
-            if (result.followUser) {
+            const { data: result } = await useAsyncGql({
+                operation: 'followUser',
+                variables: {
+                    userId: props.user.id
+                }
+            });
+            if (result.value?.followUser) {
                 isFollowing.value = true;
                 toast.addNotification({
                     header: "User followed",

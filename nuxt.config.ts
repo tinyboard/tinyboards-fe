@@ -35,21 +35,7 @@ function constructGraphQLEndpoint(): string {
   return `${protocol}://${domain}/api/v2/graphql`;
 }
 
-function constructInternalGraphQLEndpoint(): string {
-  // Use internal backend URL if provided (for Docker deployments)
-  const internalBackend = process.env.NUXT_INTERNAL_BACKEND_URL;
-  if (internalBackend) {
-    return `${internalBackend}/api/v2/graphql`;
-  }
-
-  // For Docker production deployments, default to internal service name
-  if (process.env.NODE_ENV === 'production') {
-    return 'http://tinyboards:8536/api/v2/graphql';
-  }
-
-  // Fallback to external endpoint for development
-  return constructGraphQLEndpoint();
-}
+// Note: Server-side GraphQL endpoint is now configured via GQL_HOST environment variable in docker-compose
 
 // GraphQL configuration
 function getGraphQLConfig() {
@@ -58,16 +44,7 @@ function getGraphQLConfig() {
 
   return {
     schema: buildTimeEndpoint,
-    // Configure different endpoints for server vs client
-    clients: {
-      default: {
-        host: buildTimeEndpoint,
-      }
-    },
-    // Use runtime configuration for dynamic endpoint resolution
-    options: {
-      host: buildTimeEndpoint,
-    },
+    // Let nuxt-graphql-client use GQL_HOST environment variable for runtime endpoint
     tokenStorage: {
       name: 'token',
       mode: 'cookie'
@@ -77,14 +54,16 @@ function getGraphQLConfig() {
     codegen: {
       skipDocumentsValidation: true,
       respectGitIgnore: false,
-      silent: process.env.NODE_ENV === 'production',
+      silent: false,
+      verbose: true,
       generates: {
         '.nuxt/gql/': {
           preset: 'client',
           config: {
             useTypeImports: true,
             skipTypename: true,
-            enumsAsTypes: true
+            enumsAsTypes: true,
+            documentMode: 'string'
           }
         }
       }
@@ -186,13 +165,11 @@ export default defineNuxtConfig({
     public: {
       domain: validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
       use_https: validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
-      // GQL_HOST for client-side requests
+      // Client-side GraphQL endpoint
       GQL_HOST: constructGraphQLEndpoint(),
     },
-    // Server-side GQL_HOST (will override public.GQL_HOST on server)
-    GQL_HOST: constructInternalGraphQLEndpoint(),
-    // Internal backend URL for Docker environments
-    INTERNAL_BACKEND_URL: process.env.NUXT_INTERNAL_BACKEND_URL || null,
+    // Server-side GraphQL endpoint (from environment variable)
+    // This will be set by GQL_HOST environment variable in docker-compose
   },
 
   'graphql-client': getGraphQLConfig(),

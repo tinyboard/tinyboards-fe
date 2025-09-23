@@ -47,7 +47,6 @@
 </template>
 
 <script setup>
-	import { GqlListMembers } from "#gql";
 	import { useToastStore } from "@/stores/StoreToast";
 
 	// Simple debounce implementation
@@ -81,15 +80,19 @@
 
 		isSearching.value = true;
 		try {
-			const result = await GqlListMembers({
-				search: username.value.trim(),
-				limit: 20,
-				page: 1,
-				sort: 'New' // or whatever sort type is appropriate
+			const { data: result } = await useAsyncGql({
+				operation: 'listMembers',
+				variables: {
+					searchTerm: username.value.trim(),
+					limit: 20,
+					page: 1,
+					sort: 'new',
+					listingType: 'all'
+				}
 			});
 
-			if (result?.listMembers?.users) {
-				users.value = result.listMembers.users;
+			if (result.value?.listUsers) {
+				users.value = result.value.listUsers;
 			} else {
 				users.value = [];
 			}

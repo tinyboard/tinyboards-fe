@@ -107,7 +107,6 @@
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useToastStore } from "@/stores/StoreToast";
-import { GqlGetConversations, GqlGetUnreadMessageCount, GqlMarkConversationRead } from "#gql";
 import { ref } from 'vue';
 
 definePageMeta({
@@ -126,19 +125,21 @@ const unreadCount = ref(0);
 // Fetch conversations using GraphQL
 const fetchConversations = async () => {
 	try {
-		const conversationsResult = await GqlGetConversations({
-			limit: 25,
-			page: 1
+		const { data: conversationsResult } = await useAsyncGql({
+			operation: 'GetConversations'
 		});
 
-		if (conversationsResult?.getConversations) {
-			conversations.value = conversationsResult.getConversations.conversations || [];
+		if (conversationsResult.value?.listConversations) {
+			conversations.value = conversationsResult.value.listConversations || [];
 		}
 
 		// Fetch unread count
-		const unreadResult = await GqlGetUnreadMessageCount();
-		if (unreadResult?.getUnreadMessageCount) {
-			unreadCount.value = unreadResult.getUnreadMessageCount.count || 0;
+		const { data: unreadResult } = await useAsyncGql({
+			operation: 'GetUnreadMessageCount'
+		});
+
+		if (unreadResult.value?.getUnreadMessageCount !== undefined) {
+			unreadCount.value = unreadResult.value.getUnreadMessageCount || 0;
 		}
 	} catch (error) {
 		console.error('Error fetching conversations:', error);
@@ -156,30 +157,31 @@ const markRead = async () => {
 
 	isLoading.value = true;
 	try {
-		const result = await GqlMarkConversationRead({
-			conversationId: null // null means mark all as read
+		// Mark conversations as read - this mutation expects userId parameter
+		// We'll need to loop through conversations or implement a "mark all" mutation
+		const promises = conversations.value.map(conv =>
+			useAsyncGql({
+				operation: 'markConversationRead',
+				variables: {
+					userId: conv.otherUser?.id || conv.creator?.id
+				}
+			})
+		);
+
+		await Promise.all(promises);
+
+		unreadCount.value = 0;
+		// Update conversations to mark them as read
+		conversations.value = conversations.value.map(conv => ({
+			...conv,
+			unreadCount: 0
+		}));
+
+		toast.addNotification({
+			header: 'Marked all read',
+			message: 'All messages marked as read.',
+			type: 'success'
 		});
-
-		if (result?.markConversationRead?.success) {
-			unreadCount.value = 0;
-			// Update conversations to mark them as read
-			conversations.value = conversations.value.map(conv => ({
-				...conv,
-				notif: { ...conv.notif, read: true }
-			}));
-
-			toast.addNotification({
-				header: 'Marked all read',
-				message: 'All messages marked as read.',
-				type: 'success'
-			});
-		} else {
-			toast.addNotification({
-				header: 'Failed to mark all read',
-				message: 'Please try again.',
-				type: 'error'
-			});
-		}
 	} catch (error) {
 		console.error('Error marking conversations as read:', error);
 		toast.addNotification({
