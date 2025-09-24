@@ -38,7 +38,7 @@
                     <span>
                         Board since
                         <span
-                            :title="board.creation_date"
+                            :title="board.creationDate"
                             class="font-medium text-gray-600"
                         >
                             {{

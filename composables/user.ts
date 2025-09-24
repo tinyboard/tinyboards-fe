@@ -63,9 +63,9 @@ export async function useFetchUser(username: string, query = {}) {
             banner
             isNsfw
           }
-          author {
+          creator {
             id
-            username
+            name
             displayName
             avatar
           }
@@ -82,9 +82,9 @@ export async function useFetchUser(username: string, query = {}) {
           updatedAt
           voteScore
           userVote
-          author {
+          creator {
             id
-            username
+            name
             displayName
             avatar
           }

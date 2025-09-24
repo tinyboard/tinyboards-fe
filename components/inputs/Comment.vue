@@ -86,9 +86,9 @@ function submitComment() {
 				updatedAt
 				voteScore
 				userVote
-				author {
+				creator {
 					id
-					username
+					name
 					displayName
 					avatar
 				}

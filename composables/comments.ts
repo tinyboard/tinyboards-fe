@@ -13,9 +13,9 @@ export async function usePostComments(id, query = {}) {
         updatedAt
         voteScore
         userVote
-        author {
+        creator {
           id
-          username
+          name
           displayName
           avatar
         }
@@ -65,9 +65,9 @@ export async function useComments(id, type = "post", query = {}, post_id) {
         updatedAt
         voteScore
         userVote
-        author {
+        creator {
           id
-          username
+          name
           displayName
           avatar
         }

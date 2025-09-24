@@ -25,7 +25,7 @@ export default defineNuxtPlugin(async () => {
                   name
                 }
               }
-              is_admin
+              isAdmin
               adminLevel
             }
             unreadMentionsCount

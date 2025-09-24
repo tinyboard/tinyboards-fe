@@ -55,10 +55,10 @@
         <div v-if="isAdmin && !isSelf" class="py-2 text-sm">
           <!-- Manage Admin -->
           <MenuItem v-if="requireFullPerms()" v-slot="{ active, close }">
-          <button @click="confirmAdmin(user.is_admin); close()" class="group flex items-center w-full px-4 py-1.5"
+          <button @click="confirmAdmin(user.isAdmin); close()" class="group flex items-center w-full px-4 py-1.5"
             :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
             <!-- Sheild Slash Icon -->
-            <svg v-if="user.is_admin" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24"
+            <svg v-if="user.isAdmin" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24"
               stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
               <line x1="3" y1="3" x2="21" y2="21"></line>
@@ -72,10 +72,10 @@
               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
               <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
             </svg>
-            <span>{{ user.is_admin ? 'Remove' : 'Make' }} admin</span>
+            <span>{{ user.isAdmin ? 'Remove' : 'Make' }} admin</span>
           </button>
           </MenuItem>
-          <MenuItem v-if="requireFullPerms() && user.is_admin" v-slot="{ active, close }">
+          <MenuItem v-if="requireFullPerms() && user.isAdmin" v-slot="{ active, close }">
           <button @click="confirmAdmin(false); close()" class="group flex items-center w-full px-4 py-1.5"
             :class="active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'">
             <!-- Shield Icon -->
@@ -88,7 +88,7 @@
           </button>
           </MenuItem>
           <!-- Ban/Unban -->
-          <MenuItem :disabled="user.is_admin" v-slot="{ close }">
+          <MenuItem :disabled="user.isAdmin" v-slot="{ close }">
           <button @click="confirmBan(); close()" class="group flex items-center w-full px-4 py-1.5"
             :class="user.is_banned ? ' text-green-500 hover:text-green-700 hover:bg-gray-100' : ' text-red-500 hover:text-red-700 hover:bg-gray-100'">
             <!-- User Slash Icon -->
@@ -111,7 +111,7 @@
           </button>
           </MenuItem>
           <!-- Purge Content -->
-          <MenuItem :disabled="user.is_admin" v-slot="{ active, close }">
+          <MenuItem :disabled="user.isAdmin" v-slot="{ active, close }">
           <button @click="confirmPurge(); close()" class="group flex items-center w-full px-4 py-1.5"
             :class="active ? 'bg-gray-100 text-red-700' : 'text-red-500 hover:text-red-700'">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
@@ -172,7 +172,7 @@ const confirmAdmin = (remove) => {
     id: 0,
     isOpen: true,
     options: {
-      'is_admin': props.user.is_admin,
+      'isAdmin': props.user.isAdmin,
       'user': props.user,
       'remove': remove
     }

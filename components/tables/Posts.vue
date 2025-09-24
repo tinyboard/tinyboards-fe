@@ -113,9 +113,9 @@
                   {{ item.creator.title }}
                 </span>
                 <!-- Timestamps -->
-                <span :title="item.post.creation_date" class="ml-2">
+                <span :title="item.post.creationDate" class="ml-2">
                   <span>{{
-                    formatDate(new Date(item.post.creation_date))
+                    formatDate(new Date(item.post.creationDate))
                   }}</span>
                 </span>
                 <span class="ml-2" v-if="item.post.updated">
@@ -267,7 +267,7 @@ const props = defineProps({
 });
 
 const userStore = useLoggedInUser();
-const isAdmin = userStore.user && userStore.user.is_admin;
+const isAdmin = userStore.user && userStore.user.isAdmin;
 
 const titles = {
   hot: "hot",

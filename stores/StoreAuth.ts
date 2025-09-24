@@ -5,7 +5,7 @@ import { useDirectGraphQLRequest } from "@/composables/useGraphQL";
 //import { LOGIN_QUERY } from "@/graphql/mutations/Auth";
 //import { ME_QUERY } from "@/graphql/queries/Me";
 import Cookies from 'js-cookie';
-import type { BoardFragment, Person } from "@/types/types";
+import type { BoardFragment, User } from "@/types/types";
 
 // Cookie configuration for secure token storage
 const TOKEN_COOKIE_OPTIONS = {
@@ -16,7 +16,7 @@ const TOKEN_COOKIE_OPTIONS = {
 };
 
 interface UserStore {
-  user: Person | null,
+  user: User | null,
   unread: number | null,
   token: string | null,
   adminLevel: number | null,
@@ -84,7 +84,7 @@ export const useLoggedInUser = defineStore("auth", {
                       name
                     }
                   }
-                  is_admin
+                  isAdmin
                 }
               }
             `)
@@ -170,7 +170,7 @@ export const useLoggedInUser = defineStore("auth", {
                       name
                     }
                   }
-                  is_admin
+                  isAdmin
                 }
               }
             `)

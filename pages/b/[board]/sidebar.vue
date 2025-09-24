@@ -98,7 +98,7 @@
                                     }}</strong>
                                     <!-- Role -->
                                     <span
-                                        v-if="mod.moderator.is_admin"
+                                        v-if="mod.moderator.isAdmin"
                                         class="ml-1 badge badge-red"
                                         >Admin</span
                                     >

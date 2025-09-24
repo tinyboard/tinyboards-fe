@@ -68,7 +68,7 @@
               <div class="flex">
                 <strong class="text-sm">{{ person.person.name }}</strong>
                 <!-- Role -->
-                <span v-if="person.person.is_admin" class="ml-1 badge badge-red"
+                <span v-if="person.person.isAdmin" class="ml-1 badge badge-red"
                   >Admin</span
                 >
               </div>
@@ -76,7 +76,7 @@
                 Since
                 <span class="font-medium">
                   {{
-                    format(parseISO(person.person.creation_date), "MMM dd, yyyy")
+                    format(parseISO(person.person.creationDate), "MMM dd, yyyy")
                   }}
                 </span>
               </small>
@@ -117,6 +117,7 @@ const query_str = `
         bio
         creationDate
         reputation
+        adminLevel
       }
     }
   }
@@ -146,8 +147,8 @@ const users = computed(() => {
         avatar: user.avatar,
         banner: user.banner || user.profileBackground,
         bio: user.bio,
-        creation_date: user.creationDate,
-        is_admin: user.adminLevel > 0
+        creationDate: user.creationDate,
+        isAdmin: user.adminLevel > 0
       }
     }))
   };

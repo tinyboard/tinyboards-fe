@@ -259,9 +259,9 @@ export async function getModQueue(query: any, type_: string) {
               banner
               isNsfw
             }
-            author {
+            creator {
               id
-              username
+              name
               displayName
               avatar
             }
@@ -278,9 +278,9 @@ export async function getModQueue(query: any, type_: string) {
             updatedAt
             voteScore
             userVote
-            author {
+            creator {
               id
-              username
+              name
               displayName
               avatar
             }

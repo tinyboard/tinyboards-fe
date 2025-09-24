@@ -61,7 +61,7 @@
                                         <p class="text-sm text-gray-600">
                                             {{ member.person.name }}
                                             <span
-                                                v-if="member.person.is_admin"
+                                                v-if="member.person.isAdmin"
                                                 class="ml-2 badge badge-large badge-red"
                                             >
                                                 Admin
@@ -235,7 +235,7 @@ const {
             banner
             profileBackground
             bio
-            is_admin
+            isAdmin
             rep
             postCount
             commentCount
@@ -263,7 +263,7 @@ const members = computed(() => {
                 avatar: user.avatar,
                 banner: user.banner || user.profileBackground,
                 bio: user.bio,
-                is_admin: user.is_admin
+                isAdmin: user.isAdmin
             },
             counts: {
                 rep: user.rep,

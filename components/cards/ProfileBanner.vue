@@ -15,8 +15,8 @@
 					</svg>
 					<span>
 						Member since
-						<span :title="user.creation_date" class="font-medium text-gray-600">
-							{{ format(parseISO(user.creation_date), 'yyyy MMM. dd') }}
+						<span :title="user.creationDate" class="font-medium text-gray-600">
+							{{ format(parseISO(user.creationDate), 'yyyy MMM. dd') }}
 						</span>
 					</span>
 				</li>
@@ -60,7 +60,7 @@
 						<path d="M16 5l3 3"></path>
 					</svg>
 					<span>Posts
-						<span class="font-medium text-gray-600">{{ counts.post_count }}</span>
+						<span class="font-medium text-gray-600">{{ counts.postCount }}</span>
 					</span>
 				</li>
 				<li class="ml-6 flex items-center">
@@ -71,7 +71,7 @@
 						<path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path>
 					</svg>
 					<span>Comments
-						<span class="font-medium text-gray-600">{{ counts.comment_count }}</span>
+						<span class="font-medium text-gray-600">{{ counts.commentCount }}</span>
 					</span>
 				</li>
 			</ul>
@@ -93,7 +93,7 @@
 					<div class="flex items-center text-gray-200">
 						{{ user.name }}
 						<span v-if="user.instance">@{{ user.instance }}</span>
-						<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">
+						<span v-if="user.isAdmin" class="ml-2 badge badge-large badge-red">
 							Admin
 						</span>
 					</div>
@@ -102,7 +102,7 @@
 					<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
 						{{ user.name }}
 					</h1>
-					<span v-if="user.is_admin" class="ml-2 badge badge-large badge-red">Admin</span>
+					<span v-if="user.isAdmin" class="ml-2 badge badge-large badge-red">Admin</span>
 				</div>
 				<!-- Bio -->
 				<p class="mt-2.5 lg:w-4/5 xl:w-3/5"
@@ -111,7 +111,7 @@
 				</p>
 				<!-- Stats -->
 				<small class="sm:hidden mt-2 text-gray-300">
-					Joined {{ format(parseISO(user.creation_date), 'MMM dd, yyyy') }}
+					Joined {{ format(parseISO(user.creationDate), 'MMM dd, yyyy') }}
 				</small>
 				<!-- Actions -->
 				<ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
@@ -184,7 +184,7 @@
 
 	// Admin
 	/*const isAdmin = computed(() => {
-		return !!userStore.user && userStore.user.is_admin
+		return !!userStore.user && userStore.user.isAdmin
 	});*/
 	const isAdmin = requirePermission("users");
 </script>

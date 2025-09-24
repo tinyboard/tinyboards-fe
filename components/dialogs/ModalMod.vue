@@ -286,7 +286,7 @@ watch(
     (newVal) => (hasAcceptedInvite.value = newVal ?? true),
 );
 
-// const remove = computed(() => props.options.user?.is_admin || props.options.remove);
+// const remove = computed(() => props.options.user?.isAdmin || props.options.remove);
 const isRemoving = computed(() => props.options.isRemoving);
 const hasUser = computed(() => props.options.hasOwnProperty("user"));
 const target = ref("");

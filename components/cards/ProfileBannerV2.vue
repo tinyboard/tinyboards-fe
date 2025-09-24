@@ -181,7 +181,7 @@ import { useToastStore } from "@/stores/StoreToast";
 import { onFileChange } from "@/composables/images";
 import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
-import type { Person } from "@/types/types";
+import type { User } from "@/types/types";
 
 const userStore = useLoggedInUser();
 const imageStore = useImageStore();
@@ -197,7 +197,7 @@ const isFollowLoading = ref(false);
 const followStatusChecked = ref(false);
 
 const props = defineProps<{
-    user: Person;
+    user: User;
 }>();
 
 const SAVE_SETTINGS_QUERY = `
@@ -237,7 +237,7 @@ const isSelf = computed(() => {
 
 // Admin
 /*const isAdmin = computed(() => {
-        return !!userStore.user && userStore.user.is_admin
+        return !!userStore.user && userStore.user.isAdmin
     });*/
 const isAdmin = requirePermission("users");
 

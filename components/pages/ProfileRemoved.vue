@@ -118,7 +118,7 @@ const site = useSiteStore();
 
 // Admin
 const isAdmin = computed(() => {
-    return !!userStore.user && userStore.user.is_admin;
+    return !!userStore.user && userStore.user.isAdmin;
 });
 
 // Number of days until unban

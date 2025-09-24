@@ -248,7 +248,7 @@ const isSelf = computed(() => {
 
 // Admin
 /*const isAdmin = computed(() => {
-	return !!userStore.user && userStore.user.is_admin
+	return !!userStore.user && userStore.user.isAdmin
 });*/
 const isAdmin = requirePermission("users");
 

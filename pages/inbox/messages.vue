@@ -53,11 +53,11 @@
 									class="object-cover w-16 h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
 								<span class="ml-2 text-gray-900">
 									<strong class="text-sm"
-										:class="conversation.creator.is_admin ? 'text-red-700' : 'text-gray-900'">
+										:class="conversation.creator.isAdmin ? 'text-red-700' : 'text-gray-900'">
 										{{ userStore.user.name === conversation.creator.name ?
 											conversation.recipient_user.name : conversation.creator.name }}
 
-										<span v-if="conversation.creator.is_admin" class="ml-1 badge badge-red">
+										<span v-if="conversation.creator.isAdmin" class="ml-1 badge badge-red">
 											{{ conversation.creator.id == 1 ? "System" : "Admin" }}
 										</span>
 									</strong>
@@ -134,7 +134,7 @@ const fetchConversations = async () => {
 						id
 						name
 						avatar
-						is_admin
+						isAdmin
 					}
 					recipient_user {
 						id

@@ -90,9 +90,9 @@ export const usePostsStore = defineStore("posts", {
               banner
               isNsfw
             }
-            author {
+            creator {
               id
-              username
+              name
               displayName
               avatar
             }
@@ -145,9 +145,9 @@ export const usePostsStore = defineStore("posts", {
               banner
               isNsfw
             }
-            author {
+            creator {
               id
-              username
+              name
               displayName
               avatar
             }
@@ -163,9 +163,9 @@ export const usePostsStore = defineStore("posts", {
               updatedAt
               voteScore
               userVote
-              author {
+              creator {
                 id
-                username
+                name
                 displayName
                 avatar
               }
@@ -229,9 +229,9 @@ export const usePostsStore = defineStore("posts", {
               banner
               isNsfw
             }
-            author {
+            creator {
               id
-              username
+              name
               displayName
               avatar
             }

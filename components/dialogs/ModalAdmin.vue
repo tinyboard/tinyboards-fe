@@ -16,7 +16,7 @@
             <DialogPanel
               class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-4 text-left align-middle shadow-xl transition-all">
               <!-- Header -->
-              <DialogTitle v-if="options.user && options.user.is_admin && !remove" as="h3"
+              <DialogTitle v-if="options.user && options.user.isAdmin && !remove" as="h3"
                 class="text-lg font-bold leading-6 text-gray-900">
                 Edit permissions for {{ options.user.name }}
               </DialogTitle>
@@ -66,7 +66,7 @@
                 <!--<p class="text-xs text-gray-400">permission code: {{ permissionCode }}</p>-->
               </div>
               <!-- Date Input -->
-              <!-- <input v-if="!options.user.is_admin" type="date" name="expiration" value=""> -->
+              <!-- <input v-if="!options.user.isAdmin" type="date" name="expiration" value=""> -->
               <!-- Footer -->
               <div class="mt-6 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">
@@ -74,7 +74,7 @@
                 </button>
                 <button class="button red" @click="submitAdmin"
                   :disabled="!(options.user || target.length > 0) || (!remove && permissionCode == 0)">
-                  {{ remove ? `Indeed, demote @${options.user.name}!` : (options.user?.is_admin ? 'Update permissions' :
+                  {{ remove ? `Indeed, demote @${options.user.name}!` : (options.user?.isAdmin ? 'Update permissions' :
                     `Confirm, promote ${options.user?.name ?? "them"}!`) }}
                 </button>
               </div>
@@ -159,7 +159,7 @@ watch(
   newLevel => permissionCode.value = newLevel || 0
 );
 
-// const remove = computed(() => props.options.user?.is_admin || props.options.remove);
+// const remove = computed(() => props.options.user?.isAdmin || props.options.remove);
 const remove = computed(() => props.options.remove);
 const target = ref('');
 
@@ -170,7 +170,7 @@ const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
 const submitAdmin = async () => {
-  //const isAdmin = props.options.user.is_admin;
+  //const isAdmin = props.options.user.isAdmin;
   const username = props.options.user?.name || target.value;
   if (remove.value) {
     permissionCode.value = 0;
@@ -189,7 +189,7 @@ const submitAdmin = async () => {
         console.log(data);
         // Show success toast.
         toast.addNotification({
-          header: `${username} ${remove.value ? 'removed as admin' : (props.options.user?.is_admin ? '- permissions updated' : 'was made an admin')}`,
+          header: `${username} ${remove.value ? 'removed as admin' : (props.options.user?.isAdmin ? '- permissions updated' : 'was made an admin')}`,
           message: 'Reload the page to see changes.',
           type: 'success'
         });

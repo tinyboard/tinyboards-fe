@@ -38,7 +38,7 @@ export interface GetSiteQuery {
 }
 
 export interface UserProfileQuery {
-  user: Person;
+  user: User;
 }
 
 export interface GetConversationsQuery {
@@ -100,7 +100,7 @@ export interface Post {
   updatedAt: string;
   voteScore: number;
   userVote?: number;
-  author: Person;
+  author: User;
   board?: Board;
   commentCount: number;
   image?: string;
@@ -117,7 +117,7 @@ export interface Comment {
   updatedAt: string;
   voteScore: number;
   userVote?: number;
-  author: Person;
+  author: User;
   depth: number;
   parentId?: number;
   childCount: number;
@@ -125,26 +125,37 @@ export interface Comment {
   post?: PostFragment;
 }
 
-export interface Person {
+export interface User {
   id: number;
-  username: string;
+  name: string;
   displayName?: string;
   avatar?: string;
+  banner?: string;
+  profileBackground?: string;
+  bio?: string;
+  bioHTML?: string;
+  isAdmin?: boolean;
+  isBanned?: boolean;
   isBlocked?: boolean;
-  is_admin?: boolean;
+  creationDate: string;
+  postCount?: number;
+  commentCount?: number;
+  reputation?: number;
+  rep?: number;
+  adminLevel?: number;
 }
 
 // User interaction types
 export type UserFollowersResponse = {
-    userFollowers: Person[];
+    userFollowers: User[];
 };
 
 export type UserFollowingResponse = {
-    userFollowing: Person[];
+    userFollowing: User[];
 };
 
 export type PendingFollowRequestsResponse = {
-    pendingFollowRequests: Person[];
+    pendingFollowRequests: User[];
 };
 
 export interface Site {

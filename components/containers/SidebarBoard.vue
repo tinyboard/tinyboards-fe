@@ -341,7 +341,7 @@
                                     mod.person.displayName ?? mod.person.name
                                 }}</strong>
                                 <span
-                                    v-if="mod.person.is_admin"
+                                    v-if="mod.person.isAdmin"
                                     class="ml-1 badge badge-red"
                                     >Admin</span
                                 >
