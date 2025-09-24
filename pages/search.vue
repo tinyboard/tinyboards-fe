@@ -197,8 +197,8 @@
 				}
 				comments {
 					id
-					content
-					contentHTML
+					body
+					bodyHTML
 					score
 					upvotes
 					downvotes

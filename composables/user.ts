@@ -43,25 +43,25 @@ export async function useFetchUser(username: string, query = {}) {
         posts {
           id
           title
-          content
+          body
           url
           isLocked
-          isStickied
-          isNsfw
-          isFeatured
+          featuredBoard
+          isNSFW
+          featuredLocal
           isRemoved
-          createdAt
-          updatedAt
-          voteScore
-          userVote
+          creationDate
+          updated
+          score
+          myVote
           board @include(if: $includeBoard) {
             id
             name
-            displayName
+            title
             description
             icon
             banner
-            isNsfw
+            isNSFW
           }
           creator {
             id
@@ -72,11 +72,11 @@ export async function useFetchUser(username: string, query = {}) {
           commentCount
           image
           body
-          bodyHtml
+          bodyHTML
         }
         comments {
           id
-          content
+          body
           isRemoved
           createdAt
           updatedAt

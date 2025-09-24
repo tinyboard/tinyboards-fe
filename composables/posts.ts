@@ -239,25 +239,25 @@ export async function getModQueue(query: any, type_: string) {
           posts {
             id
             title
-            content
+            body
             url
             isLocked
-            isStickied
-            isNsfw
-            isFeatured
+            featuredBoard
+            isNSFW
+            featuredLocal
             isRemoved
-            createdAt
-            updatedAt
-            voteScore
-            userVote
+            creationDate
+            updated
+            score
+            myVote
             board {
               id
               name
-              displayName
+              title
               description
               icon
               banner
-              isNsfw
+              isNSFW
             }
             creator {
               id
@@ -268,16 +268,16 @@ export async function getModQueue(query: any, type_: string) {
             commentCount
             image
             body
-            bodyHtml
+            bodyHTML
           }
           comments {
             id
-            content
+            body
             isRemoved
-            createdAt
-            updatedAt
-            voteScore
-            userVote
+            creationDate
+            updated
+            score
+            myVote
             creator {
               id
               name

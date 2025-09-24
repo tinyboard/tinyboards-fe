@@ -80,12 +80,12 @@ function submitComment() {
 		mutation CreateComment($replyToPostId: Int, $replyToCommentId: Int, $body: String!, $withBoard: Boolean!) {
 			createComment(replyToPostId: $replyToPostId, replyToCommentId: $replyToCommentId, body: $body, withBoard: $withBoard) {
 				id
-				content
+				body
 				isRemoved
-				createdAt
-				updatedAt
-				voteScore
-				userVote
+				creationDate
+				updated
+				score
+				myVote
 				creator {
 					id
 					name

@@ -93,7 +93,7 @@ export interface Post {
   url?: string;
   isLocked: boolean;
   isStickied: boolean;
-  isNsfw: boolean;
+  isNSFW: boolean;
   isFeatured: boolean;
   isRemoved: boolean;
   createdAt: string;
@@ -105,7 +105,7 @@ export interface Post {
   commentCount: number;
   image?: string;
   body?: string;
-  bodyHtml?: string;
+  bodyHTML?: string;
   comments?: Comment[];
 }
 
@@ -172,11 +172,11 @@ export interface Site {
 export interface Board {
   id: number;
   name: string;
-  displayName?: string;
+  title?: string;
   description?: string;
   icon?: string;
   banner?: string;
-  isNsfw: boolean;
+  isNSFW: boolean;
   primaryColor?: string;
   secondaryColor?: string;
   hoverColor?: string;

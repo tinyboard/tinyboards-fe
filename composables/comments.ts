@@ -7,21 +7,21 @@ export async function usePostComments(id, query = {}) {
     query ListComments($postId: Int!, $sort: CommentSortType, $limit: Int, $page: Int) {
       listComments(postId: $postId, sort: $sort, limit: $limit, page: $page) {
         id
-        content
+        body
         isRemoved
-        createdAt
-        updatedAt
-        voteScore
-        userVote
+        creationDate
+        updated
+        score
+        myVote
         creator {
           id
           name
           displayName
           avatar
         }
-        depth
+        level
         parentId
-        childCount
+        replyCount
       }
     }
   `;
@@ -59,21 +59,21 @@ export async function useComments(id, type = "post", query = {}, post_id) {
     query ListComments($postId: Int, $commentId: Int, $sort: CommentSortType, $limit: Int, $page: Int) {
       listComments(postId: $postId, commentId: $commentId, sort: $sort, limit: $limit, page: $page) {
         id
-        content
+        body
         isRemoved
-        createdAt
-        updatedAt
-        voteScore
-        userVote
+        creationDate
+        updated
+        score
+        myVote
         creator {
           id
           name
           displayName
           avatar
         }
-        depth
+        level
         parentId
-        childCount
+        replyCount
       }
     }
   `;

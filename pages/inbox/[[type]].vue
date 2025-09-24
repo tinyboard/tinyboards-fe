@@ -92,7 +92,7 @@ const { data: notifications, pending, error, refresh } = await useGraphQLQuery(`
 			}
 			comment {
 				id
-				content
+				body
 			}
 		}
 	}

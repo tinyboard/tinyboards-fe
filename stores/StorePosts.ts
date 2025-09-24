@@ -68,25 +68,24 @@ export const usePostsStore = defineStore("posts", {
           listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, userId: $userId) {
             id
             title
-            content
             url
             isLocked
-            isStickied
-            isNsfw
-            isFeatured
+            featuredBoard
+            isNSFW
+            featuredLocal
             isRemoved
-            createdAt
-            updatedAt
-            voteScore
-            userVote
+            creationDate
+            updated
+            score
+            myVote
             board @include(if: $includeBoard) {
               id
               name
-              displayName
+              title
               description
               icon
               banner
-              isNsfw
+              isNSFW
             }
             creator {
               id
@@ -97,7 +96,7 @@ export const usePostsStore = defineStore("posts", {
             commentCount
             image
             body
-            bodyHtml
+            bodyHTML
           }
         }
       `;
@@ -123,25 +122,24 @@ export const usePostsStore = defineStore("posts", {
           post(id: $id) {
             id
             title
-            content
             url
             isLocked
-            isStickied
-            isNsfw
-            isFeatured
+            featuredBoard
+            isNSFW
+            featuredLocal
             isRemoved
-            createdAt
-            updatedAt
-            voteScore
-            userVote
+            creationDate
+            updated
+            score
+            myVote
             board @include(if: $withBoard) {
               id
               name
-              displayName
+              title
               description
               icon
               banner
-              isNsfw
+              isNSFW
             }
             creator {
               id
@@ -152,24 +150,25 @@ export const usePostsStore = defineStore("posts", {
             commentCount
             image
             body
-            bodyHtml
+            bodyHTML
             comments(sort: $sort, context: $context, topCommentId: $topCommentId) {
               id
-              content
+              body
+              bodyHTML
               isRemoved
-              createdAt
-              updatedAt
-              voteScore
-              userVote
+              creationDate
+              updated
+              score
+              myVote
               creator {
                 id
                 name
-                displayName
+                title
                 avatar
               }
-              depth
+              level
               parentId
-              childCount
+              replyCount
             }
           }
         }
@@ -207,25 +206,24 @@ export const usePostsStore = defineStore("posts", {
           listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, userId: $userId) {
             id
             title
-            content
             url
             isLocked
-            isStickied
-            isNsfw
-            isFeatured
+            featuredBoard
+            isNSFW
+            featuredLocal
             isRemoved
-            createdAt
-            updatedAt
-            voteScore
-            userVote
+            creationDate
+            updated
+            score
+            myVote
             board @include(if: $includeBoard) {
               id
               name
-              displayName
+              title
               description
               icon
               banner
-              isNsfw
+              isNSFW
             }
             creator {
               id
@@ -236,7 +234,7 @@ export const usePostsStore = defineStore("posts", {
             commentCount
             image
             body
-            bodyHtml
+            bodyHTML
           }
         }
       `;

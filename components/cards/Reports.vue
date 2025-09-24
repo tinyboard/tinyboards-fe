@@ -76,7 +76,7 @@
 							target {
 								id
 								title
-								content
+								body
 							}
 						}
 					}
