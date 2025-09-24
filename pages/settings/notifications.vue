@@ -75,6 +75,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -86,9 +87,24 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch user data to get current notification settings
-const { data: userData, pending, error } = await useAsyncGql({
-  operation: 'getMe'
-});
+const getMeQuery = `
+  query GetMe {
+    getMe {
+      id
+      name
+      displayName
+      avatar
+      adminLevel
+      rep
+      emailNotificationsEnabled
+      showBots
+      showNsfw
+    }
+  }
+`;
+
+const { data: userData, error } = await useGraphQLQuery(getMeQuery);
+const pending = ref(false);
 
 // Initialize settings with default values
 let settings = ref({

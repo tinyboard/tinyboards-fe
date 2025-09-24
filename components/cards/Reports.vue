@@ -40,6 +40,7 @@
 
 <script setup>
 	import { ref } from "vue";
+	import { useGraphQLQuery } from "@/composables/useGraphQL";
 
 	const props = defineProps({
 		type: {
@@ -59,8 +60,29 @@
 		open.value = !open.value;
 		if (reports.value.length === 0) {
 			try {
-				const { data: result } = await useAsyncGql({
-					operation: 'getReports',
+				const query_str = `
+					query GetReports($type: String!, $targetId: Int!, $unresolvedOnly: Boolean!) {
+						getReports(type: $type, targetId: $targetId, unresolvedOnly: $unresolvedOnly) {
+							id
+							reason
+							resolved
+							createdAt
+							reporter {
+								id
+								name
+								displayName
+								avatar
+							}
+							target {
+								id
+								title
+								content
+							}
+						}
+					}
+				`;
+
+				const { data: result } = await useGraphQLQuery(query_str, {
 					variables: {
 						type: props.type,
 						targetId: props.id,

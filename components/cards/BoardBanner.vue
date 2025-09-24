@@ -132,6 +132,7 @@
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 import type { Board } from "@/types/types";
 
 const props = defineProps<{
@@ -158,11 +159,16 @@ const toggleSubscribe = async () => {
     try {
         if (isSubscribed.value) {
             // Unsubscribe from board
-            const { data } = await useAsyncGql({
-                operation: 'unsubscribeFromBoard',
-                variables: {
-                    boardId: props.board?.id
+            const mutation = `
+                mutation UnsubscribeFromBoard($boardId: Int!) {
+                    unsubscribeFromBoard(boardId: $boardId) {
+                        success
+                    }
                 }
+            `;
+
+            const { data } = await useGraphQLMutation(mutation, {
+                boardId: props.board?.id
             });
 
             if (data.value?.unsubscribeFromBoard) {
@@ -178,11 +184,16 @@ const toggleSubscribe = async () => {
             }
         } else {
             // Subscribe to board
-            const { data } = await useAsyncGql({
-                operation: 'subscribeToBoard',
-                variables: {
-                    boardId: props.board?.id
+            const mutation = `
+                mutation SubscribeToBoard($boardId: Int!) {
+                    subscribeToBoard(boardId: $boardId) {
+                        success
+                    }
                 }
+            `;
+
+            const { data } = await useGraphQLMutation(mutation, {
+                boardId: props.board?.id
             });
 
             if (data.value?.subscribeToBoard) {

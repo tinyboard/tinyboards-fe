@@ -349,6 +349,7 @@ import { useSiteStore } from '@/stores/StoreSite.js';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useBoardStore } from '~/stores/StoreBoard.js';
 import { useNotificationRefresh } from '@/composables/notificationRefresh';
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 import { shuffle } from "@/utils/shuffleArray";
 import Cookies from 'js-cookie';
 
@@ -382,14 +383,35 @@ const authCookie = useCookie("token").value;
 const { registerRefreshCallback } = useNotificationRefresh();
 
 // Use getMe query which includes notification counts
-const { data: userData, pending: userPending, error: userError, refresh: refreshUserData } = await useAsyncGql({
-    operation: 'getMe'
-});
+const getMeQuery = `
+  query GetMe {
+    getMe {
+      id
+      name
+      displayName
+      avatar
+      adminLevel
+      rep
+      unreadRepliesCount
+      unreadMentionsCount
+    }
+  }
+`;
+
+const { data: userData, error: userError } = await useGraphQLQuery(getMeQuery);
+const userPending = ref(false);
+const refreshUserData = () => Promise.resolve();
 
 // Get unread message count separately
-const { data: messageCount, pending: messagesPending, error: messagesError, refresh: refreshMessageCount } = await useAsyncGql({
-    operation: 'GetUnreadMessageCount'
-});
+const getUnreadMessageCountQuery = `
+  query GetUnreadMessageCount {
+    getUnreadMessageCount
+  }
+`;
+
+const { data: messageCount, error: messagesError } = await useGraphQLQuery(getUnreadMessageCountQuery);
+const messagesPending = ref(false);
+const refreshMessageCount = () => Promise.resolve();
 
 // Register refresh callback for cross-component communication
 onMounted(() => {

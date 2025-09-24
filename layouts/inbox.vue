@@ -117,6 +117,7 @@
 
 <script setup>
 import { useSiteStore } from '@/stores/StoreSite';
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 const route = useRoute();
 const site = useSiteStore();
 
@@ -138,12 +139,32 @@ const links = [
 ];
 
 // Get notification counts using the correct queries
-const { data: userData, error: userError, pending: userPending } = await useAsyncGql({
-    operation: 'getMe'
-});
-const { data: messageCount, error: messageError, pending: messagePending } = await useAsyncGql({
-    operation: 'GetUnreadMessageCount'
-});
+const getMeQuery = `
+  query GetMe {
+    getMe {
+      id
+      name
+      displayName
+      avatar
+      adminLevel
+      rep
+      unreadRepliesCount
+      unreadMentionsCount
+    }
+  }
+`;
+
+const { data: userData, error: userError } = await useGraphQLQuery(getMeQuery);
+const userPending = ref(false);
+
+const getUnreadMessageCountQuery = `
+  query GetUnreadMessageCount {
+    getUnreadMessageCount
+  }
+`;
+
+const { data: messageCount, error: messageError } = await useGraphQLQuery(getUnreadMessageCountQuery);
+const messagePending = ref(false);
 
 // Handle GraphQL errors more gracefully
 if (userError.value && userError.value?.response) {

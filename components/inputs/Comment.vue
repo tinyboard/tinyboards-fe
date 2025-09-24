@@ -38,6 +38,7 @@ import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from "@/stores/StoreSite";
 import { useCommentsStore } from "@/stores/StoreComments";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 
 const props = defineProps<{
 	parentId?: number;
@@ -75,14 +76,34 @@ const inputHandler = (e: KeyboardEvent) => {
 
 // Submit comment
 function submitComment() {
-	useAsyncGql({
-		operation: 'createComment',
-		variables: {
-			replyToPostId: props.postId,
-			replyToCommentId: props.parentId,
-			body: body.value,
-			withBoard: site.enableBoards
+	const mutation = `
+		mutation CreateComment($replyToPostId: Int, $replyToCommentId: Int, $body: String!, $withBoard: Boolean!) {
+			createComment(replyToPostId: $replyToPostId, replyToCommentId: $replyToCommentId, body: $body, withBoard: $withBoard) {
+				id
+				content
+				isRemoved
+				createdAt
+				updatedAt
+				voteScore
+				userVote
+				author {
+					id
+					username
+					displayName
+					avatar
+				}
+				depth
+				parentId
+				childCount
+			}
 		}
+	`;
+
+	useGraphQLMutation(mutation, {
+		replyToPostId: props.postId,
+		replyToCommentId: props.parentId,
+		body: body.value,
+		withBoard: site.enableBoards
 	})
 		.then((response) => {
 			const resp = response.data.value;

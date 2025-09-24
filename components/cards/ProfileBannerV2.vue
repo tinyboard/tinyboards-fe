@@ -180,6 +180,7 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { onFileChange } from "@/composables/images";
 import { useGqlMultipart } from "@/composables/graphql_multipart";
+import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
 import type { Person } from "@/types/types";
 
 const userStore = useLoggedInUser();
@@ -258,8 +259,13 @@ const checkFollowStatus = async () => {
     }
 
     try {
-        const { data: result } = await useAsyncGql({
-            operation: 'isFollowingUser',
+        const query = `
+            query IsFollowingUser($userId: Int!) {
+                isFollowingUser(userId: $userId)
+            }
+        `;
+
+        const { data: result } = await useGraphQLQuery(query, {
             variables: {
                 userId: props.user.id
             }
@@ -283,11 +289,16 @@ const toggleFollow = async () => {
     try {
         if (isFollowing.value) {
             // Unfollow user
-            const { data: result } = await useAsyncGql({
-                operation: 'unfollowUser',
-                variables: {
-                    userId: props.user.id
+            const mutation = `
+                mutation UnfollowUser($userId: Int!) {
+                    unfollowUser(userId: $userId) {
+                        success
+                    }
                 }
+            `;
+
+            const { data: result } = await useGraphQLMutation(mutation, {
+                userId: props.user.id
             });
             if (result.value?.unfollowUser) {
                 isFollowing.value = false;
@@ -299,11 +310,16 @@ const toggleFollow = async () => {
             }
         } else {
             // Follow user
-            const { data: result } = await useAsyncGql({
-                operation: 'followUser',
-                variables: {
-                    userId: props.user.id
+            const mutation = `
+                mutation FollowUser($userId: Int!) {
+                    followUser(userId: $userId) {
+                        success
+                    }
                 }
+            `;
+
+            const { data: result } = await useGraphQLMutation(mutation, {
+                userId: props.user.id
             });
             if (result.value?.followUser) {
                 isFollowing.value = true;

@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useGraphQLQuery } from "@/composables/useGraphQL";
+import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
 import { useAPI } from "@/composables/api";
 
 export async function usePostComments(id, query = {}) {
@@ -110,12 +110,18 @@ export async function editComment(id: number, newBody: string): Promise<{
   bodyHTML: string;
 }> {
   try {
-    const { data } = await useAsyncGql({
-      operation: 'editComment',
-      variables: {
-        id,
-        body: newBody
+    const mutation = `
+      mutation EditComment($id: Int!, $body: String!) {
+        editComment(id: $id, body: $body) {
+          body
+          bodyHTML
+        }
       }
+    `;
+
+    const { data } = await useGraphQLMutation(mutation, {
+      id,
+      body: newBody
     });
 
     if (data.value?.editComment) {

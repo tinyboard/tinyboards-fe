@@ -44,6 +44,7 @@
 <script setup>
 import { ref } from 'vue';
 // import { useAPI } from '@/composables/api';
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 import {
     Combobox,
     ComboboxInput,
@@ -83,20 +84,38 @@ watch(
         }
 
         // Use GraphQL query instead of REST API
-        const { data, pending, error, refresh } = await useAsyncGql({
-            operation: 'listMembers',
+        const query_str = `
+            query ListMembers($page: Int!, $limit: Int!, $search: String, $listingType: String!, $sort: String!, $showBanned: Boolean) {
+                listMembers(page: $page, limit: $limit, search: $search, listingType: $listingType, sort: $sort) {
+                    members {
+                        id
+                        name
+                        displayName
+                        avatar
+                        bio
+                        isBanned
+                    }
+                }
+            }
+        `;
+
+        const { data, error } = await useGraphQLQuery(query_str, {
             variables: {
                 page: params.page,
                 limit: params.limit,
-                searchTerm: params.search_term,
+                search: params.search_term,
                 listingType: 'all',
-                sort: 'name'
+                sort: 'name',
+                showBanned: allowBanned
             }
         });
 
+        const pending = ref(false);
+        const refresh = () => Promise.resolve();
+
         // Transform GraphQL response to match expected format
-        if (data.value?.listUsers) {
-            users.value = data.value.listUsers.map(user => ({
+        if (data.value?.listMembers?.members) {
+            users.value = data.value.listMembers.members.map(user => ({
                 person: {
                     name: user.name,
                     displayName: user.displayName,

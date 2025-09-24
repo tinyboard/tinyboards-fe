@@ -88,6 +88,7 @@
 import { formatDate } from "@/utils/formatDate";
 import { useToastStore } from "@/stores/StoreToast";
 import { useNotificationRefresh } from '@/composables/notificationRefresh';
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 
 interface NotificationCreator {
 	name: string;
@@ -159,12 +160,17 @@ const markAsRead = async () => {
 	isMarkingRead.value = true;
 
 	try {
-		const response = await useAsyncGql({
-			operation: 'markNotificationsRead',
-			variables: {
-				notificationIds: [props.notification.id],
-				markAll: false
+		const mutation = `
+			mutation MarkNotificationsRead($notificationIds: [Int!]!, $markAll: Boolean!) {
+				markNotificationsRead(notificationIds: $notificationIds, markAll: $markAll) {
+					success
+				}
 			}
+		`;
+
+		const response = await useGraphQLMutation(mutation, {
+			notificationIds: [props.notification.id],
+			markAll: false
 		});
 		const result = response.data.value;
 

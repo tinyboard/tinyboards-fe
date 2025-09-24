@@ -96,6 +96,7 @@ import { useAPI } from "@/composables/api";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 
 const site = useSiteStore();
 const userStore = useLoggedInUser();
@@ -105,13 +106,23 @@ const canCreateBoard = (!site.boardCreationAdminOnly && isAuthed) || (site.board
 
 // Define spotlight users
 // Use GraphQL query instead of REST API
-const {
-  data: usersData,
-  pending,
-  error,
-  refresh,
-} = await useAsyncGql({
-  operation: 'listMembers',
+const query_str = `
+  query ListMembers($page: Int!, $limit: Int!, $sort: String!, $listingType: String!) {
+    listMembers(page: $page, limit: $limit, sort: $sort, listingType: $listingType) {
+      members {
+        id
+        name
+        displayName
+        avatar
+        bio
+        creationDate
+        reputation
+      }
+    }
+  }
+`;
+
+const { data: usersData, error } = await useGraphQLQuery(query_str, {
   variables: {
     page: 1,
     limit: 8,
@@ -120,12 +131,15 @@ const {
   }
 });
 
+const pending = ref(false);
+const refresh = () => Promise.resolve();
+
 // Transform GraphQL response to match expected format
 const users = computed(() => {
-  if (!usersData.value?.listUsers) return { members: [] };
+  if (!usersData.value?.listMembers?.members) return { members: [] };
 
   return {
-    members: usersData.value.listUsers.map(user => ({
+    members: usersData.value.listMembers.members.map(user => ({
       person: {
         name: user.name,
         displayName: user.displayName,
