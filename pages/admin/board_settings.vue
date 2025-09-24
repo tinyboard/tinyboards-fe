@@ -37,7 +37,7 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="admin-only" :isEnabled="settings.board_creation_admin_only" @enabled="settings.board_creation_admin_only = !settings.board_creation_admin_only" />
+								<InputsSwitch id="admin-only" :isEnabled="settings.boardCreationAdminOnly" @enabled="settings.boardCreationAdminOnly = !settings.boardCreationAdminOnly" />
 								<label for="admin-only" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Restrict creation to admins</label>
 							</div>
 							<p class="mt-2 text-sm text-gray-500">
@@ -78,7 +78,7 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
         getSite {
             local_site {
                 boards_enabled
-                board_creation_admin_only
+                boardCreationAdminOnly
             }
         }
     }
@@ -102,14 +102,14 @@ const submitSettings = async () => {
 			mutation UpdateSiteConfig($input: SiteConfigInput!) {
 				updateSiteConfig(input: $input) {
 					boards_enabled
-					board_creation_admin_only
+					boardCreationAdminOnly
 				}
 			}
 		`, {
 			variables: {
 				input: {
 					boards_enabled: settings.value.boards_enabled,
-					board_creation_admin_only: settings.value.board_creation_admin_only
+					boardCreationAdminOnly: settings.value.boardCreationAdminOnly
 				}
 			}
 		});

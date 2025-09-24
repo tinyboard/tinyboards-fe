@@ -23,7 +23,7 @@
                 </p>
               </div>
               <!-- Date Input -->
-              <!-- <input v-if="!options.user.is_banned" type="date" name="expiration" value=""> -->
+              <!-- <input v-if="!options.user.isBanned" type="date" name="expiration" value=""> -->
               <!-- Footer -->
               <div class="modal-footer mt-4 flex space-x-2 justify-end">
                 <button type="button" class="button gray" @click="modalStore.closeModal">

@@ -86,8 +86,8 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex flex-col">
-							<img v-if="imageStore.background || settings.profile_background"
-								:src="imageStore.background ?? settings.profile_background"
+							<img v-if="imageStore.background || settings.profileBackground"
+								:src="imageStore.background ?? settings.profileBackground"
 								class="w-full h-56 object-cover p-0.5 border bg-white" />
 							<div v-else class="w-full h-24 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="mt-5">

@@ -56,7 +56,7 @@ const userStore = useLoggedInUser();
 const imageStore = useImageStore();
 const toast = useToastStore();
 
-const isBanned = userStore.user.is_banned;
+const isBanned = userStore.user.isBanned;
 const adminRequired = site.boardCreationAdminOnly && !requirePermission("boards");
 
 const page = ref(1);

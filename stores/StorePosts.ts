@@ -15,7 +15,6 @@ interface PostsStoreState {
     limit: number,
     sort: SortType,
     listingType: ListingType,
-    searchQuery: string | null,
     boardId: number | null,
     personId: number | null
   }
@@ -30,7 +29,6 @@ export const usePostsStore = defineStore("posts", {
       limit: 25,
       sort: mapToSortType("hot"),
       listingType: mapToListingType("local"),
-      searchQuery: "",
       boardId: null,
       personId: null
     },
@@ -66,8 +64,8 @@ export const usePostsStore = defineStore("posts", {
       this.options.listingType = listingType;
 
       const query = `
-        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $searchQuery: String, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
-          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, searchQuery: $searchQuery, boardId: $boardId, personId: $personId) {
+        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
+          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, personId: $personId) {
             id
             title
             content
@@ -205,8 +203,8 @@ export const usePostsStore = defineStore("posts", {
       // I can't believe this shit really works
 
       const query = `
-        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $searchQuery: String, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
-          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, searchQuery: $searchQuery, boardId: $boardId, personId: $personId) {
+        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
+          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, personId: $personId) {
             id
             title
             content

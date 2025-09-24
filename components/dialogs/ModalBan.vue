@@ -66,7 +66,7 @@
                   <p class="mt-1 text-xs text-gray-500">You can manually unban this user anytime.</p>
                 </div>
                 <!-- Date Input -->
-                <!-- <input v-if="!options.user.is_banned" type="date" name="expiration" value=""> -->
+                <!-- <input v-if="!options.user.isBanned" type="date" name="expiration" value=""> -->
                 <!-- Footer -->
               </div>
               <div class="modal-footer mt-4 flex space-x-2 justify-end">
@@ -114,7 +114,7 @@ const props = defineProps({
   }
 });
 
-//console.log(`banned: ${props.options.user.is_banned}`);
+//console.log(`banned: ${props.options.user.isBanned}`);
 
 const site = useSiteStore();
 const modalStore = useModalStore();
@@ -123,7 +123,7 @@ const reason = ref('');
 const duration = ref(3);
 const permanent = ref(false);
 
-const isBanned = computed(() => props.options.user?.is_banned || props.options.unban);
+const isBanned = computed(() => props.options.user?.isBanned || props.options.unban);
 const toast = useToastStore();
 
 // Loading state

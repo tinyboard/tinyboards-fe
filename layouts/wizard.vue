@@ -34,7 +34,7 @@ const toastStore = useToastStore();
 const modalStore = useModalStore();
 
 const v = userStore.user;
-const isBanned = v.is_banned;
+const isBanned = v.isBanned;
 const adminRequired = site.boardCreationAdminOnly && !requirePermission("boards");
 
 useHead({

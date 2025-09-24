@@ -54,7 +54,7 @@
                                             class="text-lg font-semibold text-gray-800"
                                         >
                                             {{
-                                                member.person.display_name ??
+                                                member.person.displayName ??
                                                 member.person.name
                                             }}
                                         </h3>
@@ -97,7 +97,7 @@
                                             <p
                                                 class="text-md text-gray-700 font-semibold"
                                             >
-                                                {{ member.counts.post_count }}
+                                                {{ member.counts.postCount }}
                                             </p>
                                             <p
                                                 class="text-xs text-gray-600 font-semibold"
@@ -259,7 +259,7 @@ const members = computed(() => {
         members: membersData.value.listUsers.map(user => ({
             person: {
                 name: user.name,
-                display_name: user.displayName,
+                displayName: user.displayName,
                 avatar: user.avatar,
                 banner: user.banner || user.profileBackground,
                 bio: user.bio,
@@ -267,7 +267,7 @@ const members = computed(() => {
             },
             counts: {
                 rep: user.rep,
-                post_count: user.postCount,
+                postCount: user.postCount,
                 comment_count: user.commentCount
             },
             creation_date: user.creationDate

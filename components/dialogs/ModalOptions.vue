@@ -117,7 +117,7 @@
                                                 Remove {{ props.type }}
                                             </button>
                                         </li>
-                                        <li v-if="isAdmin && !isAuthor && !creator.is_banned">
+                                        <li v-if="isAdmin && !isAuthor && !creator.isBanned">
                                             <button class="w-full px-5 py-3 text-red-600 flex items-center"
                                                 @click="confirmBan">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-4" width="24" height="24"
@@ -207,7 +207,7 @@ const isAdmin = computed(() => {
 
 // Is removed
 const isRemoved = computed(() => {
-    return props.type == 'post' ? props.options.object.post.is_removed : props.options.object.comment.is_removed;
+    return props.type == 'post' ? props.options.object.post.isRemoved : props.options.object.comment.isRemoved;
 })
 
 
@@ -279,7 +279,7 @@ const confirmBan = () => {
         id: creator.value.id,
         isOpen: true,
         options: {
-            'is_banned': creator.value.is_banned,
+            'isBanned': creator.value.isBanned,
             'user': creator.value
         }
     });

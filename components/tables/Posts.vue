@@ -129,7 +129,7 @@
                 <!-- Tags -->
                 <span
                   class="ml-2"
-                  v-if="item.post.is_nsfw"
+                  v-if="item.post.isNsfw"
                   title="This post is marked 18+"
                 >
                   <span class="font-black text-gray-400 dark:text-gray-500"
