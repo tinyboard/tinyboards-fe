@@ -219,7 +219,7 @@
 <script setup>
 import { ref } from "vue";
 // import { baseURL } from "@/server/constants";
-import { useAPI } from "@/composables/api";
+import { useDirectGraphQLRequest } from "@/composables/useGraphQL";
 import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 import { useBoardStore } from "@/stores/StoreBoard";
@@ -340,91 +340,79 @@ const submit = async () => {
 
         if (mode.value === "add") {
             // First, get the user ID by username
-            const userResponse = await $fetch('#gql', {
-                query: `
-                    query getUserByName($name: String!) {
-                        userProfile(name: $name) {
-                            id
-                        }
+            const userResponse = await useDirectGraphQLRequest(`
+                query getUserByName($name: String!) {
+                    userProfile(name: $name) {
+                        id
                     }
-                `,
-                variables: { name: target.value }
-            });
+                }
+            `, { name: target.value });
 
-            if (!userResponse?.userProfile?.id) {
+            if (!userResponse.data?.userProfile?.id) {
                 throw new Error('User not found');
             }
 
             // Add moderator using GraphQL
-            result = await $fetch('#gql', {
-                query: `
-                    mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
-                        addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
-                            success
-                            board {
-                                id
-                                name
-                                title
-                                moderators {
-                                    user {
-                                        name
-                                        displayName
-                                        avatar
-                                    }
-                                    permissions
-                                    rank
+            result = await useDirectGraphQLRequest(`
+                mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+                    addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
+                        success
+                        board {
+                            id
+                            name
+                            title
+                            moderators {
+                                user {
+                                    name
+                                    displayName
+                                    avatar
                                 }
+                                permissions
+                                rank
                             }
                         }
                     }
-                `,
-                variables: {
-                    boardId: board.id,
-                    userId: userResponse.userProfile.id,
-                    permissions: permissionCode.value
                 }
+            `, {
+                boardId: board.id,
+                userId: userResponse.data.userProfile.id,
+                permissions: permissionCode.value
             });
 
-            if (!result.addModerator?.success) {
+            if (!result.data?.addModerator?.success) {
                 throw new Error('Failed to add moderator');
             }
         } else if (mode.value === "remove") {
             // Remove moderator using GraphQL
-            result = await $fetch('#gql', {
-                query: `
-                    mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
-                        removeBoardModerator(boardId: $boardId, userId: $userId) {
-                            success
-                        }
+            result = await useDirectGraphQLRequest(`
+                mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+                    removeBoardModerator(boardId: $boardId, userId: $userId) {
+                        success
                     }
-                `,
-                variables: {
-                    boardId: board.id,
-                    userId: props.options.user.id
                 }
+            `, {
+                boardId: board.id,
+                userId: props.options.user.id
             });
 
-            if (!result.removeBoardModerator?.success) {
+            if (!result.data?.removeBoardModerator?.success) {
                 throw new Error('Failed to remove moderator');
             }
         } else if (mode.value === "update") {
             // Update moderator permissions using GraphQL
-            result = await $fetch('#gql', {
-                query: `
-                    mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
-                        addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
-                            success
-                        }
+            result = await useDirectGraphQLRequest(`
+                mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+                    addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
+                        success
                     }
-                `,
-                variables: {
-                    boardId: board.id,
-                    userId: props.options.user.id,
-                    permissions: permissionCode.value
                 }
+            `, {
+                boardId: board.id,
+                userId: props.options.user.id,
+                permissions: permissionCode.value
             });
 
-            if (!result.addModerator?.success) {
+            if (!result.data?.addModerator?.success) {
                 throw new Error('Failed to update moderator permissions');
             }
         }

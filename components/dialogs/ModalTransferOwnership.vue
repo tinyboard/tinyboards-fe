@@ -125,12 +125,12 @@
 </template>
 
 <script setup>
-import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
 import { ref } from 'vue';
 import { PERMISSIONS } from "@/composables/admin";
+import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
 import {
     TransitionRoot,
     TransitionChild,
@@ -166,64 +166,58 @@ const password = ref('');
 const transfer = async () => {
     try {
         // First, get the user ID by username
-        const userResponse = await $fetch('#gql', {
-            query: `
-                query getUserByName($name: String!) {
-                    userProfile(name: $name) {
-                        id
-                    }
+        const userResponse = await useDirectGraphQLRequest(`
+            query getUserByName($name: String!) {
+                userProfile(name: $name) {
+                    id
                 }
-            `,
-            variables: { name: target.value }
-        });
+            }
+        `, { name: target.value });
 
-        if (!userResponse?.userProfile?.id) {
+        if (!userResponse.data?.userProfile?.id) {
             throw new Error('User not found');
         }
 
         // Note: This assumes we're transferring board ownership, not site ownership
         // If this is for site ownership transfer, we'd need a different mutation
-        const result = await $fetch('#gql', {
-            query: `
-                mutation transferBoardOwnership($boardId: Int!, $userId: Int!) {
-                    transferBoardOwnership(boardId: $boardId, userId: $userId) {
-                        success
-                        board {
+        const result = await useDirectGraphQLRequest(`
+            mutation transferBoardOwnership($boardId: Int!, $userId: Int!) {
+                transferBoardOwnership(boardId: $boardId, userId: $userId) {
+                    success
+                    board {
+                        id
+                        name
+                        title
+                        moderators {
                             id
-                            name
-                            title
-                            moderators {
+                            boardId
+                            userId
+                            permissions
+                            rank
+                            inviteAccepted
+                            inviteAcceptedDate
+                            creationDate
+                            user {
                                 id
-                                boardId
-                                userId
-                                permissions
-                                rank
-                                inviteAccepted
-                                inviteAcceptedDate
+                                name
+                                displayName
+                                avatar
+                                banner
+                                bio
                                 creationDate
-                                user {
-                                    id
-                                    name
-                                    displayName
-                                    avatar
-                                    banner
-                                    bio
-                                    creationDate
-                                    isAdmin
-                                    isBanned
-                                }
+                                isAdmin
+                                isBanned
                             }
                         }
                     }
                 }
-            `,
-            variables: {
-                boardId: props.options?.boardId || 1, // This should be passed from the modal options
-                userId: userResponse.userProfile.id
             }
+        `, {
+            boardId: props.options?.boardId || 1, // This should be passed from the modal options
+            userId: userResponse.data.userProfile.id
         });
 
-        if (result.transferBoardOwnership?.success) {
+        if (result.data?.transferBoardOwnership?.success) {
             // Show success toast
             setTimeout(() => {
                 window.location.reload(true);

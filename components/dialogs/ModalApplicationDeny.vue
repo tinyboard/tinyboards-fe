@@ -69,6 +69,7 @@
 import { ref } from 'vue'
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
+import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
 import {
   TransitionRoot,
   TransitionChild,
@@ -97,16 +98,13 @@ const denyApplication = async () => {
 
   loading.value = true;
   try {
-    await $fetch('#gql', {
-      query: `
-        mutation denyRegistrationApplication($applicationId: Int!, $reason: String) {
-          denyRegistrationApplication(applicationId: $applicationId, reason: $reason)
-        }
-      `,
-      variables: {
-        applicationId: props.options.application.id,
-        reason: reason.value || null
+    const result = await useDirectGraphQLRequest(`
+      mutation denyRegistrationApplication($applicationId: Int!, $reason: String) {
+        denyRegistrationApplication(applicationId: $applicationId, reason: $reason)
       }
+    `, {
+      applicationId: props.options.application.id,
+      reason: reason.value || null
     });
 
     toast.addNotification({

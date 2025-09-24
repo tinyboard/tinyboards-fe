@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
-import gql from "graphql-tag";
-
-import { postFragment } from "@/utils/fragments";
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 import { useBoardStore } from "./StoreBoard";
 import { useSiteStore } from "./StoreSite";
-import type { GetPostQuery, LoadPostsQuery } from "#gql";
-import type { AsyncData } from "#app";
 import { type Post, mapToCommentSortType, type ListingType, type SortType, mapToListingType, mapToSortType } from "@/types/types";
 //import type { ListingType, SortType } from "#gql/default";
 
@@ -65,20 +61,55 @@ export const usePostsStore = defineStore("posts", {
 
       this.options.sort = mapToSortType(route?.params?.["sort"] as string ?? "hot");
     },
-    async fetchPosts({ listingType = "local" as ListingType }: { listingType: ListingType }): Promise<AsyncData<GetPostQuery, Error | null>> {
+    async fetchPosts({ listingType = "local" as ListingType }: { listingType: ListingType }) {
       this.setQueryParams();
       this.options.listingType = listingType;
 
-      return useAsyncGql({
-        operation: 'listPosts',
+      const query = `
+        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $searchQuery: String, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
+          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, searchQuery: $searchQuery, boardId: $boardId, personId: $personId) {
+            id
+            title
+            content
+            url
+            isLocked
+            isStickied
+            isNsfw
+            isFeatured
+            isRemoved
+            createdAt
+            updatedAt
+            voteScore
+            userVote
+            board @include(if: $includeBoard) {
+              id
+              name
+              displayName
+              description
+              icon
+              banner
+              isNsfw
+            }
+            author {
+              id
+              username
+              displayName
+              avatar
+            }
+            commentCount
+            image
+            body
+            bodyHtml
+          }
+        }
+      `;
+
+      return await useGraphQLQuery(query, {
         variables: {
           ...this.options,
           includeBoard: useSiteStore().enableBoards,
         }
       });
-
-      //this.posts = posts;
-      //this.paginationFunction = paginationFunction;
     },
     async fetchPost(id: number, {
       sort = "hot",
@@ -88,9 +119,65 @@ export const usePostsStore = defineStore("posts", {
       sort: string,
       context: number,
       topCommentId?: number | null
-    }): Promise<AsyncData<GetPostQuery, Error | null>> {
-      return useAsyncGql({
-        operation: 'getPost',
+    }) {
+      const query = `
+        query GetPost($id: Int!, $sort: CommentSortType!, $context: Int!, $topCommentId: Int, $withBoard: Boolean!) {
+          post(id: $id) {
+            id
+            title
+            content
+            url
+            isLocked
+            isStickied
+            isNsfw
+            isFeatured
+            isRemoved
+            createdAt
+            updatedAt
+            voteScore
+            userVote
+            board @include(if: $withBoard) {
+              id
+              name
+              displayName
+              description
+              icon
+              banner
+              isNsfw
+            }
+            author {
+              id
+              username
+              displayName
+              avatar
+            }
+            commentCount
+            image
+            body
+            bodyHtml
+            comments(sort: $sort, context: $context, topCommentId: $topCommentId) {
+              id
+              content
+              isRemoved
+              createdAt
+              updatedAt
+              voteScore
+              userVote
+              author {
+                id
+                username
+                displayName
+                avatar
+              }
+              depth
+              parentId
+              childCount
+            }
+          }
+        }
+      `;
+
+      return await useGraphQLQuery(query, {
         variables: {
           id: Number(id),
           sort: mapToCommentSortType(sort),
@@ -117,14 +204,50 @@ export const usePostsStore = defineStore("posts", {
       this.options["page"] = pageClone;
       // I can't believe this shit really works
 
-      //let { clients } = useApollo();
+      const query = `
+        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $searchQuery: String, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
+          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, searchQuery: $searchQuery, boardId: $boardId, personId: $personId) {
+            id
+            title
+            content
+            url
+            isLocked
+            isStickied
+            isNsfw
+            isFeatured
+            isRemoved
+            createdAt
+            updatedAt
+            voteScore
+            userVote
+            board @include(if: $includeBoard) {
+              id
+              name
+              displayName
+              description
+              icon
+              banner
+              isNsfw
+            }
+            author {
+              id
+              username
+              displayName
+              avatar
+            }
+            commentCount
+            image
+            body
+            bodyHtml
+          }
+        }
+      `;
 
-      return useAsyncGql({
-        operation: 'listPosts',
+      return await useGraphQLQuery(query, {
         variables: {
           ...this.options,
           includeBoard: useSiteStore().enableBoards,
-        },
+        }
       });
     },
     clear() {

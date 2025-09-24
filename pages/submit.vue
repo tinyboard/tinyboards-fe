@@ -175,6 +175,7 @@ import { useAPI } from "@/composables/api";
 import { dataURLtoFile } from "@/utils/files";
 import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { useGraphQLMutation } from '@/composables/useGraphQL';
 
 const pageTitle = ref("Submit");
 
@@ -360,8 +361,7 @@ async function submit() {
             result = response.data?.value || response;
         } else {
             // Use regular GraphQL for non-file posts
-            const response = await useAsyncGql({
-                operation: 'createPost',
+            const response = await useGraphQLMutation(createPostQuery, {
                 variables
             });
             result = response.data.value;

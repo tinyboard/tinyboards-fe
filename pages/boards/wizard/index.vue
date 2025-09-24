@@ -46,6 +46,7 @@ import { useImageStore } from '@/stores/StoreImages';
 import { useToastStore } from '@/stores/StoreToast';
 import { toRGB } from '@/composables/colors';
 import { uploadFile } from '@/composables/images';
+import { dataURLtoFile } from '@/utils/files';
 
 const route = useRoute();
 const router = useRouter();
@@ -177,8 +178,32 @@ const next = () => {
 
         try {
             // Use GraphQL mutation for board creation
-            const response = await useAsyncGql({
-                operation: 'createBoard',
+            const { data: response } = await useGraphQLMutation(`
+                mutation createBoard($input: CreateBoardInput!) {
+                    createBoard(input: $input) {
+                        board {
+                            id
+                            name
+                            title
+                            description
+                            icon
+                            banner
+                            primaryColor
+                            secondaryColor
+                            hoverColor
+                            creationDate
+                            isLocal
+                            isNSFW
+                            subscriberCount
+                            postCount
+                            isSubscribed
+                            isOwner
+                            isModerator
+                        }
+                        success
+                    }
+                }
+            `, {
                 variables: {
                     input: {
                         name: board.name,
@@ -189,10 +214,10 @@ const next = () => {
                         hoverColor: toRGB(board.hoverColor),
                         icon: icon,
                         banner: banner
-                }
+                    }
                 }
             });
-            const { createBoard: boardResponse } = response.data.value;
+            const { createBoard: boardResponse } = response.value;
 
             if (boardResponse?.board) {
                 const name = board.name;

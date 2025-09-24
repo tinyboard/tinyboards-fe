@@ -209,6 +209,7 @@ import { useImageStore } from "@/stores/StoreImages";
 import { dataURLtoFile } from "@/utils/files";
 import { toHexCode, toRGB } from "@/composables/colors";
 import { onFileChange, uploadFile } from "@/composables/images";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -268,24 +269,25 @@ const submitSettings = async () => {
     }
 
     try {
-        const result = await $fetch('#gql', {
-            query: `
-                mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
-                    updateBoardSettings(input: $input) {
-                        board {
-                            id
-                            name
-                            title
-                            description
-                            icon
-                            banner
-                            primaryColor
-                            secondaryColor
-                            hoverColor
-                        }
+        const mutation = `
+            mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
+                updateBoardSettings(input: $input) {
+                    board {
+                        id
+                        name
+                        title
+                        description
+                        icon
+                        banner
+                        primaryColor
+                        secondaryColor
+                        hoverColor
                     }
                 }
-            `,
+            }
+        `;
+
+        const { data: result } = await useGraphQLMutation(mutation, {
             variables: {
                 input: {
                     id: board.id,
@@ -298,7 +300,7 @@ const submitSettings = async () => {
             }
         });
 
-        if (result.updateBoardSettings?.board) {
+        if (result.value?.updateBoardSettings?.board) {
             // Show success toast.
             toast.addNotification({
                 header: "Settings saved",
@@ -309,11 +311,11 @@ const submitSettings = async () => {
             // Update the board store with new data
             boardStore.setBoard({
                 ...board,
-                icon: result.updateBoardSettings.board.icon,
-                banner: result.updateBoardSettings.board.banner,
-                primaryColor: result.updateBoardSettings.board.primaryColor,
-                secondaryColor: result.updateBoardSettings.board.secondaryColor,
-                hoverColor: result.updateBoardSettings.board.hoverColor
+                icon: result.value.updateBoardSettings.board.icon,
+                banner: result.value.updateBoardSettings.board.banner,
+                primaryColor: result.value.updateBoardSettings.board.primaryColor,
+                secondaryColor: result.value.updateBoardSettings.board.secondaryColor,
+                hoverColor: result.value.updateBoardSettings.board.hoverColor
             });
 
             window.location.reload(true);

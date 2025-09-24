@@ -79,6 +79,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
+import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 
 const route = useRoute();
 
@@ -92,19 +93,45 @@ definePageMeta({
 const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
-// Fetch site settings using GraphQL
-const { data: siteData, pending: sitePending, error: siteError } = await useAsyncGql({
-	operation: 'getSite'
-});
+// Fetch site settings using GraphQL with explicit query string
+const { data: siteData, pending: sitePending, error: siteError } = await useGraphQLQuery(`
+	query GetSite {
+		site {
+			name
+			site_mode
+			registration_mode
+		}
+	}
+`);
 const site = computed(() => siteData.value?.site || {});
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
-// Fetch invites
-const { data: invitesData, pending: pendingInvites, error: errorInvites, refresh: refreshInvites } = await useAsyncGql({
-	operation: 'listInvites',
+// Fetch invites using GraphQL with explicit query string
+const { data: invitesData, pending: pendingInvites, error: errorInvites, refresh: refreshInvites } = await useGraphQLQuery(`
+	query ListInvites($limit: Int!, $page: Int!) {
+		listInvites(limit: $limit, page: $page) {
+			invites {
+				id
+				invite {
+					id
+					verification_code
+					created_at
+					expires_at
+					used
+					usage_count
+					max_uses
+				}
+				creator {
+					name
+				}
+			}
+			total_count
+		}
+	}
+`, {
 	variables: {
 		limit: limit.value,
 		page: page.value
@@ -123,16 +150,22 @@ const createInvite = async () => {
 	isLoading.value = true;
 	
 	try {
-		const { mutate } = useMutation('createInvite');
-		const result = await mutate();
-		
-		if (result.data?.createInvite?.inviteCode) {
+		const { data: result } = await useGraphQLMutation(`
+			mutation CreateInvite {
+				createInvite {
+					inviteCode
+					success
+				}
+			}
+		`);
+
+		if (result.value?.createInvite?.inviteCode) {
 			// Refetch invites.
 			refreshInvites();
 			// Show success toast with invite code
 			toast.addNotification({ 
 				header: 'Invite created', 
-				message: `Invite code: ${result.data.createInvite.inviteCode}`, 
+				message: `Invite code: ${result.value.createInvite.inviteCode}`, 
 				type: 'success' 
 			});
 		}
@@ -153,10 +186,17 @@ const deleteInvite = async (invite) => {
 	isLoading.value = true;
 	
 	try {
-		const { mutate } = useMutation('deleteInvite');
-		const result = await mutate({ inviteId: invite });
-		
-		if (result.data?.deleteInvite?.success) {
+		const { data: result } = await useGraphQLMutation(`
+			mutation DeleteInvite($inviteId: ID!) {
+				deleteInvite(inviteId: $inviteId) {
+					success
+				}
+			}
+		`, {
+			variables: { inviteId: invite }
+		});
+
+		if (result.value?.deleteInvite?.success) {
 			// Refetch invites
 			refreshInvites();
 			// Show success toast

@@ -106,6 +106,7 @@ import { ref } from 'vue'
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { format, parseISO } from "date-fns";
+import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
 import {
   TransitionRoot,
   TransitionChild,
@@ -138,14 +139,11 @@ const approveFromModal = async () => {
 
   actionLoading.value = true;
   try {
-    await $fetch('#gql', {
-      query: `
-        mutation approveRegistrationApplication($applicationId: Int!) {
-          approveRegistrationApplication(applicationId: $applicationId)
-        }
-      `,
-      variables: { applicationId: props.options.application.id }
-    });
+    const result = await useDirectGraphQLRequest(`
+      mutation approveRegistrationApplication($applicationId: Int!) {
+        approveRegistrationApplication(applicationId: $applicationId)
+      }
+    `, { applicationId: props.options.application.id });
 
     toast.addNotification({
       header: 'Application Approved',

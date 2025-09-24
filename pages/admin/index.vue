@@ -101,7 +101,7 @@
                       member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">Admin</span>
+                    <span v-if="member.adminLevel > 0" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
@@ -132,7 +132,7 @@
                       member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">Admin</span>
+                    <span v-if="member.adminLevel > 0" class="ml-1 badge badge-red">Admin</span>
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
@@ -166,7 +166,7 @@
                       member.name
                     }}</strong>
                     <!-- Role -->
-                    <span v-if="member.admin_level > 0" class="ml-1 badge badge-red">
+                    <span v-if="member.adminLevel > 0" class="ml-1 badge badge-red">
                       Admin
                     </span>
                   </NuxtLink>
@@ -193,6 +193,7 @@
 <script setup>
 import { ref } from "vue";
 import { format, parseISO } from "date-fns";
+import { useGraphQLQuery } from '~/composables/useGraphQL';
 
 definePageMeta({
   //middleware: ["admin"],
@@ -205,14 +206,28 @@ definePageMeta({
     'isLeftNavbarDisabled': true
 });
 
-// Fetch members using GraphQL
+// Fetch members using GraphQL with explicit query string
 const {
   data: members,
   pending,
   error,
   refresh,
-} = await useAsyncGql({
-  operation: 'listMembers',
+} = await useGraphQLQuery(`
+  query ListMembers($limit: Int!, $sort: String!) {
+    listMembers(limit: $limit, sort: $sort) {
+      members {
+        id
+        name
+        avatar
+        admin_level
+        post_score
+        comment_score
+        creation_date
+      }
+      total_count
+    }
+  }
+`, {
   variables: {
     limit: 5,
     sort: 'mostRep'
@@ -224,8 +239,20 @@ const {
   pending: membersNewPending,
   error: membersNewError,
   refresh: membersNewRefresh,
-} = await useAsyncGql({
-  operation: 'listMembers',
+} = await useGraphQLQuery(`
+  query ListMembersNew($limit: Int!, $sort: String!) {
+    listMembers(limit: $limit, sort: $sort) {
+      members {
+        id
+        name
+        avatar
+        admin_level
+        creation_date
+      }
+      total_count
+    }
+  }
+`, {
   variables: {
     limit: 5,
     sort: 'new'
@@ -237,8 +264,20 @@ const {
   pending: membersPostsPending,
   error: membersPostsError,
   refresh: membersPostsRefresh,
-} = await useAsyncGql({
-  operation: 'listMembers',
+} = await useGraphQLQuery(`
+  query ListMembersPosts($limit: Int!, $sort: String!) {
+    listMembers(limit: $limit, sort: $sort) {
+      members {
+        id
+        name
+        avatar
+        admin_level
+        post_count
+      }
+      total_count
+    }
+  }
+`, {
   variables: {
     limit: 5,
     sort: 'mostPosts'
@@ -251,7 +290,14 @@ const {
   pending: moderationStatsPending,
   error: moderationStatsError,
   refresh: moderationStatsRefresh,
-} = await useAsyncGql({
-  operation: 'getModerationStats'
-});
+} = await useGraphQLQuery(`
+  query GetModerationStats {
+    getModerationStats {
+      pendingReports
+      bannedUsers
+      removedPosts
+      totalModerationActions
+    }
+  }
+`);
 </script>

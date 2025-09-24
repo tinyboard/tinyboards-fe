@@ -85,6 +85,7 @@ import { useImageStore } from '@/stores/StoreImages';
 import { useModalStore } from "@/stores/StoreModal";
 import { dataURLtoFile } from '@/utils/files';
 import { onFileChange, uploadFile } from '@/composables/images';
+import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -100,10 +101,20 @@ const imageStore = useImageStore();
 const modalStore = useModalStore();
 const authCookie = useCookie("token").value;
 
-// Fetch site settings.
-const { data, pending, error, refresh } = await useAsyncGql({
-    operation: 'getSite'
-});
+// Fetch site settings using GraphQL with explicit query string.
+const { data, pending, error, refresh } = await useGraphQLQuery(`
+    query GetSite {
+        site {
+            enable_nsfw
+            enable_federation
+            default_avatar
+            enable_downvotes
+            private_instance
+            email_verification_required
+            application_question
+        }
+    }
+`);
 
 // Settings.
 const settings = ref({});
@@ -134,20 +145,33 @@ const submitSettings = async () => {
 	}
 
 	try {
-		const { mutate } = useMutation('updateSiteConfig');
-		const result = await mutate({
-			input: {
-				enableNSFW: settings.value.enable_nsfw,
-				federationEnabled: settings.value.enable_federation,
-				defaultAvatar: settings.value.default_avatar,
-				enableDownvotes: settings.value.enable_downvotes,
-				privateInstance: settings.value.private_instance,
-				requireEmailVerification: settings.value.email_verification_required,
-				applicationQuestion: settings.value.application_question
+		const { data: result } = await useGraphQLMutation(`
+			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+				updateSiteConfig(input: $input) {
+					enable_nsfw
+					enable_federation
+					default_avatar
+					enable_downvotes
+					private_instance
+					email_verification_required
+					application_question
+				}
+			}
+		`, {
+			variables: {
+				input: {
+					enableNSFW: settings.value.enable_nsfw,
+					federationEnabled: settings.value.enable_federation,
+					defaultAvatar: settings.value.default_avatar,
+					enableDownvotes: settings.value.enable_downvotes,
+					privateInstance: settings.value.private_instance,
+					requireEmailVerification: settings.value.email_verification_required,
+					applicationQuestion: settings.value.application_question
+				}
 			}
 		});
 
-		if (result?.data?.updateSiteConfig) {
+		if (result.value?.updateSiteConfig) {
 			// Show success toast.
 			toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
 			window.location.reload(true);

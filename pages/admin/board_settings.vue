@@ -59,6 +59,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
+import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -71,10 +72,17 @@ definePageMeta({
 
 const toast = useToastStore();
 
-// Fetch site settings using GraphQL
-const { data, pending, error, refresh } = await useAsyncGql({
-    operation: 'getSite'
-});
+// Fetch site settings using GraphQL with explicit query string
+const { data, pending, error, refresh } = await useGraphQLQuery(`
+    query GetSite {
+        getSite {
+            local_site {
+                boards_enabled
+                board_creation_admin_only
+            }
+        }
+    }
+`);
 
 // Settings.
 const settings = ref({});
@@ -85,17 +93,28 @@ if (data.value) {
 
 // Submit settings using GraphQL.
 const isLoading = ref(false);
-const { mutate: updateSiteConfig } = useMutation('updateSiteConfig');
 
 const submitSettings = async () => {
 	isLoading.value = true;
 
 	try {
-		const result = await updateSiteConfig({
-			board_creation_admin_only: settings.value.board_creation_admin_only
+		const { data: result } = await useGraphQLMutation(`
+			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+				updateSiteConfig(input: $input) {
+					boards_enabled
+					board_creation_admin_only
+				}
+			}
+		`, {
+			variables: {
+				input: {
+					boards_enabled: settings.value.boards_enabled,
+					board_creation_admin_only: settings.value.board_creation_admin_only
+				}
+			}
 		});
 
-		if (result.data) {
+		if (result.value) {
 			// Show success toast.
 			toast.addNotification({ 
 				header: 'Settings saved', 
@@ -104,7 +123,7 @@ const submitSettings = async () => {
 			});
 
 			// Update local data without full reload
-			settings.value = { ...settings.value, ...result.data.updateSiteConfig };
+			settings.value = { ...settings.value, ...result.value.updateSiteConfig };
 		}
 	} catch (error) {
 		// Show error toast.

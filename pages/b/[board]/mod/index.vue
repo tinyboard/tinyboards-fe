@@ -67,6 +67,7 @@
 import { ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { useBoardStore } from '@/stores/StoreBoard';
+import { useGraphQLMutation } from '@/composables/useGraphQL';
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -91,46 +92,47 @@ const submitSettings = async () => {
 	isLoading.value = true;
 
 	try {
-		const result = await $fetch('#gql', {
-			query: `
-				mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
-					updateBoardSettings(input: $input) {
-						board {
-							id
-							name
-							title
-							description
-							icon
-							banner
-							isNSFW
-							creationDate
-							updated
-							isRemoved
-							isBanned
-							banReason
-							publicBanReason
-							bannedBy
-							bannedAt
-							primaryColor
-							secondaryColor
-							hoverColor
-							sidebar
-							sidebarHTML
-							isHidden
-							excludeFromAll
-							postCount
-							subscribers
-							commentCount
-							usersActiveDay
-							usersActiveWeek
-							usersActiveMonth
-							usersActiveHalfYear
-							myModPermissions
-							subscribedType
-						}
+		const mutation = `
+			mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
+				updateBoardSettings(input: $input) {
+					board {
+						id
+						name
+						title
+						description
+						icon
+						banner
+						isNSFW
+						creationDate
+						updated
+						isRemoved
+						isBanned
+						banReason
+						publicBanReason
+						bannedBy
+						bannedAt
+						primaryColor
+						secondaryColor
+						hoverColor
+						sidebar
+						sidebarHTML
+						isHidden
+						excludeFromAll
+						postCount
+						subscribers
+						commentCount
+						usersActiveDay
+						usersActiveWeek
+						usersActiveMonth
+						usersActiveHalfYear
+						myModPermissions
+						subscribedType
 					}
 				}
-			`,
+			}
+		`;
+
+		const { data: result } = await useGraphQLMutation(mutation, {
 			variables: {
 				input: {
 					id: board.id,
@@ -141,15 +143,15 @@ const submitSettings = async () => {
 			}
 		});
 
-		if (result.updateBoardSettings?.board) {
+		if (result.value?.updateBoardSettings?.board) {
 			// Show success toast.
 			toast.addNotification({ header: 'Settings saved', message: 'Board settings were updated!', type: 'success' });
 
 			// Update the board store with new data
-			boardStore.setBoard(result.updateBoardSettings.board);
+			boardStore.setBoard(result.value.updateBoardSettings.board);
 
 			// Refresh settings to reflect changes
-			settings.value = JSON.parse(JSON.stringify(result.updateBoardSettings.board));
+			settings.value = JSON.parse(JSON.stringify(result.value.updateBoardSettings.board));
 		} else {
 			throw new Error('Failed to update board settings');
 		}

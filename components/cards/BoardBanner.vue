@@ -156,30 +156,16 @@ const toggleSubscribe = async () => {
     const originalState = isSubscribed.value;
 
     try {
-        const config = useRuntimeConfig();
-        const graphqlEndpoint = config.public.GQL_HOST;
-
         if (isSubscribed.value) {
             // Unsubscribe from board
-            const data = await $fetch(graphqlEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    query: `
-                        mutation unsubscribeFromBoard($boardId: Int!) {
-                            unsubscribeFromBoard(boardId: $boardId)
-                        }
-                    `,
-                    variables: {
-                        boardId: props.board?.id
-                    }
-                })
+            const { data } = await useAsyncGql({
+                operation: 'unsubscribeFromBoard',
+                variables: {
+                    boardId: props.board?.id
+                }
             });
 
-            if (data?.data?.unsubscribeFromBoard) {
+            if (data.value?.unsubscribeFromBoard) {
                 isSubscribed.value = false;
                 toast.addNotification({
                     header: `Left ${props.board?.name}!`,
@@ -192,25 +178,14 @@ const toggleSubscribe = async () => {
             }
         } else {
             // Subscribe to board
-            const data = await $fetch(graphqlEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    query: `
-                        mutation subscribeToBoard($boardId: Int!) {
-                            subscribeToBoard(boardId: $boardId)
-                        }
-                    `,
-                    variables: {
-                        boardId: props.board?.id
-                    }
-                })
+            const { data } = await useAsyncGql({
+                operation: 'subscribeToBoard',
+                variables: {
+                    boardId: props.board?.id
+                }
             });
 
-            if (data?.data?.subscribeToBoard) {
+            if (data.value?.subscribeToBoard) {
                 isSubscribed.value = true;
                 toast.addNotification({
                     header: `Joined ${props.board?.name}!`,

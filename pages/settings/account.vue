@@ -110,6 +110,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
+import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -121,14 +122,25 @@ const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
 // Fetch user settings using GraphQL
-const { data, pending, error, refresh } = await useAsyncGql({
-	operation: 'getSettings'
-});
+const getSettingsQuery = `
+	query getSettings {
+		me {
+			bio
+			displayName
+			avatar
+			banner
+			profileBackground
+			email
+		}
+	}
+`;
+
+const { data, pending, error, refresh } = await useGraphQLQuery(getSettingsQuery);
 
 // Settings.
 let settings = ref({});
 
-if (data.value) {
+if (data.value?.me) {
 	settings.value = { ...JSON.parse(JSON.stringify(data.value.me)) };
 }
 
@@ -144,23 +156,82 @@ const hasPassword = computed(() => {
 	return !!password.value || !!newPassword.value || !!confirmPassword.value;
 })
 
-// Submit settings and password change
-const { mutate: updateSettings } = useMutation('updateUserSettings');
-const { mutate: updatePasswordMutation } = useMutation('updatePassword');
-const { mutate: deleteAccountMutation } = useMutation('deleteAccount');
+// GraphQL mutations
+const updateSettingsMutation = `
+	mutation updateUserSettings(
+		$name: String,
+		$displayName: String,
+		$bio: String,
+		$showNsfw: Boolean,
+		$defaultSortType: Int,
+		$defaultListingType: Int,
+		$avatar: Upload,
+		$banner: Upload,
+		$profileBackground: Upload,
+		$email: String
+	) {
+		updateSettings(
+			name: $name,
+			displayName: $displayName,
+			bio: $bio,
+			showNsfw: $showNsfw,
+			defaultSortType: $defaultSortType,
+			defaultListingType: $defaultListingType,
+			avatar: $avatar,
+			banner: $banner,
+			profileBackground: $profileBackground,
+			email: $email
+		) {
+			id
+			name
+			displayName
+			bio
+			bioHTML
+			avatar
+			banner
+			profileBackground
+			updated
+		}
+	}
+`;
+
+const updatePasswordMutation = `
+	mutation updatePassword(
+		$oldPassword: String!,
+		$newPassword: String!
+	) {
+		updatePassword(
+			oldPassword: $oldPassword,
+			newPassword: $newPassword
+		) {
+			success
+		}
+	}
+`;
+
+const deleteAccountMutation = `
+	mutation deleteAccount($password: String!) {
+		deleteAccount(password: $password) {
+			success
+			message
+		}
+	}
+`;
 
 const submitSettings = async () => {
 	isLoading.value = true;
 	
 	try {
 		// Update user settings first
-		const settingsResult = await updateSettings({
-			email: settings.value.email,
-			displayName: settings.value.displayName,
-			bio: settings.value.bio
+		const { data: settingsData } = await useGraphQLMutation(updateSettingsMutation, {
+			variables: {
+				email: settings.value.email,
+				displayName: settings.value.displayName,
+				bio: settings.value.bio
+			}
 		});
-		
-		if (settingsResult.data) {
+
+		if (settingsData.value?.updateSettings) {
 			// Update password if provided
 			if (hasPassword.value) {
 				if (newPassword.value !== confirmPassword.value) {
@@ -171,12 +242,14 @@ const submitSettings = async () => {
 					throw new Error('Password must be at least 8 characters long');
 				}
 				
-				const passwordResult = await updatePasswordMutation({
-					oldPassword: password.value,
-					newPassword: newPassword.value
+				const { data: passwordData } = await useGraphQLMutation(updatePasswordMutation, {
+					variables: {
+						oldPassword: password.value,
+						newPassword: newPassword.value
+					}
 				});
-				
-				if (passwordResult.data?.updatePassword?.success) {
+
+				if (passwordData.value?.updatePassword?.success) {
 					// Clear password fields
 					password.value = null;
 					newPassword.value = null;
@@ -229,14 +302,16 @@ const deleteAccount = async () => {
 	isDeletingAccount.value = true;
 
 	try {
-		const result = await deleteAccountMutation({
-			password: deletePassword.value
+		const { data: deleteData } = await useGraphQLMutation(deleteAccountMutation, {
+			variables: {
+				password: deletePassword.value
+			}
 		});
 
-		if (result?.data?.deleteAccount?.success) {
+		if (deleteData.value?.deleteAccount?.success) {
 			toast.addNotification({
 				header: 'Account deleted',
-				message: result.data.deleteAccount.message || 'Your account has been successfully deleted.',
+				message: deleteData.value.deleteAccount.message || 'Your account has been successfully deleted.',
 				type: 'success'
 			});
 
@@ -249,7 +324,7 @@ const deleteAccount = async () => {
 				navigateTo('/');
 			}, 2000);
 		} else {
-			throw new Error(result?.data?.deleteAccount?.message || 'Failed to delete account');
+			throw new Error(deleteData.value?.deleteAccount?.message || 'Failed to delete account');
 		}
 	} catch (error) {
 		console.error('Error deleting account:', error);

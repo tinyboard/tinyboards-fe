@@ -13,6 +13,7 @@ import { usePostsStore } from "@/stores/StorePosts";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
+import { useGraphQLQuery } from '@/composables/useGraphQL';
 import { ref } from "vue";
 
 const route = useRoute();
@@ -58,8 +59,56 @@ const postsStore = usePostsStore();
 postsStore.setQueryParams(route);
 
 // Fetch saved posts using listPosts with savedOnly flag
-const { data: savedPostsData, error: savedError, pending: savedPending } = await useAsyncGql({
-    operation: 'listPosts',
+const { data: savedPostsData, error: savedError, pending: savedPending } = await useGraphQLQuery(`
+    query listPosts($listingType: String!, $sort: String!, $page: Int!, $limit: Int!, $savedOnly: Boolean!, $includeBoard: Boolean) {
+        listPosts(listingType: $listingType, sort: $sort, page: $page, limit: $limit, savedOnly: $savedOnly, includeBoard: $includeBoard) {
+            id
+            title
+            titleChunk
+            body
+            bodyHTML
+            url
+            score
+            upvotes
+            downvotes
+            isNSFW
+            isRemoved
+            isDeleted
+            isLocked
+            creationDate
+            updated
+            isSaved
+            myVote
+            featuredLocal
+            featuredBoard
+            commentCount
+            altText
+            embedTitle
+            embedDescription
+            embedVideoUrl
+            sourceUrl
+            lastCrawlDate
+            creator {
+                id
+                name
+                displayName
+                avatar
+                isAdmin
+                instance
+                creationDate
+                rep
+                postCount
+                commentCount
+            }
+            board {
+                id
+                name
+                icon
+                description
+            }
+        }
+    }
+`, {
     variables: {
         listingType: 'All',
         sort: postsStore.options.sort || 'New',

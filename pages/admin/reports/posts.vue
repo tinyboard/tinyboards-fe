@@ -55,7 +55,7 @@
 
 <script setup>
 import { usePostsStore } from '@/stores/StorePosts';
-import { getModQueue } from '@/composables/posts';
+import { useGraphQLQuery } from '~/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -75,17 +75,52 @@ const postsStore = usePostsStore();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Use existing moderation queue implementation
-// TODO: When backend GraphQL schema includes getPostReports query, replace with:
-// const { data, pending, error, refresh } = await useAsyncQuery('getPostReports', {
-//   limit: limit.value,
-//   page: page.value
-// });
+// Fetch reported posts using GraphQL with explicit query string
+const { data: reportsData, pending, error, refresh } = await useGraphQLQuery(`
+	query GetPostReports($limit: Int!, $page: Int!) {
+		getPostReports(limit: $limit, page: $page) {
+			reports {
+				id
+				post {
+					id
+					title
+					body
+					author {
+						name
+						avatar
+					}
+					board {
+						name
+					}
+					creation_date
+					url
+					image
+					is_nsfw
+					is_locked
+					is_removed
+					is_featured
+					votes
+					comment_count
+				}
+				reason
+				reporter {
+					name
+				}
+				creation_date
+			}
+			total_count
+		}
+	}
+`, {
+	variables: {
+		limit: limit.value,
+		page: page.value
+	}
+});
 
-const { items, totalCount, paginate, pending, error, refresh } = await getModQueue({
-	limit: limit.value,
-	page: page.value
-}, 'posts');
+// Transform the data to match the expected format
+const items = computed(() => reportsData.value?.getPostReports?.reports?.map(report => report.post) || []);
+const totalCount = computed(() => reportsData.value?.getPostReports?.total_count || 0);
 
 if (error.value && error.value.response) {
 	throw createError({
@@ -95,7 +130,7 @@ if (error.value && error.value.response) {
 	})
 };
 
-postsStore.posts = items;
+postsStore.posts = items.value;
 const posts = postsStore.posts;
 
 const totalPages = computed(() => {

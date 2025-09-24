@@ -178,6 +178,7 @@
 
 <script setup>
 import { useSiteStore } from "@/stores/StoreSite";
+import { useGraphQLQuery } from '@/composables/useGraphQL';
 const site = useSiteStore();
 
 // useHead({
@@ -224,8 +225,24 @@ const {
     pending,
     error,
     refresh,
-} = await useAsyncGql({
-    operation: 'listMembers',
+} = await useGraphQLQuery(`
+    query listMembers($page: Int!, $limit: Int!, $sort: String!, $listingType: String!) {
+        listUsers(page: $page, limit: $limit, sort: $sort, listingType: $listingType) {
+            id
+            name
+            displayName
+            avatar
+            banner
+            profileBackground
+            bio
+            is_admin
+            rep
+            postCount
+            commentCount
+            creationDate
+        }
+    }
+`, {
     variables: {
         page: page.value,
         limit: limit.value,
@@ -242,10 +259,11 @@ const members = computed(() => {
         members: membersData.value.listUsers.map(user => ({
             person: {
                 name: user.name,
-                displayName: user.displayName,
+                display_name: user.displayName,
                 avatar: user.avatar,
                 banner: user.banner || user.profileBackground,
-                bio: user.bio
+                bio: user.bio,
+                is_admin: user.is_admin
             },
             counts: {
                 rep: user.rep,

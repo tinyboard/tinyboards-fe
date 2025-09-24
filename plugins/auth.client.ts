@@ -16,12 +16,14 @@ export default defineNuxtPlugin(async () => {
           query GetLoggedInUser {
             me {
               id
-              username
-              display_name
+              name
+              displayName
               avatar
-              boards_moderating {
-                id
-                name
+              moderates {
+                board {
+                  id
+                  name
+                }
               }
               is_admin
               adminLevel

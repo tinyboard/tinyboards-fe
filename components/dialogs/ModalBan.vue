@@ -90,6 +90,7 @@ import { ref } from 'vue'
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
+import { useGraphQLMutation } from '@/composables/useGraphQL';
 import {
   TransitionRoot,
   TransitionChild,
@@ -157,18 +158,18 @@ const ban = async () => {
       // Unban user
       if (boardId) {
         // Board-specific unban
-        const result = await $fetch('#gql', {
-          query: `
-            mutation unbanUserFromBoard($boardId: Int!, $userId: Int!) {
-              unbanUserFromBoard(boardId: $boardId, userId: $userId) {
-                success
-              }
+        const mutation = `
+          mutation unbanUserFromBoard($boardId: Int!, $userId: Int!) {
+            unbanUserFromBoard(boardId: $boardId, userId: $userId) {
+              success
             }
-          `,
+          }
+        `;
+        const result = await useGraphQLMutation(mutation, {
           variables: { boardId, userId }
         });
 
-        if (result.unbanUserFromBoard?.success) {
+        if (result.data.value?.unbanUserFromBoard?.success) {
           toast.addNotification({
             header: `${username} unbanned`,
             message: 'The user has been successfully unbanned from this board.',
@@ -179,18 +180,18 @@ const ban = async () => {
         }
       } else {
         // Site-wide unban
-        const result = await $fetch('#gql', {
-          query: `
-            mutation unbanUser($userId: Int!) {
-              unbanUser(userId: $userId) {
-                success
-              }
+        const mutation = `
+          mutation unbanUser($userId: Int!) {
+            unbanUser(userId: $userId) {
+              success
             }
-          `,
+          }
+        `;
+        const result = await useGraphQLMutation(mutation, {
           variables: { userId }
         });
 
-        if (result.unbanUser?.success) {
+        if (result.data.value?.unbanUser?.success) {
           toast.addNotification({
             header: `${username} unbanned`,
             message: 'The user has been successfully unbanned.',
@@ -211,14 +212,14 @@ const ban = async () => {
 
       if (boardId) {
         // Board-specific ban
-        const result = await $fetch('#gql', {
-          query: `
-            mutation banUserFromBoard($input: BoardBanUserInput!) {
-              banUserFromBoard(input: $input) {
-                success
-              }
+        const mutation = `
+          mutation banUserFromBoard($input: BoardBanUserInput!) {
+            banUserFromBoard(input: $input) {
+              success
             }
-          `,
+          }
+        `;
+        const result = await useGraphQLMutation(mutation, {
           variables: {
             input: {
               boardId,
@@ -229,7 +230,7 @@ const ban = async () => {
           }
         });
 
-        if (result.banUserFromBoard?.success) {
+        if (result.data.value?.banUserFromBoard?.success) {
           toast.addNotification({
             header: `${username} banned`,
             message: 'The user has been successfully banned from this board.',
@@ -240,14 +241,14 @@ const ban = async () => {
         }
       } else {
         // Site-wide ban
-        const result = await $fetch('#gql', {
-          query: `
-            mutation banUser($input: BanUserInput!) {
-              banUser(input: $input) {
-                success
-              }
+        const mutation = `
+          mutation banUser($input: BanUserInput!) {
+            banUser(input: $input) {
+              success
             }
-          `,
+          }
+        `;
+        const result = await useGraphQLMutation(mutation, {
           variables: {
             input: {
               userId,
@@ -257,7 +258,7 @@ const ban = async () => {
           }
         });
 
-        if (result.banUser?.success) {
+        if (result.data.value?.banUser?.success) {
           toast.addNotification({
             header: `${username} banned`,
             message: 'The user has been successfully banned.',

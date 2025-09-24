@@ -40,6 +40,7 @@
   import { ref } from 'vue'
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
+  import { useGraphQLMutation } from '@/composables/useGraphQL';
   import {
     TransitionRoot,
     TransitionChild,
@@ -80,35 +81,43 @@
     const id = props.id;
 
     try {
-      const { $gql } = useNuxtApp();
+      let mutation;
       let result;
 
       if (type === 'post') {
-        result = await $gql.mutation({
-          reportPost: {
-            __args: {
-              postId: id,
-              reason: reason.value.trim()
-            },
-            success: true,
-            reportId: true
+        mutation = `
+          mutation ReportPost($postId: Int!, $reason: String!) {
+            reportPost(postId: $postId, reason: $reason) {
+              success
+              reportId
+            }
+          }
+        `;
+        result = await useGraphQLMutation(mutation, {
+          variables: {
+            postId: id,
+            reason: reason.value.trim()
           }
         });
       } else {
-        result = await $gql.mutation({
-          reportComment: {
-            __args: {
-              commentId: id,
-              reason: reason.value.trim()
-            },
-            success: true,
-            reportId: true
+        mutation = `
+          mutation ReportComment($commentId: Int!, $reason: String!) {
+            reportComment(commentId: $commentId, reason: $reason) {
+              success
+              reportId
+            }
+          }
+        `;
+        result = await useGraphQLMutation(mutation, {
+          variables: {
+            commentId: id,
+            reason: reason.value.trim()
           }
         });
       }
 
       const mutationKey = type === 'post' ? 'reportPost' : 'reportComment';
-      if (result[mutationKey]?.success) {
+      if (result.data.value?.[mutationKey]?.success) {
         // Show success toast
         setTimeout(() => {
           toast.addNotification({

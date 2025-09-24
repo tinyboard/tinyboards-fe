@@ -49,6 +49,7 @@
 import { formatDate } from "@/utils/formatDate";
 import { useToastStore } from "@/stores/StoreToast";
 import { useNotificationRefresh } from '@/composables/notificationRefresh';
+import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 
 const route = useRoute();
 const toast = useToastStore();
@@ -71,8 +72,31 @@ const unreadCount = ref(0);
 
 const type = ref(route.params?.type || 'replies');
 
-const { data: notifications, pending, error, refresh } = await useAsyncGql({
-	operation: 'getNotifications',
+const { data: notifications, pending, error, refresh } = await useGraphQLQuery(`
+	query getNotifications($unreadOnly: Boolean!, $limit: Int!, $page: Int!) {
+		getNotifications(unreadOnly: $unreadOnly, limit: $limit, page: $page) {
+			id
+			isRead
+			type
+			createdAt
+			updatedAt
+			user {
+				id
+				name
+				avatar
+			}
+			post {
+				id
+				title
+				slug
+			}
+			comment {
+				id
+				content
+			}
+		}
+	}
+`, {
 	variables: {
 		unreadOnly: type.value === 'unread',
 		limit: limit.value,
@@ -111,15 +135,19 @@ const markRead = async () => {
 	isLoading.value = true;
 
 	try {
-		const response = await useAsyncGql({
-			operation: 'markNotificationsRead',
+		const { data: result } = await useGraphQLMutation(`
+			mutation markNotificationsRead($markAll: Boolean!) {
+				markNotificationsRead(markAll: $markAll) {
+					success
+				}
+			}
+		`, {
 			variables: {
 				markAll: true
 			}
 		});
-		const result = response.data.value;
 
-		if (result.markNotificationsRead?.success) {
+		if (result.value?.markNotificationsRead?.success) {
 			// Update local notifications to be marked as read
 			if (notifications.value) {
 				notifications.value = notifications.value.map(notification => ({

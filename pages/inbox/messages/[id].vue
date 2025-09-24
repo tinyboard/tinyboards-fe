@@ -87,6 +87,7 @@
 <script setup>
 	import { useToastStore } from "@/stores/StoreToast";
 	import { useLoggedInUser } from "@/stores/StoreAuth";
+	import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 
 	const route = useRoute();
 	const toast = useToastStore();
@@ -102,8 +103,27 @@
 		if (!conversationId.value) return;
 
 		try {
-			const { data: result } = await useAsyncGql({
-				operation: 'GetConversation',
+			const { data: result } = await useGraphQLQuery(`
+				query GetConversation($userId: Int!, $limit: Int!, $offset: Int!) {
+					getConversation(userId: $userId, limit: $limit, offset: $offset) {
+						id
+						creator {
+							id
+							name
+							avatar
+						}
+						recipient_user {
+							id
+							name
+						}
+						private_message {
+							body
+							body_html
+						}
+						createdAt
+					}
+				}
+			`, {
 				variables: {
 					userId: conversationId.value,
 					limit: 50,
@@ -149,8 +169,25 @@
 		const messageContent = text.value.trim();
 
 		try {
-			const { data: result } = await useAsyncGql({
-				operation: 'sendMessage',
+			const { data: result } = await useGraphQLMutation(`
+				mutation sendMessage($input: SendMessageInput!) {
+					sendMessage(input: $input) {
+						message {
+							id
+							creator {
+								id
+								name
+								avatar
+							}
+							private_message {
+								body
+								body_html
+							}
+							createdAt
+						}
+					}
+				}
+			`, {
 				variables: {
 					input: {
 						recipientId: recipientId.value,
@@ -227,8 +264,19 @@
 
 		isEditingMessage.value = true;
 		try {
-			const { data: result } = await useAsyncGql({
-				operation: 'editMessage',
+			const { data: result } = await useGraphQLMutation(`
+				mutation editMessage($input: EditMessageInput!) {
+					editMessage(input: $input) {
+						message {
+							id
+							private_message {
+								body
+								body_html
+							}
+						}
+					}
+				}
+			`, {
 				variables: {
 					input: {
 						messageId: message.id,
@@ -245,8 +293,8 @@
 						...localMessages.value[messageIndex],
 						private_message: {
 							...localMessages.value[messageIndex].private_message,
-							body: result.editMessage.message.private_message.body,
-							body_html: result.editMessage.message.private_message.body_html
+							body: result.value.editMessage.message.private_message.body,
+							body_html: result.value.editMessage.message.private_message.body_html
 						}
 					};
 				}
@@ -282,15 +330,19 @@
 		if (!confirm('Are you sure you want to delete this message?')) return;
 
 		try {
-			const response = await useAsyncGql({
-				operation: 'deleteMessage',
+			const { data: result } = await useGraphQLMutation(`
+				mutation deleteMessage($messageId: Int!) {
+					deleteMessage(messageId: $messageId) {
+						success
+					}
+				}
+			`, {
 				variables: {
 					messageId: message.id
 				}
 			});
-			const result = response.data.value;
 
-			if (result?.deleteMessage?.success) {
+			if (result.value?.deleteMessage?.success) {
 				// Remove the message from the local array
 				localMessages.value = localMessages.value.filter(m => m.id !== message.id);
 

@@ -60,6 +60,7 @@
 
 <script setup>
 import { usePostsStore } from '@/stores/StorePosts';
+import { useGraphQLQuery } from '@/composables/useGraphQL';
 
 definePageMeta({
   'hasAuthRequired': true,
@@ -79,10 +80,40 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
 // TODO: When backend GraphQL schema includes getHiddenPosts query, replace with:
-// const { data, pending, error, refresh } = await useAsyncQuery('getHiddenPosts', {
-//   limit: limit.value,
-//   page: page.value,
-//   sort: 'new'
+// const getHiddenPostsQuery = `
+//   query getHiddenPosts($limit: Int!, $page: Int!, $sort: String!) {
+//     hiddenPosts(limit: $limit, page: $page, sort: $sort) {
+//       posts {
+//         id
+//         title
+//         body
+//         url
+//         creator {
+//           id
+//           name
+//           displayName
+//           avatar
+//         }
+//         board {
+//           id
+//           name
+//           title
+//           icon
+//         }
+//         creationDate
+//         score
+//         commentCount
+//       }
+//       totalCount
+//     }
+//   }
+// `;
+// const { data, pending, error, refresh } = await useGraphQLQuery(getHiddenPostsQuery, {
+//   variables: {
+//     limit: limit.value,
+//     page: page.value,
+//     sort: 'new'
+//   }
 // });
 
 // Temporary placeholder - replace with actual hidden posts query when backend is ready
@@ -94,6 +125,7 @@ const error = ref(null);
 // Placeholder refresh function
 const refresh = async () => {
   // TODO: Implement when backend query is available
+  // When ready, uncomment the above GraphQL query and remove this placeholder
   console.log('Hidden posts refresh - waiting for backend implementation');
 };
 

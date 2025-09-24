@@ -8,14 +8,17 @@ export async function usePostComments(id, query = {}) {
     pending,
     error,
     refresh,
-  } = await useAPI("/comments", {
-    query: { ...query, post_id: id },
-    key: `post_${id}_comments`,
+  } = await useAsyncGql({
+    operation: 'listComments',
+    variables: {
+      postId: id,
+      ...query
+    }
   });
 
   let comments = ref([]);
-  if (!error.value) {
-    comments.value = listing.value.comments;
+  if (!error.value && listing.value?.listComments) {
+    comments.value = listing.value.listComments;
   }
 
   return {
@@ -27,25 +30,23 @@ export async function usePostComments(id, query = {}) {
 }
 
 export async function useComments(id, type = "post", query = {}, post_id) {
-  const url = type === "post" ? "/comments" : `/comments/${id}`;
+  const variables = type === "post"
+    ? { postId: id, ...query }
+    : { commentId: id, postId: post_id, ...query };
 
   const {
     data: listing,
     pending,
     error,
     refresh,
-  } = await useAPI(url, {
-    query: {
-      ...query,
-      ...(type === "post" && { post_id: id }),
-      ...(type === "comment" && { post: post_id }),
-    },
-    key: `${type}_${id}_comments`,
+  } = await useAsyncGql({
+    operation: 'listComments',
+    variables
   });
 
   let comments = ref([]);
-  if (!error.value) {
-    comments.value = listing.value.comments;
+  if (!error.value && listing.value?.listComments) {
+    comments.value = listing.value.listComments;
   }
 
   return {

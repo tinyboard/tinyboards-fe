@@ -66,7 +66,7 @@
 							</svg>
 						</button>
 					</div>
-					<div v-else-if="v.admin_level === 0" class="col-span-2 flex justify-end">
+					<div v-else-if="v.adminLevel === 0" class="col-span-2 flex justify-end">
 						<button @click="() => confirmBan(v)" class="px-1 text-gray-500 hover:text-red-600"
 							:title="`Ban @${v.name}`">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
@@ -106,6 +106,7 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
 import { format, parseISO } from "date-fns";
+import { useGraphQLQuery } from '~/composables/useGraphQL';
 
 const route = useRoute();
 const router = useRouter();
@@ -133,9 +134,22 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 // Search
 const searchTerm = ref(route.query.search_term || "");
 
-// Fetch users
-const { data: members, pending, error, refresh } = await useAsyncGql({
-	operation: 'listMembers',
+// Fetch users using GraphQL with explicit query string
+const { data: members, pending, error, refresh } = await useGraphQLQuery(`
+	query ListMembers($limit: Int!, $page: Int!, $search: String) {
+		listMembers(limit: $limit, page: $page, search: $search) {
+			members {
+				id
+				name
+				avatar
+				admin_level
+				is_banned
+				creation_date
+			}
+			total_count
+		}
+	}
+`, {
 	variables: {
 		limit: limit.value,
 		page: page.value,

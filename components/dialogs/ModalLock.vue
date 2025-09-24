@@ -41,6 +41,7 @@
   import { useToastStore } from '@/stores/StoreToast';
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
+  import { useGraphQLMutation } from '@/composables/useGraphQL';
   import {
     TransitionRoot,
     TransitionChild,
@@ -76,19 +77,23 @@
     const id = props.id;
 
     try {
-      const { $gql } = useNuxtApp();
-      const result = await $gql.mutation({
-        setPostLocked: {
-          __args: {
-            id: id,
-            value: !props.options.isLocked
-          },
-          id: true,
-          isLocked: true
+      const mutation = `
+        mutation SetPostLocked($id: Int!, $value: Boolean!) {
+          setPostLocked(id: $id, value: $value) {
+            id
+            isLocked
+          }
+        }
+      `;
+
+      const result = await useGraphQLMutation(mutation, {
+        variables: {
+          id: id,
+          value: !props.options.isLocked
         }
       });
 
-      if (result.setPostLocked) {
+      if (result.data.value?.setPostLocked) {
         // Show success toast
         setTimeout(() => {
           toast.addNotification({

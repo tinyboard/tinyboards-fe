@@ -190,6 +190,7 @@ import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 import { usePostsStore } from "@/stores/StorePosts";
 import { requirePermission } from "@/composables/admin";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 import {
     TransitionRoot,
     TransitionChild,
@@ -244,21 +245,25 @@ const togglePostPin = async () => {
     }
 
     try {
-        const { $gql } = useNuxtApp();
-        const result = await $gql.mutation({
-            featurePost: {
-                __args: {
-                    postId: id,
-                    featured: !isStickied.value,
-                    featureType: pinType.value,
-                },
-                id: true,
-                featuredBoard: true,
-                featuredLocal: true
+        const mutation = `
+          mutation FeaturePost($postId: Int!, $featured: Boolean!, $featureType: String!) {
+            featurePost(postId: $postId, featured: $featured, featureType: $featureType) {
+              id
+              featuredBoard
+              featuredLocal
             }
+          }
+        `;
+
+        const result = await useGraphQLMutation(mutation, {
+          variables: {
+            postId: id,
+            featured: !isStickied.value,
+            featureType: pinType.value,
+          }
         });
 
-        if (result.featurePost) {
+        if (result.data.value?.featurePost) {
             // Show success toast
             setTimeout(() => {
                 toast.addNotification({

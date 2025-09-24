@@ -107,6 +107,7 @@
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useToastStore } from "@/stores/StoreToast";
+import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 import { ref } from 'vue';
 
 definePageMeta({
@@ -125,18 +126,40 @@ const unreadCount = ref(0);
 // Fetch conversations using GraphQL
 const fetchConversations = async () => {
 	try {
-		const { data: conversationsResult } = await useAsyncGql({
-			operation: 'GetConversations'
-		});
+		const { data: conversationsResult } = await useGraphQLQuery(`
+			query GetConversations {
+				listConversations {
+					id
+					creator {
+						id
+						name
+						avatar
+						is_admin
+					}
+					recipient_user {
+						id
+						name
+					}
+					message {
+						body_html
+					}
+					notif {
+						read
+					}
+				}
+			}
+		`);
 
 		if (conversationsResult.value?.listConversations) {
 			conversations.value = conversationsResult.value.listConversations || [];
 		}
 
 		// Fetch unread count
-		const { data: unreadResult } = await useAsyncGql({
-			operation: 'GetUnreadMessageCount'
-		});
+		const { data: unreadResult } = await useGraphQLQuery(`
+			query GetUnreadMessageCount {
+				getUnreadMessageCount
+			}
+		`);
 
 		if (unreadResult.value?.getUnreadMessageCount !== undefined) {
 			unreadCount.value = unreadResult.value.getUnreadMessageCount || 0;
@@ -160,8 +183,13 @@ const markRead = async () => {
 		// Mark conversations as read - this mutation expects userId parameter
 		// We'll need to loop through conversations or implement a "mark all" mutation
 		const promises = conversations.value.map(conv =>
-			useAsyncGql({
-				operation: 'markConversationRead',
+			useGraphQLMutation(`
+				mutation markConversationRead($userId: Int!) {
+					markConversationRead(userId: $userId) {
+						success
+					}
+				}
+			`, {
 				variables: {
 					userId: conv.otherUser?.id || conv.creator?.id
 				}

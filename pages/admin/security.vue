@@ -177,6 +177,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
+import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -189,10 +190,54 @@ definePageMeta({
 
 const toast = useToastStore();
 
-// Fetch site settings using GraphQL
-const { data: siteData, pending, error, refresh } = await useAsyncGql({
-    operation: 'getSite'
-});
+// Fetch site settings using GraphQL with explicit query string
+const { data: siteData, pending, error, refresh } = await useGraphQLQuery(`
+    query GetSite {
+        site {
+            name
+            description
+            icon
+            primaryColor
+            secondaryColor
+            hoverColor
+            registrationMode
+            requireEmailVerification
+            privateInstance
+            openRegistration
+            enableDownvotes
+            enableNSFW
+            boardCreationAdminOnly
+            defaultTheme
+            defaultPostListingType
+            defaultAvatar
+            legalInformation
+            hideModlogModNames
+            applicationEmailAdmins
+            captchaEnabled
+            captchaDifficulty
+            reportsEmailAdmins
+            welcomeMessage
+            boardsEnabled
+            boardCreationMode
+            trustedUserMinReputation
+            trustedUserMinAccountAgeDays
+            trustedUserManualApproval
+            trustedUserMinPosts
+            allowedPostTypes
+            enableNSFWTagging
+            wordFilterEnabled
+            filteredWords
+            wordFilterAppliesToPosts
+            wordFilterAppliesToComments
+            wordFilterAppliesToUsernames
+            linkFilterEnabled
+            bannedDomains
+            approvedImageHosts
+            imageEmbedHostsOnly
+            applicationQuestion
+        }
+    }
+`);
 const data = computed(() => ({ value: siteData.value?.site }));
 
 // Settings.
@@ -216,8 +261,6 @@ const submitSettings = async () => {
 	isLoading.value = true;
 
 	try {
-		const { mutate } = useMutation('updateSiteConfig');
-
 		// Map the field names to GraphQL field names
 		const input = {
 			// Keep existing site info
@@ -272,9 +315,21 @@ const submitSettings = async () => {
 			imageEmbedHostsOnly: settings.value.imageEmbedHostsOnly
 		};
 
-		const result = await mutate({ input });
+		const { data: result } = await useGraphQLMutation(`
+			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+				updateSiteConfig(input: $input) {
+					name
+					description
+					registrationMode
+					requireEmailVerification
+					privateInstance
+				}
+			}
+		`, {
+			variables: { input }
+		});
 
-		if (result?.data?.updateSiteConfig) {
+		if (result.value?.updateSiteConfig) {
 			// Show success toast.
 			toast.addNotification({
 				header: 'Settings saved',

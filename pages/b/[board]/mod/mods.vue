@@ -434,6 +434,7 @@ import {
     requireFullModPerms,
 } from "@/composables/mod";
 import { format, parseISO } from "date-fns";
+import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
 
 import { useBoardStore } from "@/stores/StoreBoard";
 
@@ -467,8 +468,26 @@ const user = userStore.user;
 const isLoading = ref(false);
 
 // Fetch moderators using GraphQL
-const { data, pending, error, refresh } = await useAsyncGql({
-    operation: 'getBoardModerators',
+const query = `
+    query getBoardModerators($boardId: Int!) {
+        getBoardModerators(boardId: $boardId) {
+            id
+            user {
+                id
+                name
+                avatar
+                isBanned
+            }
+            permissions
+            rank
+            inviteAccepted
+            inviteAcceptedDate
+            creationDate
+        }
+    }
+`;
+
+const { data, pending, error, refresh } = await useGraphQLQuery(query, {
     variables: {
         boardId: board.id
     }
@@ -511,14 +530,15 @@ async function resolveInvite(accept) {
     try {
         if (accept) {
             // Accept moderator invite by adding ourselves as moderator
-            const result = await $fetch('#gql', {
-                query: `
-                    mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
-                        addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
-                            success
-                        }
+            const mutation = `
+                mutation addModerator($boardId: Int!, $userId: Int!, $permissions: Int) {
+                    addModerator(boardId: $boardId, userId: $userId, permissions: $permissions) {
+                        success
                     }
-                `,
+                }
+            `;
+
+            const { data: result } = await useGraphQLMutation(mutation, {
                 variables: {
                     boardId: board.id,
                     userId: user.id,
@@ -526,7 +546,7 @@ async function resolveInvite(accept) {
                 }
             });
 
-            if (result.addModerator?.success) {
+            if (result.value?.addModerator?.success) {
                 // Refresh moderator data
                 refresh();
                 toast.addNotification({
@@ -539,21 +559,22 @@ async function resolveInvite(accept) {
             }
         } else {
             // Decline invite by removing ourselves as moderator
-            const result = await $fetch('#gql', {
-                query: `
-                    mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
-                        removeBoardModerator(boardId: $boardId, userId: $userId) {
-                            success
-                        }
+            const mutation = `
+                mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+                    removeBoardModerator(boardId: $boardId, userId: $userId) {
+                        success
                     }
-                `,
+                }
+            `;
+
+            const { data: result } = await useGraphQLMutation(mutation, {
                 variables: {
                     boardId: board.id,
                     userId: user.id
                 }
             });
 
-            if (result.removeBoardModerator?.success) {
+            if (result.value?.removeBoardModerator?.success) {
                 // Refresh moderator data
                 refresh();
                 toast.addNotification({

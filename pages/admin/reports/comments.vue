@@ -28,7 +28,7 @@
 
 <script setup>
 // import { useCommentsStore } from '@/stores/StoreComments';
-import { getModQueue } from '@/composables/posts';
+import { useGraphQLQuery } from '~/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -48,17 +48,50 @@ const route = useRoute();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Use existing moderation queue implementation
-// TODO: When backend GraphQL schema includes getCommentReports query, replace with:
-// const { data, pending, error, refresh } = await useAsyncQuery('getCommentReports', {
-//   limit: limit.value,
-//   page: page.value
-// });
+// Fetch reported comments using GraphQL with explicit query string
+const { data: reportsData, pending, error, refresh } = await useGraphQLQuery(`
+	query GetCommentReports($limit: Int!, $page: Int!) {
+		getCommentReports(limit: $limit, page: $page) {
+			reports {
+				id
+				comment {
+					id
+					body
+					author {
+						name
+						avatar
+					}
+					post {
+						id
+						title
+						board {
+							name
+						}
+					}
+					creation_date
+					is_removed
+					votes
+					reply_count
+				}
+				reason
+				reporter {
+					name
+				}
+				creation_date
+			}
+			total_count
+		}
+	}
+`, {
+	variables: {
+		limit: limit.value,
+		page: page.value
+	}
+});
 
-const { items, totalCount, paginate, pending, error, refresh } = await getModQueue({
-	limit: limit.value,
-	page: page.value
-}, 'comments');
+// Transform the data to match the expected format
+const items = computed(() => reportsData.value?.getCommentReports?.reports?.map(report => report.comment) || []);
+const totalCount = computed(() => reportsData.value?.getCommentReports?.total_count || 0);
 
 //console.log(`comments are ${JSON.stringify(items.value, null, 4)}`);
 
@@ -71,7 +104,7 @@ if (error.value && error.value.response) {
 };
 
 // commentsStore.comments = items;
-const comments = items;
+const comments = items.value;
 
 const totalPages = computed(() => {
 	return Math.ceil(totalCount.value / limit.value || 1);

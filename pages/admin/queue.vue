@@ -264,6 +264,7 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
 import { format, parseISO } from "date-fns";
+import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 
 const route = useRoute();
 const router = useRouter();
@@ -296,19 +297,31 @@ const bulkActionLoading = ref(false);
 // Selection state
 const selectedApplications = ref([]);
 
-// Fetch applications
-const { data: applications, pending, error, refresh } = await useAsyncGql({
-	operation: 'listRegistrationApplications',
+// Fetch applications using GraphQL with explicit query string
+const { data: applications, pending, error, refresh } = await useGraphQLQuery(`
+	query ListRegistrationApplications($limit: Int!, $offset: Int!) {
+		listRegistrationApplications(limit: $limit, offset: $offset) {
+			id
+			username
+			userId
+			answer
+			creationDate
+			status
+		}
+	}
+`, {
 	variables: {
 		limit: limit.value,
 		offset: (page.value - 1) * limit.value
 	}
 });
 
-// Fetch application count
-const { data: countData } = await useAsyncGql({
-	operation: 'registrationApplicationsCount'
-});
+// Fetch application count using GraphQL with explicit query string
+const { data: countData } = await useGraphQLQuery(`
+	query RegistrationApplicationsCount {
+		registrationApplicationsCount
+	}
+`);
 const applicationCount = computed(() => countData.value?.registrationApplicationsCount || 0);
 
 // Mock data for now - these would come from API
@@ -376,12 +389,11 @@ const viewApplication = (application) => {
 const approveApplication = async (applicationId) => {
 	actionLoading.value = true;
 	try {
-		await $fetch('#gql', {
-			query: `
-				mutation approveRegistrationApplication($applicationId: Int!) {
-					approveRegistrationApplication(applicationId: $applicationId)
-				}
-			`,
+		const { data: result } = await useGraphQLMutation(`
+			mutation ApproveRegistrationApplication($applicationId: Int!) {
+				approveRegistrationApplication(applicationId: $applicationId)
+			}
+		`, {
 			variables: { applicationId }
 		});
 
@@ -421,12 +433,11 @@ const bulkApprove = async () => {
 
 	bulkActionLoading.value = true;
 	try {
-		await $fetch('#gql', {
-			query: `
-				mutation bulkApproveRegistrationApplications($applicationIds: [Int!]!) {
-					bulkApproveRegistrationApplications(applicationIds: $applicationIds)
-				}
-			`,
+		const { data: result } = await useGraphQLMutation(`
+			mutation BulkApproveRegistrationApplications($applicationIds: [Int!]!) {
+				bulkApproveRegistrationApplications(applicationIds: $applicationIds)
+			}
+		`, {
 			variables: { applicationIds: selectedApplications.value }
 		});
 
@@ -454,12 +465,11 @@ const bulkDeny = async () => {
 
 	bulkActionLoading.value = true;
 	try {
-		await $fetch('#gql', {
-			query: `
-				mutation bulkDenyRegistrationApplications($applicationIds: [Int!]!) {
-					bulkDenyRegistrationApplications(applicationIds: $applicationIds)
-				}
-			`,
+		const { data: result } = await useGraphQLMutation(`
+			mutation BulkDenyRegistrationApplications($applicationIds: [Int!]!) {
+				bulkDenyRegistrationApplications(applicationIds: $applicationIds)
+			}
+		`, {
 			variables: { applicationIds: selectedApplications.value }
 		});
 

@@ -46,6 +46,7 @@
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
   import { useCommentsStore } from '@/stores/StoreComments';
+  import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
   import {
     TransitionRoot,
     TransitionChild,
@@ -95,8 +96,14 @@
     try {
       if (type === 'post') {
         // Use GraphQL mutation for post removal
-        const { mutate } = useMutation('setPostRemoved');
-        const result = await mutate({
+        const result = await useDirectGraphQLRequest(`
+          mutation setPostRemoved($id: Int!, $value: Boolean!) {
+            setPostRemoved(id: $id, value: $value) {
+              id
+              isRemoved
+            }
+          }
+        `, {
           id: props.id,
           value: true
         });
@@ -118,8 +125,14 @@
         }
       } else {
         // Use GraphQL mutation for comment removal
-        const { mutate } = useMutation('setCommentRemoved');
-        const result = await mutate({
+        const result = await useDirectGraphQLRequest(`
+          mutation setCommentRemoved($id: Int!, $value: Boolean!) {
+            setCommentRemoved(id: $id, value: $value) {
+              id
+              isRemoved
+            }
+          }
+        `, {
           id: props.id,
           value: true
         });

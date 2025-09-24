@@ -73,9 +73,9 @@
                         </div>
                     </NuxtLink>
                     <div class="col-span-1 flex items-center">
-                        {{ createPermissionString(v?.admin_level || 0) }}
+                        {{ createPermissionString(v?.adminLevel || 0) }}
                     </div>
-                    <div v-if="(requireOwnerPerms() && v?.id != user?.user?.id) || (requireFullPerms() && (v?.admin_level || 0) < (user?.adminLevel || 0))"
+                    <div v-if="(requireOwnerPerms() && v?.id != user?.user?.id) || (requireFullPerms() && (v?.adminLevel || 0) < (user?.adminLevel || 0))"
                         class="col-span-2 flex justify-end space-x-2">
                         <button @click="() => openManageModal(v, false)"
                             class="px-1 text-gray-500 hover:text-blue-600"
@@ -128,6 +128,7 @@ import { useSiteStore } from '@/stores/StoreSite';
 import { useModalStore } from '@/stores/StoreModal';
 import { requireFullPerms, createPermissionString, requireOwnerPerms } from '@/composables/admin';
 import { useLoggedInUser } from '~~/stores/StoreAuth';
+import { useGraphQLQuery } from '~/composables/useGraphQL';
 
 const route = useRoute();
 const router = useRouter();
@@ -156,9 +157,22 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 // Search
 const searchTerm = ref(route.query.search_term || "");
 
-// Fetch admin users
-const { data: members, pending, error, refresh } = await useAsyncGql({
-    operation: 'listMembers',
+// Fetch admin users using GraphQL with explicit query string
+const { data: members, pending, error, refresh } = await useGraphQLQuery(`
+    query ListAdminMembers($limit: Int!, $page: Int!, $search: String) {
+        listMembers(limit: $limit, page: $page, search: $search) {
+            members {
+                id
+                name
+                avatar
+                admin_level
+                is_banned
+                creation_date
+            }
+            total_count
+        }
+    }
+`, {
     variables: {
         limit: limit.value,
         page: page.value,
@@ -171,7 +185,7 @@ const { data: members, pending, error, refresh } = await useAsyncGql({
                 ...data,
                 listMembers: {
                     ...data.listMembers,
-                    members: data.listMembers.members.filter(member => member?.admin_level > 0)
+                    members: data.listMembers.members.filter(member => member?.adminLevel > 0)
                 }
             };
         }

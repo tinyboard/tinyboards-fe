@@ -356,6 +356,7 @@ import { formatDate } from "@/utils/formatDate";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { useGraphQLMutation } from '@/composables/useGraphQL';
 import type { Comment, Post, PostFragment } from "@/types/types";
 
 const route = useRoute();
@@ -434,16 +435,26 @@ const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
 
   try {
-    const { mutate } = useMutation('voteOnComment');
-    const result = await mutate({
-      id: comment.value!.id,
-      voteType: voteType.value
+    const { data: result } = await useGraphQLMutation(`
+      mutation voteOnComment($id: Int!, $voteType: Int!) {
+        voteOnComment(id: $id, voteType: $voteType) {
+          score
+          upvotes
+          downvotes
+          myVote
+        }
+      }
+    `, {
+      variables: {
+        id: comment.value!.id,
+        voteType: voteType.value
+      }
     });
-    
-    if (result.data?.voteOnComment) {
+
+    if (result.value?.voteOnComment) {
       // Update comment score from response
       if (comment.value!.score !== undefined) {
-        comment.value!.score = result.data.voteOnComment.score;
+        comment.value!.score = result.value.voteOnComment.score;
       }
     }
   } catch (error) {
@@ -502,16 +513,23 @@ const save = async () => {
   isSaving.value = true;
 
   try {
-    const { mutate } = useMutation('saveComment');
-    const result = await mutate({
-      commentId: comment.value.id,
-      save: isSaved.value
+    const { data: result } = await useGraphQLMutation(`
+      mutation saveComment($commentId: Int!, $save: Boolean!) {
+        saveComment(commentId: $commentId, save: $save) {
+          isSaved
+        }
+      }
+    `, {
+      variables: {
+        commentId: comment.value.id,
+        save: isSaved.value
+      }
     });
 
-    if (result.data?.saveComment) {
+    if (result.value?.saveComment) {
       // Update comment save status from response
-      comment.value.isSaved = result.data.saveComment.isSaved;
-      isSaved.value = result.data.saveComment.isSaved;
+      comment.value.isSaved = result.value.saveComment.isSaved;
+      isSaved.value = result.value.saveComment.isSaved;
 
       toast.addNotification({
         header: `Comment ${isSaved.value ? 'saved' : 'unsaved'}`,

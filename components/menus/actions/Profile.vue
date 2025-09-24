@@ -136,6 +136,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { useModalStore } from '@/stores/StoreModal';
 import { useToastStore } from '@/stores/StoreToast';
 import { requireFullPerms } from '@/composables/admin';
+import { useGraphQLMutation } from '@/composables/useGraphQL';
 
 const modalStore = useModalStore();
 const toast = useToastStore();
@@ -208,12 +209,19 @@ const confirmPurge = () => {
 const toggleBlockUser = async () => {
   isBlocking.value = true;
   try {
-    const { $gql } = useNuxtApp();
-
     if (props.user.isBlocked) {
       // Unblock user
-      const result = await $gql.mutation({
-        unblockUser: {
+      const mutation = `
+        mutation UnblockUser($targetId: Int!) {
+          unblockUser(targetId: $targetId) {
+            id
+            isBlocked
+          }
+        }
+      `;
+
+      const result = await useGraphQLMutation(mutation, {
+        variables: {
           targetId: props.user.id
         }
       });
@@ -228,8 +236,17 @@ const toggleBlockUser = async () => {
       }
     } else {
       // Block user
-      const result = await $gql.mutation({
-        blockUser: {
+      const mutation = `
+        mutation BlockUser($targetId: Int!) {
+          blockUser(targetId: $targetId) {
+            id
+            isBlocked
+          }
+        }
+      `;
+
+      const result = await useGraphQLMutation(mutation, {
+        variables: {
           targetId: props.user.id
         }
       });

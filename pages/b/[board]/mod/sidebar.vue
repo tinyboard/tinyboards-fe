@@ -92,6 +92,7 @@
 import { ref } from "vue";
 import { useToastStore } from "@/stores/StoreToast";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -116,21 +117,22 @@ const submitSettings = async () => {
     isLoading.value = true;
 
     try {
-        const result = await $fetch('#gql', {
-            query: `
-                mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
-                    updateBoardSettings(input: $input) {
-                        board {
-                            id
-                            name
-                            title
-                            description
-                            sidebar
-                            sidebarHTML
-                        }
+        const mutation = `
+            mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
+                updateBoardSettings(input: $input) {
+                    board {
+                        id
+                        name
+                        title
+                        description
+                        sidebar
+                        sidebarHTML
                     }
                 }
-            `,
+            }
+        `;
+
+        const { data: result } = await useGraphQLMutation(mutation, {
             variables: {
                 input: {
                     id: board.id,
@@ -139,7 +141,7 @@ const submitSettings = async () => {
             }
         });
 
-        if (result.updateBoardSettings?.board) {
+        if (result.value?.updateBoardSettings?.board) {
             // Show success toast.
             toast.addNotification({
                 header: "Settings saved",
@@ -150,12 +152,12 @@ const submitSettings = async () => {
             // Update the board store with new data
             boardStore.setBoard({
                 ...board,
-                sidebar: result.updateBoardSettings.board.sidebar,
-                sidebarHTML: result.updateBoardSettings.board.sidebarHTML
+                sidebar: result.value.updateBoardSettings.board.sidebar,
+                sidebarHTML: result.value.updateBoardSettings.board.sidebarHTML
             });
 
             // Refresh settings to reflect changes
-            settings.value.sidebar = result.updateBoardSettings.board.sidebar;
+            settings.value.sidebar = result.value.updateBoardSettings.board.sidebar;
         } else {
             throw new Error('Failed to update board sidebar');
         }

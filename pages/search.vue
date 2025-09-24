@@ -104,6 +104,7 @@
 	import { usePostsStore } from '@/stores/StorePosts';
 	import { useCommentsStore } from '@/stores/StoreComments';
 	import { useSiteStore } from '@/stores/StoreSite';
+	import { useGraphQLQuery } from '@/composables/useGraphQL';
 
 	// Define route & router.
 	const route = useRoute();
@@ -146,11 +147,95 @@
 	const postStore = usePostsStore();
 
 	// Fetch search results.
-	const { data: results, pending, error, refresh } = await useAsyncGql('searchContent', {
-		q: route.query?.query || '',
-		searchType: type.value.toUpperCase(),
-		page: page.value,
-		limit: limit.value
+	const { data: results, pending, error, refresh } = await useGraphQLQuery(`
+		query searchContent($q: String!, $searchType: String!, $page: Int!, $limit: Int!) {
+			searchContent(q: $q, searchType: $searchType, page: $page, limit: $limit) {
+				posts {
+					id
+					title
+					titleChunk
+					body
+					bodyHTML
+					url
+					score
+					upvotes
+					downvotes
+					isNSFW
+					isRemoved
+					isDeleted
+					isLocked
+					creationDate
+					updated
+					isSaved
+					myVote
+					featuredLocal
+					featuredBoard
+					commentCount
+					altText
+					embedTitle
+					embedDescription
+					embedVideoUrl
+					sourceUrl
+					lastCrawlDate
+					creator {
+						id
+						name
+						displayName
+						avatar
+						isAdmin
+						instance
+						creationDate
+						rep
+						postCount
+						commentCount
+					}
+					board {
+						id
+						name
+						icon
+					}
+				}
+				comments {
+					id
+					content
+					contentHTML
+					score
+					upvotes
+					downvotes
+					creationDate
+					updated
+					isSaved
+					myVote
+					isRemoved
+					isDeleted
+					creator {
+						id
+						name
+						displayName
+						avatar
+						isAdmin
+						instance
+						creationDate
+						rep
+						postCount
+						commentCount
+					}
+					post {
+						id
+						title
+						titleChunk
+					}
+				}
+				total_count
+			}
+		}
+	`, {
+		variables: {
+			q: route.query?.query || '',
+			searchType: type.value.toUpperCase(),
+			page: page.value,
+			limit: limit.value
+		}
 	});
 
 	const posts = computed(() => results.value?.searchContent?.posts || []);

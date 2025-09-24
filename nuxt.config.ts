@@ -4,87 +4,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 const tls = require("tls");
 
-// this is to read env vars to set the base url for graphql requests
 const process = require("process");
 tls.DEFAULT_ECDH_CURVE = "auto";
-
-// Environment validation and endpoint construction
-function validateEnvVar(name: string, fallback?: string): string {
-  const value = process.env[name];
-  if (!value && !fallback) {
-    throw new Error(`Required environment variable ${name} is not set`);
-  }
-  return value || fallback || '';
-}
-
-function validateProdEnvVar(name: string, fallback?: string): string {
-  const value = process.env[name];
-
-  // In production, require explicit values
-  if (process.env.NODE_ENV === 'production' && !value) {
-    throw new Error(`Required production environment variable ${name} is not set`);
-  }
-
-  return value || fallback || '';
-}
-
-function constructGraphQLEndpoint(): string {
-  const domain = validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536');
-  const useHttps = validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true';
-  const protocol = useHttps ? 'https' : 'http';
-  return `${protocol}://${domain}/api/v2/graphql`;
-}
-
-// Note: Server-side GraphQL endpoint is now configured via GQL_HOST environment variable in docker-compose
-
-// GraphQL configuration
-function getGraphQLConfig() {
-  const buildTimeEndpoint = constructGraphQLEndpoint();
-  const externalEndpoint = process.env.GQL_HOST || buildTimeEndpoint;
-  const internalEndpoint = process.env.NUXT_INTERNAL_GQL_HOST || 'http://tinyboards:8536/api/v2/graphql';
-
-  console.log('🔧 GraphQL Config:');
-  console.log('  Build-time endpoint (schema):', buildTimeEndpoint);
-  console.log('  External endpoint (client):', externalEndpoint);
-  console.log('  Internal endpoint (server):', internalEndpoint);
-
-  return {
-    clients: {
-      default: {
-        // Schema introspection for build-time codegen
-        schema: buildTimeEndpoint,
-        introspectionHost: buildTimeEndpoint,
-        // Primary host for server-side and fallback
-        host: externalEndpoint,
-      }
-    },
-    tokenStorage: {
-      name: 'token',
-      mode: 'cookie'
-    },
-    proxyCookies: true,
-    proxyHeaders: true,
-    autoImport: true,
-    functionPrefix: '',
-    codegen: {
-      skipDocumentsValidation: true,
-      respectGitIgnore: false,
-      silent: false,
-      verbose: true,
-      generates: {
-        '.nuxt/gql/': {
-          preset: 'client',
-          config: {
-            useTypeImports: true,
-            skipTypename: true,
-            enumsAsTypes: true,
-            documentMode: 'string'
-          }
-        }
-      }
-    }
-  };
-}
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -124,7 +45,6 @@ export default defineNuxtConfig({
   modules: [
     "@nuxtjs/tailwindcss",
     //"@nuxtjs/i18n",
-    "nuxt-graphql-client",
     "@pinia/nuxt"
   ],
 
@@ -134,10 +54,9 @@ export default defineNuxtConfig({
 
   //i18n: {},
   routeRules: {
-    // Static prerendered pages
+    // Static pages without prerender
     "/help/**": {
       static: true,
-      prerender: true,
       headers: { 'Cache-Control': 's-maxage=86400' }
     },
 
@@ -176,36 +95,24 @@ export default defineNuxtConfig({
       headers: { 'Cache-Control': 's-maxage=300' }
     },
 
-    // Static homepage redirect
+    // Homepage redirect
     "/": {
-      redirect: "/feed",
-      prerender: true
+      redirect: "/feed"
     }
   },
 
   runtimeConfig: {
     public: {
-      domain: validateProdEnvVar('NUXT_PUBLIC_DOMAIN', 'localhost:8536'),
-      use_https: validateProdEnvVar('NUXT_PUBLIC_USE_HTTPS', 'false') === 'true',
+      domain: process.env.NUXT_PUBLIC_DOMAIN || 'localhost:8536',
+      use_https: process.env.NUXT_PUBLIC_USE_HTTPS === 'true',
       // Make GraphQL endpoint available to client-side
-      GQL_HOST: process.env.NUXT_PUBLIC_GQL_HOST || process.env.GQL_HOST || constructGraphQLEndpoint(),
+      GQL_HOST: process.env.NUXT_PUBLIC_GQL_HOST || process.env.GQL_HOST,
     },
-    // GraphQL endpoint for server-side
-    GQL_HOST: process.env.GQL_HOST || constructGraphQLEndpoint(),
-    // Internal GraphQL endpoint for server-side requests
+    // Server-side only configuration
+    GQL_HOST: process.env.GQL_HOST,
     NUXT_INTERNAL_GQL_HOST: process.env.NUXT_INTERNAL_GQL_HOST || 'http://tinyboards:8536/api/v2/graphql',
   },
 
-  'graphql-client': getGraphQLConfig(),
-
-  /*apollo: {
-    clients: {
-      default: {
-        httpEndpoint: `${process.env.NUXT_PUBLIC_USE_HTTPS === "true" ? "https" : "http"}://${process.env.NUXT_PUBLIC_DOMAIN}/api/v2/graphql`,
-        tokenName: "token",
-      },
-    },
-  },*/
 
   optimizeDeps: {
     exclude: ["@vueuse/head"],

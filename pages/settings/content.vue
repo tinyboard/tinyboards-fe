@@ -39,6 +39,7 @@
 	import { ref } from 'vue';
 	// import { baseURL } from "@/server/constants";
 	import { useToastStore } from '@/stores/StoreToast';
+	import { useGraphQLQuery } from '@/composables/useGraphQL';
 
 	definePageMeta({
 		'hasAuthRequired': true,
@@ -50,14 +51,24 @@
 	const authCookie = useCookie("token").value;
 
 	// Fetch user settings using GraphQL
-	const { data, pending, error, refresh } = await useAsyncGql({
-		operation: 'getSettings'
-	});
+	const getSettingsQuery = `
+		query getSettings {
+			me {
+				bio
+				displayName
+				avatar
+				banner
+				profileBackground
+			}
+		}
+	`;
+
+	const { data, pending, error, refresh } = await useGraphQLQuery(getSettingsQuery);
 
 	// Settings.
 	let settings = ref({});
 
-	if (data.value) {
+	if (data.value?.me) {
 		settings.value = { ...JSON.parse(JSON.stringify(data.value.me)) };
 	}
 

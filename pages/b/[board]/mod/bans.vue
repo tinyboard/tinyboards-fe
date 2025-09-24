@@ -85,6 +85,7 @@ import { computed, ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { useModalStore } from '@/stores/StoreModal';
 import { useBoardStore } from '@/stores/StoreBoard';
+import { useGraphQLQuery } from '@/composables/useGraphQL';
 
 const route = useRoute();
 const boardStore = useBoardStore();
@@ -110,8 +111,30 @@ const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
 // Fetch banned users for this board using GraphQL
-const { data: bans, pending, error, refresh } = await useAsyncGql({
-    operation: 'getBoardBannedUsers',
+const query = `
+    query getBoardBannedUsers($boardId: Int!, $limit: Int!, $page: Int!) {
+        getBoardBannedUsers(boardId: $boardId, limit: $limit, page: $page) {
+            totalCount
+            bans {
+                id
+                user {
+                    id
+                    name
+                    avatar
+                }
+                expires
+                bannedAt
+                reason
+                bannerUser {
+                    id
+                    name
+                }
+            }
+        }
+    }
+`;
+
+const { data: bans, pending, error, refresh } = await useGraphQLQuery(query, {
     variables: {
         boardId: board.id,
         limit: limit.value,

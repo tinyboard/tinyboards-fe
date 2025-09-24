@@ -45,6 +45,7 @@
   import { useModalStore } from '@/stores/StoreModal';
   import { usePostsStore } from '@/stores/StorePosts';
   import { useCommentsStore } from '@/stores/StoreComments';
+  import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
   import {
     TransitionRoot,
     TransitionChild,
@@ -101,31 +102,25 @@
       if (props.options.approve) {
         // Use approve mutations
         if (type === 'post') {
-          result = await $fetch('#gql', {
-            query: `
-              mutation approvePost($postId: Int!) {
-                approvePost(postId: $postId) {
-                  success
-                }
+          result = await useDirectGraphQLRequest(`
+            mutation approvePost($postId: Int!) {
+              approvePost(postId: $postId) {
+                success
               }
-            `,
-            variables: { postId: id }
-          });
+            }
+          `, { postId: id });
         } else {
-          result = await $fetch('#gql', {
-            query: `
-              mutation approveComment($commentId: Int!) {
-                approveComment(commentId: $commentId) {
-                  success
-                }
+          result = await useDirectGraphQLRequest(`
+            mutation approveComment($commentId: Int!) {
+              approveComment(commentId: $commentId) {
+                success
               }
-            `,
-            variables: { commentId: id }
-          });
+            }
+          `, { commentId: id });
         }
 
         const mutationKey = type === 'post' ? 'approvePost' : 'approveComment';
-        if (result[mutationKey]?.success) {
+        if (result.data?.[mutationKey]?.success) {
           toast.addNotification({
             header: `${type} approved`,
             message: `The ${type} was successfully approved.`,
@@ -135,35 +130,29 @@
           throw new Error(`Failed to approve ${type}`);
         }
       } else {
-        // Use existing removal mutations
-        const { $gql } = useNuxtApp();
-
+        // Use removal mutations
         if (type === 'post') {
-          result = await $gql.mutation({
-            setPostRemoved: {
-              __args: {
-                id: id,
-                value: true
-              },
-              id: true,
-              isRemoved: true
+          result = await useDirectGraphQLRequest(`
+            mutation setPostRemoved($id: Int!, $value: Boolean!) {
+              setPostRemoved(id: $id, value: $value) {
+                id
+                isRemoved
+              }
             }
-          });
+          `, { id: id, value: true });
         } else {
-          result = await $gql.mutation({
-            setCommentRemoved: {
-              __args: {
-                id: id,
-                value: true
-              },
-              id: true,
-              isRemoved: true
+          result = await useDirectGraphQLRequest(`
+            mutation setCommentRemoved($id: Int!, $value: Boolean!) {
+              setCommentRemoved(id: $id, value: $value) {
+                id
+                isRemoved
+              }
             }
-          });
+          `, { id: id, value: true });
         }
 
         const mutationKey = type === 'post' ? 'setPostRemoved' : 'setCommentRemoved';
-        if (result[mutationKey]) {
+        if (result.data?.[mutationKey]) {
           toast.addNotification({
             header: `${type} removed`,
             message: `The ${type} was successfully removed.`,

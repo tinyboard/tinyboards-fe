@@ -1,15 +1,80 @@
-import type { 
-    GetPostQuery, 
-    GetSiteQuery, 
-    UserProfileQuery,
-    GetConversationsQuery,
-    GetConversationQuery,
-    SendMessageMutation,
-    EditMessageMutation
-} from "#gql";
-import { CommentSortType, ListingType, SortType } from "#gql/default";
+// Manually define GraphQL enum types that were previously generated
+export enum CommentSortType {
+  HOT = "hot",
+  NEW = "new",
+  OLD = "old",
+  TOP = "top"
+}
 
-export type { CommentSortType, ListingType, SortType } from "#gql/default";
+export enum ListingType {
+  ALL = "all",
+  LOCAL = "local",
+  SUBSCRIBED = "subscribed",
+  MODERATED = "moderated"
+}
+
+export enum SortType {
+  ACTIVE = "active",
+  HOT = "hot",
+  NEW = "new",
+  OLD = "old",
+  TOP_DAY = "topDay",
+  TOP_WEEK = "topWeek",
+  TOP_MONTH = "topMonth",
+  TOP_YEAR = "topYear",
+  TOP_ALL = "topAll",
+  MOST_COMMENTS = "mostComments",
+  NEW_COMMENTS = "newComments",
+  CONTROVERSIAL = "controversial"
+}
+
+// Define GraphQL response types manually
+export interface GetPostQuery {
+  post: Post;
+}
+
+export interface GetSiteQuery {
+  site: Site;
+}
+
+export interface UserProfileQuery {
+  user: Person;
+}
+
+export interface GetConversationsQuery {
+  conversations: Conversation[];
+}
+
+export interface GetConversationQuery {
+  conversation: Conversation;
+}
+
+export interface SendMessageMutation {
+  sendMessage: Message;
+}
+
+export interface EditMessageMutation {
+  editMessage: Message;
+}
+
+// Message and conversation types
+export interface Message {
+  id: number;
+  content: string;
+  createdAt: string;
+  updatedAt?: string;
+  sender: Person;
+  recipient: Person;
+  conversationId: number;
+}
+
+export interface Conversation {
+  id: number;
+  participants: Person[];
+  messages: Message[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 export type PostFragment = {
     id: number;
@@ -20,13 +85,54 @@ export type PostFragment = {
     creatorId: number;
 }
 
-export type Post = GetPostQuery["post"];
-export type Comment = Post["comments"][0] & {
-    replies?: Comment[];
-    post?: PostFragment;
-};
+// Define core types that reference other GraphQL types
+export interface Post {
+  id: number;
+  title: string;
+  content?: string;
+  url?: string;
+  isLocked: boolean;
+  isStickied: boolean;
+  isNsfw: boolean;
+  isFeatured: boolean;
+  isRemoved: boolean;
+  createdAt: string;
+  updatedAt: string;
+  voteScore: number;
+  userVote?: number;
+  author: Person;
+  board?: Board;
+  commentCount: number;
+  image?: string;
+  body?: string;
+  bodyHtml?: string;
+  comments?: Comment[];
+}
 
-export type Person = UserProfileQuery["user"];
+export interface Comment {
+  id: number;
+  content: string;
+  isRemoved: boolean;
+  createdAt: string;
+  updatedAt: string;
+  voteScore: number;
+  userVote?: number;
+  author: Person;
+  depth: number;
+  parentId?: number;
+  childCount: number;
+  replies?: Comment[];
+  post?: PostFragment;
+}
+
+export interface Person {
+  id: number;
+  username: string;
+  displayName?: string;
+  avatar?: string;
+  isBlocked?: boolean;
+  is_admin?: boolean;
+}
 
 // User interaction types
 export type UserFollowersResponse = {
@@ -41,9 +147,33 @@ export type PendingFollowRequestsResponse = {
     pendingFollowRequests: Person[];
 };
 
-export type Site = GetSiteQuery["site"];
+export interface Site {
+  id: number;
+  name: string;
+  description?: string;
+  icon?: string;
+  banner?: string;
+  enableBoards: boolean;
+  isPrivate: boolean;
+  requireRegistrationCode: boolean;
+}
 
-export type Board = GetSiteQuery["board"];
+export interface Board {
+  id: number;
+  name: string;
+  displayName?: string;
+  description?: string;
+  icon?: string;
+  banner?: string;
+  isNsfw: boolean;
+  primaryColor?: string;
+  secondaryColor?: string;
+  hoverColor?: string;
+  myModPermissions?: number;
+  subscribers: number;
+  exclude_from_all?: boolean;
+  isBanned?: boolean;
+}
 
 export type BoardFragment = {
     id: number;
@@ -130,57 +260,63 @@ export type ListingType = "all" | "local" | "subscribed" | "moderated";
 
 //export type SortType = GqlSortType;
 
-export function mapToSortType(sort: string, fallback: SortType = SortType.Hot): SortType {
+export function mapToSortType(sort: string, fallback: SortType = SortType.HOT): SortType {
     switch (sort.toLowerCase()) {
+        case "active":
+            return SortType.ACTIVE;
         case "hot":
-            return SortType.Hot;
+            return SortType.HOT;
         case "new":
-            return SortType.New;
-        case "topall":
-            return SortType.TopAll;
-        case "topmonth":
-            return SortType.TopMonth;
-        case "topweek":
-            return SortType.TopWeek;
-        case "topday":
-            return SortType.TopDay;
-        case "mostcomments":
-            return SortType.MostComments;
-        case "newcomments":
-            return SortType.NewComments;
-        case "controversial":
-            return SortType.Controversial;
-        default:
-            return fallback;
-    }
-}
-
-export function mapToCommentSortType(sort: string, fallback: CommentSortType = CommentSortType.Hot): CommentSortType {
-    switch (sort.toLowerCase()) {
-        case "hot":
-            return CommentSortType.Hot;
-        case "new":
-            return CommentSortType.New;
+            return SortType.NEW;
         case "old":
-            return CommentSortType.Old;
-        case "top":
-            return CommentSortType.Top;
+            return SortType.OLD;
+        case "topday":
+            return SortType.TOP_DAY;
+        case "topweek":
+            return SortType.TOP_WEEK;
+        case "topmonth":
+            return SortType.TOP_MONTH;
+        case "topyear":
+            return SortType.TOP_YEAR;
+        case "topall":
+            return SortType.TOP_ALL;
+        case "mostcomments":
+            return SortType.MOST_COMMENTS;
+        case "newcomments":
+            return SortType.NEW_COMMENTS;
+        case "controversial":
+            return SortType.CONTROVERSIAL;
         default:
             return fallback;
     }
 }
 
-export function mapToListingType(sort: string, fallback: ListingType = ListingType.Local): ListingType {
+export function mapToCommentSortType(sort: string, fallback: CommentSortType = CommentSortType.HOT): CommentSortType {
+    switch (sort.toLowerCase()) {
+        case "hot":
+            return CommentSortType.HOT;
+        case "new":
+            return CommentSortType.NEW;
+        case "old":
+            return CommentSortType.OLD;
+        case "top":
+            return CommentSortType.TOP;
+        default:
+            return fallback;
+    }
+}
+
+export function mapToListingType(sort: string, fallback: ListingType = ListingType.LOCAL): ListingType {
     switch (sort.toLowerCase()) {
         case "local":
-            return ListingType.Local;
+            return ListingType.LOCAL;
         case "subscribed":
         case "joined":
-            return ListingType.Subscribed;
+            return ListingType.SUBSCRIBED;
         case "moderated":
-            return ListingType.Moderated;
+            return ListingType.MODERATED;
         case "all":
-            return ListingType.All;
+            return ListingType.ALL;
         default:
             return fallback;
     }

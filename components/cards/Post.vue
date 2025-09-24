@@ -493,6 +493,7 @@ import { canEmbedImage } from "@/composables/images";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useSiteStore } from "@/stores/StoreSite";
+import { useGraphQLMutation } from '@/composables/useGraphQL';
 //import { toHexCode } from "@/composables/colors";
 
 // Modals & Toasts
@@ -570,16 +571,26 @@ const vote = async (type = 0) => {
   voteType.value = voteType.value === type ? 0 : type;
   
   try {
-    const { mutate } = useMutation('voteOnPost');
-    const result = await mutate({
-      id: props.post.id,
-      voteType: voteType.value
+    const { data: result } = await useGraphQLMutation(`
+      mutation voteOnPost($id: Int!, $voteType: Int!) {
+        voteOnPost(id: $id, voteType: $voteType) {
+          score
+          upvotes
+          downvotes
+          myVote
+        }
+      }
+    `, {
+      variables: {
+        id: props.post.id,
+        voteType: voteType.value
+      }
     });
-    
-    if (result.data?.voteOnPost) {
+
+    if (result.value?.voteOnPost) {
       // Update post score from response
       if (props.post.score !== undefined) {
-        props.post.score = result.data.voteOnPost.score;
+        props.post.score = result.value.voteOnPost.score;
       }
     }
   } catch (error) {
@@ -603,15 +614,22 @@ const save = async () => {
   isSaveLoading.value = true;
 
   try {
-    const { mutate } = useMutation('savePost');
-    const result = await mutate({
-      postId: props.post.id,
-      save: isSaved.value
+    const { data: result } = await useGraphQLMutation(`
+      mutation savePost($postId: Int!, $save: Boolean!) {
+        savePost(postId: $postId, save: $save) {
+          isSaved
+        }
+      }
+    `, {
+      variables: {
+        postId: props.post.id,
+        save: isSaved.value
+      }
     });
 
-    if (result.data?.savePost) {
+    if (result.value?.savePost) {
       // Update the post's save status from the response
-      isSaved.value = result.data.savePost.isSaved;
+      isSaved.value = result.value.savePost.isSaved;
     }
   } catch (error) {
     // Revert failed save & show error toast

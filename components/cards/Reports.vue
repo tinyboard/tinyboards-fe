@@ -59,23 +59,8 @@
 		open.value = !open.value;
 		if (reports.value.length === 0) {
 			try {
-				const result = await $fetch('#gql', {
-					query: `
-						query getReports($type: String!, $targetId: Int!, $unresolvedOnly: Boolean) {
-							getReports(type: $type, targetId: $targetId, unresolvedOnly: $unresolvedOnly) {
-								id
-								reason
-								resolved
-								creationDate
-								createdBy {
-									id
-									name
-									displayName
-									avatar
-								}
-							}
-						}
-					`,
+				const { data: result } = await useAsyncGql({
+					operation: 'getReports',
 					variables: {
 						type: props.type,
 						targetId: props.id,
@@ -83,8 +68,8 @@
 					}
 				});
 
-				if (result?.getReports) {
-					reports.value = result.getReports.map(report => ({
+				if (result.value?.getReports) {
+					reports.value = result.value.getReports.map(report => ({
 						data: {
 							id: report.id,
 							reason: report.reason

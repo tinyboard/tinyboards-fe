@@ -59,7 +59,6 @@ export const useLoggedInUser = defineStore("auth", {
           mutation Login($usernameOrEmail: String!, $password: String!) {
             login(usernameOrEmail: $usernameOrEmail, password: $password) {
               token
-              registration_application_required
             }
           }
         `, { usernameOrEmail: nameOrEmail, password })
@@ -76,12 +75,14 @@ export const useLoggedInUser = defineStore("auth", {
               query GetLoggedInUser {
                 me {
                   id
-                  username
-                  display_name
+                  name
+                  displayName
                   avatar
-                  boards_moderating {
-                    id
-                    name
+                  moderates {
+                    board {
+                      id
+                      name
+                    }
                   }
                   is_admin
                 }
@@ -160,12 +161,14 @@ export const useLoggedInUser = defineStore("auth", {
               query GetLoggedInUser {
                 me {
                   id
-                  username
-                  display_name
+                  name
+                  displayName
                   avatar
-                  boards_moderating {
-                    id
-                    name
+                  moderates {
+                    board {
+                      id
+                      name
+                    }
                   }
                   is_admin
                 }

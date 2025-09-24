@@ -161,6 +161,7 @@ import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
 // import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
+import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 //import { useLoggedInUser } from '@/stores/StoreAuth';
 //import { useModalStore } from "@/stores/StoreModal";
 import { useImageStore } from '@/stores/StoreImages';
@@ -187,7 +188,26 @@ const imageStore = useImageStore();
 const UPDATE_SETTINGS_MUTATION = 'updateUserSettings';
 
 const settings = ref({});
-const { data } = await useAsyncGql({ operation: 'getSettings' });
+const query = `
+  query GetSettings {
+    me {
+      id
+      username
+      displayName
+      email
+      bio
+      avatar
+      banner
+      showBots
+      showReadPosts
+      showNsfw
+      defaultListingType
+      defaultSortType
+    }
+  }
+`;
+
+const { data } = await useGraphQLQuery(query);
 if (data.value.me) {
 	const s = data.value.me;
 	settings.value = {
@@ -230,15 +250,17 @@ const isRemoving = ref({
 const removeAvatar = async () => {
 	isRemoving.value.avatar = true;
 	try {
-		const { $gql } = useNuxtApp();
-		const result = await $gql.mutation({
-			removeAvatar: {
-				id: true,
-				avatar: true
+		const mutation = `
+			mutation RemoveAvatar {
+				removeAvatar {
+					id
+					avatar
+				}
 			}
-		});
+		`;
+		const result = await useGraphQLMutation(mutation);
 
-		if (result.removeAvatar) {
+		if (result.data.value?.removeAvatar) {
 			settings.value.avatar = null;
 			imageStore.purgeAvatar();
 			toast.addNotification({
@@ -263,15 +285,17 @@ const removeAvatar = async () => {
 const removeBanner = async () => {
 	isRemoving.value.banner = true;
 	try {
-		const { $gql } = useNuxtApp();
-		const result = await $gql.mutation({
-			removeBanner: {
-				id: true,
-				banner: true
+		const mutation = `
+			mutation RemoveBanner {
+				removeBanner {
+					id
+					banner
+				}
 			}
-		});
+		`;
+		const result = await useGraphQLMutation(mutation);
 
-		if (result.removeBanner) {
+		if (result.data.value?.removeBanner) {
 			settings.value.banner = null;
 			imageStore.purgeBanner();
 			toast.addNotification({
@@ -296,15 +320,17 @@ const removeBanner = async () => {
 const clearBio = async () => {
 	isRemoving.value.bio = true;
 	try {
-		const { $gql } = useNuxtApp();
-		const result = await $gql.mutation({
-			clearBio: {
-				id: true,
-				bio: true
+		const mutation = `
+			mutation ClearBio {
+				clearBio {
+					id
+					bio
+				}
 			}
-		});
+		`;
+		const result = await useGraphQLMutation(mutation);
 
-		if (result.clearBio) {
+		if (result.data.value?.clearBio) {
 			settings.value.bio = '';
 			toast.addNotification({
 				header: "Bio cleared",

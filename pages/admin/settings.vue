@@ -188,6 +188,7 @@ import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
 import { useToastStore } from '@/stores/StoreToast';
 import { dataURLtoFile } from '@/utils/files';
+import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -201,10 +202,28 @@ definePageMeta({
 const toast = useToastStore();
 const authCookie = useCookie("token").value;
 
-// Fetch site settings.
-const { data: siteData, pending, error, refresh } = await useAsyncGql({
-  operation: 'getSite'
-});
+// Fetch site settings using GraphQL with explicit query string
+const { data: siteData, pending, error, refresh } = await useGraphQLQuery(`
+  query GetSite {
+    site {
+      name
+      description
+      welcome_message
+      icon
+      enable_downvotes
+      primary_color
+      secondary_color
+      hover_color
+      site_mode
+      registration_mode
+      enable_nsfw
+      application_question
+      private_instance
+      email_verification_required
+      default_avatar
+    }
+  }
+`);
 const data = computed(() => ({ value: siteData.value?.site }));
 
 // Convert colors from rgb to hex
@@ -295,28 +314,49 @@ const submitSettings = async () => {
 			settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
 		}
 
-		const { mutate } = useMutation('updateSiteConfig');
-		const result = await mutate({
-			input: {
-				name: settings.value.name,
-				description: settings.value.description,
-				welcome_message: settings.value.welcome_message,
-				icon: settings.value.icon,
-				enable_downvotes: settings.value.enable_downvotes,
-				primary_color: toRGB(primaryColor.value),
-				secondary_color: toRGB(secondaryColor.value),
-				hover_color: toRGB(hoverColor.value),
-				site_mode: settings.value.site_mode,
-				registration_mode: settings.value.registration_mode,
-				enable_nsfw: settings.value.enable_nsfw,
-				application_question: settings.value.application_question,
-				private_instance: settings.value.private_instance,
-				email_verification_required: settings.value.email_verification_required,
-				default_avatar: settings.value.default_avatar
+		const { data: result } = await useGraphQLMutation(`
+			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+				updateSiteConfig(input: $input) {
+					name
+					description
+					welcome_message
+					icon
+					enable_downvotes
+					primary_color
+					secondary_color
+					hover_color
+					site_mode
+					registration_mode
+					enable_nsfw
+					application_question
+					private_instance
+					email_verification_required
+					default_avatar
+				}
+			}
+		`, {
+			variables: {
+				input: {
+					name: settings.value.name,
+					description: settings.value.description,
+					welcome_message: settings.value.welcome_message,
+					icon: settings.value.icon,
+					enable_downvotes: settings.value.enable_downvotes,
+					primary_color: toRGB(primaryColor.value),
+					secondary_color: toRGB(secondaryColor.value),
+					hover_color: toRGB(hoverColor.value),
+					site_mode: settings.value.site_mode,
+					registration_mode: settings.value.registration_mode,
+					enable_nsfw: settings.value.enable_nsfw,
+					application_question: settings.value.application_question,
+					private_instance: settings.value.private_instance,
+					email_verification_required: settings.value.email_verification_required,
+					default_avatar: settings.value.default_avatar
+				}
 			}
 		});
 
-		if (result.data?.updateSiteConfig) {
+		if (result.value?.updateSiteConfig) {
 			// Show success toast
 			toast.addNotification({ 
 				header: 'Settings saved', 

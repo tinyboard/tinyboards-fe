@@ -48,6 +48,7 @@
 
 <script setup>
 	import { useToastStore } from "@/stores/StoreToast";
+	import { useGraphQLQuery } from '@/composables/useGraphQL';
 
 	// Simple debounce implementation
 	const debounce = (func, wait) => {
@@ -80,8 +81,16 @@
 
 		isSearching.value = true;
 		try {
-			const { data: result } = await useAsyncGql({
-				operation: 'listMembers',
+			const { data: result } = await useGraphQLQuery(`
+				query listMembers($searchTerm: String!, $limit: Int!, $page: Int!, $sort: String!, $listingType: String!) {
+					listUsers(searchTerm: $searchTerm, limit: $limit, page: $page, sort: $sort, listingType: $listingType) {
+						id
+						name
+						displayName
+						avatar
+					}
+				}
+			`, {
 				variables: {
 					searchTerm: username.value.trim(),
 					limit: 20,

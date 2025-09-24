@@ -151,11 +151,11 @@ const permissions = [
   },
 ]
 
-const permissionCode = ref(props.options.user?.admin_level || 0);
+const permissionCode = ref(props.options.user?.adminLevel || 0);
 const fullPermsEnabled = computed(() => (permissionCode.value & PERMISSIONS["full"]) > 0);
 
 watch(
-  () => props.options.user?.admin_level,
+  () => props.options.user?.adminLevel,
   newLevel => permissionCode.value = newLevel || 0
 );
 
