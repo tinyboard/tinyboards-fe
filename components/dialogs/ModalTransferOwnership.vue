@@ -52,7 +52,7 @@
                                     <div class="p-2 border border-red-600 rounded">
                                         <p class="text-red-600 font-bold">This operation cannot be undone. Make sure you
                                             trust
-                                            the person you're giving ownership to.</p>
+                                            the user you're giving ownership to.</p>
                                     </div>
                                     <p class="text-gray-700">You will be prompted to confirm your password to finish the
                                         ownership

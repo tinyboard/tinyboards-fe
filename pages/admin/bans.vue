@@ -34,23 +34,23 @@
                 </span>
             </div>
             <!-- Rows -->
-            <ul v-if="bans?.listBannedUsers?.persons?.length" class="flex flex-col">
-                <li v-for="v in bans.listBannedUsers.persons" :key="v.person.id"
+            <ul v-if="bans?.listBannedUsers?.users?.length" class="flex flex-col">
+                <li v-for="v in bans.listBannedUsers.users" :key="v.id"
                     class="relative group grid grid-cols-6 px-4 py-2 odd:bg-gray-50 hover:bg-gray-100 border-b last:border-0 shadow-inner-white">
-                    <NuxtLink external :to="`/@${v.person.name}`" target="_blank" class="col-span-3">
+                    <NuxtLink external :to="`/@${v.name}`" target="_blank" class="col-span-3">
                         <div class="flex grow-0">
                             <div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2">
-                                <img :src="v.person.avatar" class="w-8 h-8 rounded-sm" />
-                                <p class="text-primary font-semibold">{{ v.person.name }}</p>
+                                <img :src="v.avatar" class="w-8 h-8 rounded-sm" />
+                                <p class="text-primary font-semibold">{{ v.name }}</p>
                             </div>
                         </div>
                     </NuxtLink>
                     <div class="col-span-1 flex items-center">
-                        {{ v.person.unbanDate ? `in ${daysUntilUnban(v.person)} day(s)` : "never" }}
+                        {{ v.unbanDate ? `in ${daysUntilUnban(v)} day(s)` : "never" }}
                     </div>
                     <div class="col-span-2 flex justify-end">
-                        <button @click="() => confirmUnban(v.person)" class="px-1 text-gray-500 hover:text-green-600"
-                            :title="`Unban @${v.person.name}`">
+                        <button @click="() => confirmUnban(v)" class="px-1 text-gray-500 hover:text-green-600"
+                            :title="`Unban @${v.name}`">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -112,13 +112,11 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 const { data: bans, pending, error, refresh } = await useGraphQLQuery(`
     query ListBannedUsers($limit: Int!, $page: Int!) {
         listBannedUsers(limit: $limit, page: $page) {
-            persons {
-                person {
-                    id
-                    name
-                    avatar
-                    unbanDate
-                }
+            users {
+                id
+                name
+                avatar
+                unbanDate
             }
             totalCount
         }

@@ -165,14 +165,14 @@ export async function usePosts(listingType: ListingType) {
 /**
  * Use this when a list of posts is alreday available, but you need to be able to load more for eg. pagination. 
  */
-export function usePreloadedPosts(posts: Post[], personId = null) {
+export function usePreloadedPosts(posts: Post[], userId = null) {
   const postsStore = usePostsStore();
   postsStore.setPosts(posts);
 
   const loading = ref(false);
 
-  if (personId) {
-    postsStore.setUserId(personId);
+  if (userId) {
+    postsStore.setUserId(userId);
   }
 
   return usePagination();

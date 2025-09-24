@@ -2,8 +2,8 @@
 <template>
     <Combobox as="div" v-model="selectedUser">
         <div class="flex items-center w-full p-1 border-[1px] border-gray-300 rounded focus-within:ring-2">
-            <div v-if="selectedUser.hasOwnProperty('person')" class="p-[2px] border-[0.5px] border-gray-400 mr-2">
-                <img loading="lazy" :src="selectedUser.person.avatar" alt="avatar"
+            <div v-if="selectedUser.hasOwnProperty('user')" class="p-[2px] border-[0.5px] border-gray-400 mr-2">
+                <img loading="lazy" :src="selectedUser.user.avatar" alt="avatar"
                     class="flex-shrink-0 object-cover w-8 h-8 md:w-10 md:h-10" />
             </div>
             <div v-else class="border-dashed border-[2px] border-gray-400 p-2 mr-2">
@@ -19,21 +19,21 @@
             <h3 class="text-gray-500 text-[15px] font-semibold">@</h3>
             <ComboboxInput class="border-0 px-0 font-semibold text-gray-800 flex-grow mr-2 focus:ring-0"
                 style="font-size: 15px !important;" placeholder="Enter username..." @change="query = $event.target.value"
-                :display-value="(v) => v.person?.name ?? ''" />
+                :display-value="(v) => v.user?.name ?? ''" />
         </div>
         <ComboboxOptions>
             <div class="absolute bg-white w-full max-w-[26rem] z-[999] py-2 rounded  shadow-2xl overflow-visible">
-                <ComboboxOption as="template" v-for="v in users" :key="v.person.id" :value="v" v-slot="{ active }">
+                <ComboboxOption as="template" v-for="v in users" :key="v.user.id" :value="v" v-slot="{ active }">
                     <div class="flex items-center w-full p-1 hover:bg-gray-300 cursor-pointer" :class="{
                         'bg-primary bg-opacity-20 hover:bg-opacity-30': active,
                         'bg-transparent hover:bg-gray-300': !active
                     }">
                         <div class="p-[2px] border-[0.5px] border-gray-400 mr-2">
-                            <img loading="lazy" :src="v.person.avatar" alt="avatar"
+                            <img loading="lazy" :src="v.user.avatar" alt="avatar"
                                 class="flex-shrink-0 object-cover w-8 h-8 md:w-10 md:h-10" />
                         </div>
                         <h3 class="text-gray-500 text-[15px] font-semibold">@</h3>
-                        <h3 class="text-gray-800 text-[15px] font-semibold">{{ v.person.name }}</h3>
+                        <h3 class="text-gray-800 text-[15px] font-semibold">{{ v.user.name }}</h3>
                     </div>
                 </ComboboxOption>
             </div>
@@ -66,7 +66,7 @@ const allowBanned = props.allowBanned || false;
 watch(
     () => selectedUser.value,
     u => {
-        emit("update:modelValue", u.person.name);
+        emit("update:modelValue", u.user.name);
     }
 )
 
@@ -116,7 +116,7 @@ watch(
         // Transform GraphQL response to match expected format
         if (data.value?.listMembers?.members) {
             users.value = data.value.listMembers.members.map(user => ({
-                person: {
+                user: {
                     name: user.name,
                     displayName: user.displayName,
                     avatar: user.avatar,

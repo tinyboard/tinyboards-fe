@@ -318,18 +318,18 @@
             >
                 <li
                     v-for="mod in mods.value.slice(0, 6)"
-                    :key="mod.person.id"
+                    :key="mod.user.id"
                     class="pt-2 first:pt-0"
                 >
                     <NuxtLink
-                        :to="`/@${mod.person.name}`"
+                        :to="`/@${mod.user.name}`"
                         class="flex space-x-2"
                     >
                         <img
                             loading="lazy"
                             class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
                             :src="
-                                mod.person.avatar ??
+                                mod.user.avatar ??
                                 'https://placekitten.com/36/36'
                             "
                         />
@@ -338,16 +338,16 @@
                         >
                             <div class="flex">
                                 <strong class="text-sm">{{
-                                    mod.person.displayName ?? mod.person.name
+                                    mod.user.displayName ?? mod.user.name
                                 }}</strong>
                                 <span
-                                    v-if="mod.person.isAdmin"
+                                    v-if="mod.user.isAdmin"
                                     class="ml-1 badge badge-red"
                                     >Admin</span
                                 >
                             </div>
                             <small class="text-gray-400 block">
-                                {{ mod.person.name }}
+                                {{ mod.user.name }}
                             </small>
                         </div>
                     </NuxtLink>

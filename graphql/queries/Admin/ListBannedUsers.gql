@@ -1,6 +1,6 @@
 query listBannedUsers($page: Int, $limit: Int) {
   listBannedUsers(page: $page, limit: $limit) {
-    persons {
+    users {
       id
       name
       displayName

@@ -41,7 +41,7 @@ export const commentFragment = gql`
 `;
 
 export const userFragment = gql`
-	fragment UserFragment on Person {
+	fragment UserFragment on User {
 		id
 		name
 		displayName

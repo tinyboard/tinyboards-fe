@@ -54,21 +54,21 @@
       </div>
       <ul class="flex flex-col space-y-2 divide-y divide-gray-200/50">
         <li
-          v-for="person in users.members"
-          :key="person.id"
+          v-for="user in users.members"
+          :key="user.id"
           class="pt-2 first:pt-0"
         >
-          <NuxtLink :to="`/@${person.person.name}`" class="flex space-x-2">
+          <NuxtLink :to="`/@${user.name}`" class="flex space-x-2">
             <img
               loading="lazy"
               class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-              :src="person.person.avatar ?? 'https://placekitten.com/36/36'"
+              :src="user.avatar ?? 'https://placekitten.com/36/36'"
             />
             <div class="flex flex-col justify-center leading-normal">
               <div class="flex">
-                <strong class="text-sm">{{ person.person.name }}</strong>
+                <strong class="text-sm">{{ user.name }}</strong>
                 <!-- Role -->
-                <span v-if="person.person.isAdmin" class="ml-1 badge badge-red"
+                <span v-if="user.isAdmin" class="ml-1 badge badge-red"
                   >Admin</span
                 >
               </div>
@@ -76,7 +76,7 @@
                 Since
                 <span class="font-medium">
                   {{
-                    format(parseISO(person.person.creationDate), "MMM dd, yyyy")
+                    format(parseISO(user.creationDate), "MMM dd, yyyy")
                   }}
                 </span>
               </small>
@@ -141,15 +141,14 @@ const users = computed(() => {
 
   return {
     members: usersData.value.listMembers.members.map(user => ({
-      person: {
-        name: user.name,
-        displayName: user.displayName,
-        avatar: user.avatar,
-        banner: user.banner || user.profileBackground,
-        bio: user.bio,
-        creationDate: user.creationDate,
-        isAdmin: user.adminLevel > 0
-      }
+      id: user.id,
+      name: user.name,
+      displayName: user.displayName,
+      avatar: user.avatar,
+      banner: user.banner || user.profileBackground,
+      bio: user.bio,
+      creationDate: user.creationDate,
+      isAdmin: user.adminLevel > 0
     }))
   };
 });

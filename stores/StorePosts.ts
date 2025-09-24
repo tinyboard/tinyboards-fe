@@ -16,7 +16,7 @@ interface PostsStoreState {
     sort: SortType,
     listingType: ListingType,
     boardId: number | null,
-    personId: number | null
+    userId: number | null
   }
 }
 
@@ -30,7 +30,7 @@ export const usePostsStore = defineStore("posts", {
       sort: mapToSortType("hot"),
       listingType: mapToListingType("local"),
       boardId: null,
-      personId: null
+      userId: null
     },
     //paginationFunction: () => {},  
   }),
@@ -64,8 +64,8 @@ export const usePostsStore = defineStore("posts", {
       this.options.listingType = listingType;
 
       const query = `
-        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
-          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, personId: $personId) {
+        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $boardId: Int, $userId: Int, $includeBoard: Boolean!) {
+          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, userId: $userId) {
             id
             title
             content
@@ -189,7 +189,7 @@ export const usePostsStore = defineStore("posts", {
       this.posts = posts;
     },
     setUserId(id: number) {
-      this.options.personId = id;
+      this.options.userId = id;
     },
     extend(posts: Post[]) {
       this.posts.concat(posts);
@@ -203,8 +203,8 @@ export const usePostsStore = defineStore("posts", {
       // I can't believe this shit really works
 
       const query = `
-        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $boardId: Int, $personId: Int, $includeBoard: Boolean!) {
-          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, personId: $personId) {
+        query ListPosts($page: Int!, $limit: Int!, $sort: SortType!, $listingType: ListingType!, $boardId: Int, $userId: Int, $includeBoard: Boolean!) {
+          listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, userId: $userId) {
             id
             title
             content
@@ -250,7 +250,7 @@ export const usePostsStore = defineStore("posts", {
     },
     clear() {
       this.posts = [];
-      this.options.personId = null;
+      this.options.userId = null;
     },
   },
 });

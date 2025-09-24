@@ -30,7 +30,7 @@
                         class="w-full col-span-full md:col-span-2 lg:col-span-1"
                     >
                         <NuxtLink
-                            :to="`/@${member.person.name}`"
+                            :to="`/@${member.name}`"
                             class="relative flex flex-col sm:rounded-md bg-white hover:bg-gray-50 border-y sm:border shadow-inner-white"
                         >
                             <div class="w-full flex flex-col">
@@ -38,7 +38,7 @@
                                 <div
                                     class="h-24 w-full sm:rounded-t-md bg-primary/20"
                                     :style="{
-                                        backgroundImage: `url(${member.person.banner})`,
+                                        backgroundImage: `url(${member.banner})`,
                                         backgroundSize: 'cover',
                                         backgroundRepeat: 'no-repeat',
                                     }"
@@ -46,7 +46,7 @@
                                 <!-- Pfp and username -->
                                 <div class="flex flex-row p-2 space-x-2">
                                     <img
-                                        :src="member.person.avatar"
+                                        :src="member.avatar"
                                         class="w-16 h-16 rounded-md bg-white p-0.5 mt-[-20px]"
                                     />
                                     <div class="flex flex-col">
@@ -54,14 +54,14 @@
                                             class="text-lg font-semibold text-gray-800"
                                         >
                                             {{
-                                                member.person.displayName ??
-                                                member.person.name
+                                                member.displayName ??
+                                                member.name
                                             }}
                                         </h3>
                                         <p class="text-sm text-gray-600">
-                                            {{ member.person.name }}
+                                            {{ member.name }}
                                             <span
-                                                v-if="member.person.isAdmin"
+                                                v-if="member.isAdmin"
                                                 class="ml-2 badge badge-large badge-red"
                                             >
                                                 Admin
@@ -257,14 +257,13 @@ const members = computed(() => {
 
     return {
         members: membersData.value.listUsers.map(user => ({
-            person: {
-                name: user.name,
-                displayName: user.displayName,
-                avatar: user.avatar,
-                banner: user.banner || user.profileBackground,
-                bio: user.bio,
-                isAdmin: user.isAdmin
-            },
+            id: user.id,
+            name: user.name,
+            displayName: user.displayName,
+            avatar: user.avatar,
+            banner: user.banner || user.profileBackground,
+            bio: user.bio,
+            isAdmin: user.isAdmin,
             counts: {
                 rep: user.rep,
                 postCount: user.postCount,

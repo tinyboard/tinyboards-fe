@@ -27,7 +27,7 @@ query listPosts(
   $limit: Int
   $boardId: Int
   $userId: Int
-  $personName: String
+  $userName: String
   $boardName: String
   $savedOnly: Boolean
   $includeBoard: Boolean!
@@ -39,7 +39,7 @@ query listPosts(
     limit: $limit
     boardId: $boardId
     userId: $userId
-    personName: $personName
+    userName: $userName
     boardName: $boardName
     savedOnly: $savedOnly
   ) {

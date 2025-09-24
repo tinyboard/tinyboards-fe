@@ -22,7 +22,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         key: `get_user_${jwt}`,
       }).then(({ data, error }) => {
         if (data.value) {
-          userStore.user = data.value.person;
+          userStore.user = data.value.user;
           userStore.counts = data.value.counts;
           userStore.unread = data.value.unread_notifications;
           userStore.token = jwt;

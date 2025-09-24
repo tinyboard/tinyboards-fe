@@ -116,7 +116,6 @@ if (error.value && error.value.response) {
     });
 }*/
 
-//const personView = userData.value.person_view;
 const user = userData.value?.user;
 const moderates = user?.moderates || [];
 

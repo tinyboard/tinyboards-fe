@@ -63,14 +63,14 @@ export interface Message {
   content: string;
   createdAt: string;
   updatedAt?: string;
-  sender: Person;
-  recipient: Person;
+  sender: User;
+  recipient: User;
   conversationId: number;
 }
 
 export interface Conversation {
   id: number;
-  participants: Person[];
+  participants: User[];
   messages: Message[];
   createdAt: string;
   updatedAt: string;
