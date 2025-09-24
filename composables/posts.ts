@@ -1,6 +1,7 @@
 import { ref, computed } from "vue";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useAPI } from "@/composables/api";
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 import type { Post, ListingType } from "@/types/types";
 
 /**
@@ -231,14 +232,77 @@ export async function getModQueue(query: any, type_: string) {
   let totalCount = ref(0);
 
   async function request(query: any) {
-    const { data, pending, error, refresh } = await useAsyncGql({
-      operation: 'getModerationQueue',
+    const query_str = `
+      query GetModerationQueue($limit: Int!, $page: Int!, $type: String!) {
+        getModerationQueue(limit: $limit, page: $page, type: $type) {
+          totalCount
+          posts {
+            id
+            title
+            content
+            url
+            isLocked
+            isStickied
+            isNsfw
+            isFeatured
+            isRemoved
+            createdAt
+            updatedAt
+            voteScore
+            userVote
+            board {
+              id
+              name
+              displayName
+              description
+              icon
+              banner
+              isNsfw
+            }
+            author {
+              id
+              username
+              displayName
+              avatar
+            }
+            commentCount
+            image
+            body
+            bodyHtml
+          }
+          comments {
+            id
+            content
+            isRemoved
+            createdAt
+            updatedAt
+            voteScore
+            userVote
+            author {
+              id
+              username
+              displayName
+              avatar
+            }
+            depth
+            parentId
+            childCount
+          }
+        }
+      }
+    `;
+
+    const result = await useGraphQLQuery(query_str, {
       variables: {
         limit: query.limit || 25,
         page: query.page || 1,
         type: type_
       }
     });
+
+    const { data, error } = result;
+    const pending = ref(false);
+    const refresh = () => Promise.resolve();
 
     if (data.value?.getModerationQueue) {
       const queueData = data.value.getModerationQueue;

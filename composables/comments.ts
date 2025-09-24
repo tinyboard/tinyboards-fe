@@ -1,20 +1,41 @@
 import { ref } from "vue";
-
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 import { useAPI } from "@/composables/api";
 
 export async function usePostComments(id, query = {}) {
-  const {
-    data: listing,
-    pending,
-    error,
-    refresh,
-  } = await useAsyncGql({
-    operation: 'listComments',
+  const query_str = `
+    query ListComments($postId: Int!, $sort: CommentSortType, $limit: Int, $page: Int) {
+      listComments(postId: $postId, sort: $sort, limit: $limit, page: $page) {
+        id
+        content
+        isRemoved
+        createdAt
+        updatedAt
+        voteScore
+        userVote
+        author {
+          id
+          username
+          displayName
+          avatar
+        }
+        depth
+        parentId
+        childCount
+      }
+    }
+  `;
+
+  const result = await useGraphQLQuery(query_str, {
     variables: {
       postId: id,
       ...query
     }
   });
+
+  const { data: listing, error } = result;
+  const pending = ref(false);
+  const refresh = () => Promise.resolve();
 
   let comments = ref([]);
   if (!error.value && listing.value?.listComments) {
@@ -34,15 +55,36 @@ export async function useComments(id, type = "post", query = {}, post_id) {
     ? { postId: id, ...query }
     : { commentId: id, postId: post_id, ...query };
 
-  const {
-    data: listing,
-    pending,
-    error,
-    refresh,
-  } = await useAsyncGql({
-    operation: 'listComments',
+  const query_str = `
+    query ListComments($postId: Int, $commentId: Int, $sort: CommentSortType, $limit: Int, $page: Int) {
+      listComments(postId: $postId, commentId: $commentId, sort: $sort, limit: $limit, page: $page) {
+        id
+        content
+        isRemoved
+        createdAt
+        updatedAt
+        voteScore
+        userVote
+        author {
+          id
+          username
+          displayName
+          avatar
+        }
+        depth
+        parentId
+        childCount
+      }
+    }
+  `;
+
+  const result = await useGraphQLQuery(query_str, {
     variables
   });
+
+  const { data: listing, error } = result;
+  const pending = ref(false);
+  const refresh = () => Promise.resolve();
 
   let comments = ref([]);
   if (!error.value && listing.value?.listComments) {

@@ -1,6 +1,7 @@
 import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 import { ref } from "vue";
 import type { Comment, Post } from "@/types/types";
 
@@ -67,12 +68,18 @@ export async function editPost(id: number, newBody: string): Promise<{
   bodyHTML: string;
 }> {
   try {
-    const { data } = await useAsyncGql({
-      operation: 'editPost',
-      variables: {
-        id,
-        body: newBody
+    const mutation = `
+      mutation EditPost($id: Int!, $body: String!) {
+        editPost(id: $id, body: $body) {
+          body
+          bodyHTML
+        }
       }
+    `;
+
+    const { data } = await useGraphQLMutation(mutation, {
+      id,
+      body: newBody
     });
 
     if (data.value?.editPost) {

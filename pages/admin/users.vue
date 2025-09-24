@@ -40,20 +40,20 @@
 			<ul v-if="members?.listMembers?.members?.length" class="flex flex-col">
 				<li v-for="v in members.listMembers.members" :key="v.id"
 					class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
-					:class="v.is_banned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
+					:class="v.isBanned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
 					<NuxtLink external :to="`/@${v.name}`" target="_blank" class="col-span-3">
 						<div class="flex grow-0">
 							<div class="flex items-center pl-2 pr-6 py-1 hover:bg-gray-200 rounded-md space-x-2"
-								:class="v.is_banned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
+								:class="v.isBanned ? 'hover:bg-red-300' : 'hover:bg-gray-200'">
 								<img :src="v.avatar" class="w-8 h-8 rounded-sm" />
 								<p class="text-primary font-semibold">{{ v.name }}</p>
 							</div>
 						</div>
 					</NuxtLink>
 					<div class="col-span-1 flex items-center">
-						{{ format(parseISO(v.creation_date), 'yyyy MMM. dd') }}
+						{{ format(parseISO(v.creationDate), 'yyyy MMM. dd') }}
 					</div>
-					<div v-if="v.is_banned" class="col-span-2 flex justify-end">
+					<div v-if="v.isBanned" class="col-span-2 flex justify-end">
 						<button @click="() => confirmUnban(v)" class="px-1 text-gray-500 hover:text-green-600"
 							:title="`Unban @${v.name}`">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" width="40" height="40"
@@ -142,9 +142,9 @@ const { data: members, pending, error, refresh } = await useGraphQLQuery(`
 				id
 				name
 				avatar
-				admin_level
-				is_banned
-				creation_date
+				adminLevel
+				isBanned
+				creationDate
 			}
 			total_count
 		}

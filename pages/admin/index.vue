@@ -106,7 +106,7 @@
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
                       {{
-                        (member.post_score || 0) + (member.comment_score || 0)
+                        (member.postScore || 0) + (member.commentScore || 0)
                       }}
                     </p>
                   </div>
@@ -136,7 +136,7 @@
                   </NuxtLink>
                   <div class="ml-auto flex items-center">
                     <p class="font-bold text-lg text-secondary text-right">
-                      {{ member.post_count || 0 }}
+                      {{ member.postCount || 0 }}
                     </p>
                   </div>
                 </div>
@@ -174,7 +174,7 @@
                     <p class="text-gray-400 text-sm font-medium uppercase">
                       {{
                         format(
-                          parseISO(member.creation_date),
+                          parseISO(member.creationDate),
                           "MMM dd, yyyy"
                         )
                       }}
@@ -219,10 +219,10 @@ const {
         id
         name
         avatar
-        admin_level
-        post_score
-        comment_score
-        creation_date
+        adminLevel
+        postScore
+        commentScore
+        creationDate
       }
       total_count
     }
@@ -246,8 +246,8 @@ const {
         id
         name
         avatar
-        admin_level
-        creation_date
+        adminLevel
+        creationDate
       }
       total_count
     }
@@ -271,8 +271,8 @@ const {
         id
         name
         avatar
-        admin_level
-        post_count
+        adminLevel
+        postCount
       }
       total_count
     }
