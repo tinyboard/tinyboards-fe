@@ -18,7 +18,7 @@
 			</div>
 
 			<!-- Form -->
-			<form v-else @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
+			<form v-else @submit.prevent="submitSettings" class="sm:border sm:rounded-md overflow-y-auto">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Registration -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
@@ -316,7 +316,7 @@ const submitSettings = async () => {
 		};
 
 		const { data: result } = await useGraphQLMutation(`
-			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+			mutation UpdateSiteConfig($input: UpdateSiteConfigInput!) {
 				updateSiteConfig(input: $input) {
 					name
 					description

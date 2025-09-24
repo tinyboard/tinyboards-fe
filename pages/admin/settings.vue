@@ -8,7 +8,7 @@
 					and embeds.</p>
 			</div>
 			<!-- Form -->
-			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md">
+			<form @submit.prevent="submitSettings" class="sm:border sm:rounded-md">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Site Name -->
 					<div class="md:grid md:grid-cols-3 md:gap-6">
@@ -315,7 +315,7 @@ const submitSettings = async () => {
 		}
 
 		const { data: result } = await useGraphQLMutation(`
-			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+			mutation UpdateSiteConfig($input: UpdateSiteConfigInput!) {
 				updateSiteConfig(input: $input) {
 					name
 					description

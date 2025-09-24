@@ -16,7 +16,7 @@ export const requirePermission = (permission: AdminPermission) => {
   const u = useLoggedInUser();
   return (
     ((u.adminLevel ?? 0) &
-      (PERMISSIONS[permission] + PERMISSIONS["full"] + PERMISSIONS["owner"])) >
+      (PERMISSIONS[permission] + PERMISSIONS["full"] + PERMISSIONS["owner"] + PERMISSIONS["system"])) >
     0
   );
 };
@@ -24,13 +24,13 @@ export const requirePermission = (permission: AdminPermission) => {
 export const requireFullPerms = () => {
   const u = useLoggedInUser();
 
-  return ((u.adminLevel ?? 0) & (PERMISSIONS["full"] + PERMISSIONS["owner"])) > 0;
+  return ((u.adminLevel ?? 0) & (PERMISSIONS["full"] + PERMISSIONS["owner"] + PERMISSIONS["system"])) > 0;
 };
 
 export const requireOwnerPerms = () => {
   const u = useLoggedInUser();
 
-  return ((u.adminLevel ?? 0) & PERMISSIONS["owner"]) > 0;
+  return ((u.adminLevel ?? 0) & (PERMISSIONS["owner"] + PERMISSIONS["system"])) > 0;
 };
 
 export const createPermissionString = (adminLevel: number) => {

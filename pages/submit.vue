@@ -34,6 +34,22 @@
                                 Change board
                             </button>
                         </div>
+                        <!-- Board info when boards are disabled -->
+                        <div v-if="!site.enableBoards"
+                            class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
+                            <div class="flex flex-row space-x-2 items-center">
+                                <img :src="defaultBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-11 h-11 object-cover rounded"
+                                    alt="board icon" />
+                                <div class="w-full text-center md:text-left">
+                                    <p class="font-bold text-gray-700">
+                                        You are posting to +{{ boardName }}
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        {{ defaultBoard?.title || 'Default community board' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <div class="p-4 bg-white">
                             <div class="grid grid-cols-6 gap-6">
                                 <!-- Board -->
@@ -167,7 +183,7 @@ definePageMeta({
     key: (route) => route.fullPath,
 });
 
-import { ref } from "vue";
+import { ref, computed } from "vue";
 // import { baseURL } from "@/server/constants";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
@@ -192,9 +208,26 @@ const route = useRoute();
 
 const isEditingBoard = ref(!boardStore.hasBoard);
 
+// Fetch default board for auto-selection
+const { data: defaultBoardData } = await useGraphQLQuery(`
+  query GetDefaultBoard {
+    listBoards(limit: 1) {
+      id
+      name
+      title
+    }
+  }
+`);
+
+const defaultBoard = computed(() => defaultBoardData.value?.listBoards?.[0]);
+
 // Using createPost mutation from GraphQL files
 
-const boardName = ref(boardStore.hasBoard ? boardStore.board.name : "");
+const boardName = ref(
+  boardStore.hasBoard
+    ? boardStore.board.name
+    : (defaultBoard.value?.name || "general")
+);
 const title = ref(route.query.title?.toString() || "");
 const url = ref(route.query.url?.toString() || "");
 const image: Ref<string | ArrayBuffer | null> = ref(null);
@@ -203,7 +236,9 @@ const isNsfw = ref(false);
 
 pageTitle.value = boardStore.hasBoard
     ? `Submit to +${boardStore.board.name}`
-    : "Submit";
+    : site.enableBoards
+        ? "Submit"
+        : `Submit to +${boardName.value}`;
 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);
@@ -276,13 +311,19 @@ async function submit() {
     isLoading.value = true;
 
     try {
+        // Ensure board is always set - use current board name or default
+        const finalBoardName = boardName.value || defaultBoard.value?.name || "general";
+
+        const linkValue = (url.value && typeof url.value === 'string' && url.value.trim() !== '') ? url.value.trim() : null;
+
         const variables = {
             title: title.value,
-            board: boardName.value,
-            body: body.value,
-            link: url.value,
-            isNSFW: isNsfw.value,
-            file: null  // This will be replaced by the multipart file
+            board: finalBoardName && finalBoardName.trim() !== '' ? finalBoardName : null,  // Let backend handle default if empty
+            body: body.value && body.value.trim() !== '' ? body.value : null,
+            link: linkValue,  // Only send valid URLs, not empty strings
+            isNSFW: isNsfw.value || false,
+            altText: null,  // Optional alt text for images
+            file: null  // Will be replaced by multipart upload
         };
 
         const createPostQuery = `
@@ -292,6 +333,7 @@ async function submit() {
                 $body: String
                 $link: String
                 $isNSFW: Boolean
+                $altText: String
                 $file: Upload
             ) {
                 createPost(
@@ -300,51 +342,12 @@ async function submit() {
                     body: $body
                     link: $link
                     isNSFW: $isNSFW
+                    altText: $altText
                     file: $file
                 ) {
                     id
                     title
                     titleChunk
-                    url
-                    body
-                    bodyHTML
-                    score
-                    upvotes
-                    downvotes
-                    isNSFW
-                    isRemoved
-                    isDeleted
-                    isLocked
-                    creationDate
-                    updated
-                    isSaved
-                    myVote
-                    featuredLocal
-                    featuredBoard
-                    commentCount
-                    altText
-                    embedTitle
-                    embedDescription
-                    embedVideoUrl
-                    sourceUrl
-                    lastCrawlDate
-                    creator {
-                        id
-                        name
-                        displayName
-                        avatar
-                        isAdmin
-                        instance
-                        creationDate
-                        rep
-                        postCount
-                        commentCount
-                    }
-                    board {
-                        id
-                        name
-                        icon
-                    }
                 }
             }
         `;
@@ -353,29 +356,67 @@ async function submit() {
         if (image.value) {
             // Use multipart upload for files
             const file = dataURLtoFile(image.value);
-            const response = await useGqlMultipart({
-                query: createPostQuery,
-                variables: variables,
-                files: { file: file }
-            });
-            result = response.data?.value || response;
+            try {
+                const response = await useGqlMultipart({
+                    query: createPostQuery,
+                    variables: { ...variables, file: file },
+                    files: { file: file }
+                });
+
+                // Handle different response formats from multipart upload
+                if (response.data?.value?.createPost) {
+                    result = response.data.value;
+                } else if (response.data?.createPost) {
+                    result = response.data;
+                } else if (response.createPost) {
+                    result = response;
+                } else {
+                    result = response.data?.value || response.data || response;
+                }
+            } catch (uploadError) {
+                if (process.dev) console.error('Multipart upload error:', uploadError);
+                // If multipart fails, still try to show a meaningful error
+                throw uploadError;
+            }
         } else {
             // Use regular GraphQL for non-file posts
             const response = await useGraphQLMutation(createPostQuery, {
                 variables
             });
-            result = response.data.value;
+            result = response.data?.value || response;
         }
         if (result.createPost) {
             const post = result.createPost;
+            // Debug: Log the post data to see what we actually received
+            if (process.dev) {
+                console.log('Post creation response:', {
+                    id: post.id,
+                    title: post.title,
+                    titleChunk: post.titleChunk,
+                    fullPost: post
+                });
+            }
+
+            // Create a URL-safe slug from title if titleChunk is not available
+            let titleSlug = post.titleChunk;
+            if (!titleSlug || titleSlug === 'undefined' || titleSlug.trim() === '') {
+                // Create slug from title by removing special chars and replacing spaces with hyphens
+                titleSlug = post.title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+                    .replace(/\s+/g, '-') // Replace spaces with hyphens
+                    .replace(/-+/g, '-') // Replace multiple hyphens with single
+                    .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
+                    .substring(0, 50) || 'post'; // Limit length and fallback to 'post'
+            }
 
             if (site.enableBoards) {
                 navigateTo(
-                    `/b/${boardName.value}/p/${post.id}/${post.titleChunk}`
+                    `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
                 );
             } else {
                 navigateTo(
-                    `/p/${post.id}/${post.titleChunk}`
+                    `/p/${post.id}/${titleSlug}`
                 );
             }
         } else {

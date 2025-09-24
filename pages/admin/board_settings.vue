@@ -7,7 +7,7 @@
 				<p class="mt-1 text-sm text-gray-600">This is where you can find all the settings related to boards.</p>
 			</div>
 			<!-- Form -->
-			<form @submit.prevent="onSubmit" @submit="submitSettings()" class="sm:border sm:rounded-md overflow-y-auto">
+			<form @submit.prevent="submitSettings" class="sm:border sm:rounded-md overflow-y-auto">
 				<div class="flex flex-col space-y-6 divide-y bg-white p-4">
 					<!-- Boards -->
 					<div id="boards" class="md:grid md:grid-cols-3 md:gap-6 target:bg-blue-300 target:bg-opacity-20">
@@ -75,11 +75,9 @@ const toast = useToastStore();
 // Fetch site settings using GraphQL with explicit query string
 const { data, pending, error, refresh } = await useGraphQLQuery(`
     query GetSite {
-        getSite {
-            local_site {
-                boards_enabled
-                boardCreationAdminOnly
-            }
+        site {
+            boardsEnabled
+            boardCreationAdminOnly
         }
     }
 `);
@@ -88,7 +86,10 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 const settings = ref({});
 
 if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value.getSite.local_site)) };
+	settings.value = {
+		boards_enabled: data.value.site.boardsEnabled,
+		boardCreationAdminOnly: data.value.site.boardCreationAdminOnly
+	};
 };
 
 // Submit settings using GraphQL.
@@ -99,16 +100,16 @@ const submitSettings = async () => {
 
 	try {
 		const { data: result } = await useGraphQLMutation(`
-			mutation UpdateSiteConfig($input: SiteConfigInput!) {
+			mutation UpdateSiteConfig($input: UpdateSiteConfigInput!) {
 				updateSiteConfig(input: $input) {
-					boards_enabled
+					boardsEnabled
 					boardCreationAdminOnly
 				}
 			}
 		`, {
 			variables: {
 				input: {
-					boards_enabled: settings.value.boards_enabled,
+					boardsEnabled: settings.value.boards_enabled,
 					boardCreationAdminOnly: settings.value.boardCreationAdminOnly
 				}
 			}
