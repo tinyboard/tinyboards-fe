@@ -115,34 +115,14 @@ if (site.enableBoards && post?.value?.board?.name) {
       const hasBoard = params.hasOwnProperty("board");
       const boardInParams = typeof (params.board) === 'string' ? params.board : '';
 
-      // Generate safe slug for redirects
-      const safeSlug = post.value.titleChunk && post.value.titleChunk !== 'undefined' && post.value.titleChunk.trim() !== ''
-        ? post.value.titleChunk
-        : post.value.title
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-            .replace(/\s+/g, '-') // Replace spaces with hyphens
-            .replace(/-+/g, '-') // Replace multiple hyphens with single
-            .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-            .substring(0, 50) || 'post'; // Limit length and fallback to 'post'
-
       // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
-            await navigateTo(`/b/${boardName}/p/${post.value.id}/${safeSlug}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+            await navigateTo(`/b/${boardName}/p/${post.value.id}/${post.value.titleChunk || 'post'}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
       }
 } else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      const safeSlug = post?.value?.titleChunk && post.value.titleChunk !== 'undefined' && post.value.titleChunk.trim() !== ''
-        ? post.value.titleChunk
-        : post?.value?.title
-            ?.toLowerCase()
-            ?.replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-            ?.replace(/\s+/g, '-') // Replace spaces with hyphens
-            ?.replace(/-+/g, '-') // Replace multiple hyphens with single
-            ?.replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-            ?.substring(0, 50) || 'unknown'; // Limit length and fallback
-      await navigateTo(`/p/${post?.value?.id || 'unknown'}/${safeSlug}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+      await navigateTo(`/p/${post?.value?.id || 'unknown'}/${post?.value?.titleChunk || 'post'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
 }
 
 

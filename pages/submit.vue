@@ -397,18 +397,8 @@ async function submit() {
                 });
             }
 
-            // Create a URL-safe slug from title if titleChunk is not available
-            let titleSlug = post.titleChunk;
-            if (!titleSlug || titleSlug === 'undefined' || titleSlug.trim() === '') {
-                // Create slug from title by removing special chars and replacing spaces with hyphens
-                titleSlug = post.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-                    .replace(/\s+/g, '-') // Replace spaces with hyphens
-                    .replace(/-+/g, '-') // Replace multiple hyphens with single
-                    .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-                    .substring(0, 50) || 'post'; // Limit length and fallback to 'post'
-            }
+            // Use the backend's titleChunk directly
+            const titleSlug = post.titleChunk || 'post';
 
             if (site.enableBoards) {
                 navigateTo(

@@ -2,7 +2,7 @@ import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { Comment, Post } from "@/types/types";
 
 /**
@@ -30,6 +30,13 @@ export async function usePost(id: number): Promise<{
     context,
     topCommentId
   });
+
+  // Debug logging
+  if (process.dev) {
+    console.log('usePost - fetching post ID:', id);
+    console.log('usePost - data received:', data.value);
+    console.log('usePost - error received:', error.value);
+  }
 
   // Create a computed ref that reacts to changes in data
   const post = computed(() => {

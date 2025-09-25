@@ -68,6 +68,7 @@ export const usePostsStore = defineStore("posts", {
           listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, userId: $userId) {
             id
             title
+            titleChunk
             url
             isLocked
             featuredBoard
@@ -92,6 +93,7 @@ export const usePostsStore = defineStore("posts", {
               name
               displayName
               avatar
+              adminLevel
             }
             commentCount
             image
@@ -118,10 +120,11 @@ export const usePostsStore = defineStore("posts", {
       topCommentId?: number | null
     }) {
       const query = `
-        query GetPost($id: Int!, $sort: CommentSortType!, $context: Int!, $topCommentId: Int, $withBoard: Boolean!) {
+        query GetPost($id: Int!, $sort: CommentSortType, $context: Int, $topCommentId: Int, $withBoard: Boolean!) {
           post(id: $id) {
             id
             title
+            titleChunk
             url
             isLocked
             featuredBoard
@@ -146,6 +149,7 @@ export const usePostsStore = defineStore("posts", {
               name
               displayName
               avatar
+              adminLevel
             }
             commentCount
             image
@@ -163,7 +167,7 @@ export const usePostsStore = defineStore("posts", {
               creator {
                 id
                 name
-                title
+                displayName
                 avatar
               }
               level
@@ -174,7 +178,7 @@ export const usePostsStore = defineStore("posts", {
         }
       `;
 
-      return await useGraphQLQuery(query, {
+      const result = await useGraphQLQuery(query, {
         variables: {
           id: Number(id),
           sort: mapToCommentSortType(sort),
@@ -183,6 +187,21 @@ export const usePostsStore = defineStore("posts", {
           withBoard: useSiteStore().enableBoards
         }
       });
+
+      // Debug logging
+      if (process.dev) {
+        console.log('StorePosts.fetchPost - ID:', id);
+        console.log('StorePosts.fetchPost - variables:', {
+          id: Number(id),
+          sort: mapToCommentSortType(sort),
+          context,
+          topCommentId,
+          withBoard: useSiteStore().enableBoards
+        });
+        console.log('StorePosts.fetchPost - result:', result);
+      }
+
+      return result;
     },
     setPosts(posts: Post[]) {
       this.posts = posts;
@@ -206,6 +225,7 @@ export const usePostsStore = defineStore("posts", {
           listPosts(page: $page, limit: $limit, sort: $sort, listingType: $listingType, boardId: $boardId, userId: $userId) {
             id
             title
+            titleChunk
             url
             isLocked
             featuredBoard
@@ -230,6 +250,7 @@ export const usePostsStore = defineStore("posts", {
               name
               displayName
               avatar
+              adminLevel
             }
             commentCount
             image

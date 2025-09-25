@@ -136,7 +136,7 @@
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle"
-            :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${getPostSlug(post)}`">
+            :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk || 'post'}`">
             {{ post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
@@ -561,21 +561,6 @@ const status = computed(() => {
   }
 });
 
-// Generate URL-safe slug for post
-const getPostSlug = (post: Post) => {
-  if (post.titleChunk && post.titleChunk !== 'undefined' && post.titleChunk.trim() !== '') {
-    return post.titleChunk;
-  }
-
-  // Create slug from title as fallback
-  return post.title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Replace multiple hyphens with single
-    .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
-    .substring(0, 50) || 'post'; // Limit length and fallback to 'post'
-};
 
 // Image
 const hasImage = computed(() => props.post.url && canEmbedImage(props.post.url));
