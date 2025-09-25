@@ -102,9 +102,9 @@ import { reactive, computed } from "vue";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { usePost } from "@/composables/post";
 import { usePostComments } from "@/composables/comments";
-import { useSave } from "@/composables/save";
-import { useAPI } from "@/composables/api";
-import { useSubscribe } from "@/composables/subscribe";
+import { useSave } from "@/composables/useSave";
+// import { useAPI } from "@/composables/api"; // Removed - no longer used
+import { useSubscribe } from "@/composables/useSubscribe";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
@@ -123,8 +123,8 @@ const authCookie = useCookie("token").value;
 
 // Define post actions
 // const { voteType, vote } = useVote();
-const { isSaved, save } = useSave();
-const { isSubscribed, subscribe } = useSubscribe();
+const { isSaved, save } = useSave(props.post.saved);
+const { isSubscribed, subscribe } = useSubscribe(props.post.board?.subscribedType === 'subscribed');
 
 // Voting
 // let voteType = ref(props.item.my_vote);

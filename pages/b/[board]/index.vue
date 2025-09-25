@@ -231,11 +231,12 @@
 </template>
 <script setup>
 //import { usePostsStore } from "@/stores/StorePosts";
-import { getListing } from "@/composables/listing";
+// import { getListing } from "@/composables/listing"; // Removed - using GraphQL instead
 // import { getBoard } from "@/composables/board";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { mapToListingType } from "@/types/types";
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 import CardsBoardBanner from "@/components/cards/BoardBanner.vue";
 
 // Import sidebar components
@@ -253,13 +254,56 @@ const boardStore = useBoardStore();
 //const postStore = usePostsStore();
 const v = userStore.user;
 
-// Check if board exists when visiting a board route
-if (route.params?.board && !boardStore.hasBoard) {
-    throw createError({
-        statusCode: 404,
-        statusMessage: `Board "${route.params.board}" not found`,
-        fatal: true
-    });
+// Fetch board data if we have a board parameter
+if (route.params?.board) {
+    const boardName = route.params.board;
+
+    const boardQuery = `
+        query GetBoard($name: String!) {
+            board(name: $name) {
+                id
+                name
+                title
+                description
+                icon
+                banner
+                isNSFW
+                subscribedType
+                subscribers
+                postCount
+                commentCount
+                myModPermissions
+                primaryColor
+                secondaryColor
+                creationDate
+                isRemoved
+            }
+        }
+    `;
+
+    try {
+        const { data: boardData, error: boardError } = await useGraphQLQuery(boardQuery, {
+            variables: { name: boardName }
+        });
+
+        if (boardError.value || !boardData.value?.board) {
+            throw createError({
+                statusCode: 404,
+                statusMessage: `Board "${boardName}" not found`,
+                fatal: true
+            });
+        }
+
+        // Set board data in store
+        boardStore.setBoard(boardData.value.board);
+    } catch (error) {
+        console.error('Error fetching board:', error);
+        throw createError({
+            statusCode: 404,
+            statusMessage: `Board "${boardName}" not found`,
+            fatal: true
+        });
+    }
 }
 
 //const boardView = boardStore.boardView;

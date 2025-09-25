@@ -10,7 +10,7 @@
 <script setup>
 // import { baseURL } from '@/server/constants';
 import { useFetchUser } from "@/composables/user";
-import { getListing } from "@/composables/listing";
+// import { getListing } from "@/composables/listing"; // Removed - using GraphQL instead
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";

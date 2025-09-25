@@ -63,7 +63,7 @@
                         <h1 class="text-gray-700 text-xl md:text-4xl leading-5 font-bold">
                             {{ currentBoard.value?.title ?? currentBoard.value?.name }}
                         </h1>
-                        <button v-if="isAuthed" class="hidden sm:block button w-24 group" :class="[
+                        <button v-if="shouldShowJoinButton" class="hidden sm:block button w-24 group" :class="[
                             isSubscribed ? 'gray hover:red' : 'primary',
                         ]" @click="toggleSubscribe" :disabled="isSubscribing">
                             <span v-if="isSubscribing">Loading...</span>
@@ -97,7 +97,7 @@
                     </p>
                 </div>
             </div>
-            <div v-if="isAuthed" class="block sm:hidden mt-2">
+            <div v-if="shouldShowJoinButton" class="block sm:hidden mt-2">
                 <p class="text-md text-gray-700">{{ currentBoard.value?.description }}</p>
                 <div class="mt-4 flex flex-row space-x-2">
                     <NuxtLink v-if="isMod.value" :to="`/b/${currentBoard.value?.name}/mod/settings`"
@@ -156,6 +156,12 @@ const isAuthed = userStore.isAuthed;
 
 const isSubscribed = computed(() => (currentBoard.value?.subscribedType || "notSubscribed") === "subscribed");
 const isSubscribing = ref(false);
+
+// Computed property to handle hydration issues
+const shouldShowJoinButton = computed(() => {
+    // Only show if we're on client side and user is authenticated
+    return process.client && isAuthed.value && currentBoard.value?.id;
+});
 
 const toggleSubscribe = async () => {
     if (isSubscribing.value) return;

@@ -121,7 +121,7 @@
 </template>
 <script setup>
 import { usePostsStore } from "@/stores/StorePosts";
-import { getListing } from "@/composables/listing";
+// import { getListing } from "@/composables/listing"; // Removed - using GraphQL instead
 // import { getBoard } from "@/composables/board";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";

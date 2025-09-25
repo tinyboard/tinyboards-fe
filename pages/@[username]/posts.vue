@@ -10,7 +10,7 @@
 <script setup>
 import { useFetchUser } from "@/composables/user";
 import { usePostsStore } from "@/stores/StorePosts";
-import { getListing } from "@/composables/listing";
+// import { getListing } from "@/composables/listing"; // Removed - using GraphQL instead
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
