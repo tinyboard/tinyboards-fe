@@ -9,20 +9,32 @@
                   <div class="col-span-full flex gap-6 sm:py-6">
                         <!-- Thread -->
                         <div class="relative w-full">
-                              <component v-if="post && post.value" :post="post.value" :comments="comments"
-                                    :is="canViewPost ? thread : threadRemoved" />
-                              <LazyContainersCommentSection v-if="post && post.value" :post="post.value" :comments="comments" />
-                              <!-- Error -->
+
+                              <!-- Loading State -->
+                              <div v-if="postResult.pending?.value" class="relative w-full">
+                                    <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
+                                          <div role="status" class="max-w-sm">
+                                                <h1>Loading post...</h1>
+                                          </div>
+                                    </div>
+                              </div>
+                              <!-- Post Content -->
+                              <template v-else-if="postResult.post?.value">
+                                    <component :post="postResult.post.value" :comments="comments"
+                                          :is="canViewPost ? thread : threadRemoved" />
+                                    <LazyContainersCommentSection :post="postResult.post.value" :comments="comments" />
+                              </template>
+                              <!-- Error State -->
                               <div v-else class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
                                           <div role="status" class="max-w-sm">
-                                                <h1>There was an error.</h1>
+                                                <h1>There was an error loading this post.</h1>
                                           </div>
                                     </div>
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread v-if="post?.value" :post="post.value" />
+                        <ContainersSidebarThread v-if="postResult.post.value" :post="postResult.post.value" />
                   </div>
             </section>
       </main>
@@ -42,7 +54,8 @@ import { requireModPermission } from "@/composables/mod";
 const title = ref("Post");
 
 definePageMeta({
-      key: (route) => route.fullPath
+      key: (route) => route.fullPath,
+      ssr: false  // Disable SSR for this page to avoid 500 errors on refresh
 });
 
 useHead({
@@ -79,11 +92,11 @@ if (Number.isNaN(postID)) {
       });
 }
 
-// Post
-let { post, error, data } = await usePost(postID);
+// Post - don't destructure to preserve reactivity
+const postResult = await usePost(postID);
 
-
-if (error.value && error.value.response) {
+// More defensive error checking - only throw error if we have a real error, not just empty data
+if (postResult.error.value && postResult.error.value.response && !postResult.data.value) {
       throw createError({
             status: 404,
             statusText: 'We could not find the page you were looking for. Try better next time.'
@@ -92,19 +105,19 @@ if (error.value && error.value.response) {
 
 
 // Set board data in store if boards are enabled and post has board
-if (site.enableBoards && post?.value?.board) {
-    boardStore.setBoard(post.value.board);
+if (site.enableBoards && postResult.post?.value?.board) {
+    boardStore.setBoard(postResult.post.value.board);
 }
 
 // quick reference to comments
-let comments = post?.value?.comments || [];
+let comments = postResult.post?.value?.comments || [];
 
 // If boards are enabled, post.board is not null -> safe to assume not null
-title.value = `${post?.value?.title || 'Unknown Post'} ${site.enableBoards && post?.value?.board ? '| +' + post.value.board.name : ''}`;
+title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| +' + postResult.post.value.board.name : ''}`;
 
 // if boards are enabled...
-if (site.enableBoards && post?.value?.board?.name) {
-      const boardName = post.value.board.name;
+if (site.enableBoards && postResult.post?.value?.board?.name) {
+      const boardName = postResult.post.value.board.name;
       const params = route.params ?? {};
       const hasBoard = params.hasOwnProperty("board");
       const boardInParams = typeof (params.board) === 'string' ? params.board : '';
@@ -112,11 +125,11 @@ if (site.enableBoards && post?.value?.board?.name) {
       // missing board name from route, or board name is incorrect => redirect to path with correct board name
       if (!hasBoard ||
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
-            await navigateTo(`/b/${boardName}/p/${post.value.id}/${post.value.titleChunk || 'post'}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+            await navigateTo(`/b/${boardName}/p/${postResult.post.value.id}/${postResult.post.value.titleChunk || 'post'}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
       }
 } else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      await navigateTo(`/p/${post?.value?.id || 'unknown'}/${post?.value?.titleChunk || 'post'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+      await navigateTo(`/p/${postResult.post?.value?.id || 'unknown'}/${postResult.post?.value?.titleChunk || 'post'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
 }
 
 
@@ -153,11 +166,11 @@ const canViewPost = computed(() => {
       }
 
       // Own post
-      if (v && post?.value?.isRemoved && v.id === post?.value?.creatorId) {
+      if (v && postResult.post?.value?.isRemoved && v.id === postResult.post?.value?.creatorId) {
             return true;
       }
 
-      return !(post?.value?.isDeleted || post?.value?.isRemoved);
+      return !(postResult.post?.value?.isDeleted || postResult.post?.value?.isRemoved);
 });
 
 /*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params?.id);

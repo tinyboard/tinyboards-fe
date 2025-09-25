@@ -2,7 +2,7 @@ import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import type { Comment, Post } from "@/types/types";
 
 /**
@@ -25,36 +25,49 @@ export async function usePost(id: number): Promise<{
   const context = route.query.context ? Number(route.query.context) : 0;
   const topCommentId = route.params?.comment ? Number(route.params?.comment) : null;
 
-  const { data, error } = await postsStore.fetchPost(id, {
+  const { data, error, pending } = await postsStore.fetchPost(id, {
     sort,
     context,
     topCommentId
   });
 
-  // Debug logging
-  if (process.dev) {
-    console.log('usePost - fetching post ID:', id);
-    console.log('usePost - data received:', data.value);
-    console.log('usePost - error received:', error.value);
-  }
-
-  // Create a computed ref that reacts to changes in data
+  // Create a computed that handles the data properly
   const post = computed(() => {
-    const postData = data.value?.post;
+    try {
+      let postData = data.value?.post;
 
-    if (postData && postData.comments) {
-      commentsStore.setComments(postData.comments);
-      // organize post comments into a tree
-      postData.comments = treeComments(postData.comments);
-      postsStore.setPosts([postData]);
+      // Fallback: maybe the response structure is different
+      if (!postData && data.value) {
+        // Try direct access in case the response is just the post data
+        if (data.value.id) {
+          postData = data.value;
+        }
+        // Try other possible structures
+        else if (data.value.data?.post) {
+          postData = data.value.data.post;
+        }
+      }
+
+      if (postData && postData.comments) {
+        commentsStore.setComments(postData.comments);
+        // organize post comments into a tree
+        postData.comments = treeComments(postData.comments);
+        postsStore.setPosts([postData]);
+      }
+
+      return postData;
+    } catch (error) {
+      if (process.dev) {
+        console.error('Error in usePost computed:', error);
+      }
+      return null;
     }
-
-    return postData;
   });
 
   return {
     post,
     error,
+    pending,
     data  // Also return the raw data for debugging
   };
 }

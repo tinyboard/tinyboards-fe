@@ -188,17 +188,9 @@ export const usePostsStore = defineStore("posts", {
         }
       });
 
-      // Debug logging
+      // Debug logging - minimal
       if (process.dev) {
-        console.log('StorePosts.fetchPost - ID:', id);
-        console.log('StorePosts.fetchPost - variables:', {
-          id: Number(id),
-          sort: mapToCommentSortType(sort),
-          context,
-          topCommentId,
-          withBoard: useSiteStore().enableBoards
-        });
-        console.log('StorePosts.fetchPost - result:', result);
+        console.log('StorePosts.fetchPost - ID:', id, 'success:', !!result.data.value);
       }
 
       return result;
