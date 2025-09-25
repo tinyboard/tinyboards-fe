@@ -85,6 +85,30 @@ const isReplyingDisabled = ref(
 	!isModOrAdmin && (props.post.isRemoved || props.post.isDeleted || props.post.isLocked)
 );
 
+// Comment sort options
+const sorts = [
+	{
+		name: "Hot",
+		key: "hot",
+		href: { path: route.fullPath, query: { ...route.query, sort: "hot" } },
+	},
+	{
+		name: "Latest",
+		key: "new",
+		href: { path: route.fullPath, query: { ...route.query, sort: "new" } },
+	},
+	{
+		name: "Oldest",
+		key: "old",
+		href: { path: route.fullPath, query: { ...route.query, sort: "old" } },
+	},
+	{
+		name: "Top All",
+		key: "top",
+		href: { path: route.fullPath, query: { ...route.query, sort: "top" } },
+	},
+];
+
 function onCommentPublished(comment: Comment) {
 	comment.replies = [];
 	comments.unshift(comment);

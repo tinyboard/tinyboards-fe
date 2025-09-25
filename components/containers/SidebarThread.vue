@@ -42,7 +42,7 @@
                 </div>
                 <div class="w-2/4 p-1 text-sm">
                     <strong>{{
-                        format(parseISO(post.creator.creationDate), "yyyy MMM. dd")
+                        (post.creator?.creationDate) ? format(parseISO(post.creator.creationDate), "yyyy MMM. dd") : 'Unknown'
                     }}</strong>
                     <p class="text-gray-500">Joined</p>
                 </div>
@@ -59,10 +59,10 @@
                         <dt>Published</dt>
                         <dd class="font-medium">
                             {{
-                                format(
+                                (post?.creationDate) ? format(
                                     parseISO(post.creationDate),
                                     "MMM dd, yyyy",
-                                )
+                                ) : 'Unknown'
                             }}
                         </dd>
                     </dl>

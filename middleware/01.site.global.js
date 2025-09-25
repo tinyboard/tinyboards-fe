@@ -37,6 +37,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       console.log(`🔍 Middleware GraphQL request [${process.server ? 'SSR' : 'Client'}] for initApp`);
     }
 
+    // Be more conservative about loading user data during SSR to prevent auth errors
+    const shouldLoadUser = hasValidToken && (!process.server || process.dev);
+
     const initAppQuery = `
       query InitApp($shouldLoadSite: Boolean!, $shouldLoadLoggedInUser: Boolean!, $shouldLoadBoard: Boolean!, $boardName: String!) {
         site @include(if: $shouldLoadSite) {
@@ -122,17 +125,27 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const { data, error } = await useGraphQLQuery(initAppQuery, {
       variables: {
         shouldLoadSite: true,
-        shouldLoadLoggedInUser: hasValidToken,
+        shouldLoadLoggedInUser: shouldLoadUser,
         shouldLoadBoard: !!to.params?.board,
         boardName: to.params?.board || '',
       },
     });
 
-    if (error.value && error.value.response) {
+    if (error.value) {
       // Handle GraphQL errors gracefully
       if (process.dev) {
         console.warn('GraphQL error in middleware:', error.value);
       }
+
+      // If it's an auth error, clear the invalid token
+      if (error.value.isAuthError && process.client) {
+        const tokenCookie = useCookie('token');
+        tokenCookie.value = null;
+        if (process.dev) {
+          console.warn('🔐 Cleared invalid token due to auth error in middleware');
+        }
+      }
+
       // Don't throw, just continue with empty data
     }
 

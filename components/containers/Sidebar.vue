@@ -76,7 +76,7 @@
                 Since
                 <span class="font-medium">
                   {{
-                    format(parseISO(user.creationDate), "MMM dd, yyyy")
+                    user.creationDate ? format(parseISO(user.creationDate), "MMM dd, yyyy") : 'Unknown'
                   }}
                 </span>
               </small>

@@ -1,4 +1,4 @@
-import { ref, type Ref, computed } from 'vue';
+import { ref, type Ref, computed, getCurrentInstance } from 'vue';
 import type { AsyncData } from 'nuxt/app';
 
 /**
@@ -191,25 +191,14 @@ function getAuthHeaders(customHeaders?: Record<string, string>): Record<string, 
   };
 
   if (process.server) {
-    // Server-side: forward cookies from the request
-    try {
-      const nuxtApp = useNuxtApp();
-      const event = nuxtApp.ssrContext?.event;
-
-      if (event?.node?.req?.headers?.cookie) {
-        headers['Cookie'] = event.node.req.headers.cookie;
-      }
-
-      // Also forward authorization header if present
-      const authHeader = event?.node?.req?.headers?.authorization;
-      if (authHeader) {
-        headers['Authorization'] = authHeader;
-      }
-    } catch (error) {
-      if (process.dev) {
-        console.warn('⚠️  Failed to extract SSR headers:', error);
-      }
+    // Server-side: Skip auth headers to avoid SSR context issues
+    // Most content (posts, comments, etc.) can be fetched without authentication
+    // Auth-required queries should be handled on client-side or in proper middleware context
+    if (process.dev) {
+      console.debug('🔧 SSR: Skipping auth headers to avoid context issues');
     }
+    // Just use basic headers without authentication for SSR
+    // The backend should handle missing auth gracefully for public queries
   } else {
     // Client-side: get token from cookie and use Authorization header
     try {

@@ -90,8 +90,25 @@ if (Number.isNaN(postID)) {
       });
 }
 
-// Post - don't destructure to preserve reactivity
-const postResult = await usePost(postID);
+// Post - don't destructure to preserve reactivity with error handling
+let postResult;
+try {
+  postResult = await usePost(postID);
+
+  // Handle authentication errors
+  if (postResult.error.value?.isAuthError) {
+    // Clear invalid token and redirect to login
+    const tokenCookie = useCookie('token');
+    tokenCookie.value = null;
+    await navigateTo('/login?redirect=' + encodeURIComponent(useRoute().fullPath));
+  }
+} catch (error) {
+  console.error('Error fetching post:', error);
+  throw createError({
+    status: 500,
+    statusText: 'Failed to load post data'
+  });
+}
 
 // More defensive error checking - only throw error if we have a real error, not just empty data
 if (postResult.error.value && postResult.error.value.response && !postResult.data.value) {

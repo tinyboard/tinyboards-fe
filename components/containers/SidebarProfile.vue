@@ -39,7 +39,7 @@
                 </svg>
                 Registered
                 <span class="text-gray-900">{{
-                    format(parseISO(u.creationDate), "yyyy MMM. dd")
+                    u.creationDate ? format(parseISO(u.creationDate), "yyyy MMM. dd") : 'Unknown'
                 }}</span>
             </div>
             <div v-if="u.isAdmin" class="text-red-600 mt-4">
