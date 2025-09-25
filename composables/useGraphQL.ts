@@ -405,10 +405,19 @@ export async function useGraphQLQuery<T = any>(
             const result: GraphQLResponse<T> = await response.json();
 
             if (result.errors && result.errors.length > 0) {
-              const gqlError = new Error(result.errors[0].message || 'GraphQL Error');
+              const errorMessage = result.errors[0].message || 'GraphQL Error';
+              const gqlError = new Error(errorMessage);
               // @ts-ignore - Add GraphQL-specific error properties
               gqlError.gqlErrors = result.errors;
               gqlError.graphQLErrors = result.errors; // Also add with camelCase
+              gqlError.isAuthError = errorMessage.toLowerCase().includes('login required') ||
+                                    errorMessage.toLowerCase().includes('unauthorized') ||
+                                    errorMessage.toLowerCase().includes('not authenticated');
+
+              if (process.dev && gqlError.isAuthError) {
+                console.warn('🔐 Authentication required:', errorMessage);
+              }
+
               throw gqlError;
             }
 

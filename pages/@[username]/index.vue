@@ -1,8 +1,15 @@
 <template>
+    <!-- Loading State -->
+    <div v-if="userResult.pending?.value" class="container mx-auto max-w-4xl p-4">
+        <div class="bg-white rounded-md border p-8 text-center">
+            <h2 class="text-xl font-semibold text-gray-800">Loading user profile...</h2>
+        </div>
+    </div>
+    <!-- User Profile -->
     <component
-        v-if="user"
-        :user="user"
-        :moderates="moderates"
+        v-else-if="user.value"
+        :user="user.value"
+        :moderates="moderates.value"
         :is="canView ? Profile : ProfileRemoved"
     >
         <template v-slot:content>
@@ -15,11 +22,11 @@
                 <NuxtLink :to="`/@${username}/posts`" v-if="username">View All</NuxtLink>
             </div>
             <LazyListsPosts
-                v-if="posts?.length"
-                :posts="posts"
+                v-if="posts.value?.length"
+                :posts="posts.value"
                 :isCompact="!preferCardView"
-                :isLoading="pending"
-                :hasError="error"
+                :isLoading="userResult.pending?.value"
+                :hasError="userResult.error?.value"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
                 @{{ username || 'Unknown user' }} hasn't made any posts. At all.
@@ -33,8 +40,8 @@
                 <NuxtLink :to="`/@${username}/comments`" v-if="username">View All</NuxtLink>
             </div>
             <LazyListsComments
-                v-if="user?.comments?.length"
-                :comments="user.comments"
+                v-if="comments.value?.length"
+                :comments="comments.value"
                 :cards="true"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
@@ -42,6 +49,13 @@
             </div>
         </template>
     </component>
+    <!-- Error State -->
+    <div v-else class="container mx-auto max-w-4xl p-4">
+        <div class="bg-white rounded-md border p-8 text-center">
+            <h2 class="text-xl font-semibold text-red-600">User not found</h2>
+            <p class="text-gray-600 mt-2">The user you're looking for doesn't exist or has been deleted.</p>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -52,7 +66,7 @@ import { usePreloadedPosts } from "@/composables/posts";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 
 const route = useRoute();
 const site = useSiteStore();
@@ -64,7 +78,7 @@ definePageMeta({
     key: (route) => route.fullPath,
     isFooterDisabled: true,
     isLeftNavbarDisabled: true,
-    title: "Profile",
+    title: "Profile"
     //isScrollDisabled: true
 });
 
@@ -90,8 +104,8 @@ const ProfileRemoved = defineAsyncComponent(
 
 const username = computed(() => route.params?.username);
 
-// Fetch user with posts and comments
-const { data: userData, error } = await useFetchUser(username.value, {
+// Fetch user with posts and comments - don't destructure to preserve reactivity
+const userResult = await useFetchUser(username.value, {
     withPosts: true,
     withComments: true,
     sort: "new",
@@ -99,7 +113,8 @@ const { data: userData, error } = await useFetchUser(username.value, {
     page: 1,
 });
 
-if (error.value && error.value.response) {
+// More defensive error checking - only throw error if we have a real error, not just empty data
+if (userResult.error.value && userResult.error.value.response && !userResult.data.value) {
     throw createError({
         statusCode: 404,
         statusMessage:
@@ -108,32 +123,20 @@ if (error.value && error.value.response) {
     });
 }
 
-/*if (error) {
-    throw createError({
-        statusCode: 500,
-        statusMessage: "Well shit.",
-        fatal: true,
-    });
-}*/
+// Create reactive computed for user data
+const user = computed(() => userResult.data.value?.user);
+const moderates = computed(() => user.value?.moderates || []);
 
-const user = userData.value?.user;
-const moderates = user?.moderates || [];
-
-if (!user) {
-    throw createError({
-        statusCode: 404,
-        statusMessage: "User not found",
-        fatal: true,
-    });
-}
-
-if (user.isDeleted) {
-    title.value = "Deleted Account";
-} else if (user.isBanned) {
-    title.value = `@${user.name} - Banned`;
-} else {
-    title.value = `${user.displayName ?? user.name} (@${user.name})`;
-}
+// Update title reactively
+watch(user, (newUser) => {
+    if (newUser?.isDeleted) {
+        title.value = "Deleted Account";
+    } else if (newUser?.isBanned) {
+        title.value = `@${newUser.name} - Banned`;
+    } else if (newUser) {
+        title.value = `${newUser.displayName ?? newUser.name} (@${newUser.name})`;
+    }
+}, { immediate: true });
 
 // Display preferences
 const preferCardView = useCookie("preferCardView");
@@ -168,9 +171,19 @@ const canView = computed(() => {
 	creator_id: user.value.id
 }, 'posts');*/
 
-const posts = user?.posts || [];
-const comments = user?.comments || [];
+const posts = computed(() => user.value?.posts || []);
+const comments = computed(() => user.value?.comments || []);
 
-usePreloadedPosts(posts);
-commentsStore.setComments(comments);
+// Watch for changes and update stores
+watch(posts, (newPosts) => {
+    if (newPosts.length) {
+        usePreloadedPosts(newPosts);
+    }
+}, { immediate: true });
+
+watch(comments, (newComments) => {
+    if (newComments.length) {
+        commentsStore.setComments(newComments);
+    }
+}, { immediate: true });
 </script>

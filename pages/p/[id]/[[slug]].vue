@@ -53,8 +53,7 @@ import { requireModPermission } from "@/composables/mod";
 const title = ref("Post");
 
 definePageMeta({
-      key: (route) => route.fullPath,
-      ssr: false  // Disable SSR for this page to avoid 500 errors on refresh
+      key: (route) => route.fullPath
 });
 
 useHead({
