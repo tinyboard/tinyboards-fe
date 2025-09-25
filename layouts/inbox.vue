@@ -140,17 +140,17 @@ const links = [
 
 // Get notification counts using the correct queries
 const getMeQuery = `
-  query GetMe {
-    GetMe {
+  query {
+    me {
       id
       name
       displayName
       avatar
       adminLevel
       rep
-      unreadRepliesCount
-      unreadMentionsCount
     }
+    unreadRepliesCount
+    unreadMentionsCount
   }
 `;
 

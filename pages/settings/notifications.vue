@@ -88,17 +88,14 @@ const authCookie = useCookie("token").value;
 
 // Fetch user data to get current notification settings
 const getMeQuery = `
-  query GetMe {
-    GetMe {
+  query {
+    me {
       id
       name
       displayName
       avatar
       adminLevel
       rep
-      emailNotificationsEnabled
-      showBots
-      showNsfw
     }
   }
 `;

@@ -384,17 +384,17 @@ const { registerRefreshCallback } = useNotificationRefresh();
 
 // Use getMe query which includes notification counts
 const getMeQuery = `
-  query GetMe {
-    GetMe {
+  query {
+    me {
       id
       name
       displayName
       avatar
       adminLevel
       rep
-      unreadRepliesCount
-      unreadMentionsCount
     }
+    unreadRepliesCount
+    unreadMentionsCount
   }
 `;
 
@@ -404,7 +404,7 @@ const refreshUserData = () => Promise.resolve();
 
 // Get unread message count separately
 const getUnreadMessageCountQuery = `
-  query GetUnreadMessageCount {
+  query {
     getUnreadMessageCount
   }
 `;
