@@ -1,4 +1,4 @@
-query getBoard($name: String!) {
+query GetBoard($name: String!) {
   board(name: $name) {
     id
     name

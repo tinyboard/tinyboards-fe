@@ -141,7 +141,7 @@ const links = [
 // Get notification counts using the correct queries
 const getMeQuery = `
   query GetMe {
-    getMe {
+    GetMe {
       id
       name
       displayName

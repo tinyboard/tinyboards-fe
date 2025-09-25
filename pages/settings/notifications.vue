@@ -89,7 +89,7 @@ const authCookie = useCookie("token").value;
 // Fetch user data to get current notification settings
 const getMeQuery = `
   query GetMe {
-    getMe {
+    GetMe {
       id
       name
       displayName

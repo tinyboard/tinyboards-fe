@@ -4,6 +4,7 @@ import { useBoardStore } from "@/stores/StoreBoard";
 import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useGraphQLQuery } from "@/composables/useGraphQL";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const siteStore = useSiteStore();
@@ -36,13 +37,94 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       console.log(`🔍 Middleware GraphQL request [${process.server ? 'SSR' : 'Client'}] for initApp`);
     }
 
-    const { data, error } = await useAsyncGql({
-      operation: 'initApp',
+    const initAppQuery = `
+      query InitApp($shouldLoadSite: Boolean!, $shouldLoadLoggedInUser: Boolean!, $shouldLoadBoard: Boolean!, $boardName: String!) {
+        site @include(if: $shouldLoadSite) {
+          name
+          description
+          icon
+          primaryColor
+          secondaryColor
+          hoverColor
+          enableDownvotes
+          enableNSFW
+          applicationQuestion
+          privateInstance
+          inviteOnly
+          requireApplication
+          boardsEnabled
+          boardCreationAdminOnly
+          requireEmailVerification
+        }
+        me @include(if: $shouldLoadLoggedInUser) {
+          id
+          name
+          displayName
+          isBanned
+          unbanDate
+          avatar
+          adminLevel
+          rep
+          postScore
+          commentScore
+          creationDate
+          postCount
+          commentCount
+          joinedBoards {
+            icon
+            name
+            title
+            subscribers
+          }
+          moderates {
+            board {
+              icon
+              name
+              title
+              subscribers
+            }
+          }
+        }
+        unreadRepliesCount @include(if: $shouldLoadLoggedInUser)
+        unreadMentionsCount @include(if: $shouldLoadLoggedInUser)
+        board(name: $boardName) @include(if: $shouldLoadBoard) {
+          id
+          name
+          title
+          description
+          icon
+          banner
+          primaryColor
+          secondaryColor
+          hoverColor
+          creationDate
+          isNSFW
+          isBanned
+          banReason
+          sidebarHTML
+          isHidden
+          subscribers
+          postCount
+          commentCount
+          myModPermissions
+          subscribedType
+          moderators {
+            user {
+              name
+              displayName
+              avatar
+            }
+          }
+        }
+      }
+    `;
+
+    const { data, error } = await useGraphQLQuery(initAppQuery, {
       variables: {
         shouldLoadSite: true,
         shouldLoadLoggedInUser: hasValidToken,
         shouldLoadBoard: !!to.params?.board,
-        boardName: to.params?.board,
+        boardName: to.params?.board || '',
       },
     });
 

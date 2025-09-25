@@ -1,4 +1,4 @@
-query getLoggedInUser {
+query {
   me {
     id
     name

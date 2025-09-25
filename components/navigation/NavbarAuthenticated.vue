@@ -385,7 +385,7 @@ const { registerRefreshCallback } = useNotificationRefresh();
 // Use getMe query which includes notification counts
 const getMeQuery = `
   query GetMe {
-    getMe {
+    GetMe {
       id
       name
       displayName
