@@ -205,7 +205,7 @@
                 <ul v-if="isAuthed" class="mt-2 flex items-center space-x-2">
                     <li v-if="isMod">
                         <NuxtLink
-                            :to="`/+${board.name}/mod/settings`"
+                            :to="`/b/${board.name}/mod/settings`"
                             class="button button-sm white"
                         >
                             Settings
@@ -293,8 +293,8 @@ const toggleSubscribe = async () => {
             if (result.unsubscribeFromBoard) {
                 isSubscribed.value = false;
                 toast.addNotification({
-                    header: `Left +${board.name}!`,
-                    message: `You are no longer a member of +${board.name}.`,
+                    header: `Left ${board.name}!`,
+                    message: `You are no longer a member of ${board.name}.`,
                     type: "success",
                 });
 
@@ -312,8 +312,8 @@ const toggleSubscribe = async () => {
             if (result.subscribeToBoard) {
                 isSubscribed.value = true;
                 toast.addNotification({
-                    header: `Joined +${board.name}!`,
-                    message: `You are now a member of +${board.name}.`,
+                    header: `Joined ${board.name}!`,
+                    message: `You are now a member of ${board.name}.`,
                     type: "success",
                 });
 

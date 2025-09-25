@@ -23,24 +23,22 @@ export async function useFetchUser(username: string, query = {}) {
   const site = useSiteStore();
 
   const query_str = `
-    query UserProfile($username: String!, $includeBoard: Boolean!, $sort: String, $limit: Int, $page: Int) {
-      userProfile(username: $username) {
-        user {
-          id
-          name
-          displayName
-          avatar
-          banner
-          profileBackground
-          bio
-          isAdmin
-          isBanned
-          creationDate
-          postCount
-          commentCount
-          reputation
-        }
-        posts {
+    query UserProfile($username: String!, $includeBoard: Boolean!, $limit: Int, $page: Int) {
+      user(name: $username) {
+        id
+        name
+        displayName
+        avatar
+        banner
+        profileBackground
+        bio
+        isAdmin
+        isBanned
+        creationDate
+        postCount
+        commentCount
+        rep
+        posts(sort: hot, limit: $limit, page: $page) {
           id
           title
           body
@@ -74,26 +72,28 @@ export async function useFetchUser(username: string, query = {}) {
           body
           bodyHTML
         }
-        comments {
+        comments(sort: new, limit: $limit, page: $page) {
           id
           body
           isRemoved
-          createdAt
-          updatedAt
-          voteScore
-          userVote
+          creationDate
+          updated
+          score
+          myVote
           creator {
             id
             name
             displayName
             avatar
           }
-          depth
+          level
           parentId
-          childCount
+          replyCount
+          post {
+            id
+            title
+          }
         }
-        totalPosts
-        totalComments
       }
     }
   `;

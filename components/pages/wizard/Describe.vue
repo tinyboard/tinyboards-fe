@@ -7,7 +7,7 @@
             <input type="text" id="name" v-model="board.displayName" maxlength="50" :placeholder="board.name"
                 class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base" />
             <div class="flex justify-between">
-                <p class="mt-2 text-sm text-gray-500">This will take precedence over the +name of your board, if specified.
+                <p class="mt-2 text-sm text-gray-500">This will take precedence over the name of your board, if specified.
                 </p>
                 <p class="mt-2 text-xs" :class="board.displayName.length > 45 ? 'text-red-600' : 'text-gray-500'">{{
                     board.displayName.length }} / 50</p>
@@ -19,7 +19,7 @@
             <!-- Input -->
             <textarea id="description" name="description" maxlength="255" rows="4"
                 class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
-                :placeholder="`A board for discussing everything about why +${board.name} is the best board ever.`"
+                :placeholder="`A board for discussing everything about why ${board.name} is the best board ever.`"
                 v-model="board.description" />
             <div class="flex justify-between">
                 <p class="mt-2 text-sm text-gray-500">Brief description about your board.</p>

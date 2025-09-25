@@ -46,7 +46,7 @@
                                 class="bg-white p-[2px] border border-gray-300 w-32 h-32"
                             />
                             <h1 class="text-3xl text-gray-700 font-bold mt-4">
-                                Welcome to +{{ board.value?.name || 'Unknown Board' }}
+                                Welcome to {{ board.value?.name || 'Unknown Board' }}
                             </h1>
                             <p class="text-md text-gray-500">
                                 Right now it's empty here. Let's get started by
@@ -257,7 +257,7 @@ const v = userStore.user;
 if (route.params?.board && !boardStore.hasBoard) {
     throw createError({
         statusCode: 404,
-        statusMessage: `Board "+${route.params.board}" not found`,
+        statusMessage: `Board "${route.params.board}" not found`,
         fatal: true
     });
 }
@@ -280,8 +280,8 @@ definePageMeta({
 });
 
 const title = computed(() => board.value?.is_removed
-    ? `+${board.value?.name || 'Unknown'}: Banned`
-    : `${board.value?.title ?? board.value?.name ?? 'Unknown Board'} (+${board.value?.name ?? 'unknown'})`);
+    ? `${board.value?.name || 'Unknown'}: Banned`
+    : `${board.value?.title ?? board.value?.name ?? 'Unknown Board'} (${board.value?.name ?? 'unknown'})`);
 
 useHead({
     title,

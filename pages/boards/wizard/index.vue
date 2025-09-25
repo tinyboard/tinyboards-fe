@@ -31,7 +31,7 @@
                 <button class="button gray flex-grow-0" @click="back">{{ page > 1 ? 'Go back' : 'Cancel' }}</button>
                 <button class="button primary flex-grow" :disabled="!board.boarding.canProceed || isLoading"
                     @click="next">{{ page ==
-                        MAX_PAGE ? `Create +${board.name}! 🌟` : 'Continue' }}</button>
+                        MAX_PAGE ? `Create ${board.name}! 🌟` : 'Continue' }}</button>
             </div>
         </div>
     </NuxtLayout>
@@ -230,12 +230,12 @@ const next = () => {
                 // Show success message
                 toast.addNotification({
                     header: 'Board created!',
-                    message: `Successfully created +${name}`,
+                    message: `Successfully created ${name}!`,
                     type: 'success'
                 });
 
                 // Navigate to the newly created board
-                router.push(`/+${name}?welcome=true`);
+                router.push(`/b/${name}?welcome=true`);
             } else {
                 throw new Error('Board creation returned null response');
             }

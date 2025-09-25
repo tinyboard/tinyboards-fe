@@ -22,6 +22,10 @@ export async function usePostComments(id, query = {}) {
         level
         parentId
         replyCount
+        post {
+          id
+          title
+        }
       }
     }
   `;
@@ -74,6 +78,10 @@ export async function useComments(id, type = "post", query = {}, post_id) {
         level
         parentId
         replyCount
+        post {
+          id
+          title
+        }
       }
     }
   `;

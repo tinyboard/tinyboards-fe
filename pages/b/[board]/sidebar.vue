@@ -153,8 +153,8 @@ definePageMeta({
 });
 
 const title = board.isBanned
-    ? `+${board.name}: Banned`
-    : `${board.title ?? board.name} (+${board.name})`;
+    ? `${board.name}: Banned`
+    : `${board.title ?? board.name} (${board.name})`;
 
 useHead({
     title,

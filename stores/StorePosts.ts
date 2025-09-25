@@ -87,6 +87,7 @@ export const usePostsStore = defineStore("posts", {
               icon
               banner
               isNSFW
+              subscribedType
             }
             creator {
               id
@@ -94,6 +95,9 @@ export const usePostsStore = defineStore("posts", {
               displayName
               avatar
               adminLevel
+              postCount
+              commentCount
+              rep
             }
             commentCount
             image
@@ -143,6 +147,7 @@ export const usePostsStore = defineStore("posts", {
               icon
               banner
               isNSFW
+              subscribedType
             }
             creator {
               id
@@ -150,6 +155,9 @@ export const usePostsStore = defineStore("posts", {
               displayName
               avatar
               adminLevel
+              postCount
+              commentCount
+              rep
             }
             commentCount
             image
@@ -169,6 +177,9 @@ export const usePostsStore = defineStore("posts", {
                 name
                 displayName
                 avatar
+                postCount
+                commentCount
+                rep
               }
               level
               parentId
@@ -236,6 +247,7 @@ export const usePostsStore = defineStore("posts", {
               icon
               banner
               isNSFW
+              subscribedType
             }
             creator {
               id
@@ -243,6 +255,9 @@ export const usePostsStore = defineStore("posts", {
               displayName
               avatar
               adminLevel
+              postCount
+              commentCount
+              rep
             }
             commentCount
             image

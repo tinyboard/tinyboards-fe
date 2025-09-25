@@ -190,7 +190,7 @@
                     :key="i"
                     class="pt-2 first:pt-0"
                 >
-                    <NuxtLink :to="`/+${m.board.name}`" class="flex space-x-2">
+                    <NuxtLink :to="`/b/${m.board.name}`" class="flex space-x-2">
                         <img
                             loading="lazy"
                             class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"

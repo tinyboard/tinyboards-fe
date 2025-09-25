@@ -308,7 +308,7 @@ const addSelfAsMod = async () => {
             boardStore.updateBoard(result.data.value.adminAddSelfAsMod);
             toast.addNotification({
                 header: 'Success',
-                message: `You are now a moderator of +${board.name}`,
+                message: `You are now a moderator of ${board.name}`,
                 type: 'success'
             });
         }
@@ -350,7 +350,7 @@ const removeSelfAsMod = async () => {
             boardStore.updateBoard(result.data.value.adminRemoveSelfAsMod);
             toast.addNotification({
                 header: 'Success',
-                message: `You are no longer a moderator of +${board.name}`,
+                message: `You are no longer a moderator of ${board.name}`,
                 type: 'success'
             });
         }
@@ -399,7 +399,7 @@ const banBoard = async () => {
             boardStore.updateBoard(result.data.value.adminBanBoard);
             toast.addNotification({
                 header: 'Board Banned',
-                message: `+${board.name} has been banned`,
+                message: `${board.name} has been banned`,
                 type: 'success'
             });
         }
@@ -418,7 +418,7 @@ const banBoard = async () => {
 const unbanBoard = async () => {
     if (isLoading.value) return;
     
-    if (!confirm(`Are you sure you want to unban +${board.name}?`)) {
+    if (!confirm(`Are you sure you want to unban ${board.name}?`)) {
         return;
     }
     
@@ -445,7 +445,7 @@ const unbanBoard = async () => {
             boardStore.updateBoard(result.data.value.adminUnbanBoard);
             toast.addNotification({
                 header: 'Board Unbanned',
-                message: `+${board.name} has been unbanned`,
+                message: `${board.name} has been unbanned`,
                 type: 'success'
             });
         }
@@ -467,7 +467,7 @@ const toggleBoardFromAll = async () => {
     const exclude = !board.exclude_from_all;
     const action = exclude ? 'hide from' : 'show in';
     
-    if (!confirm(`Are you sure you want to ${action} the /all feed for +${board.name}?`)) {
+    if (!confirm(`Are you sure you want to ${action} the /all feed for ${board.name}?`)) {
         return;
     }
     
@@ -495,7 +495,7 @@ const toggleBoardFromAll = async () => {
             boardStore.updateBoard(result.data.value.excludeBoardFromAll);
             toast.addNotification({
                 header: 'Board Updated',
-                message: `+${board.name} will ${exclude ? 'not appear' : 'appear'} in /all feed`,
+                message: `${board.name} will ${exclude ? 'not appear' : 'appear'} in /all feed`,
                 type: 'success'
             });
         }

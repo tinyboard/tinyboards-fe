@@ -184,6 +184,7 @@ export interface Board {
   subscribers: number;
   exclude_from_all?: boolean;
   isBanned?: boolean;
+  subscribedType?: string;
 }
 
 export type BoardFragment = {

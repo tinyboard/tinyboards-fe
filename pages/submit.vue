@@ -235,10 +235,10 @@ const body: Ref<string | null> = ref(null);
 const isNsfw = ref(false);
 
 pageTitle.value = boardStore.hasBoard
-    ? `Submit to +${boardStore.board.name}`
+    ? `Submit to ${boardStore.board.name}`
     : site.enableBoards
         ? "Submit"
-        : `Submit to +${boardName.value}`;
+        : `Submit to ${boardName.value}`;
 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);

@@ -67,7 +67,7 @@
                 </span>
               </span>
               <!-- Score -->
-              <span :title="`+${comment.upvotes} | -${comment.downvotes}`"
+              <span :title="`+${comment.upvotes ?? 0} | -${comment.downvotes ?? 0}`"
                 class="hidden sm:flex comments-center space-x-2">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
@@ -324,7 +324,7 @@
         <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
           <img loading="lazy" :src="userStore.user!.avatar!" alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white" />
-          <LazyInputsComment :post-id="comment.post?.id" :parent-id="comment.id" @closed="isReplying = false"
+          <LazyInputsComment :post-id="comment.post?.id || parentPost?.id || Number(route.params?.id)" :parent-id="comment.id" @closed="isReplying = false"
             @comment-published="onCommentPublished" />
         </div>
         <!-- Replies -->
@@ -409,7 +409,7 @@ const level = computed(() => {
 
 // in some queries, we request the parent post
 // if we don't, it can be obtained from the post store (in post pages, it's the only post in the store)
-const parentPost: PostFragment | undefined = comment.value.post ?? postStore.getPost(comment.value.postId);
+const parentPost: PostFragment | undefined = comment.value.post ?? postStore.getPost(comment.value.post?.id);
 
 const onCommentPublished = (newComment: Comment) => {
   // Append reply to list of replies.
@@ -429,7 +429,7 @@ const onCommentPublished = (newComment: Comment) => {
 };
 
 // Vote
-const voteType = ref(comment.value!.myVote);
+const voteType = ref(comment.value?.myVote ?? 0);
 const vote = async (type = 0) => {
   const previousVote = voteType.value;
   voteType.value = voteType.value === type ? 0 : type;
@@ -470,15 +470,22 @@ const vote = async (type = 0) => {
 };
 
 const score = computed(() => {
-  // return comment.value.score + (comment.value.myVote + voteType.value === 0 ? 0 : voteType.value) || 0
-  return comment.value!.score + voteType.value;
+  const commentScore = comment.value?.score ?? 0;
+  const currentVoteType = voteType.value ?? 0;
+  return commentScore + currentVoteType;
 });
 
 // TODO: figure this out
 const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);
 
-const upvotes = computed(() => voteType.value == 1 ? comment.value.upvotes + 1 : comment.value.upvotes);
-const downvotes = computed(() => voteType.value == -1 ? comment.value.downvotes + 1 : comment.value.downvotes);
+const upvotes = computed(() => {
+  const baseUpvotes = comment.value?.upvotes ?? 0;
+  return voteType.value == 1 ? baseUpvotes + 1 : baseUpvotes;
+});
+const downvotes = computed(() => {
+  const baseDownvotes = comment.value?.downvotes ?? 0;
+  return voteType.value == -1 ? baseDownvotes + 1 : baseDownvotes;
+});
 
 // Author
 const isAuthor = computed(() => {

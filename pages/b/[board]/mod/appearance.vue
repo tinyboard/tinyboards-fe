@@ -229,7 +229,7 @@ definePageMeta({
 });
 
 useHead({
-    title: `+${board.name} Settings`,
+    title: `${board.name} Settings`,
 });
 
 const toast = useToastStore();

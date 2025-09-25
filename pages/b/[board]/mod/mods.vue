@@ -455,7 +455,7 @@ definePageMeta({
 });
 
 useHead({
-    title: `Mods of +${board.name}`,
+    title: `Mods of ${board.name}`,
 });
 
 const authCookie = useCookie("token").value;

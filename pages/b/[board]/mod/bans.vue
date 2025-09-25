@@ -99,7 +99,7 @@ definePageMeta({
 });
 
 useHead({
-    title: `Banned Users - +${board.name}`
+    title: `Banned Users - ${board.name}`
 });
 
 const authCookie = useCookie("token").value;

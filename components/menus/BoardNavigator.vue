@@ -186,7 +186,7 @@ const searchQuery = ref("");
 
 const pageTitle = computed(() => {
     if (boardStore.hasBoard) {
-        return `+${boardStore.board.name}`;
+        return `${boardStore.board.name}`;
     } else if (route.meta.title === "Profile") {
         return `@${route.params?.username}`;
     } else {

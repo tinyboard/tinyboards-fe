@@ -127,7 +127,7 @@ if (site.enableBoards && postResult.post?.value?.board) {
 let comments = postResult.post?.value?.comments || [];
 
 // If boards are enabled, post.board is not null -> safe to assume not null
-title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| +' + postResult.post.value.board.name : ''}`;
+title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| ' + postResult.post.value.board.name : ''}`;
 
 // if boards are enabled...
 if (site.enableBoards && postResult.post?.value?.board?.name) {
