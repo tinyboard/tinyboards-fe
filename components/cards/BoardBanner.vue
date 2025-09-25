@@ -1,9 +1,9 @@
 <template>
     <div id="board-banner" class="col-span-full bg-white sm:rounded-md border-b sm:border sm:shadow-inner-white">
         <div class="w-full sm:rounded-t-md relative"
-            :class="[props.board?.banner ? 'h-28 sm:h-56' : 'h-14 sm:h-28']" :style="{
-                backgroundColor: props.board?.primaryColor || '#3c6991',
-                backgroundImage: `url(${props.board?.banner || ''})`,
+            :class="[currentBoard.value?.banner ? 'h-28 sm:h-56' : 'h-14 sm:h-28']" :style="{
+                backgroundColor: currentBoard.value?.primaryColor || '#3c6991',
+                backgroundImage: `url(${currentBoard.value?.banner || ''})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
             }">
@@ -19,9 +19,9 @@
                     </svg>
                     <span>
                         <span class="font-medium text-gray-600">
-                            {{ (props.board?.subscribers || 0).toLocaleString() }}
+                            {{ (currentBoard.value?.subscribers || 0).toLocaleString() }}
                         </span>
-                        {{ (props.board?.subscribers || 0) === 1 ? "Member" : "Members" }}
+                        {{ (currentBoard.value?.subscribers || 0) === 1 ? "Member" : "Members" }}
                     </span>
                 </div>
                 <div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
@@ -34,9 +34,9 @@
                     </svg>
                     <span>
                         <span class="font-medium text-gray-600">{{
-                            (props.board?.postCount || 0).toLocaleString()
+                            (currentBoard.value?.postCount || 0).toLocaleString()
                         }}</span>
-                        {{ (props.board?.postCount || 0) === 1 ? "Post" : "Posts" }}
+                        {{ (currentBoard.value?.postCount || 0) === 1 ? "Post" : "Posts" }}
                     </span>
                 </div>
                 <div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
@@ -47,21 +47,21 @@
                     </svg>
                     <span>
                         <span class="font-medium text-gray-600">{{
-                            (props.board?.commentCount || 0).toLocaleString()
+                            (currentBoard.value?.commentCount || 0).toLocaleString()
                         }}</span>
-                        {{ (props.board?.commentCount || 0) === 1 ? "Comment" : "Comments" }}
+                        {{ (currentBoard.value?.commentCount || 0) === 1 ? "Comment" : "Comments" }}
                     </span>
                 </div>
             </div>
         </div>
         <div class="pt-2 sm:pt-4 px-2 sm:px-12 pb-6 sm:rounded-b-md">
             <div class="flex flex-row space-x-2 sm:space-x-4">
-                <img v-if="props.board?.icon" loading="lazy" :src="props.board?.icon" alt="icon"
+                <img v-if="currentBoard.value?.icon" loading="lazy" :src="currentBoard.value?.icon" alt="icon"
                     class="z-10 flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white mt-[-50px] sm:mt-[-60px]" />
                 <div class="flex flex-col">
                     <div class="flex flex-row space-x-4">
                         <h1 class="text-gray-700 text-xl md:text-4xl leading-5 font-bold">
-                            {{ props.board?.title ?? props.board?.name }}
+                            {{ currentBoard.value?.title ?? currentBoard.value?.name }}
                         </h1>
                         <button v-if="isAuthed" class="hidden sm:block button w-24 group" :class="[
                             isSubscribed ? 'gray hover:red' : 'primary',
@@ -78,29 +78,29 @@
                                 ]">Leave</span>
                             </template>
                         </button>
-                        <NuxtLink v-if="isMod.value" :to="`/b/${props.board?.name}/mod/settings`"
+                        <NuxtLink v-if="isMod.value" :to="`/b/${currentBoard.value?.name}/mod/settings`"
                             class="hidden sm:block button w-24 gray text-center">
                             Settings
                         </NuxtLink>
                         <LazyMenusActionsBoard class="hidden sm:block" v-if="isAuthed" />
                     </div>
                     <p class="text-sm sm:text-md text-gray-500">
-                        {{ props.board?.name }}
+                        {{ currentBoard.value?.name }}
                         <span class="inline sm:hidden">
-                            · {{ props.board?.subscribers || 0 }}
+                            · {{ currentBoard.value?.subscribers || 0 }}
                             {{
-                                (props.board?.subscribers || 0) === 1 ? "member" : "members"
+                                (currentBoard.value?.subscribers || 0) === 1 ? "member" : "members"
                             }}</span>
                     </p>
-                    <p v-if="props.board?.description" class="text-sm text-gray-600 mt-1">
-                        {{ props.board?.description }}
+                    <p v-if="currentBoard.value?.description" class="text-sm text-gray-600 mt-1">
+                        {{ currentBoard.value?.description }}
                     </p>
                 </div>
             </div>
             <div v-if="isAuthed" class="block sm:hidden mt-2">
-                <p class="text-md text-gray-700">{{ props.board?.description }}</p>
+                <p class="text-md text-gray-700">{{ currentBoard.value?.description }}</p>
                 <div class="mt-4 flex flex-row space-x-2">
-                    <NuxtLink v-if="isMod.value" :to="`/b/${props.board?.name}/mod/settings`"
+                    <NuxtLink v-if="isMod.value" :to="`/b/${currentBoard.value?.name}/mod/settings`"
                         class="button flex-grow gray text-center">
                         Settings
                     </NuxtLink>
@@ -133,13 +133,20 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
+import { useBoardStore } from "@/stores/StoreBoard";
 import type { Board } from "@/types/types";
 
 const props = defineProps<{
     board?: Board;
 }>();
-const isMod = computed(() => (props.board?.myModPermissions !== undefined && props.board?.myModPermissions !== 0) || false);
-//const boardCounts = props.boardView.counts;
+
+const boardStore = useBoardStore();
+
+// Use board from props if available, otherwise fall back to store
+const currentBoard = computed(() => props.board || boardStore.board);
+
+const isMod = computed(() => (currentBoard.value?.myModPermissions !== undefined && currentBoard.value?.myModPermissions !== 0) || false);
+//const boardCounts = currentBoard.valueView.counts;
 
 const userStore = useLoggedInUser();
 const toast = useToastStore();
@@ -147,11 +154,22 @@ const toast = useToastStore();
 // Is Authed
 const isAuthed = userStore.isAuthed;
 
-const isSubscribed = ref((props.board?.subscribedType || "notSubscribed") === "subscribed");
+const isSubscribed = computed(() => (currentBoard.value?.subscribedType || "notSubscribed") === "subscribed");
 const isSubscribing = ref(false);
 
 const toggleSubscribe = async () => {
     if (isSubscribing.value) return;
+
+    // Check if board data is available
+    if (!currentBoard.value?.id) {
+        console.error('No board ID available for subscription action. Board:', currentBoard.value);
+        toast.addNotification({
+            header: 'Error',
+            message: 'Board data not available. Please refresh the page.',
+            type: 'error'
+        });
+        return;
+    }
 
     isSubscribing.value = true;
     const originalState = isSubscribed.value;
@@ -161,52 +179,54 @@ const toggleSubscribe = async () => {
             // Unsubscribe from board
             const mutation = `
                 mutation UnsubscribeFromBoard($boardId: Int!) {
-                    unsubscribeFromBoard(boardId: $boardId) {
-                        success
-                    }
+                    unsubscribeFromBoard(boardId: $boardId)
                 }
             `;
 
             const { data } = await useGraphQLMutation(mutation, {
-                boardId: props.board?.id
+                variables: { boardId: currentBoard.value?.id }
             });
 
             if (data.value?.unsubscribeFromBoard) {
-                isSubscribed.value = false;
+                // Update board's subscribedType in store
+                if (currentBoard.value) {
+                    currentBoard.value.subscribedType = "notSubscribed";
+                }
                 toast.addNotification({
-                    header: `Left ${props.board?.name}!`,
-                    message: `You are no longer a member of ${props.board?.name}.`,
+                    header: `Left ${currentBoard.value?.name}!`,
+                    message: `You are no longer a member of ${currentBoard.value?.name}.`,
                     type: "success",
                 });
 
                 // Update user store
-                userStore.removeJoinedBoard(props.board?.id);
+                userStore.removeJoinedBoard(currentBoard.value?.id);
             }
         } else {
             // Subscribe to board
             const mutation = `
                 mutation SubscribeToBoard($boardId: Int!) {
-                    subscribeToBoard(boardId: $boardId) {
-                        success
-                    }
+                    subscribeToBoard(boardId: $boardId)
                 }
             `;
 
             const { data } = await useGraphQLMutation(mutation, {
-                boardId: props.board?.id
+                variables: { boardId: currentBoard.value?.id }
             });
 
             if (data.value?.subscribeToBoard) {
-                isSubscribed.value = true;
+                // Update board's subscribedType in store
+                if (currentBoard.value) {
+                    currentBoard.value.subscribedType = "subscribed";
+                }
                 toast.addNotification({
-                    header: `Joined ${props.board?.name}!`,
-                    message: `You are now a member of ${props.board?.name}.`,
+                    header: `Joined ${currentBoard.value?.name}!`,
+                    message: `You are now a member of ${currentBoard.value?.name}.`,
                     type: "success",
                 });
 
                 // Update user store - create a board view object
                 const boardView = {
-                    board: props.board,
+                    board: currentBoard.value,
                     subscribed: "Subscribed"
                 };
                 userStore.addJoinedBoard(boardView);
@@ -220,8 +240,10 @@ const toggleSubscribe = async () => {
             type: "error",
         });
 
-        // Revert state on error
-        isSubscribed.value = originalState;
+        // Revert state on error - restore original subscribedType
+        if (currentBoard.value) {
+            currentBoard.value.subscribedType = originalState ? "subscribed" : "notSubscribed";
+        }
     } finally {
         isSubscribing.value = false;
     }

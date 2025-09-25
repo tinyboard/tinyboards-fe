@@ -295,14 +295,14 @@
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.post?.id}/${parentPost?.titleChunk ?? '-'}/${comment.id}#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Permalink
             </NuxtLink>
           </li>
           <li class="hidden sm:inline sm:list-comment">
             <NuxtLink
-              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
+              :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.post?.id}/${parentPost?.titleChunk ?? '-'}/${comment.id}?context=3#comment-text-${comment.id}`"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
               Context
             </NuxtLink>
@@ -324,7 +324,7 @@
         <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
           <img loading="lazy" :src="userStore.user!.avatar!" alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white" />
-          <LazyInputsComment :post-id="comment.postId" :parent-id="comment.id" @closed="isReplying = false"
+          <LazyInputsComment :post-id="comment.post?.id" :parent-id="comment.id" @closed="isReplying = false"
             @comment-published="onCommentPublished" />
         </div>
         <!-- Replies -->
@@ -335,7 +335,7 @@
         <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
         <!-- Continue Thread Link -->
         <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
-          :to="`/p/${comment.postId}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
+          :to="`/p/${comment.post?.id}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>
@@ -423,7 +423,7 @@ const onCommentPublished = (newComment: Comment) => {
   // Navigate to comment if replies are hidden.
   if (route.meta.hasRepliesDisabled) {
     navigateTo(
-      `/p/${comment.value!.postId}/${comment.value!.parentId}/#${comment.value!.id}`
+      `/p/${comment.value!.post?.id}/${comment.value!.parentId}/#${comment.value!.id}`
     );
   }
 };

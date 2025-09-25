@@ -14,8 +14,9 @@
             >
                 <!-- Banner -->
                 <CardsBoardBanner
-                    v-if="shouldShowBoardBanner"
+                    v-if="shouldShowBoardBanner && board.value"
                     :board="board.value"
+                    :key="board.value?.id"
                     class="col-span-full"
                 />
                 <LazyCardsBanner
@@ -262,9 +263,9 @@ if (route.params?.board && !boardStore.hasBoard) {
 }
 
 //const boardView = boardStore.boardView;
-const board = computed(() => boardStore.board || {});
+const board = computed(() => boardStore.board);
 //const boardCounts = boardView.counts;
-const moderators = computed(() => board.value.moderators || []);
+const moderators = computed(() => board.value?.moderators || []);
 
 // Computed property for banner display
 const shouldShowBoardBanner = computed(() => {

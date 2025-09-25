@@ -120,8 +120,10 @@ export async function editComment(id: number, newBody: string): Promise<{
     `;
 
     const { data } = await useGraphQLMutation(mutation, {
-      id,
-      body: newBody
+      variables: {
+        id,
+        body: newBody
+      }
     });
 
     if (data.value?.editComment) {

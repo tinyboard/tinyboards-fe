@@ -1,5 +1,5 @@
 <template>
-	<form @submit.prevent="onSubmit" @submit="submitComment()" class="comment-form relative flex flex-col w-full">
+	<form @submit.prevent="submitComment" class="comment-form relative flex flex-col w-full">
 		<!-- Textarea -->
 		<textarea v-show="!isPreviewVisible" required placeholder="Write a comment..." rows="4"
 			class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
@@ -76,11 +76,35 @@ const inputHandler = (e: KeyboardEvent) => {
 
 // Submit comment
 function submitComment() {
+	// Validate required fields
+	if (!body.value.trim()) {
+		toast.addNotification({
+			header: 'Comment failed',
+			message: 'Comment body cannot be empty.',
+			type: 'error'
+		});
+		return;
+	}
+
+	// For top-level comments, we need postId
+	// For replies, we need both postId and parentId
+	if (!props.postId) {
+		toast.addNotification({
+			header: 'Comment failed',
+			message: 'Missing post ID.',
+			type: 'error'
+		});
+		return;
+	}
+
+	isLoading.value = true;
+
 	const mutation = `
-		mutation CreateComment($replyToPostId: Int, $replyToCommentId: Int, $body: String!, $withBoard: Boolean!) {
-			createComment(replyToPostId: $replyToPostId, replyToCommentId: $replyToCommentId, body: $body, withBoard: $withBoard) {
+		mutation CreateComment($replyToPostId: Int, $replyToCommentId: Int, $body: String!) {
+			createComment(replyToPostId: $replyToPostId, replyToCommentId: $replyToCommentId, body: $body) {
 				id
 				body
+				bodyHTML
 				isRemoved
 				creationDate
 				updated
@@ -92,21 +116,25 @@ function submitComment() {
 					displayName
 					avatar
 				}
-				depth
+				level
 				parentId
-				childCount
+				replyCount
 			}
 		}
 	`;
 
-	useGraphQLMutation(mutation, {
-		replyToPostId: props.postId,
-		replyToCommentId: props.parentId,
-		body: body.value,
-		withBoard: site.enableBoards
-	})
+	const variables = {
+		replyToPostId: props.parentId ? null : props.postId,
+		replyToCommentId: props.parentId || null,
+		body: body.value.trim()
+	};
+
+	useGraphQLMutation(mutation, { variables })
 		.then((response) => {
 			const resp = response.data.value;
+			if (!resp || !resp.createComment) {
+				throw new Error('No comment data returned from mutation');
+			}
 			emit('commentPublished', resp.createComment);
 			// save comment to comments store
 			commentsStore.comments.push(resp.createComment);
@@ -116,8 +144,9 @@ function submitComment() {
 			toast.addNotification({ header: 'Comment created', message: 'Your comment was published!', type: 'success' });
 		})
 		.catch((err) => {
-			console.error(err);
-			toast.addNotification({ header: 'Comment failed', message: 'Your comment failed to publish. Please try again.', type: 'error' });
+			console.error('Comment submission error:', err);
+			const errorMessage = err.message || 'Your comment failed to publish. Please try again.';
+			toast.addNotification({ header: 'Comment failed', message: errorMessage, type: 'error' });
 		})
 		.finally(() => {
 			isLoading.value = false;
