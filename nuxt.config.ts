@@ -89,10 +89,15 @@ export default defineNuxtConfig({
       ssr: false
     },
 
-    // Board pages with SSR for SEO
+    // Board pages without SSR to avoid production GraphQL context issues
     "/b/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300' }
+      ssr: false,
+      prerender: false
+    },
+    // Post pages without SSR to avoid auth context issues
+    "/p/**": {
+      ssr: false,
+      prerender: false
     },
 
     // Homepage redirect

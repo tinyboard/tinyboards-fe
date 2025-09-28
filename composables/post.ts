@@ -2,7 +2,7 @@ import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, watchEffect } from "vue";
 import type { Comment, Post } from "@/types/types";
 
 /**
@@ -36,27 +36,15 @@ export async function usePost(id: number): Promise<{
     try {
       let postData = data.value?.post;
 
-      // Debug logging
-      if (process.dev) {
-        console.log('usePost computed - raw data.value:', data.value);
-        console.log('usePost computed - postData from data.value?.post:', postData);
-      }
-
       // Fallback: maybe the response structure is different
       if (!postData && data.value) {
         // Try direct access in case the response is just the post data
         if (data.value.id) {
           postData = data.value;
-          if (process.dev) {
-            console.log('usePost computed - using direct data.value as postData:', postData);
-          }
         }
         // Try other possible structures
         else if (data.value.data?.post) {
           postData = data.value.data.post;
-          if (process.dev) {
-            console.log('usePost computed - using data.value.data.post as postData:', postData);
-          }
         }
       }
 
@@ -65,10 +53,6 @@ export async function usePost(id: number): Promise<{
         // organize post comments into a tree
         postData.comments = treeComments(postData.comments);
         postsStore.setPosts([postData]);
-      }
-
-      if (process.dev) {
-        console.log('usePost computed - final postData:', postData);
       }
 
       return postData;
@@ -84,7 +68,7 @@ export async function usePost(id: number): Promise<{
     post,
     error,
     pending,
-    data  // Also return the raw data for debugging
+    data
   };
 }
 

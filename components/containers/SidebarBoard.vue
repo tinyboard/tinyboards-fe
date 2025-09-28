@@ -105,7 +105,7 @@
                     </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/" class="flex items-center">
+                    <NuxtLink :to="`/b/${board.name}/mod`" class="flex items-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="w-4 h-4 mr-2"
@@ -127,7 +127,7 @@
                     </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/" class="flex items-center">
+                    <NuxtLink :to="`/b/${board.name}/mod/bans`" class="flex items-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="w-4 h-4 mr-2"
@@ -155,7 +155,7 @@
                     </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/" class="flex items-center">
+                    <NuxtLink :to="`/b/${board.name}/mod/appearance`" class="flex items-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="w-4 h-4 mr-2"
@@ -182,7 +182,7 @@
                     </NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/" class="flex items-center">
+                    <NuxtLink :to="`/b/${board.name}/mod/log`" class="flex items-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="w-4 h-4 mr-2"

@@ -199,6 +199,7 @@ function getAuthHeaders(customHeaders?: Record<string, string>): Record<string, 
     }
     // Just use basic headers without authentication for SSR
     // The backend should handle missing auth gracefully for public queries
+    // In production, we want to avoid SSR for complex auth-dependent queries
   } else {
     // Client-side: get token from cookie and use Authorization header
     try {

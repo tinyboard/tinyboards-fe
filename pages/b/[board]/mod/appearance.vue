@@ -13,7 +13,7 @@
                 </p>
             </div>
             <!-- Form -->
-            <form @submit.prevent="onSubmit" @submit="submitSettings()">
+            <form @submit.prevent="submitSettings">
                 <div class="flex flex-col space-y-6 divide-y bg-white p-4">
                     <!-- Photo -->
                     <div class="md:grid md:grid-cols-3 md:gap-6">
@@ -216,11 +216,19 @@ const board = boardStore.board;
 const modalStore = useModalStore();
 const imageStore = useImageStore();
 
+// Ensure board exists before proceeding
+if (!board) {
+    throw createError({
+        statusCode: 404,
+        statusMessage: 'Board not found'
+    });
+}
+
 const settings = ref(JSON.parse(JSON.stringify(board)));
 
-const primaryColor = ref(toHexCode(settings.value.primary_color));
-const secondaryColor = ref(toHexCode(settings.value.secondary_color));
-const hoverColor = ref(toHexCode(settings.value.hover_color));
+const primaryColor = ref(toHexCode(settings.value.primary_color || '#3B82F6'));
+const secondaryColor = ref(toHexCode(settings.value.secondary_color || '#6B7280'));
+const hoverColor = ref(toHexCode(settings.value.hover_color || '#2563EB'));
 
 definePageMeta({
     hasAuthRequired: true,

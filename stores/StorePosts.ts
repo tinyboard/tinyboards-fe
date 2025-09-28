@@ -199,10 +199,6 @@ export const usePostsStore = defineStore("posts", {
         }
       });
 
-      // Debug logging - minimal
-      if (process.dev) {
-        console.log('StorePosts.fetchPost - ID:', id, 'success:', !!result.data.value);
-      }
 
       return result;
     },

@@ -78,10 +78,6 @@
                                 ]">Leave</span>
                             </template>
                         </button>
-                        <NuxtLink v-if="isMod" :to="`/b/${currentBoard?.name}/mod`"
-                            class="hidden sm:block button w-24 gray text-center">
-                            Mod Tools
-                        </NuxtLink>
                         <LazyMenusActionsBoard class="hidden sm:block" v-if="isAuthed" />
                     </div>
                     <p class="text-sm sm:text-md text-gray-500">
@@ -100,10 +96,6 @@
             <div v-if="shouldShowJoinButton" class="block sm:hidden mt-2">
                 <p class="text-md text-gray-700">{{ currentBoard?.description }}</p>
                 <div class="mt-4 flex flex-row space-x-2">
-                    <NuxtLink v-if="isMod" :to="`/b/${currentBoard?.name}/mod`"
-                        class="button flex-grow gray text-center">
-                        Mod Tools
-                    </NuxtLink>
                     <button class="button flex-grow group" :class="[isSubscribed ? 'gray hover:red' : 'primary']"
                         @click="toggleSubscribe" :disabled="isSubscribing">
                         <span v-if="isSubscribing">Loading...</span>
