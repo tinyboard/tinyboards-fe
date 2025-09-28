@@ -1,40 +1,38 @@
 <template>
-    <NuxtLayout name="wizard">
-        <div class="flex flex-col w-full">
-            <div class="mb-12 flex flex-row space-x-2 items-center">
-                <img :src="site.icon" class="rounded w-12 h-12">
-                <h3 class="text-primary font-bold text-2xl">{{ site.name }}</h3>
-            </div>
-            <div v-if="!site.enableBoards">
-                <h1 class="text-3xl font-bold">Boards are disabled</h1>
-                <p class="text-gray-600 my-6">Boards are turned off for {{ site.name }}.<br /><br />Sorry, even the wizard can't do the impossible.</p>
-                <NuxtLink to="/feed" class="mt-6">
-                    <button class="button gray">Go home</button>
-                </NuxtLink>
-            </div>
-            <div v-else-if="isBanned">
-                <h1 class="text-3xl font-bold">You are banned</h1>
-                <p class="text-gray-600 my-6">Bruh.</p>
-                <NuxtLink to="/feed" class="mt-6">
-                    <button class="button gray">Go home</button>
-                </NuxtLink>
-            </div>
-            <div v-else-if="adminRequired">
-                <h1 class="text-3xl font-bold">Board creation restricted</h1>
-                <p class="text-gray-600 my-6">Only admins can create new boards for some reason, it seems.</p>
-                <NuxtLink to="/feed" class="mt-6">
-                    <button class="button gray">Go home</button>
-                </NuxtLink>
-            </div>
-            <component v-else :is="pages[page - 1]" />
-            <div v-if="site.enableBoards && !(adminRequired || isBanned)" class="mt-12 flex flex-row space-x-4 w-full">
-                <button class="button gray flex-grow-0" @click="back">{{ page > 1 ? 'Go back' : 'Cancel' }}</button>
-                <button class="button primary flex-grow" :disabled="!board.boarding.canProceed || isLoading"
-                    @click="next">{{ page ==
-                        MAX_PAGE ? `Create ${board.name}! 🌟` : 'Continue' }}</button>
-            </div>
+    <div class="flex flex-col w-full">
+        <div class="mb-12 flex flex-row space-x-2 items-center">
+            <img :src="site.icon" class="rounded w-12 h-12">
+            <h3 class="text-primary font-bold text-2xl">{{ site.name }}</h3>
         </div>
-    </NuxtLayout>
+        <div v-if="!site.enableBoards">
+            <h1 class="text-3xl font-bold">Boards are disabled</h1>
+            <p class="text-gray-600 my-6">Boards are turned off for {{ site.name }}.<br /><br />Sorry, even the wizard can't do the impossible.</p>
+            <NuxtLink to="/feed" class="mt-6">
+                <button class="button gray">Go home</button>
+            </NuxtLink>
+        </div>
+        <div v-else-if="isBanned">
+            <h1 class="text-3xl font-bold">You are banned</h1>
+            <p class="text-gray-600 my-6">Bruh.</p>
+            <NuxtLink to="/feed" class="mt-6">
+                <button class="button gray">Go home</button>
+            </NuxtLink>
+        </div>
+        <div v-else-if="adminRequired">
+            <h1 class="text-3xl font-bold">Board creation restricted</h1>
+            <p class="text-gray-600 my-6">Only admins can create new boards for some reason, it seems.</p>
+            <NuxtLink to="/feed" class="mt-6">
+                <button class="button gray">Go home</button>
+            </NuxtLink>
+        </div>
+        <component v-else :is="pages[page - 1]" />
+        <div v-if="site.enableBoards && !(adminRequired || isBanned)" class="mt-12 flex flex-row space-x-4 w-full">
+            <button class="button gray flex-grow-0" @click="back">{{ page > 1 ? 'Go back' : 'Cancel' }}</button>
+            <button class="button primary flex-grow" :disabled="!board.boarding.canProceed || isLoading"
+                @click="next">{{ page ==
+                    MAX_PAGE ? `Create ${board.name}! 🌟` : 'Continue' }}</button>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -72,7 +70,7 @@ const isLoading = ref(false);
 }*/
 
 definePageMeta({
-    layout: false,
+    layout: 'wizard',
     isScrollDisabled: true,
     'hasAuthRequired': true,
     /*middleware: [

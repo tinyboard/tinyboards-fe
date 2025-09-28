@@ -48,50 +48,52 @@ const route = useRoute();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Fetch reported comments using GraphQL with explicit query string
+// Fetch reported comments using GraphQL with explicit query string (client-side only)
 const { data: reportsData, pending, error, refresh } = await useGraphQLQuery(`
-	query GetCommentReports($limit: Int!, $page: Int!) {
-		getCommentReports(limit: $limit, page: $page) {
-			reports {
-				id
-				comment {
-					id
-					body
-					author {
-						name
-						avatar
-					}
-					post {
-						id
-						title
-						board {
-							name
-						}
-					}
-					creation_date
-					is_removed
-					votes
-					reply_count
-				}
-				reason
-				reporter {
-					name
-				}
-				creation_date
-			}
-			total_count
+	query GetCommentReports($limit: Int!, $offset: Int!) {
+		getCommentReports(limit: $limit, offset: $offset) {
+			id
+			creatorId
+			commentId
+			originalCommentText
+			reason
+			resolved
+			resolverId
+			creationDate
+			updated
 		}
 	}
 `, {
 	variables: {
 		limit: limit.value,
-		page: page.value
-	}
+		offset: (page.value - 1) * limit.value
+	},
+	ssr: false  // Force client-side execution for authentication
 });
 
-// Transform the data to match the expected format
-const items = computed(() => reportsData.value?.getCommentReports?.reports?.map(report => report.comment) || []);
-const totalCount = computed(() => reportsData.value?.getCommentReports?.total_count || 0);
+// Transform the data to match the expected format for comments
+const items = computed(() => {
+	if (!reportsData.value?.getCommentReports) return [];
+
+	return reportsData.value.getCommentReports.map(report => ({
+		id: report.commentId,
+		body: report.originalCommentText,
+		creation_date: report.creationDate,
+		// Add minimal required fields for the list component
+		author: { name: 'Reported User', avatar: null },
+		post: { id: 0, title: 'Unknown Post', board: { name: 'Unknown Board' } },
+		is_removed: false,
+		votes: 0,
+		reply_count: 0
+	}));
+});
+
+// Since backend doesn't provide total count, we'll estimate based on results
+const totalCount = computed(() => {
+	const reports = reportsData.value?.getCommentReports || [];
+	// If we got a full page, assume there might be more
+	return reports.length === limit.value ? (page.value * limit.value) + 1 : (page.value - 1) * limit.value + reports.length;
+});
 
 //console.log(`comments are ${JSON.stringify(items.value, null, 4)}`);
 

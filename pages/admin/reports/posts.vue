@@ -75,52 +75,59 @@ const postsStore = usePostsStore();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Fetch reported posts using GraphQL with explicit query string
+// Fetch reported posts using GraphQL with explicit query string (client-side only)
 const { data: reportsData, pending, error, refresh } = await useGraphQLQuery(`
-	query GetPostReports($limit: Int!, $page: Int!) {
-		getPostReports(limit: $limit, page: $page) {
-			reports {
-				id
-				post {
-					id
-					title
-					body
-					author {
-						name
-						avatar
-					}
-					board {
-						name
-					}
-					creation_date
-					url
-					image
-					is_nsfw
-					is_locked
-					is_removed
-					is_featured
-					votes
-					comment_count
-				}
-				reason
-				reporter {
-					name
-				}
-				creation_date
-			}
-			total_count
+	query GetPostReports($limit: Int!, $offset: Int!) {
+		getPostReports(limit: $limit, offset: $offset) {
+			id
+			creatorId
+			postId
+			originalPostTitle
+			originalPostUrl
+			originalPostBody
+			reason
+			resolved
+			resolverId
+			creationDate
+			updated
 		}
 	}
 `, {
 	variables: {
 		limit: limit.value,
-		page: page.value
-	}
+		offset: (page.value - 1) * limit.value
+	},
+	ssr: false  // Force client-side execution for authentication
 });
 
-// Transform the data to match the expected format
-const items = computed(() => reportsData.value?.getPostReports?.reports?.map(report => report.post) || []);
-const totalCount = computed(() => reportsData.value?.getPostReports?.total_count || 0);
+// Transform the data to match the expected format for posts
+const items = computed(() => {
+	if (!reportsData.value?.getPostReports) return [];
+
+	return reportsData.value.getPostReports.map(report => ({
+		id: report.postId,
+		title: report.originalPostTitle,
+		body: report.originalPostBody,
+		url: report.originalPostUrl,
+		creation_date: report.creationDate,
+		// Add minimal required fields for the list component
+		author: { name: 'Reported User' },
+		board: { name: 'Unknown Board' },
+		is_nsfw: false,
+		is_locked: false,
+		is_removed: false,
+		is_featured: false,
+		votes: 0,
+		comment_count: 0
+	}));
+});
+
+// Since backend doesn't provide total count, we'll estimate based on results
+const totalCount = computed(() => {
+	const reports = reportsData.value?.getPostReports || [];
+	// If we got a full page, assume there might be more
+	return reports.length === limit.value ? (page.value * limit.value) + 1 : (page.value - 1) * limit.value + reports.length;
+});
 
 if (error.value && error.value.response) {
 	throw createError({

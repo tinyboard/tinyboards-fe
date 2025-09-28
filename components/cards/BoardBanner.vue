@@ -130,6 +130,7 @@
 
 <script lang="ts" setup>
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useSiteStore } from "@/stores/StoreSite";
 import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
@@ -141,6 +142,7 @@ const props = defineProps<{
 }>();
 
 const boardStore = useBoardStore();
+const site = useSiteStore();
 
 // Use board from props if available, otherwise fall back to store
 const currentBoard = computed(() => props.board || boardStore.board);
@@ -159,8 +161,8 @@ const isSubscribing = ref(false);
 
 // Computed property to handle hydration issues
 const shouldShowJoinButton = computed(() => {
-    // Only show if we're on client side and user is authenticated
-    return process.client && isAuthed.value && currentBoard.value?.id;
+    // Only show if boards are enabled, we're on client side, user is authenticated, and board data exists
+    return site.enableBoards && process.client && isAuthed.value && currentBoard.value?.id;
 });
 
 const toggleSubscribe = async () => {
