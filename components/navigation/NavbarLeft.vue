@@ -160,7 +160,7 @@
 								<img :src="boardView.board.icon" class="w-12 h-12" />
 								<div class="text-left">
 									<h3 class="font-semibold text-gray-800 text-md">{{ boardView.board.title ?? boardView.board.name }}</h3>
-									<p class="text-gray-600 text-xs">+{{ boardView.board.name }} · {{ boardView.counts.subscribers }} {{ boardView.counts.subscribers == 1 ? "member" : "members" }}</p>
+									<p class="text-gray-600 text-xs">{{ boardView.board.name }} · {{ boardView.counts.subscribers }} {{ boardView.counts.subscribers == 1 ? "member" : "members" }}</p>
 								</div>
 							</div>
 						</div>-->
@@ -211,7 +211,7 @@
 								<img :src="boardView.board.icon" class="w-12 h-12" />
 								<div class="text-left">
 									<h3 class="font-semibold text-gray-800 text-md">{{ boardView.board.title ?? boardView.board.name }}</h3>
-									<p class="text-gray-600 text-xs">+{{ boardView.board.name }} · {{ boardView.counts.subscribers }} {{ boardView.counts.subscribers == 1 ? "member" : "members" }}</p>
+									<p class="text-gray-600 text-xs">{{ boardView.board.name }} · {{ boardView.counts.subscribers }} {{ boardView.counts.subscribers == 1 ? "member" : "members" }}</p>
 								</div>
 							</div>
 						</div>-->

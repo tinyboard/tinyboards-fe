@@ -11,7 +11,7 @@
                         <div class="relative w-full">
 
                               <!-- Loading State -->
-                              <div v-if="postResult.pending?.value" class="relative w-full">
+                              <div v-if="postResult.pending" class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
                                           <div role="status" class="max-w-sm">
                                                 <h1>Loading post...</h1>
@@ -34,7 +34,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread v-if="postResult.post.value" :post="postResult.post.value" />
+                        <ContainersSidebarThread v-if="postResult.post?.value" :post="postResult.post.value" />
                   </div>
             </section>
       </main>

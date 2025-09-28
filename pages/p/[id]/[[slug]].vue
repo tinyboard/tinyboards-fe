@@ -10,7 +10,7 @@
                         <!-- Thread -->
                         <div class="relative w-full">
                               <!-- Loading State -->
-                              <div v-if="postResult.pending?.value" class="relative w-full">
+                              <div v-if="postResult.pending" class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
                                           <div role="status" class="max-w-sm">
                                                 <h1>Loading post...</h1>
@@ -18,10 +18,10 @@
                                     </div>
                               </div>
                               <!-- Post Content -->
-                              <template v-else-if="postResult.post?.value">
-                                    <component :post="postResult.post.value" :comments="comments"
+                              <template v-else-if="postResult.post">
+                                    <component :post="postResult.post" :comments="comments"
                                           :is="canViewPost ? thread : threadRemoved" />
-                                    <LazyContainersCommentSection :post="postResult.post.value" :comments="comments" />
+                                    <LazyContainersCommentSection :post="postResult.post" :comments="comments" />
                               </template>
                               <!-- Error State -->
                               <div v-else class="relative w-full">
@@ -33,7 +33,7 @@
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread v-if="postResult.post?.value" :post="postResult.post.value" />
+                        <ContainersSidebarThread v-if="postResult.post" :post="postResult.post" />
                   </div>
             </section>
       </main>

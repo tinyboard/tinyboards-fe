@@ -1,15 +1,15 @@
 <template>
     <!-- Loading State -->
-    <div v-if="userResult.pending?.value" class="container mx-auto max-w-4xl p-4">
+    <div v-if="userResult.pending" class="container mx-auto max-w-4xl p-4">
         <div class="bg-white rounded-md border p-8 text-center">
             <h2 class="text-xl font-semibold text-gray-800">Loading user profile...</h2>
         </div>
     </div>
     <!-- User Profile -->
     <component
-        v-else-if="user.value"
-        :user="user.value"
-        :moderates="moderates.value"
+        v-else-if="user"
+        :user="user"
+        :moderates="moderates"
         :is="canView ? Profile : ProfileRemoved"
     >
         <template v-slot:content>
@@ -22,11 +22,11 @@
                 <NuxtLink :to="`/@${username}/posts`" v-if="username">View All</NuxtLink>
             </div>
             <LazyListsPosts
-                v-if="posts.value?.length"
-                :posts="posts.value"
+                v-if="posts?.length"
+                :posts="posts"
                 :isCompact="!preferCardView"
-                :isLoading="userResult.pending?.value"
-                :hasError="userResult.error?.value"
+                :isLoading="userResult.pending"
+                :hasError="userResult.error"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
                 @{{ username || 'Unknown user' }} hasn't made any posts. At all.
@@ -40,8 +40,8 @@
                 <NuxtLink :to="`/@${username}/comments`" v-if="username">View All</NuxtLink>
             </div>
             <LazyListsComments
-                v-if="comments.value?.length"
-                :comments="comments.value"
+                v-if="comments?.length"
+                :comments="comments"
                 :cards="true"
             />
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">

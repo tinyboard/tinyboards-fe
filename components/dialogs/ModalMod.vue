@@ -64,7 +64,7 @@
                                 as="h3"
                                 class="text-lg font-bold leading-6 text-gray-900"
                             >
-                                Invite mod to +{{ board.name }}
+                                Invite mod to {{ board.name }}
                             </DialogTitle>
                             <!-- Body -->
                             <div class="mt-2">
@@ -78,7 +78,7 @@
                                             ? "a moderator of"
                                             : "invited to moderate"
                                     }}
-                                    +{{ board.name }}.
+                                    {{ board.name }}.
                                     <br />
                                     <br />
                                     You will be able to invite them back

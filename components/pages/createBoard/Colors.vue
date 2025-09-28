@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-4">
         <h1 class="text-4xl text-gray-800 font-bold">Time to add some colors 🎨</h1>
-        <p class="text-gray-700">Give +{{ board.name }} an unforgettably cool style. More customization options will be
+        <p class="text-gray-700">Give {{ board.name }} an unforgettably cool style. More customization options will be
             available later.</p>
 
 

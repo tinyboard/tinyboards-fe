@@ -113,7 +113,7 @@
                             <div class="text-gray-800 text-md font-semibold">
                                 {{ board.title ?? board.name }}
                             </div>
-                            <span class="text-xs text-gray-600">+{{ board.name }}</span>
+                            <span class="text-xs text-gray-600">{{ board.name }}</span>
                         </div>
                     </NuxtLink>
                     </MenuItem>
@@ -133,7 +133,7 @@
                             <div class="text-gray-800 text-md font-semibold">
                                 {{ board.title ?? board.name }}
                             </div>
-                            <span class="text-xs text-gray-600">+{{ board.name }}</span>
+                            <span class="text-xs text-gray-600">{{ board.name }}</span>
                         </div>
                     </NuxtLink>
                     </MenuItem>
@@ -155,7 +155,7 @@
                             <div class="text-gray-800 text-md font-semibold">
                                 {{ board.title ?? board.name }}
                             </div>
-                            <span class="text-xs text-gray-600">+{{ board.name }}</span>
+                            <span class="text-xs text-gray-600">{{ board.name }}</span>
                         </div>
                     </NuxtLink>
                     </MenuItem>

@@ -4,7 +4,7 @@
             <!-- Page Heading & Description -->
             <div>
                 <h3 class="text-lg font-medium leading-6 text-gray-900">Banned users</h3>
-                <p class="mt-1 text-sm text-gray-600">These people have been banned from +{{ board.name }}.</p>
+                <p class="mt-1 text-sm text-gray-600">These people have been banned from {{ board.name }}.</p>
             </div>
             <button class="ml-auto flex items-center button red" @click="openBanModal">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" width="40" height="40" viewBox="0 0 24 24"

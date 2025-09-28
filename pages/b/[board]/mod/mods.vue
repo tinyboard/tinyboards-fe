@@ -6,7 +6,7 @@
                 Moderators
             </h3>
             <p class="mt-1 text-sm text-gray-600">
-                These individuals work tirelessly to keep +{{ board.name }}
+                These individuals work tirelessly to keep {{ board.name }}
                 clean. For free.
             </p>
         </div>
@@ -17,7 +17,7 @@
             class="flex flex-col sm:flex-row text-center sm:text-left justify-between items-center align-middle bg-white dark:bg-gray-600 px-4 py-2 rounded"
         >
             <p class="text-gray-700 text-sm font-semibold">
-                You are invited to become a moderator of +{{ board.name }}.
+                You are invited to become a moderator of {{ board.name }}.
             </p>
             <div class="flex mt-2 sm:mt-0 space-x-2 w-full sm:w-auto">
                 <button
@@ -41,7 +41,7 @@
             class="flex justify-between items-center align-middle bg-white dark:bg-gray-600 px-4 py-2 rounded"
         >
             <p class="text-gray-700 text-sm font-semibold">
-                You are a moderator of +{{ board.name }}.
+                You are a moderator of {{ board.name }}.
             </p>
             <div class="flex space-x-2">
                 <button
@@ -265,7 +265,7 @@
                     Invited Moderators
                 </h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    These users have been invited to moderate +{{ board.name }}.
+                    These users have been invited to moderate {{ board.name }}.
                 </p>
             </div>
 

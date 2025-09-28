@@ -125,7 +125,7 @@ const route = useRoute();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Fetch comments using GraphQL
+// Fetch comments using GraphQL (client-side only)
 const { data: commentsData, pending, error, refresh } = await useGraphQLQuery(`
 	query GetComments($postId: Int, $limit: Int, $page: Int) {
 		comments(postId: $postId, limit: $limit, page: $page) {
@@ -156,7 +156,8 @@ const { data: commentsData, pending, error, refresh } = await useGraphQLQuery(`
 		postId: null, // Get all comments
 		limit: limit.value * 5, // Get more to filter removed ones
 		page: page.value
-	}
+	},
+	ssr: false  // Force client-side execution for authentication
 });
 
 // Filter only removed comments

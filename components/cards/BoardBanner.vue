@@ -1,9 +1,9 @@
 <template>
     <div id="board-banner" class="col-span-full bg-white sm:rounded-md border-b sm:border sm:shadow-inner-white">
         <div class="w-full sm:rounded-t-md relative"
-            :class="[currentBoard.value?.banner ? 'h-28 sm:h-56' : 'h-14 sm:h-28']" :style="{
-                backgroundColor: currentBoard.value?.primaryColor || '#3c6991',
-                backgroundImage: `url(${currentBoard.value?.banner || ''})`,
+            :class="[currentBoard?.banner ? 'h-28 sm:h-56' : 'h-14 sm:h-28']" :style="{
+                backgroundColor: currentBoard?.primaryColor || '#3c6991',
+                backgroundImage: `url(${currentBoard?.banner || ''})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
             }">
@@ -19,9 +19,9 @@
                     </svg>
                     <span>
                         <span class="font-medium text-gray-600">
-                            {{ (currentBoard.value?.subscribers || 0).toLocaleString() }}
+                            {{ (currentBoard?.subscribers || 0).toLocaleString() }}
                         </span>
-                        {{ (currentBoard.value?.subscribers || 0) === 1 ? "Member" : "Members" }}
+                        {{ (currentBoard?.subscribers || 0) === 1 ? "Member" : "Members" }}
                     </span>
                 </div>
                 <div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
@@ -34,9 +34,9 @@
                     </svg>
                     <span>
                         <span class="font-medium text-gray-600">{{
-                            (currentBoard.value?.postCount || 0).toLocaleString()
+                            (currentBoard?.postCount || 0).toLocaleString()
                         }}</span>
-                        {{ (currentBoard.value?.postCount || 0) === 1 ? "Post" : "Posts" }}
+                        {{ (currentBoard?.postCount || 0) === 1 ? "Post" : "Posts" }}
                     </span>
                 </div>
                 <div class="bg-white px-4 py-2 shadow-sm flex flex-row rounded">
@@ -47,21 +47,21 @@
                     </svg>
                     <span>
                         <span class="font-medium text-gray-600">{{
-                            (currentBoard.value?.commentCount || 0).toLocaleString()
+                            (currentBoard?.commentCount || 0).toLocaleString()
                         }}</span>
-                        {{ (currentBoard.value?.commentCount || 0) === 1 ? "Comment" : "Comments" }}
+                        {{ (currentBoard?.commentCount || 0) === 1 ? "Comment" : "Comments" }}
                     </span>
                 </div>
             </div>
         </div>
         <div class="pt-2 sm:pt-4 px-2 sm:px-12 pb-6 sm:rounded-b-md">
             <div class="flex flex-row space-x-2 sm:space-x-4">
-                <img v-if="currentBoard.value?.icon" loading="lazy" :src="currentBoard.value?.icon" alt="icon"
+                <img v-if="currentBoard?.icon" loading="lazy" :src="currentBoard?.icon" alt="icon"
                     class="z-10 flex-shrink-0 w-24 h-24 md:w-36 md:h-36 object-cover rounded-none p-0.5 border bg-white mt-[-50px] sm:mt-[-60px]" />
                 <div class="flex flex-col">
                     <div class="flex flex-row space-x-4">
                         <h1 class="text-gray-700 text-xl md:text-4xl leading-5 font-bold">
-                            {{ currentBoard.value?.title ?? currentBoard.value?.name }}
+                            {{ currentBoard?.title ?? currentBoard?.name }}
                         </h1>
                         <button v-if="shouldShowJoinButton" class="hidden sm:block button w-24 group" :class="[
                             isSubscribed ? 'gray hover:red' : 'primary',
@@ -78,31 +78,31 @@
                                 ]">Leave</span>
                             </template>
                         </button>
-                        <NuxtLink v-if="isMod.value" :to="`/b/${currentBoard.value?.name}/mod/settings`"
+                        <NuxtLink v-if="isMod" :to="`/b/${currentBoard?.name}/mod`"
                             class="hidden sm:block button w-24 gray text-center">
-                            Settings
+                            Mod Tools
                         </NuxtLink>
                         <LazyMenusActionsBoard class="hidden sm:block" v-if="isAuthed" />
                     </div>
                     <p class="text-sm sm:text-md text-gray-500">
-                        {{ currentBoard.value?.name }}
+                        {{ currentBoard?.name }}
                         <span class="inline sm:hidden">
-                            · {{ currentBoard.value?.subscribers || 0 }}
+                            · {{ currentBoard?.subscribers || 0 }}
                             {{
-                                (currentBoard.value?.subscribers || 0) === 1 ? "member" : "members"
+                                (currentBoard?.subscribers || 0) === 1 ? "member" : "members"
                             }}</span>
                     </p>
-                    <p v-if="currentBoard.value?.description" class="text-sm text-gray-600 mt-1">
-                        {{ currentBoard.value?.description }}
+                    <p v-if="currentBoard?.description" class="text-sm text-gray-600 mt-1">
+                        {{ currentBoard?.description }}
                     </p>
                 </div>
             </div>
             <div v-if="shouldShowJoinButton" class="block sm:hidden mt-2">
-                <p class="text-md text-gray-700">{{ currentBoard.value?.description }}</p>
+                <p class="text-md text-gray-700">{{ currentBoard?.description }}</p>
                 <div class="mt-4 flex flex-row space-x-2">
-                    <NuxtLink v-if="isMod.value" :to="`/b/${currentBoard.value?.name}/mod/settings`"
+                    <NuxtLink v-if="isMod" :to="`/b/${currentBoard?.name}/mod`"
                         class="button flex-grow gray text-center">
-                        Settings
+                        Mod Tools
                     </NuxtLink>
                     <button class="button flex-grow group" :class="[isSubscribed ? 'gray hover:red' : 'primary']"
                         @click="toggleSubscribe" :disabled="isSubscribing">
@@ -147,22 +147,33 @@ const site = useSiteStore();
 // Use board from props if available, otherwise fall back to store
 const currentBoard = computed(() => props.board || boardStore.board);
 
+
 const isMod = computed(() => (currentBoard.value?.myModPermissions !== undefined && currentBoard.value?.myModPermissions !== 0) || false);
 //const boardCounts = currentBoard.valueView.counts;
 
 const userStore = useLoggedInUser();
 const toast = useToastStore();
 
-// Is Authed
-const isAuthed = userStore.isAuthed;
+// Is Authed - make it safe for SSR
+const isAuthed = computed(() => {
+    if (process.server) return false;
+    return userStore?.isAuthed || false;
+});
 
 const isSubscribed = computed(() => (currentBoard.value?.subscribedType || "notSubscribed") === "subscribed");
 const isSubscribing = ref(false);
 
 // Computed property to handle hydration issues
 const shouldShowJoinButton = computed(() => {
-    // Only show if boards are enabled, we're on client side, user is authenticated, and board data exists
-    return site.enableBoards && process.client && isAuthed.value && currentBoard.value?.id;
+    // Only show on client side to avoid SSR issues
+    if (process.server) return false;
+
+    try {
+        return site?.enableBoards && process.client && isAuthed.value && currentBoard.value?.id;
+    } catch (error) {
+        console.warn('Error in shouldShowJoinButton:', error);
+        return false;
+    }
 });
 
 const toggleSubscribe = async () => {

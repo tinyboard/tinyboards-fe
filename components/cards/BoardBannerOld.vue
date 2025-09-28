@@ -179,7 +179,7 @@
                         {{ board.title ?? board.name }}
                     </h1>
                     <p class="text-sm text-gray-200">
-                        +{{ board.name }}
+                        {{ board.name }}
                         <span v-if="isSubscribed" class="ml-1 badge badge-blue"
                             >Joined</span
                         >

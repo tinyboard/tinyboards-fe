@@ -134,7 +134,7 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 // Search
 const searchTerm = ref(route.query.search_term || "");
 
-// Fetch users using GraphQL with explicit query string
+// Fetch users using GraphQL with explicit query string (client-side only)
 const { data: members, pending, error, refresh } = await useGraphQLQuery(`
 	query ListMembers($limit: Int!, $page: Int!, $search: String) {
 		listMembers(limit: $limit, page: $page, search: $search) {
@@ -154,7 +154,8 @@ const { data: members, pending, error, refresh } = await useGraphQLQuery(`
 		limit: limit.value,
 		page: page.value,
 		search: route.query.search_term || undefined
-	}
+	},
+	ssr: false  // Force client-side execution for authentication
 });
 
 const totalPages = computed(() => {

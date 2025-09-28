@@ -63,7 +63,7 @@
                                 </h3>
                                 <p class="text-gray-600">
                                     Are you sure you want to resign as a
-                                    moderator of +{{ board.name }}?
+                                    moderator of {{ board.name }}?
                                     <br />
                                     <br />
                                     You can become a moderator again when

@@ -48,7 +48,7 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<textarea id="biography" name="biography" rows="4" class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" placeholder="The best board on this godforsaken website." v-model="settings.description"/>
-							<p class="mt-2 text-sm text-gray-500">Brief description about +{{ board.name }}.</p>
+							<p class="mt-2 text-sm text-gray-500">Brief description about {{ board.name }}.</p>
 						</div>
 					</div>
 				</div>
@@ -135,7 +135,7 @@ const submitSettings = async () => {
 		const { data: result } = await useGraphQLMutation(mutation, {
 			variables: {
 				input: {
-					id: board.id,
+					boardId: board.id,
 					name: settings.value.name,
 					title: settings.value.title,
 					description: settings.value.description

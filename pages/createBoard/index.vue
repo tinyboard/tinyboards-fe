@@ -178,19 +178,23 @@ const next = () => {
             const { data: response } = await useGraphQLMutation(`
                 mutation createBoard($input: CreateBoardInput!) {
                     createBoard(input: $input) {
-                        id
-                        name
-                        title
-                        description
-                        icon
-                        banner
-                        primaryColor
-                        secondaryColor
-                        hoverColor
-                        creationDate
-                        subscribers
-                        postCount
-                        subscribedType
+                        board {
+                            id
+                            name
+                            title
+                            description
+                            icon
+                            banner
+                            primaryColor
+                            secondaryColor
+                            hoverColor
+                            creationDate
+                            subscribers
+                            postCount
+                            subscribedType
+                            isNSFW
+                            myModPermissions
+                        }
                     }
                 }
             `, {
@@ -207,15 +211,16 @@ const next = () => {
                     }
                 }
             });
-            const { createBoard: boardResponse } = response.value;
+            const { createBoard: createBoardResponse } = response.value;
 
-            if (boardResponse) {
+            if (createBoardResponse?.board) {
+                const boardData = createBoardResponse.board;
                 const name = board.name;
                 board.clear();
 
                 // Add to user's joined and modded boards
-                userStore.addJoinedBoard(boardResponse);
-                userStore.addModdedBoard(boardResponse);
+                userStore.addJoinedBoard(boardData);
+                userStore.addModdedBoard(boardData);
 
                 // Show success message
                 toast.addNotification({

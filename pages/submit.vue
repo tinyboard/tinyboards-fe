@@ -23,7 +23,7 @@
                                     alt="board icon" />
                                 <div class="w-full text-center md:text-left">
                                     <p class="font-bold text-gray-700">
-                                        You are posting to +{{ boardName }}
+                                        You are posting to {{ boardName }}
                                     </p>
                                     <p class="text-sm text-gray-500">
                                         {{ boardStore.board.description }}
@@ -42,7 +42,7 @@
                                     alt="board icon" />
                                 <div class="w-full text-center md:text-left">
                                     <p class="font-bold text-gray-700">
-                                        You are posting to +{{ boardName }}
+                                        You are posting to {{ boardName }}
                                     </p>
                                     <p class="text-sm text-gray-500">
                                         {{ defaultBoard?.title || 'Default community board' }}

@@ -78,7 +78,7 @@
                 <p>{{ post.board?.title || post.board?.name || 'Unknown Board' }}</p>
               </div>
               <div class="block md:hidden">
-                <p>+{{ post.board?.name || 'unknown' }}</p>
+                <p>{{ post.board?.name || 'unknown' }}</p>
               </div>
             </NuxtLink>
             <!-- Admin Pin Icon -->

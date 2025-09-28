@@ -14,9 +14,9 @@
             >
                 <!-- Banner -->
                 <CardsBoardBanner
-                    v-if="shouldShowBoardBanner && board.value"
-                    :board="board.value"
-                    :key="board.value?.id"
+                    v-if="shouldShowBoardBanner"
+                    :board="board"
+                    :key="board?.id"
                     class="col-span-full"
                 />
                 <LazyCardsBanner
@@ -42,11 +42,11 @@
                     >
                         <div class="text-center flex flex-col items-center">
                             <img
-                                :src="board.value?.icon || '/img/default-board-icon.png'"
+                                :src="board?.icon || '/img/default-board-icon.png'"
                                 class="bg-white p-[2px] border border-gray-300 w-32 h-32"
                             />
                             <h1 class="text-3xl text-gray-700 font-bold mt-4">
-                                Welcome to {{ board.value?.name || 'Unknown Board' }}
+                                Welcome to {{ board?.name || 'Unknown Board' }}
                             </h1>
                             <p class="text-md text-gray-500">
                                 Right now it's empty here. Let's get started by
@@ -54,8 +54,8 @@
                             </p>
                             <!-- Create Post -->
                             <NuxtLink
-                                v-if="!submitPage && board.value?.name"
-                                :to="`/b/${board.value.name}/submit`"
+                                v-if="!submitPage && board?.name"
+                                :to="`/b/${board.name}/submit`"
                                 class="flex items-center button primary mt-4"
                             >
                                 <svg

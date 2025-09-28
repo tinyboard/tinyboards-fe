@@ -108,7 +108,7 @@ const site = useSiteStore();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 
-// Fetch banned users using GraphQL with explicit query string
+// Fetch banned users using GraphQL with explicit query string (client-side only)
 const { data: bans, pending, error, refresh } = await useGraphQLQuery(`
     query ListBannedUsers($limit: Int!, $page: Int!) {
         listBannedUsers(limit: $limit, page: $page) {
@@ -125,7 +125,8 @@ const { data: bans, pending, error, refresh } = await useGraphQLQuery(`
     variables: {
         limit: limit.value,
         page: page.value
-    }
+    },
+    ssr: false  // Force client-side execution for authentication
 });
 
 const totalPages = computed(() => {

@@ -322,7 +322,7 @@
         </ul>
         <!-- Write Form -->
         <div v-if="isAuthed && isReplying" class="relative flex md:space-x-2 mt-4">
-          <img loading="lazy" :src="userStore.user!.avatar!" alt="avatar"
+          <img loading="lazy" :src="userStore.user?.avatar" alt="avatar"
             class="hidden md:inline-block flex-shrink-0 w-9 h-9 object-cover sm:p-0.5 sm:border bg-white" />
           <LazyInputsComment :post-id="comment.post?.id || parentPost?.id || Number(route.params?.id)" :parent-id="comment.id" @closed="isReplying = false"
             @comment-published="onCommentPublished" />
@@ -404,7 +404,7 @@ const isCollapsed = ref(false);
 
 // take comment level and subtract offset (depth) to get relative level
 const level = computed(() => {
-  return comment.value!.level - offset;
+  return comment.value.level - offset;
 });
 
 // in some queries, we request the parent post
@@ -413,7 +413,7 @@ const parentPost: PostFragment | undefined = comment.value.post ?? postStore.get
 
 const onCommentPublished = (newComment: Comment) => {
   // Append reply to list of replies.
-  comment.value!.replies!.unshift({
+  comment.value.replies?.unshift({
     ...newComment,
     replies: []
   });
@@ -423,7 +423,7 @@ const onCommentPublished = (newComment: Comment) => {
   // Navigate to comment if replies are hidden.
   if (route.meta.hasRepliesDisabled) {
     navigateTo(
-      `/p/${comment.value!.post?.id}/${comment.value!.parentId}/#${comment.value!.id}`
+      `/p/${comment.value.post?.id}/${comment.value.parentId}/#${comment.value.id}`
     );
   }
 };
@@ -446,15 +446,15 @@ const vote = async (type = 0) => {
       }
     `, {
       variables: {
-        id: comment.value!.id,
+        id: comment.value.id,
         voteType: voteType.value
       }
     });
 
     if (result.value?.voteOnComment) {
       // Update comment score from response
-      if (comment.value!.score !== undefined) {
-        comment.value!.score = result.value.voteOnComment.score;
+      if (comment.value.score !== undefined) {
+        comment.value.score = result.value.voteOnComment.score;
       }
     }
   } catch (error) {

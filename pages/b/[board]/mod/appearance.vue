@@ -290,7 +290,7 @@ const submitSettings = async () => {
         const { data: result } = await useGraphQLMutation(mutation, {
             variables: {
                 input: {
-                    id: board.id,
+                    boardId: board.id,
                     icon: settings.value.icon,
                     banner: settings.value.banner,
                     primaryColor: toRGB(primaryColor.value),

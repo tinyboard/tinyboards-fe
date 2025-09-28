@@ -1,7 +1,7 @@
 <template>
   <div
     id="sidebar"
-    class="w-[290px] hidden xl:flex flex-col flex-shrink-0 space-y-6 text-base"
+    class="w-[290px] hidden md:flex flex-col flex-shrink-0 space-y-6 text-base"
   >
     <div class="flex flex-col space-y-2" v-if="isAuthed">
       <NuxtLink :to="`/submit`" class="flex items-center button primary">

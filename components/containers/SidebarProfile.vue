@@ -207,7 +207,7 @@
                                 }}</strong>
                             </div>
                             <small class="text-gray-400 block">
-                                +{{ m.board.name }} • {{ m.board.subscribers }}
+                                {{ m.board.name }} • {{ m.board.subscribers }}
                                 {{
                                     m.board.subscribers == 1
                                         ? "member"

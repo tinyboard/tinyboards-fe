@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-4">
         <h1 class="text-4xl text-gray-800 font-bold">Let's describe this board ✏️</h1>
-        <p class="text-gray-700">What's +{{ board.name }} about? Write a bit about it.</p>
+        <p class="text-gray-700">What's {{ board.name }} about? Write a bit about it.</p>
         <div>
             <label for="name" class="text-base font-bold text-gray-900">Display name</label>
             <input type="text" id="name" v-model="board.displayName" maxlength="50" :placeholder="board.name"

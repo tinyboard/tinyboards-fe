@@ -62,7 +62,7 @@
                                 />
                                 <path d="M5 14h14l-4.5 -4.5l4.5 -4.5h-14v16" />
                             </svg>
-                            <span>Report +{{ board.name }}</span>
+                            <span>Report {{ board.name }}</span>
                         </button>
                     </MenuItem>
                     <MenuItem disabled v-slot="{ active, close }">
@@ -97,7 +97,7 @@
                                 />
                                 <path d="M5.7 5.7l12.6 12.6" />
                             </svg>
-                            <span>Block +{{ board.name }}</span>
+                            <span>Block {{ board.name }}</span>
                         </button>
                     </MenuItem>
                 </div>
@@ -213,7 +213,7 @@
                                 />
                             </svg>
                             <span v-if="isLoading">{{ board.is_banned ? 'Unbanning...' : 'Banning...' }}</span>
-                            <span v-else>{{ board.is_banned ? 'Unban' : 'Ban' }} +{{ board.name }}</span>
+                            <span v-else>{{ board.is_banned ? 'Unban' : 'Ban' }} {{ board.name }}</span>
                         </button>
                     </MenuItem>
                     <!-- Hide/Show from All Feed -->

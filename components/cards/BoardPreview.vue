@@ -11,7 +11,7 @@
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M9 6l6 6l-6 6" />
                 </svg>
-                +{{ board.name ?? 'CoolBoard' }}
+                {{ board.name ?? 'CoolBoard' }}
             </span>
         </nav>
         <div class="mt-8 mx-8 overflow-hidden">
@@ -79,7 +79,7 @@
                                 </button>
                             </div>
                             <p class="text-sm sm:text-md text-gray-500">
-                                +{{ board.name ?? 'CoolBoard' }}
+                                {{ board.name ?? 'CoolBoard' }}
                             </p>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
                     </button>
                     <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
                         About
-                        <span class="text-gray-700 text-opacity-70">+{{ board.name ?? 'CoolBoard' }}</span>
+                        <span class="text-gray-700 text-opacity-70">{{ board.name ?? 'CoolBoard' }}</span>
                     </h2>
                     <div class="prose prose-sm text-gray-900">
                         <p>{{ board.description.length > 0 ? board.description : 'No description...' }}</p>

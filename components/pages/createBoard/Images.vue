@@ -1,7 +1,7 @@
 <template>
     <div class="space-y-4">
         <h1 class="text-4xl text-gray-800 font-bold">Upload some images 🖼️</h1>
-        <p class="text-gray-700">What is +{{ board.name }} without a good banner, after all?</p>
+        <p class="text-gray-700">What is {{ board.name }} without a good banner, after all?</p>
         <div>
             <label class="text-base font-bold leading-6 text-gray-900">Icon</label>
 

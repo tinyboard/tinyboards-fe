@@ -79,7 +79,7 @@ const postsStore = usePostsStore();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Fetch removed posts using GraphQL
+// Fetch removed posts using GraphQL (client-side only)
 const { data: postsData, pending, error, refresh } = await useGraphQLQuery(`
 	query GetRemovedPosts($limit: Int!, $page: Int!) {
 		posts(limit: $limit, page: $page, listingType: all, sort: new) {
@@ -116,7 +116,8 @@ const { data: postsData, pending, error, refresh } = await useGraphQLQuery(`
 	variables: {
 		limit: limit.value,
 		page: page.value
-	}
+	},
+	ssr: false  // Force client-side execution for authentication
 });
 
 // Filter only removed posts

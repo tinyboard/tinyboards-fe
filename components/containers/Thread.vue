@@ -31,10 +31,10 @@
         <line x1="14.5" y1="4" x2="20" y2="9.5"></line>
       </svg>
       <div>
-        <strong>Pinned to +{{ board?.name || post.board?.name }}</strong>
+        <strong>Pinned to {{ board?.name || post.board?.name }}</strong>
         <br />
         <p class="text-sm text-green-800">
-          This post was pinned to +{{ board?.name || post.board?.name }} by the board mods. Maybe you should read it.
+          This post was pinned to {{ board?.name || post.board?.name }} by the board mods. Maybe you should read it.
         </p>
       </div>
     </div>
