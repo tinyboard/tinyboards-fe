@@ -13,7 +13,7 @@
         Create post
       </NuxtLink>
 
-      <NuxtLink v-if="site.enableBoards && canCreateBoard" :to="`/boards/wizard`" class="flex items-center button gray">
+      <NuxtLink v-if="site.enableBoards && canCreateBoard" :to="`/createBoard`" class="flex items-center button gray">
         <svg  xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
         Create board
       </NuxtLink>

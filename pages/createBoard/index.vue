@@ -100,10 +100,10 @@ definePageMeta({
 })
 
 // Import pages
-const pageInit = defineAsyncComponent(() => import('@/components/pages/wizard/Init'));
-const pageDescribe = defineAsyncComponent(() => import('@/components/pages/wizard/Describe'));
-const pageImages = defineAsyncComponent(() => import('@/components/pages/wizard/Images'));
-const pageColors = defineAsyncComponent(() => import('@/components/pages/wizard/Colors'));
+const pageInit = defineAsyncComponent(() => import('@/components/pages/createBoard/Init'));
+const pageDescribe = defineAsyncComponent(() => import('@/components/pages/createBoard/Describe'));
+const pageImages = defineAsyncComponent(() => import('@/components/pages/createBoard/Images'));
+const pageColors = defineAsyncComponent(() => import('@/components/pages/createBoard/Colors'));
 
 const pages = [
     pageInit,
