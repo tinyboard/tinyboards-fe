@@ -208,8 +208,9 @@ import { useModalStore } from "@/stores/StoreModal";
 import { useImageStore } from "@/stores/StoreImages";
 import { dataURLtoFile } from "@/utils/files";
 import { toHexCode, toRGB } from "@/composables/colors";
-import { onFileChange, uploadFile } from "@/composables/images";
+import { onFileChange } from "@/composables/images";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
+import { useGqlMultipart } from "@/composables/graphql_multipart";
 
 const boardStore = useBoardStore();
 const board = boardStore.board;
@@ -247,86 +248,89 @@ const isLoading = ref(false);
 const submitSettings = async () => {
     isLoading.value = true;
 
-    // upload images
+    // Prepare files for upload
+    const files = {};
     if (imageStore.avatar) {
-        const avatar = dataURLtoFile(imageStore.avatar);
-        // after converting to file is finished, delete the original b64 url
+        files["iconFile"] = dataURLtoFile(imageStore.avatar);
         imageStore.purgeAvatar();
-
-        try {
-            settings.value.icon = await uploadFile(avatar, "avatar");
-        } catch (e) {
-            console.error(e);
-            isLoading.value = false;
-            return;
-        }
     }
 
     if (imageStore.banner) {
-        const banner = dataURLtoFile(imageStore.banner);
-        // after converting to file is finished, delete the original b64 url
+        files["bannerFile"] = dataURLtoFile(imageStore.banner);
         imageStore.purgeBanner();
-
-        try {
-            settings.value.banner = await uploadFile(banner, "banner");
-        } catch (e) {
-            console.error(e);
-            isLoading.value = false;
-            return;
-        }
     }
 
     try {
-        const mutation = `
-            mutation updateBoardSettings($input: UpdateBoardSettingsInput!) {
-                updateBoardSettings(input: $input) {
-                    board {
-                        id
-                        name
-                        title
-                        description
-                        icon
-                        banner
-                        primaryColor
-                        secondaryColor
-                        hoverColor
+        // Validate color values before sending
+        const primaryRGB = toRGB(primaryColor.value);
+        const secondaryRGB = toRGB(secondaryColor.value);
+        const hoverRGB = toRGB(hoverColor.value);
+
+        if (!primaryRGB || !secondaryRGB || !hoverRGB) {
+            throw new Error('Invalid color values. Please check your color selections.');
+        }
+
+        const { data: result } = await useGqlMultipart({
+            query: `
+                mutation UpdateBoardSettings(
+                    $input: UpdateBoardSettingsInput!,
+                    $iconFile: Upload,
+                    $bannerFile: Upload
+                ) {
+                    updateBoardSettings(
+                        input: $input,
+                        iconFile: $iconFile,
+                        bannerFile: $bannerFile
+                    ) {
+                        board {
+                            id
+                            name
+                            title
+                            description
+                            icon
+                            banner
+                            primaryColor
+                            secondaryColor
+                            hoverColor
+                        }
                     }
                 }
-            }
-        `;
-
-        const { data: result } = await useGraphQLMutation(mutation, {
+            `,
             variables: {
                 input: {
                     boardId: board.id,
-                    icon: settings.value.icon,
-                    banner: settings.value.banner,
-                    primaryColor: toRGB(primaryColor.value),
-                    secondaryColor: toRGB(secondaryColor.value),
-                    hoverColor: toRGB(hoverColor.value),
-                }
-            }
+                    primaryColor: primaryRGB,
+                    secondaryColor: secondaryRGB,
+                    hoverColor: hoverRGB,
+                },
+                iconFile: null,
+                bannerFile: null
+            },
+            files
         });
 
         if (result.value?.updateBoardSettings?.board) {
-            // Show success toast.
+            const updatedBoard = result.value.updateBoardSettings.board;
+
+            // Update the board store with new data
+            boardStore.setBoard({
+                ...board,
+                icon: updatedBoard.icon,
+                banner: updatedBoard.banner,
+                primaryColor: updatedBoard.primaryColor,
+                secondaryColor: updatedBoard.secondaryColor,
+                hoverColor: updatedBoard.hoverColor
+            });
+
+            // Show success toast
             toast.addNotification({
                 header: "Settings saved",
                 message: "Board appearance was updated!",
                 type: "success",
             });
 
-            // Update the board store with new data
-            boardStore.setBoard({
-                ...board,
-                icon: result.value.updateBoardSettings.board.icon,
-                banner: result.value.updateBoardSettings.board.banner,
-                primaryColor: result.value.updateBoardSettings.board.primaryColor,
-                secondaryColor: result.value.updateBoardSettings.board.secondaryColor,
-                hoverColor: result.value.updateBoardSettings.board.hoverColor
-            });
-
-            window.location.reload(true);
+            // Use router navigation instead of hard reload
+            await navigateTo(`/b/${board.name}`);
         } else {
             throw new Error('Failed to update board appearance');
         }
@@ -337,7 +341,6 @@ const submitSettings = async () => {
             message: "Board appearance failed to save.",
             type: "error",
         });
-        // Log the error.
         console.error(error);
     } finally {
         isLoading.value = false;

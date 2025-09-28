@@ -189,6 +189,7 @@ import { ref } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { dataURLtoFile } from '@/utils/files';
 import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
+import { useGqlMultipart } from "@/composables/graphql_multipart";
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -273,35 +274,7 @@ const onIconChange = e => {
 	}
 };
 
-const uploadFile = async (file) => {
-	let formData = new FormData();
-	formData.append('file', file);
-
-	// For now, keep file upload as REST API until GraphQL file upload is implemented
-	try {
-		const config = useRuntimeConfig();
-		const response = await $fetch("/api/v1/file/upload", {
-			baseURL: `${config.public.use_https ? "https" : "http"}://${config.public.domain}`,
-			method: "PUT",
-			body: formData,
-			headers: {
-				Authorization: `Bearer ${authCookie}`
-			}
-		});
-
-		if (response.uploads && response.uploads.length > 0) {
-			return response.uploads[0];
-		}
-	} catch (error) {
-		if (error.statusCode === 413) {
-			toast.addNotification({ header: 'Your files are too large!', message: 'Your file is over 25MB!! How did you bypass the previous checks?', type: 'error' });
-		} else {
-			toast.addNotification({ header: 'Upload failed', message: 'Failed to upload image :(', type: 'error' });
-		}
-		console.error(error);
-		throw error;
-	}
-}
+// Removed old REST API upload function - now using GraphQL multipart upload
 
 // Submit settings.
 const isLoading = ref(false);
@@ -309,38 +282,46 @@ const isLoading = ref(false);
 const submitSettings = async () => {
 	isLoading.value = true;
 
-	try {
-		if (icon.value) {
-			settings.value.icon = await uploadFile(dataURLtoFile(icon.value));
-		}
+	// Prepare files for upload
+	const files = {};
+	if (icon.value) {
+		files["iconFile"] = dataURLtoFile(icon.value);
+	}
 
-		const { data: result } = await useGraphQLMutation(`
-			mutation UpdateSiteConfig($input: UpdateSiteConfigInput!) {
-				updateSiteConfig(input: $input) {
-					name
-					description
-					welcome_message
-					icon
-					enable_downvotes
-					primary_color
-					secondary_color
-					hover_color
-					site_mode
-					registration_mode
-					enable_nsfw
-					application_question
-					private_instance
-					email_verification_required
-					default_avatar
+	try {
+		const { data: result } = await useGqlMultipart({
+			query: `
+				mutation UpdateSiteConfig(
+					$input: UpdateSiteConfigInput!,
+					$iconFile: Upload
+				) {
+					updateSiteConfig(
+						input: $input,
+						iconFile: $iconFile
+					) {
+						name
+						description
+						welcome_message
+						icon
+						enable_downvotes
+						primary_color
+						secondary_color
+						hover_color
+						site_mode
+						registration_mode
+						enable_nsfw
+						application_question
+						private_instance
+						email_verification_required
+						default_avatar
+					}
 				}
-			}
-		`, {
+			`,
 			variables: {
 				input: {
 					name: settings.value.name,
 					description: settings.value.description,
 					welcome_message: settings.value.welcome_message,
-					icon: settings.value.icon,
 					enable_downvotes: settings.value.enable_downvotes,
 					primary_color: toRGB(primaryColor.value),
 					secondary_color: toRGB(secondaryColor.value),
@@ -352,16 +333,18 @@ const submitSettings = async () => {
 					private_instance: settings.value.private_instance,
 					email_verification_required: settings.value.email_verification_required,
 					default_avatar: settings.value.default_avatar
-				}
-			}
+				},
+				iconFile: null
+			},
+			files
 		});
 
 		if (result.value?.updateSiteConfig) {
 			// Show success toast
-			toast.addNotification({ 
-				header: 'Settings saved', 
-				message: 'Site settings were updated!', 
-				type: 'success' 
+			toast.addNotification({
+				header: 'Settings saved',
+				message: 'Site settings were updated!',
+				type: 'success'
 			});
 
 			// refresh to purge outdated stuff
@@ -369,10 +352,10 @@ const submitSettings = async () => {
 		}
 	} catch (error) {
 		// Show error toast
-		toast.addNotification({ 
-			header: 'Saving failed', 
-			message: error.message || 'Site settings have failed to save.', 
-			type: 'error' 
+		toast.addNotification({
+			header: 'Saving failed',
+			message: error.message || 'Site settings have failed to save.',
+			type: 'error'
 		});
 		console.error(error);
 	} finally {

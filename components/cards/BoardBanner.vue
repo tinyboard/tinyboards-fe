@@ -2,7 +2,7 @@
     <div id="board-banner" class="col-span-full bg-white sm:rounded-md border-b sm:border sm:shadow-inner-white">
         <div class="w-full sm:rounded-t-md relative"
             :class="[currentBoard?.banner ? 'h-28 sm:h-56' : 'h-14 sm:h-28']" :style="{
-                backgroundColor: currentBoard?.primaryColor || '#3c6991',
+                backgroundColor: toCSSColor(currentBoard?.primaryColor) || '#3c6991',
                 backgroundImage: `url(${currentBoard?.banner || ''})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
@@ -127,6 +127,7 @@ import { format, parseISO } from "date-fns";
 import { useToastStore } from "@/stores/StoreToast";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { toCSSColor } from "@/composables/colors";
 import type { Board } from "@/types/types";
 
 const props = defineProps<{

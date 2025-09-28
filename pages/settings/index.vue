@@ -198,6 +198,7 @@ const query = `
       bio
       avatar
       banner
+      profileBackground
       showBots
       showReadPosts
       showNsfw
@@ -217,7 +218,7 @@ if (data.value.me) {
 		displayName: s.displayName,
 		avatar: s.avatar,
 		banner: s.banner,
-		background: s.background
+		profileBackground: s.profileBackground
 
 	};
 } else {
@@ -372,7 +373,30 @@ const submitSettings = async () => {
 
 	try {
 		const { data: result } = await useGqlMultipart({
-			operation: UPDATE_SETTINGS_MUTATION,
+			query: `
+				mutation UpdateSettings(
+					$displayName: String,
+					$bio: String,
+					$avatar: Upload,
+					$banner: Upload,
+					$profileBackground: Upload
+				) {
+					updateSettings(
+						displayName: $displayName,
+						bio: $bio,
+						avatar: $avatar,
+						banner: $banner,
+						profileBackground: $profileBackground
+					) {
+						id
+						displayName
+						bio
+						avatar
+						banner
+						profileBackground
+					}
+				}
+			`,
 			variables: {
 				displayName: settings.value.displayName,
 				bio: settings.value.bio,
