@@ -1,3 +1,0 @@
-mutation subscribeToBoard($boardId: Int!) {
-  subscribeToBoard(boardId: $boardId)
-}

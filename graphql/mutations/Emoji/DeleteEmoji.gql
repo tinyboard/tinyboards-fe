@@ -1,3 +1,0 @@
-mutation deleteEmoji($emojiId: Int!) {
-  deleteEmoji(emojiId: $emojiId)
-}

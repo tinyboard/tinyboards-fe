@@ -1,3 +1,0 @@
-mutation reprocessContentEmojis($boardId: Int) {
-  reprocessContentEmojis(boardId: $boardId)
-}

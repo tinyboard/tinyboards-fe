@@ -1,3 +1,0 @@
-mutation unsubscribeFromBoard($boardId: Int!) {
-  unsubscribeFromBoard(boardId: $boardId)
-}

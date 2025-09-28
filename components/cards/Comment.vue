@@ -11,9 +11,9 @@
       <div class="relative flex flex-col flex-shrink-0 comments-center mr-2">
         <!-- User Avatar -->
         <NuxtLink v-if="comment.creator"
-          :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`"
+          :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
           class="z-10">
-          <img loading="lazy" :src="comment.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
+          <img loading="lazy" :src="comment.creator?.avatar || 'https://placekitten.com/36/36'" alt="avatar"
             class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 rounded" />
         </NuxtLink>
         <!-- Comment Collapse Bar -->
@@ -26,12 +26,12 @@
           <div class="flex comments-center min-h-[24px] sm:min-h-[36px] items-center">
             <div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
               <NuxtLink v-if="comment.creator"
-                :to="`/@${comment.creator.name}${comment.creator.instance ? '@' + comment.creator.instance : ''}`"
+                :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
                 class="flex comments-center text-sm">
-                <strong>{{ comment.creator.displayName ?? comment.creator.name }}</strong>
-                <span v-if="comment.creator.instance">@{{ comment.creator.instance }}</span>
+                <strong>{{ comment.creator?.displayName ?? comment.creator?.name }}</strong>
+                <span v-if="comment.creator?.instance">@{{ comment.creator.instance }}</span>
                 <!-- Role -->
-                <span v-if="comment.creator.isAdmin" class="ml-1 badge badge-red">Admin</span>
+                <span v-if="comment.creator?.isAdmin" class="ml-1 badge badge-red">Admin</span>
                 <span v-if="isOP" class="ml-1 badge badge-blue">OP</span>
               </NuxtLink>
               <!-- Parent Context Link -->

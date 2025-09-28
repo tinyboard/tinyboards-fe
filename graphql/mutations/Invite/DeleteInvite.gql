@@ -1,5 +1,0 @@
-mutation deleteInvite($inviteId: Int!) {
-  deleteInvite(inviteId: $inviteId) {
-    success
-  }
-}

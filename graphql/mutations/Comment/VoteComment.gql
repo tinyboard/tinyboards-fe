@@ -1,9 +1,0 @@
-mutation voteOnComment($id: Int!, $voteType: Int!) {
-  voteOnComment(id: $id, voteType: $voteType) {
-    id
-    score
-    upvotes
-    downvotes
-    myVote
-  }
-}

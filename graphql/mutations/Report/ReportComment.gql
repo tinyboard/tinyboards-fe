@@ -1,6 +1,0 @@
-mutation reportComment($commentId: Int!, $reason: String!) {
-  reportComment(commentId: $commentId, reason: $reason) {
-    success
-    reportId
-  }
-}

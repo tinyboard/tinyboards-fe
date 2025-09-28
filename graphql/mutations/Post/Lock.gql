@@ -1,6 +1,0 @@
-mutation setPostLocked($id: Int!, $value: Boolean!) {
-  setPostLocked(id: $id, value: $value) {
-    id
-    isLocked
-  }
-}

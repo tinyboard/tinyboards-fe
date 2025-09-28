@@ -1,7 +1,0 @@
-mutation blockBoard($boardId: Int!) {
-  blockBoard(boardId: $boardId)
-}
-
-mutation unblockBoard($boardId: Int!) {
-  unblockBoard(boardId: $boardId)
-}

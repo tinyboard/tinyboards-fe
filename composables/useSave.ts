@@ -26,21 +26,17 @@ export function useSave(initialSavedState: boolean = false): SaveResult {
     isSaved.value = !isSaved.value;
 
     try {
-      const mutation = isSaved.value
-        ? `mutation Save${type.charAt(0).toUpperCase() + type.slice(1)}($${type}Id: Int!) {
-             save${type.charAt(0).toUpperCase() + type.slice(1)}(${type}Id: $${type}Id)
-           }`
-        : `mutation Unsave${type.charAt(0).toUpperCase() + type.slice(1)}($${type}Id: Int!) {
-             unsave${type.charAt(0).toUpperCase() + type.slice(1)}(${type}Id: $${type}Id)
-           }`;
+      const mutation = `mutation Save${type.charAt(0).toUpperCase() + type.slice(1)}($${type}Id: Int!, $save: Boolean!) {
+         save${type.charAt(0).toUpperCase() + type.slice(1)}(${type}Id: $${type}Id, save: $save)
+       }`;
 
-      const variables = type === 'post' ? { postId: id } : { commentId: id };
+      const variables = type === 'post'
+        ? { postId: id, save: isSaved.value }
+        : { commentId: id, save: isSaved.value };
 
       const { data, error } = await useGraphQLMutation(mutation, { variables });
 
-      const mutationKey = isSaved.value
-        ? `save${type.charAt(0).toUpperCase() + type.slice(1)}`
-        : `unsave${type.charAt(0).toUpperCase() + type.slice(1)}`;
+      const mutationKey = `save${type.charAt(0).toUpperCase() + type.slice(1)}`;
 
       if (error.value || !data.value?.[mutationKey]) {
         // Revert optimistic update on error

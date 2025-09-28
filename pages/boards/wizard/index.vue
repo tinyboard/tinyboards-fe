@@ -181,26 +181,19 @@ const next = () => {
             const { data: response } = await useGraphQLMutation(`
                 mutation createBoard($input: CreateBoardInput!) {
                     createBoard(input: $input) {
-                        board {
-                            id
-                            name
-                            title
-                            description
-                            icon
-                            banner
-                            primaryColor
-                            secondaryColor
-                            hoverColor
-                            creationDate
-                            isLocal
-                            isNSFW
-                            subscriberCount
-                            postCount
-                            isSubscribed
-                            isOwner
-                            isModerator
-                        }
-                        success
+                        id
+                        name
+                        title
+                        description
+                        icon
+                        banner
+                        primaryColor
+                        secondaryColor
+                        hoverColor
+                        creationDate
+                        subscribers
+                        postCount
+                        subscribedType
                     }
                 }
             `, {
@@ -219,13 +212,13 @@ const next = () => {
             });
             const { createBoard: boardResponse } = response.value;
 
-            if (boardResponse?.board) {
+            if (boardResponse) {
                 const name = board.name;
                 board.clear();
 
                 // Add to user's joined and modded boards
-                userStore.addJoinedBoard(boardResponse.board);
-                userStore.addModdedBoard(boardResponse.board);
+                userStore.addJoinedBoard(boardResponse);
+                userStore.addModdedBoard(boardResponse);
 
                 // Show success message
                 toast.addNotification({

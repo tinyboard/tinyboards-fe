@@ -1,7 +1,0 @@
-mutation banUser($input: BanUserInput!) {
-  banUser(input: $input) {
-    success
-    banId
-    message
-  }
-}

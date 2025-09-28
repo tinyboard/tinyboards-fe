@@ -1,3 +1,0 @@
-mutation markConversationRead($userId: Int!) {
-  markConversationRead(userId: $userId)
-}

@@ -11,9 +11,9 @@
       isCompact && isExpanded ? 'items-start' : 'items-center'
     ]">
       <NuxtLink v-if="!!post.creator" v-show="isCompact"
-        :to="`/@${post.creator.name}${post.creator.instance ? '@' + post.creator.instance : ''}`"
+        :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
         class="hidden sm:flex flex-shrink-0">
-        <img loading="lazy" :src="post.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
+        <img loading="lazy" :src="post.creator?.avatar || 'https://placekitten.com/36/36'" alt="avatar"
           class="w-10 h-10 object-cover rounded" />
       </NuxtLink>
       <!-- TODO: "avatar" for deleted users / put some ghost here :P -->
@@ -25,14 +25,14 @@
         <div v-if="post.creator" scope="row" class="z-10 relative flex items-center text-gray-900 dark:text-white">
           <div class="flex flex-col flex-shrink-0 sm:truncate">
             <p class="flex items-center font-normal text-sm text-gray-400 leading-normal">
-              <NuxtLink :to="`/@${post.creator.name}${post.creator.instance ? '@' + post.creator.instance : ''}`"
+              <NuxtLink :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
                 class="flex items-center">
                 <!-- Avatar (mobile only) -->
-                <img loading="lazy" :src="post.creator.avatar || 'https://placekitten.com/24/24'" alt="avatar"
+                <img loading="lazy" :src="post.creator?.avatar || 'https://placekitten.com/24/24'" alt="avatar"
                   class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded" />
                 <!-- Username -->
-                <strong class="ml-2 sm:ml-0">{{ post.creator.displayName ?? post.creator.name }}</strong>
-                <span v-if="post.creator.instance">@{{ post.creator.instance }}</span>
+                <strong class="ml-2 sm:ml-0">{{ post.creator?.displayName ?? post.creator?.name }}</strong>
+                <span v-if="post.creator?.instance">@{{ post.creator.instance }}</span>
                 <!-- Role -->
                 <span v-if="creatorIsAdmin" class="ml-1 badge badge-red">Admin</span>
               </NuxtLink>
@@ -140,7 +140,7 @@
             {{ post.title }}
           </NuxtLink>
           <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
-            'max-h-56 overlay': !isExpanded && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img'))
+            'max-h-56 overlay': !isExpanded && (post.bodyHTML && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img')))
           }">
             <!-- Post Image -->
             <div v-if="hasImage && !!post.url" class="mt-2.5 md:mt-4">
@@ -463,9 +463,9 @@
     </div>
     <!-- Avatar - Desktop Only -->
     <NuxtLink v-if="!!post.creator" v-show="!isCompact"
-      :to="`/@${post.creator.name}${post.creator.instance ? '@' + post.creator.instance : ''}`"
+      :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
       class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
-      <img loading="lazy" :src="post.creator.avatar || 'https://placekitten.com/64/64'" alt="avatar"
+      <img loading="lazy" :src="post.creator?.avatar || 'https://placekitten.com/64/64'" alt="avatar"
         class="w-16 h-16 object-cover rounded" />
     </NuxtLink>
     <div v-else-if="!post.creator" v-show="!isCompact">

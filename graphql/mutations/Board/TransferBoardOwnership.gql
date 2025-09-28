@@ -1,5 +1,0 @@
-mutation transferBoardOwnership($boardId: Int!, $newOwnerId: Int!) {
-  transferBoardOwnership(boardId: $boardId, newOwnerId: $newOwnerId) {
-    success
-  }
-}

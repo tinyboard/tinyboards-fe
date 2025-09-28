@@ -1,9 +1,0 @@
-query getSettings {
-      me {
-      	 bio
-	 displayName
-	 avatar
-	 banner
-	 profileBackground
-	 }
-}

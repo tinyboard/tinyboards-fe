@@ -1,6 +1,0 @@
-query getModerationStats {
-  getModerationStats {
-    pendingReports
-    bannedUsers
-  }
-}

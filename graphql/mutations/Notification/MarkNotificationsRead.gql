@@ -1,6 +1,0 @@
-mutation markNotificationsRead($notificationIds: [Int!], $markAll: Boolean) {
-  markNotificationsRead(notificationIds: $notificationIds, markAll: $markAll) {
-    success
-    markedCount
-  }
-}

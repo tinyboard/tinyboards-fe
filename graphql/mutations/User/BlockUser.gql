@@ -1,7 +1,0 @@
-mutation blockUser($targetId: Int!) {
-  blockUser(targetId: $targetId)
-}
-
-mutation unblockUser($targetId: Int!) {
-  unblockUser(targetId: $targetId)
-}

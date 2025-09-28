@@ -1,6 +1,0 @@
-query getModerationQueue($limit: Int) {
-  getModerationQueue(limit: $limit) {
-    pendingReports
-    totalCount
-  }
-}
