@@ -29,7 +29,7 @@ definePageMeta({
     title: "Profile",
 });
 
-const title = ref(route.params?.username);
+const title = ref(route.params?.username || 'Profile');
 
 useHead({
     title: title,
@@ -76,9 +76,9 @@ if (error.value && error.value.response) {
     });
 }
 
-const user = userData.value?.user;
+const user = computed(() => userData.value?.user);
 
-if (!user) {
+if (!user.value) {
     throw createError({
         statusCode: 404,
         statusMessage: "User not found",
@@ -88,30 +88,30 @@ if (!user) {
 
 //postsStore.options.userId = user.id;
 
-const { loading, loadMore } = usePreloadedPosts(user.posts || [], user.id);
+const { loading, loadMore } = usePreloadedPosts(user.value?.posts || [], user.value?.id);
 
-if (user.isDeleted) {
+if (user.value?.isDeleted) {
     title.value = "Deleted Account";
-} else if (user.isBanned) {
-    title.value = `@${user.name}: Suspended`;
+} else if (user.value?.isBanned) {
+    title.value = `@${user.value.name}: Suspended`;
 } else {
-    title.value = `${user.displayName ?? user.name} (@${user.name})`;
+    title.value = `${user.value?.displayName ?? user.value?.name} (@${user.value?.name})`;
 }
 
 // Is Self
 const isSelf = computed(() => {
-    return !!userStore.user && userStore.user.name === user.name;
+    return !!userStore.user && userStore.user.name === user.value?.name;
 });
 
 // Admin - can bypass banned page if they have either the content or the users permission
 const isAdmin = requirePermission("content") || requirePermission("users");
 
 const canView = computed(() => {
-    if (user.isDeleted) {
+    if (user.value?.isDeleted) {
         return false;
     }
 
-    if (!user.isBanned) {
+    if (!user.value?.isBanned) {
         return true;
     }
 

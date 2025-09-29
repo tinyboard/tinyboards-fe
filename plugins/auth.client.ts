@@ -11,7 +11,6 @@ export default defineNuxtPlugin(async () => {
     // If there's a token, try to fetch user data
     if (token.value) {
       try {
-        console.log('Initializing auth from token...');
         const { data, error } = await useDirectGraphQLRequest(`
           query GetLoggedInUser {
             me {
@@ -34,7 +33,6 @@ export default defineNuxtPlugin(async () => {
         `);
 
         if (data.value?.me && !error.value) {
-          console.log('Auth initialization successful');
           const user = data.value.me;
           const moderates = user.moderates?.map((m: any) => m.board) || [];
           const joined = user.joinedBoards || [];
@@ -48,7 +46,6 @@ export default defineNuxtPlugin(async () => {
           userStore.token = token.value;
           userStore.unread = (data.value.unreadMentionsCount || 0) + (data.value.unreadRepliesCount || 0);
         } else {
-          console.log('Auth initialization failed, removing invalid token');
           // Invalid token, remove it
           token.value = null;
           userStore.logout();

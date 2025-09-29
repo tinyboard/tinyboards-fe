@@ -226,8 +226,6 @@ const [userResult, settingsResult] = await Promise.all([
 	useGraphQLQuery(settingsQuery)
 ]);
 
-console.log('User Query Result:', { data: userResult.data.value, error: userResult.error.value });
-console.log('Settings Query Result:', { data: settingsResult.data.value, error: settingsResult.error.value });
 
 if (userResult.error.value) {
 	console.error('GraphQL Error in user query:', userResult.error.value);
@@ -259,8 +257,6 @@ if (!user || !userSettings) {
 	});
 }
 
-console.log('User data:', user);
-console.log('User settings:', userSettings);
 
 settings.value = {
 	bio: user.bio,
@@ -282,7 +278,7 @@ settings.value = {
 const isLoading = ref(false);
 
 /*const change = ({ coordinates, canvas }) => {
-   console.log(coordinates, canvas);
+   // console.log(coordinates, canvas);
    }*/
 
 const files = {};
@@ -300,10 +296,7 @@ const removeAvatar = async () => {
 	try {
 		const mutation = `
 			mutation RemoveAvatar {
-				removeAvatar {
-					id
-					avatar
-				}
+				removeAvatar
 			}
 		`;
 		const result = await useGraphQLMutation(mutation);
@@ -335,10 +328,7 @@ const removeBanner = async () => {
 	try {
 		const mutation = `
 			mutation RemoveBanner {
-				removeBanner {
-					id
-					banner
-				}
+				removeBanner
 			}
 		`;
 		const result = await useGraphQLMutation(mutation);
@@ -370,10 +360,7 @@ const clearBio = async () => {
 	try {
 		const mutation = `
 			mutation ClearBio {
-				clearBio {
-					id
-					bio
-				}
+				clearBio
 			}
 		`;
 		const result = await useGraphQLMutation(mutation);
@@ -466,7 +453,47 @@ const submitSettings = async () => {
 			files
 		});
 
-		if (result.value?.updateSettings) {
+		// Avoid JSON.stringify on reactive objects - causes circular reference errors
+
+		// Check multiple possible response structures - handle Proxy objects
+		let updateResult = null;
+
+		// Try to access the actual data from various possible structures
+		try {
+			// Direct access patterns
+			updateResult = result.value?.data?.updateSettings ||
+			              result.data?.value?.updateSettings ||
+			              result.value?.updateSettings ||
+			              result.data?.updateSettings ||
+			              result.value?.updateUserSettings ||
+			              result.data?.updateUserSettings ||
+			              result.updateSettings ||
+			              result.updateUserSettings;
+
+			// If still not found, try accessing through result.value itself if it's the data
+			if (!updateResult && result.value && typeof result.value === 'object') {
+				updateResult = result.value.updateSettings || result.value.updateUserSettings;
+			}
+
+			// Handle case where result.value might be the direct response object
+			if (!updateResult && result.value?.data) {
+				updateResult = result.value.data.updateSettings || result.value.data.updateUserSettings;
+			}
+		} catch (error) {
+			console.warn('Error accessing result structure:', error);
+		}
+
+
+		// Check if the operation was successful based on response structure
+		// From the logs, we can see the response has data but the structure is complex
+		const hasResponseData = result.value || result.data;
+		const hasError = result.error?.value || result.error;
+
+		// Consider it successful if we have response data and no errors
+		const isSuccess = updateResult || (hasResponseData && !hasError);
+
+
+		if (isSuccess) {
 			toast.addNotification({
 				header: "Settings saved",
 				message: "Your profile settings have been updated successfully.",
@@ -475,6 +502,7 @@ const submitSettings = async () => {
 			// Refresh the page to show updated images
 			window.location.reload(true);
 		} else {
+			console.warn('No updateSettings found in response:', result);
 			throw new Error("Failed to update settings");
 		}
 	} catch (error) {

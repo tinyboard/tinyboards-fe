@@ -25,6 +25,7 @@
 				</NuxtLink>
 			</p>
 		</div>
+
 		<!-- Comments & States -->
 		<div id="comments" class="bg-white p-2.5 sm:p-4 sm:shadow-inner-xs sm:rounded-md border-y sm:border-x"
 			style="scroll-margin-top: 7rem;">
@@ -63,7 +64,7 @@ const props = defineProps<{
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from '@/stores/StoreSite';
 import { useBoardStore } from "@/stores/StoreBoard";
-import { ref } from "vue";
+import { ref, reactive, watch } from "vue";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import type { Comment, Post } from "@/types/types";
@@ -79,7 +80,15 @@ const isAuthed = userStore.isAuthed;
 
 const isModOrAdmin = requirePermission("content") || requireModPermission(modPermissions, "content")
 
-const comments = props.post.comments;
+// Create a reactive copy of comments that can be safely modified
+const comments = ref<Comment[]>(props.post.comments || []);
+
+// Watch for changes to the post's comments and update our reactive copy
+watch(() => props.post.comments, (newComments) => {
+  if (newComments) {
+    comments.value = [...newComments];
+  }
+}, { immediate: true });
 
 const isReplyingDisabled = ref(
 	!isModOrAdmin && (props.post.isRemoved || props.post.isDeleted || props.post.isLocked)
@@ -111,6 +120,38 @@ const sorts = [
 
 function onCommentPublished(comment: Comment) {
 	comment.replies = [];
-	comments.unshift(comment);
+
+	// If this is a top-level comment (no parentId), add to main comments array
+	if (!comment.parentId) {
+		comments.value.unshift(comment);
+	} else {
+		// This is a reply - find the parent comment and add to its replies
+		const findAndAddToParent = (commentsArray: Comment[]): boolean => {
+			for (const existingComment of commentsArray) {
+				if (existingComment.id === comment.parentId) {
+					// Found the parent, add reply to its replies array
+					if (!existingComment.replies) {
+						existingComment.replies = [];
+					}
+					existingComment.replies.unshift(comment);
+					return true;
+				}
+				// Recursively search in replies
+				if (existingComment.replies && existingComment.replies.length > 0) {
+					if (findAndAddToParent(existingComment.replies)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		};
+
+		// Try to find the parent and add the reply
+		if (!findAndAddToParent(comments.value)) {
+			console.warn('Could not find parent comment with ID:', comment.parentId);
+			// Fallback: add to top level if parent not found
+			comments.value.unshift(comment);
+		}
+	}
 };
 </script>

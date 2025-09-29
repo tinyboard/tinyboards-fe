@@ -8,7 +8,6 @@
 const route = useRoute();
 const router = useRouter();
 
-console.log(`Hi from ${route.path}`);
 
 onMounted(() => {
   // Redirect to submit page when pasting URL

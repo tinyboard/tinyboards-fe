@@ -23,8 +23,8 @@ export async function useFetchUser(username: string, query = {}) {
   const site = useSiteStore();
 
   const query_str = `
-    query UserProfile($username: String!, $includeBoard: Boolean!, $limit: Int, $page: Int) {
-      user(name: $username) {
+    query UserProfile($name: String!, $includeBoard: Boolean!, $limit: Int, $page: Int) {
+      user(name: $name) {
         id
         name
         displayName
@@ -92,17 +92,26 @@ export async function useFetchUser(username: string, query = {}) {
           post {
             id
             title
+            titleChunk
+            board @include(if: $includeBoard) {
+              id
+              name
+              title
+              icon
+            }
           }
         }
       }
     }
   `;
 
-  return await useGraphQLQuery(query_str, {
+  const result = await useGraphQLQuery(query_str, {
     variables: {
-      username,
+      name: username,
       includeBoard: site.enableBoards,
       ...query,
     }
   });
+
+  return result;
 }

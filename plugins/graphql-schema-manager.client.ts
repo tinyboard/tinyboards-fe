@@ -10,7 +10,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     // Client-side: always use external domain
     const protocol = config.public.use_https ? 'https' : 'http';
     const endpoint = `${protocol}://${config.public.domain}/api/v2/graphql`;
-    console.log('🔗 Client-side GraphQL endpoint:', endpoint);
     return endpoint;
   };
 
@@ -56,7 +55,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   // Function to check if backend is available
   const checkBackendAvailability = async () => {
     try {
-      console.log(`🔍 Checking GraphQL backend availability at: ${gqlEndpoint}`);
       const response = await fetch(gqlEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,12 +64,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (response.ok) {
         const result = await response.json();
         if (result.data?.__schema) {
-          console.log(`✅ GraphQL backend is available at: ${gqlEndpoint}`);
           return true;
         }
       }
     } catch (error) {
-      console.log(`⚠️ GraphQL backend not yet available at ${gqlEndpoint}, will retry...`, error.message);
     }
     return false;
   };

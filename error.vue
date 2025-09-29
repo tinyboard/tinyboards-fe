@@ -32,7 +32,6 @@
 const props = defineProps({ error: Object });
 const router = useRouter();
 
-onMounted(() => console.log(props.error));
 
 /*useHead({
 	title: `${error.value.statusCode} ${errorCodes[error.statusCode] || ""}`

@@ -1,6 +1,6 @@
 <template>
     <!-- Loading State -->
-    <div v-if="userResult.pending" class="container mx-auto max-w-4xl p-4">
+    <div v-if="userResult.pending.value || (!user && !userResult.error.value)" class="container mx-auto max-w-4xl p-4">
         <div class="bg-white rounded-md border p-8 text-center">
             <h2 class="text-xl font-semibold text-gray-800">Loading user profile...</h2>
         </div>
@@ -39,11 +39,40 @@
                 </h3>
                 <NuxtLink :to="`/@${username}/comments`" v-if="username">View All</NuxtLink>
             </div>
-            <LazyListsComments
-                v-if="comments?.length"
-                :comments="comments"
-                :cards="true"
-            />
+            <div v-if="comments?.length" class="space-y-4">
+                <div v-for="comment in comments" :key="comment.id" class="p-4 bg-white border rounded shadow-sm">
+                    <div v-if="comment.post" class="mb-3 pb-2 border-b border-gray-200">
+                        <div class="flex items-center gap-2 text-sm mb-1">
+                            <span v-if="comment.post.board" class="text-gray-500">in</span>
+                            <NuxtLink
+                                v-if="comment.post.board"
+                                :to="`/b/${comment.post.board.name}`"
+                                class="text-green-600 hover:text-green-800 hover:underline font-medium"
+                            >
+                                {{ comment.post.board.name }}
+                            </NuxtLink>
+                        </div>
+                        <NuxtLink
+                            :to="`/p/${comment.post.id}/${comment.post.titleChunk || 'post'}`"
+                            class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                        >
+                            <strong>{{ comment.post.title }}</strong>
+                        </NuxtLink>
+                    </div>
+                    <div class="mb-3">
+                        <p class="text-gray-800 leading-relaxed">{{ comment.body }}</p>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        {{ new Date(comment.creationDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }) }}
+                    </div>
+                </div>
+            </div>
             <div v-else class="bg-white rounded-md border p-4 text-gray-400">
                 @{{ username || 'Unknown user' }} hasn't made any comments.
             </div>
@@ -113,6 +142,7 @@ const userResult = await useFetchUser(username.value, {
     page: 1,
 });
 
+
 // More defensive error checking - only throw error if we have a real error, not just empty data
 if (userResult.error.value && userResult.error.value.response && !userResult.data.value) {
     throw createError({
@@ -124,7 +154,10 @@ if (userResult.error.value && userResult.error.value.response && !userResult.dat
 }
 
 // Create reactive computed for user data
-const user = computed(() => userResult.data.value?.user);
+const user = computed(() => {
+    const userData = userResult.data.value?.user;
+    return userData;
+});
 const moderates = computed(() => user.value?.moderates || []);
 
 // Update title reactively
@@ -172,7 +205,10 @@ const canView = computed(() => {
 }, 'posts');*/
 
 const posts = computed(() => user.value?.posts || []);
-const comments = computed(() => user.value?.comments || []);
+const comments = computed(() => {
+    const userComments = user.value?.comments || [];
+    return userComments;
+});
 
 // Watch for changes and update stores
 watch(posts, (newPosts) => {

@@ -145,7 +145,6 @@ const board = boardStore.board;
 //const board = boardView.counts;
 const mods = board.moderators;
 
-console.log("stores have been set up");
 
 definePageMeta({
     alias: ["/+:board/s", "/+:board/sidebar"],

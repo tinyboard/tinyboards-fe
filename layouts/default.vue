@@ -57,7 +57,6 @@ const hoverColor = hasBoard
     ? hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129"
     : site.hoverColor || "54, 94, 129";
 
-console.log("setting up head");
 
 useHead({
     bodyAttrs: {
@@ -90,7 +89,6 @@ useHead({
         },
     ],
 });
-console.log("success!");
 
 watch(
     () => boardStore.board,

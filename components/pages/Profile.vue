@@ -1,8 +1,12 @@
 <template>
     <main
-        class="flex flex-col pt-12 sm:pt-14"
+        class="flex flex-col pt-12 sm:pt-14 min-h-screen"
         :style="{
-            backgroundImage: `url(${imageStore.background || user.profileBackground})`,
+            backgroundImage: user?.profileBackground ? `url(${user.profileBackground})` : '',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundAttachment: 'fixed'
         }"
     >
         <!-- Sub Navigation & Profile Details -->
@@ -12,7 +16,7 @@
                 class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6"
             >
                 <div
-                    v-if="user.isBanned"
+                    v-if="user?.isBanned"
                     class="col-span-full mb-4 order-2 sm:order-first flex items-center justify-center sm:justify-start p-2.5 text-center sm:text-left text-red-900 bg-red-200 border-y sm:border-x border-red-300 sm:rounded-md sm:shadow-inner-white"
                 >
                     <svg
@@ -45,7 +49,7 @@
                             >{{ isSelf ? "Your account" : "This account" }} has
                             been
                             {{
-                                user.unban_date
+                                user?.unbanDate
                                     ? `suspended for
 							${unbanDays} day(s)`
                                     : "terminated"
@@ -75,11 +79,11 @@
                         >
                             <MenusSort
                                 :sorts="
-                                    type === 'comment' ? commentSorts : postSorts
+                                    (type === 'comment' || type === 'comments') ? commentSorts : postSorts
                                 "
                             />
                             <div
-                                v-if="type === 'post' || type === 'saved'"
+                                v-if="(type === 'post' || type === 'posts') || type === 'saved'"
                                 class="ml-auto flex space-x-2"
                             >
                                 <button
@@ -167,23 +171,60 @@
                         </div>
                         <!-- Posts -->
                         <LazyListsPosts
-                            v-if="type === 'post' && user.posts?.length"
-                            :posts="user.posts"
+                            v-if="(type === 'post' || type === 'posts') && user?.posts?.length"
+                            :posts="user?.posts"
                             :isCompact="!preferCardView"
                             :isLoading="pending"
                             :hasError="error"
                         />
                         <!-- Comments -->
-                        <LazyListsComments
-                            v-else-if="type === 'comment' && user.comments?.length"
-                            :comments="user.comments"
-                            mode="list"
-                            :cards="true"
-                        />
+                        <div v-else-if="(type === 'comment' || type === 'comments')">
+                            <div v-if="user?.comments?.length" class="space-y-4">
+                                <div v-for="comment in user.comments" :key="comment.id" class="p-4 bg-white border rounded shadow-sm">
+                                    <div v-if="comment.post" class="mb-3 pb-2 border-b border-gray-200">
+                                        <div class="flex items-center gap-2 text-sm mb-1">
+                                            <span v-if="comment.post.board" class="text-gray-500">in</span>
+                                            <NuxtLink
+                                                v-if="comment.post.board"
+                                                :to="`/b/${comment.post.board.name}`"
+                                                class="text-green-600 hover:text-green-800 hover:underline font-medium"
+                                            >
+                                                {{ comment.post.board.name }}
+                                            </NuxtLink>
+                                        </div>
+                                        <NuxtLink
+                                            :to="`/p/${comment.post.id}/${comment.post.titleChunk || 'post'}`"
+                                            class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                                        >
+                                            <strong>{{ comment.post.title }}</strong>
+                                        </NuxtLink>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p class="text-gray-800 leading-relaxed">{{ comment.body }}</p>
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        {{ new Date(comment.creationDate).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+                                <p>
+                                    <span class="font-medium">{{ user?.name }} has made no comments</span>
+                                    <br />
+                                    They must not be that talkative
+                                </p>
+                            </div>
+                        </div>
                         <!-- Saved Posts -->
                         <LazyListsPosts
-                            v-else-if="type === 'saved' && user.savedPosts?.length"
-                            :posts="user.savedPosts"
+                            v-else-if="type === 'saved' && user?.savedPosts?.length"
+                            :posts="user?.savedPosts"
                             :isCompact="!preferCardView"
                             :isLoading="pending"
                             :hasError="error"
@@ -194,9 +235,9 @@
                         >
                             <p>
                                 <span class="font-medium">
-                                    {{ user.name }}
+                                    {{ user?.name }}
                                     <template v-if="type === 'saved'">has no saved posts</template>
-                                    <template v-else>has made no {{ type === 'post' ? "posts" : "comments" }}</template>
+                                    <template v-else>has made no {{ (type === 'post' || type === 'posts') ? "posts" : "comments" }}</template>
                                 </span>
                                 <br />
                                 <template v-if="type === 'saved'">Start saving posts to see them here</template>
@@ -236,14 +277,15 @@ const props = defineProps({
 const route = useRoute();
 const userStore = useLoggedInUser();
 
-const user = props.user;
+const user = computed(() => props.user);
+
 
 // Is Authed
 const isAuthed = userStore.isAuthed;
 
 // Is Self
 const isSelf = computed(() => {
-    return !!userStore.user && userStore.user.name === user.name;
+    return !!userStore.user && userStore.user.name === user?.name;
 });
 
 // Admin
@@ -254,7 +296,7 @@ const isAdmin = requirePermission("users");
 
 // Number of days until unban
 const unbanDays = computed(() => {
-    if (user.unbanDate) {
+    if (user?.unbanDate) {
         const date = new Date(user.unbanDate);
 
         return Math.ceil(
@@ -340,11 +382,11 @@ const commentSorts = [
 const links = [
     { name: "Overview", href: `/@${route.params?.username}` },
     {
-        name: `Posts (${user.postCount})`,
+        name: "Posts",
         href: `/@${route.params?.username}/posts`,
     },
     {
-        name: `Comments (${user.commentCount})`,
+        name: "Comments",
         href: `/@${route.params?.username}/comments`,
     },
     // Only show saved posts tab for the user's own profile

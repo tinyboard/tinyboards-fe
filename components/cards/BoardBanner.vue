@@ -153,7 +153,10 @@ const isAuthed = computed(() => {
     return userStore?.isAuthed || false;
 });
 
-const isSubscribed = computed(() => (currentBoard.value?.subscribedType || "notSubscribed") === "subscribed");
+const isSubscribed = computed(() => {
+    const subscribedType = currentBoard.value?.subscribedType;
+    return (subscribedType || "notSubscribed") === "subscribed";
+});
 const isSubscribing = ref(false);
 
 // Computed property to handle hydration issues
@@ -171,6 +174,7 @@ const shouldShowJoinButton = computed(() => {
 
 const toggleSubscribe = async () => {
     if (isSubscribing.value) return;
+
 
     // Check if board data is available
     if (!currentBoard.value?.id) {
@@ -199,6 +203,7 @@ const toggleSubscribe = async () => {
                 variables: { boardId: currentBoard.value?.id }
             });
 
+
             if (data.value?.unsubscribeFromBoard) {
                 // Update board's subscribedType in store
                 if (currentBoard.value) {
@@ -224,6 +229,7 @@ const toggleSubscribe = async () => {
             const { data } = await useGraphQLMutation(mutation, {
                 variables: { boardId: currentBoard.value?.id }
             });
+
 
             if (data.value?.subscribeToBoard) {
                 // Update board's subscribedType in store

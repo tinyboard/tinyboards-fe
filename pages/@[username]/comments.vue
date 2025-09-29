@@ -48,7 +48,7 @@ const ProfileRemoved = defineAsyncComponent(
 // User
 const username = computed(() => route.params?.username);
 
-const title = ref(route.params?.username);
+const title = ref(route.params?.username || 'Profile');
 
 useHead({
     title: title,
@@ -89,7 +89,8 @@ if (error.value && error.value.response) {
     });
 }
 
-const user = userData.value?.user;
+const user = computed(() => userData.value?.user);
+
 
 if (!user) {
     throw createError({

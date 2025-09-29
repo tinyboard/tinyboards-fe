@@ -91,7 +91,6 @@ export async function usePosts(listingType: ListingType) {
     throw gqlError;
   }
 
-  if (process.dev) console.log("getting posts...");
   if (error.value) {
     if (process.dev) console.error(error.value);
 

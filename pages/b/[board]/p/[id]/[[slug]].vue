@@ -12,9 +12,9 @@
 
                               <!-- Post Content -->
                               <template v-if="(postResult.post?.value || postResult.post)?.title">
-                                    <component :post="postResult.post?.value || postResult.post" :comments="comments"
+                                    <component :post="postResult.post?.value || postResult.post"
                                           :is="canViewPost ? thread : threadRemoved" />
-                                    <LazyContainersCommentSection :post="postResult.post?.value || postResult.post" :comments="comments" />
+                                    <LazyContainersCommentSection :post="postResult.post?.value || postResult.post" />
                               </template>
                               <!-- Loading State -->
                               <div v-else class="relative w-full">
@@ -117,8 +117,6 @@ if (site.enableBoards && postResult.post?.value?.board) {
     boardStore.setBoard(postResult.post.value.board);
 }
 
-// quick reference to comments
-let comments = postResult.post?.value?.comments || [];
 
 // If boards are enabled, post.board is not null -> safe to assume not null
 title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| +' + postResult.post.value.board.name : ''}`;
@@ -152,9 +150,6 @@ const type = computed(() => {
 })
 const sort = ref(route.query?.sort);
 
-const onCommentPublished = (comment: Comment) => {
-      comments.unshift(comment);
-};
 
 /*
  * Whether the user can see this post.

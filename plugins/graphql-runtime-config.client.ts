@@ -10,7 +10,6 @@ export default defineNuxtPlugin(async () => {
   const clientEndpoint = config.public.GQL_HOST
 
   if (process.client && clientEndpoint) {
-    console.log('🔧 [GraphQL Runtime Config] Setting client endpoint to:', clientEndpoint)
 
     // Override the GraphQL client configuration
     const { $gql } = useNuxtApp()
@@ -19,7 +18,6 @@ export default defineNuxtPlugin(async () => {
       // Update the GraphQL client host if possible
       if ($gql.default.host) {
         $gql.default.host = clientEndpoint
-        console.log('✅ [GraphQL Runtime Config] Updated GraphQL client host to:', clientEndpoint)
       }
     }
   }

@@ -316,7 +316,6 @@ const shouldShowBoardBanner = computed(() => {
     return route.params?.board && boardStore.hasBoard && board.value && board.value.id;
 });
 
-console.log("stores have been set up");
 
 definePageMeta({
     key: (route) => route.fullPath,
@@ -369,7 +368,6 @@ const { hasPosts, error, queryParams, loadMore, loading } = await usePosts(
     mapToListingType("local")
 );
 /*const postsStore = usePostsStore();
-console.log("using posts store");
 
 const sorts = [
     "hot",
