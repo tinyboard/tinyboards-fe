@@ -188,46 +188,93 @@ const imageStore = useImageStore();
 const UPDATE_SETTINGS_MUTATION = 'updateUserSettings';
 
 const settings = ref({});
-const query = `
-  query GetSettings {
+// Get basic user info
+const userQuery = `
+  query GetUser {
     me {
       id
-      username
+      name
       displayName
-      email
       bio
       avatar
       banner
       profileBackground
-      showBots
-      showReadPosts
-      showNsfw
-      defaultListingType
-      defaultSortType
     }
   }
 `;
 
-const { data } = await useGraphQLQuery(query);
-if (data.value.me) {
-	const s = data.value.me;
-	settings.value = {
-		/*...data.value.me.settings,
-		   ...data.value.me*/
-		bio: s.bio,
-		displayName: s.displayName,
-		avatar: s.avatar,
-		banner: s.banner,
-		profileBackground: s.profileBackground
+// Get user settings separately
+const settingsQuery = `
+  query GetUserSettings {
+    getUserSettings {
+      id
+      name
+      email
+      showNSFW
+      showBots
+      theme
+      defaultSortType
+      defaultListingType
+      emailNotificationsEnabled
+      interfaceLanguage
+    }
+  }
+`;
 
-	};
-} else {
+const [userResult, settingsResult] = await Promise.all([
+	useGraphQLQuery(userQuery),
+	useGraphQLQuery(settingsQuery)
+]);
+
+console.log('User Query Result:', { data: userResult.data.value, error: userResult.error.value });
+console.log('Settings Query Result:', { data: settingsResult.data.value, error: settingsResult.error.value });
+
+if (userResult.error.value) {
+	console.error('GraphQL Error in user query:', userResult.error.value);
+	throw createError({
+		statusCode: userResult.error.value.isAuthError ? 401 : 500,
+		statusMessage: userResult.error.value.message || "Failed to load user data.",
+		fatal: true
+	});
+}
+
+if (settingsResult.error.value) {
+	console.error('GraphQL Error in settings query:', settingsResult.error.value);
+	throw createError({
+		statusCode: settingsResult.error.value.isAuthError ? 401 : 500,
+		statusMessage: settingsResult.error.value.message || "Failed to load user settings.",
+		fatal: true
+	});
+}
+
+const user = userResult.data.value?.me;
+const userSettings = settingsResult.data.value?.getUserSettings;
+
+if (!user || !userSettings) {
+	console.warn('No user data or settings returned from GraphQL queries');
 	throw createError({
 		statusCode: 500,
 		statusMessage: "Internal server error while loading your settings.",
 		fatal: true
 	});
 }
+
+console.log('User data:', user);
+console.log('User settings:', userSettings);
+
+settings.value = {
+	bio: user.bio,
+	displayName: user.displayName,
+	avatar: user.avatar,
+	banner: user.banner,
+	profileBackground: user.profileBackground,
+	email: userSettings.email,
+	showBots: userSettings.showBots,
+	showNsfw: userSettings.showNSFW,
+	defaultListingType: userSettings.defaultListingType,
+	defaultSortType: userSettings.defaultSortType,
+	emailNotificationsEnabled: userSettings.emailNotificationsEnabled
+};
 
 
 
@@ -377,6 +424,10 @@ const submitSettings = async () => {
 				mutation UpdateSettings(
 					$displayName: String,
 					$bio: String,
+					$showNsfw: Boolean,
+					$defaultSortType: Int,
+					$defaultListingType: Int,
+					$email: String,
 					$avatar: Upload,
 					$banner: Upload,
 					$profileBackground: Upload
@@ -384,6 +435,10 @@ const submitSettings = async () => {
 					updateSettings(
 						displayName: $displayName,
 						bio: $bio,
+						showNsfw: $showNsfw,
+						defaultSortType: $defaultSortType,
+						defaultListingType: $defaultListingType,
+						email: $email,
 						avatar: $avatar,
 						banner: $banner,
 						profileBackground: $profileBackground
@@ -400,6 +455,10 @@ const submitSettings = async () => {
 			variables: {
 				displayName: settings.value.displayName,
 				bio: settings.value.bio,
+				showNsfw: settings.value.showNsfw,
+				defaultSortType: settings.value.defaultSortType,
+				defaultListingType: settings.value.defaultListingType,
+				email: settings.value.email,
 				avatar: null,
 				banner: null,
 				profileBackground: null

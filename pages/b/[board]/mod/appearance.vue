@@ -227,9 +227,9 @@ if (!board) {
 
 const settings = ref(JSON.parse(JSON.stringify(board)));
 
-const primaryColor = ref(toHexCode(settings.value.primary_color || '#3B82F6'));
-const secondaryColor = ref(toHexCode(settings.value.secondary_color || '#6B7280'));
-const hoverColor = ref(toHexCode(settings.value.hover_color || '#2563EB'));
+const primaryColor = ref(toHexCode(settings.value.primaryColor || '#3B82F6'));
+const secondaryColor = ref(toHexCode(settings.value.secondaryColor || '#6B7280'));
+const hoverColor = ref(toHexCode(settings.value.hoverColor || '#2563EB'));
 
 definePageMeta({
     hasAuthRequired: true,
@@ -309,7 +309,7 @@ const submitSettings = async () => {
             files
         });
 
-        if (result.value?.updateBoardSettings?.board) {
+        if (result.value?.updateBoardSettings) {
             const updatedBoard = result.value.updateBoardSettings.board;
 
             // Update the board store with new data
