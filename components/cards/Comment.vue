@@ -190,7 +190,7 @@
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ comment.score + voteType }}
+              {{ comment.score }}
             </span>
           </li>
           <li>
@@ -479,12 +479,10 @@ const score = computed(() => {
 const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);
 
 const upvotes = computed(() => {
-  const baseUpvotes = comment.value?.upvotes ?? 0;
-  return voteType.value == 1 ? baseUpvotes + 1 : baseUpvotes;
+  return comment.value?.upvotes ?? 0;
 });
 const downvotes = computed(() => {
-  const baseDownvotes = comment.value?.downvotes ?? 0;
-  return voteType.value == -1 ? baseDownvotes + 1 : baseDownvotes;
+  return comment.value?.downvotes ?? 0;
 });
 
 // Author

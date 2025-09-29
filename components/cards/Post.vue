@@ -185,7 +185,7 @@
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ post.score + voteType }}
+              {{ post.score }}
             </span>
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'
@@ -436,7 +436,7 @@
         <div class="flex flex-col flex-grow space-y-2 text-sm text-gray-500">
           <dl class="flex justify-between">
             <dt>Score&nbsp;</dt>
-            <dd class="font-medium">{{ post.score + voteType }}</dd>
+            <dd class="font-medium">{{ post.score }}</dd>
           </dl>
           <dl class="flex justify-between">
             <dt>Replies&nbsp;</dt>
