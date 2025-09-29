@@ -91,7 +91,7 @@
                 Share
             </h2>
             <input
-                :value="`${config.useHTTPS ? 'https' : 'http'}://${config.domain}/${post.id}`"
+                :value="`${config.useHTTPS ? 'https' : 'http'}://${config.domain}${site.enableBoards ? `/b/${post.board.name}/p/${post.id}/${post.titleChunk}` : `/p/${post.id}/${post.titleChunk}`}`"
                 class="w-full p-1 text-sm mb-4"
                 @focus="$event.target.select()"
             />

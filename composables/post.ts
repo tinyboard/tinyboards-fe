@@ -2,7 +2,7 @@ import { usePostsStore } from "@/stores/StorePosts";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { treeComments } from "@/utils/treeComments";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
-import { ref, computed, watch, watchEffect } from "vue";
+import { ref, computed, watch } from "vue";
 import type { Comment, Post } from "@/types/types";
 
 /**
@@ -31,7 +31,26 @@ export async function usePost(id: number): Promise<{
     topCommentId
   });
 
-  // Create a computed that handles the data properly
+  // Track if comments have been processed to avoid multiple processing
+  const commentsProcessed = ref(false);
+
+  // Watch for data changes and process comments once
+  watch(() => data.value, (newData) => {
+    if (newData && !commentsProcessed.value) {
+      let postData = newData?.post || newData;
+
+      if (postData && postData.comments) {
+        commentsStore.setComments(postData.comments);
+        // organize post comments into a tree
+        const treeResult = treeComments(postData.comments);
+        postData.comments = treeResult;
+        postsStore.setPosts([postData]);
+        commentsProcessed.value = true;
+      }
+    }
+  }, { immediate: true });
+
+  // Create a computed that returns the processed data
   const post = computed(() => {
     try {
       let postData = data.value?.post;
@@ -46,13 +65,6 @@ export async function usePost(id: number): Promise<{
         else if (data.value.data?.post) {
           postData = data.value.data.post;
         }
-      }
-
-      if (postData && postData.comments) {
-        commentsStore.setComments(postData.comments);
-        // organize post comments into a tree
-        postData.comments = treeComments(postData.comments);
-        postsStore.setPosts([postData]);
       }
 
       return postData;

@@ -1,52 +1,78 @@
 import type { Comment } from "@/types/types";
 
 /**
- * Create a comment tree.
- * @param comments Array of comments not ordered into a tree, typically from the API.
- * @returns A comment tree.
+ * Create a comment tree from a flat array of comments.
+ * @param comments Array of comments from the API (can be in any order)
+ * @returns A hierarchical comment tree with nested replies
  */
 export function treeComments(comments: Comment[]): Comment[] {
+  console.log('DEBUG treeComments: Input:', comments.map(c => ({ id: c.id, parentId: c.parentId, body: c.body?.substring(0, 20) })));
+
   if (comments.length === 0) {
     return [];
   }
 
-  const repliesByID: {
-    [index: number]: Comment[]
-  } = {};
+  // Create a map to store all comments by their ID for quick lookup
+  const commentMap = new Map<number, Comment>();
 
-  comments.forEach((comment: Comment) => {
-    // top level comment's parent ID is null => treat it as -1
-    let parentID = comment.parentId ?? -1;
-    if (!!repliesByID[parentID]) {
-      repliesByID[parentID].push(comment);
+  // Initialize all comments with empty replies array
+  comments.forEach(comment => {
+    // Create a copy to avoid mutating the original
+    const commentCopy = { ...comment, replies: [] };
+    commentMap.set(comment.id, commentCopy);
+  });
+
+  console.log('DEBUG treeComments: CommentMap keys:', Array.from(commentMap.keys()));
+
+  // Array to hold top-level comments (those with no parent)
+  const topLevelComments: Comment[] = [];
+
+  // Build the tree structure
+  comments.forEach(comment => {
+    const commentCopy = commentMap.get(comment.id)!;
+
+    console.log(`DEBUG treeComments: Processing comment ${comment.id}, parentId: ${comment.parentId}`);
+
+    if (comment.parentId === null || comment.parentId === undefined) {
+      // This is a top-level comment
+      console.log(`DEBUG treeComments: Adding ${comment.id} as top-level`);
+      topLevelComments.push(commentCopy);
     } else {
-      repliesByID[parentID] = [comment];
+      // This is a reply - find its parent and add it to parent's replies
+      const parent = commentMap.get(comment.parentId);
+      if (parent) {
+        console.log(`DEBUG treeComments: Adding ${comment.id} as reply to ${comment.parentId}`);
+        parent.replies = parent.replies || [];
+        parent.replies.push(commentCopy);
+      } else {
+        console.log(`DEBUG treeComments: Parent ${comment.parentId} not found for ${comment.id}, treating as top-level`);
+        topLevelComments.push(commentCopy);
+      }
     }
   });
 
-  //console.log(JSON.stringify(repliesByID, null, 4));
+  console.log('DEBUG treeComments: Top-level comments:', topLevelComments.map(c => ({ id: c.id, repliesCount: c.replies?.length })));
+  console.log('DEBUG treeComments: Final result structure:', topLevelComments.map(c => ({
+    id: c.id,
+    replies: c.replies?.map(r => ({ id: r.id, parentId: r.parentId })) || []
+  })));
 
-  const getRepliesForComment = (comment: Comment) => {
-    repliesByID[comment.id]?.forEach((reply) => {
-      getRepliesForComment(reply);
-    });
-    comment.replies = repliesByID[comment.id] ?? [];
+  // Sort top-level comments by creation date (newest first)
+  topLevelComments.sort((a, b) =>
+    new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
+  );
 
-    return comment;
+  // Recursively sort replies within each comment tree
+  const sortReplies = (comment: Comment) => {
+    if (comment.replies && comment.replies.length > 0) {
+      comment.replies.sort((a, b) =>
+        new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime()
+      );
+      comment.replies.forEach(sortReplies);
+    }
   };
 
-  // locate the top comment, which should be the root of the tree
-  // if there are no top-level comments (comments directly under the post), find the ID of the comment which doesn't have a parent comment
-  let topCommentID: number;
-  if (Object.keys(repliesByID).includes("-1")) {
-    topCommentID = -1;
-  } else {
-    const idlist = comments.map((comment) => comment.id);
-    topCommentID = comments.filter(
-      (comment) => !idlist.includes(comment.parentId ?? -1),
-    )[0]?.parentId ?? -1;
-  }
+  topLevelComments.forEach(sortReplies);
 
-  //console.log(topCommentID);
-  return repliesByID[topCommentID].map(getRepliesForComment);
+  return topLevelComments;
 }

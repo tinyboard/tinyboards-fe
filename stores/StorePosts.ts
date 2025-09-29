@@ -98,6 +98,7 @@ export const usePostsStore = defineStore("posts", {
               postCount
               commentCount
               rep
+              creationDate
             }
             commentCount
             image
@@ -148,6 +149,7 @@ export const usePostsStore = defineStore("posts", {
               banner
               isNSFW
               subscribedType
+              creationDate
             }
             creator {
               id
@@ -158,6 +160,7 @@ export const usePostsStore = defineStore("posts", {
               postCount
               commentCount
               rep
+              creationDate
             }
             commentCount
             image
@@ -254,6 +257,7 @@ export const usePostsStore = defineStore("posts", {
               postCount
               commentCount
               rep
+              creationDate
             }
             commentCount
             image

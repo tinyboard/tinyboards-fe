@@ -333,9 +333,9 @@
           level <= limit
           " v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />-->
         <LazyListsComments v-show="!isCollapsed" :comments="comment.replies" :offset="offset" class="relative" />
-        <!-- Continue Thread Link -->
-        <NuxtLink v-if="comment.replyCount && level > limit" v-show="!isCollapsed"
-          :to="`/p/${comment.post?.id}/${parentPost?.titleChunk ?? '-'}/${comment.id}`"
+        <!-- Continue Thread Link - only show if we have many replies and are at deep nesting -->
+        <NuxtLink v-if="comment.replyCount > 1 && level >= limit" v-show="!isCollapsed"
+          :to="`${site.enableBoards && comment.board ? '/b/' + comment.board.name + '/p' : '/p'}/${comment.post?.id}/${comment.post?.titleChunk || '-'}/${comment.id}`"
           class="relative inline-block text-primary text-sm hover:underline mt-2">
           Continue thread &#8594;
         </NuxtLink>
@@ -395,7 +395,7 @@ const props = defineProps<{
 //const comment = ref(props.comment);
 const comment = ref(props.comment);
 const offset = props.offset ?? 0;
-const limit = props.limit ?? 0;
+const limit = props.limit ?? 6;
 //const commentsStore = useCommentsStore();
 //commentsStore.comments.push(props.comment);
 
