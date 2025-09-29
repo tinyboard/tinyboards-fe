@@ -95,60 +95,60 @@
 
     try {
       if (type === 'post') {
-        // Use GraphQL mutation for post removal
+        // Use GraphQL mutation for post deletion
         const result = await useDirectGraphQLRequest(`
-          mutation setPostRemoved($id: Int!, $value: Boolean!) {
-            setPostRemoved(id: $id, value: $value) {
+          mutation deletePost($postId: Int!, $deleted: Boolean!) {
+            deletePost(postId: $postId, deleted: $deleted) {
               id
-              isRemoved
+              isDeleted
             }
           }
         `, {
-          id: props.id,
-          value: true
+          postId: props.id,
+          deleted: true
         });
 
-        if (result.data?.setPostRemoved) {
+        if (result.data?.deletePost) {
           // Update state
           if (postsStore.updatePost) {
             postsStore.updatePost(props.id, {
-              isRemoved: result.data.setPostRemoved.isRemoved
+              isDeleted: result.data.deletePost.isDeleted
             });
           }
 
           // Show success toast
           toast.addNotification({
             header: 'Post deleted!',
-            message: 'Your post was removed successfully.',
+            message: 'Your post was deleted successfully.',
             type: 'success'
           });
         }
       } else {
-        // Use GraphQL mutation for comment removal
+        // Use GraphQL mutation for comment deletion
         const result = await useDirectGraphQLRequest(`
-          mutation setCommentRemoved($id: Int!, $value: Boolean!) {
-            setCommentRemoved(id: $id, value: $value) {
+          mutation deleteComment($commentId: Int!, $deleted: Boolean!) {
+            deleteComment(commentId: $commentId, deleted: $deleted) {
               id
-              isRemoved
+              isDeleted
             }
           }
         `, {
-          id: props.id,
-          value: true
+          commentId: props.id,
+          deleted: true
         });
 
-        if (result.data?.setCommentRemoved) {
+        if (result.data?.deleteComment) {
           // Update state
           if (commentsStore.updateComment) {
             commentsStore.updateComment(props.id, {
-              isRemoved: result.data.setCommentRemoved.isRemoved
+              isDeleted: result.data.deleteComment.isDeleted
             });
           }
 
           // Show success toast
           toast.addNotification({
             header: 'Comment deleted!',
-            message: 'Your comment was removed successfully.',
+            message: 'Your comment was deleted successfully.',
             type: 'success'
           });
         }
