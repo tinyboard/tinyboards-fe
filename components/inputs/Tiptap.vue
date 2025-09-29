@@ -7,8 +7,14 @@
       <span v-else>{{ placeholder }}</span>
     </span>
 
-    <!-- Editor -->
-    <editor-content :editor="editor" :style="`min-height:170px`"/>
+    <!-- Editor Container -->
+    <div class="relative">
+      <editor-content :editor="editor" :style="`min-height:170px`"/>
+      <!-- Emoji Picker inside editor -->
+      <div class="absolute bottom-3 right-3">
+        <EmojiPicker @emoji-selected="insertEmoji" />
+      </div>
+    </div>
 
     <!-- Editor Menu Buttons -->
     <div v-if="editor" id="editor" class="hidden md:flex space-x-2 p-2 text-sm font-bold opacity-70 hover:opacity-100 bg-gray-100 border-t border-dashed">
@@ -113,14 +119,17 @@
   });
 
   import Link from '@tiptap/extension-link';
+  import Image from '@tiptap/extension-image';
   import { useEditor, EditorContent } from '@tiptap/vue-3';
   import StarterKit from '@tiptap/starter-kit';
+  import EmojiPicker from './EmojiPicker.vue';
 
   const editor = useEditor({
     // enablePasteRules: false, // disable Markdown when pasting
     // enableInputRules: false, // disable Markdown when typing
     extensions: [
       Link,
+      Image,
       StarterKit
     ]
   });
@@ -154,6 +163,20 @@
         .setLink({ href: url })
         .run()
     }
+
+  const addImage = () => {
+    const url = window.prompt('Image URL')
+
+    if (url) {
+      editor.value.chain().focus().setImage({ src: url }).run()
+    }
+  }
+
+  const insertEmoji = (emoji) => {
+    if (editor.value) {
+      editor.value.chain().focus().insertContent(emoji).run()
+    }
+  }
 </script>
 
 <style scoped>

@@ -1,9 +1,33 @@
 <template>
 	<form @submit.prevent="submitComment" class="comment-form relative flex flex-col w-full">
-		<!-- Textarea -->
-		<textarea v-show="!isPreviewVisible" required placeholder="Write a comment..." rows="4"
-			class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
-			v-model="body" @keydown="inputHandler" />
+		<!-- Textarea Container -->
+		<div class="relative">
+			<textarea
+				ref="textareaRef"
+				v-show="!isPreviewVisible"
+				required
+				placeholder="Write a comment..."
+				rows="4"
+				class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary pr-10"
+				v-model="body"
+				@keydown="handleKeydown"
+				@input="handleInput"
+				@click="handleTextareaClick"
+			/>
+			<!-- Emoji Picker inside textarea -->
+			<div v-show="!isPreviewVisible" class="absolute bottom-2 right-2">
+				<EmojiPicker @emoji-selected="insertEmoji" />
+			</div>
+		</div>
+
+		<!-- Emoji Suggestions -->
+		<EmojiSuggestions
+			:suggestions="emojiSuggestions.suggestions.value"
+			:is-visible="emojiSuggestions.isVisible.value"
+			:position="emojiSuggestions.position.value"
+			:selected-index="emojiSuggestions.selectedIndex.value"
+			@select="selectEmojiSuggestion"
+		/>
 		<!-- MD Preview -->
 		<div v-show="isPreviewVisible" class="w-full" style="min-height: 118px;">
 			<div class="min-h-[24px] sm:min-h-[36px] pt-2.5 space-x-2 text-sm text-gray-500 dark:text-gray-400">
@@ -18,15 +42,21 @@
 			<span class="ml-2 text-red-500">&#10006;</span>
 		</button>
 		<!-- Action Buttons -->
-		<div class="mt-2 flex justify-end w-full">
-			<!-- Show/hide MD Preview -->
-			<button type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible">
-				{{ isPreviewVisible ? 'Edit' : 'Preview' }}
-			</button>
-			<button v-if="parentId" type="button" class="ml-auto button white w-24" @click="close">Cancel</button>
-			<button class="button primary min-w-[96px] ml-2" :class="{ 'loading': isLoading }" :disabled="isLoading">
-				{{ parentId ? 'Reply' : 'Comment' }}
-			</button>
+		<div class="mt-2 flex justify-between w-full">
+			<div class="flex items-center">
+				<!-- Empty div to maintain layout -->
+				<div></div>
+			</div>
+			<div class="flex">
+				<!-- Show/hide MD Preview -->
+				<button type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible">
+					{{ isPreviewVisible ? 'Edit' : 'Preview' }}
+				</button>
+				<button v-if="parentId" type="button" class="ml-2 button white w-24" @click="close">Cancel</button>
+				<button class="button primary min-w-[96px] ml-2" :class="{ 'loading': isLoading }" :disabled="isLoading">
+					{{ parentId ? 'Reply' : 'Comment' }}
+				</button>
+			</div>
 		</div>
 	</form>
 </template>
@@ -39,6 +69,9 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from "@/stores/StoreSite";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
+import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
+import EmojiPicker from './EmojiPicker.vue';
+import EmojiSuggestions from './EmojiSuggestions.vue';
 
 const props = defineProps<{
 	parentId?: number;
@@ -53,9 +86,13 @@ const commentsStore = useCommentsStore();
 
 const body = ref("");
 const isLoading = ref(false);
+const textareaRef = ref<HTMLTextAreaElement>();
 
 // Markdown previewing
 const isPreviewVisible = ref(false);
+
+// Emoji suggestions
+const emojiSuggestions = useEmojiSuggestions();
 
 const preview = computed(() => {
 	return marked.parse(body.value ?? '')
@@ -67,10 +104,95 @@ const close = () => {
 };
 
 // Handle key press
-const inputHandler = (e: KeyboardEvent) => {
+const handleKeydown = (e: KeyboardEvent) => {
+	// Handle emoji suggestions navigation
+	if (emojiSuggestions.isVisible.value) {
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			emojiSuggestions.navigateDown();
+			return;
+		}
+		if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			emojiSuggestions.navigateUp();
+			return;
+		}
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			const selectedEmoji = emojiSuggestions.selectSuggestion();
+			if (selectedEmoji) {
+				insertEmojiSuggestion(selectedEmoji);
+			}
+			return;
+		}
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			emojiSuggestions.hideSuggestions();
+			return;
+		}
+	}
+
+	// Original functionality
 	if (e.keyCode === 13 && e.shiftKey) {
 		e.preventDefault();
 		submitComment();
+	}
+};
+
+// Handle input changes
+const handleInput = () => {
+	if (textareaRef.value) {
+		const cursorPosition = textareaRef.value.selectionStart;
+		emojiSuggestions.showSuggestions(body.value, cursorPosition, textareaRef.value);
+	}
+};
+
+// Handle textarea clicks
+const handleTextareaClick = () => {
+	if (textareaRef.value) {
+		const cursorPosition = textareaRef.value.selectionStart;
+		emojiSuggestions.showSuggestions(body.value, cursorPosition, textareaRef.value);
+	}
+};
+
+// Insert emoji into textarea
+const insertEmoji = (emoji: string) => {
+	const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+	if (textarea) {
+		const start = textarea.selectionStart;
+		const end = textarea.selectionEnd;
+		const text = body.value;
+		body.value = text.substring(0, start) + emoji + text.substring(end);
+
+		// Restore cursor position
+		nextTick(() => {
+			textarea.focus();
+			textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+		});
+	}
+};
+
+// Insert emoji from suggestions
+const insertEmojiSuggestion = (emoji: any) => {
+	if (textareaRef.value) {
+		const result = emojiSuggestions.replaceEmojiInText(body.value, textareaRef.value.selectionStart, emoji);
+		body.value = result.newText;
+
+		// Restore cursor position
+		nextTick(() => {
+			if (textareaRef.value) {
+				textareaRef.value.focus();
+				textareaRef.value.setSelectionRange(result.newCursorPosition, result.newCursorPosition);
+			}
+		});
+	}
+};
+
+// Select emoji suggestion from dropdown
+const selectEmojiSuggestion = (index: number) => {
+	const selectedEmoji = emojiSuggestions.selectSuggestion(index);
+	if (selectedEmoji) {
+		insertEmojiSuggestion(selectedEmoji);
 	}
 };
 

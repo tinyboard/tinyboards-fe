@@ -6,6 +6,51 @@ const imageStore = useImageStore();
 const modalStore = useModalStore();
 const toast = useToastStore();
 
+// Validate emoji image dimensions
+const validateEmojiDimensions = (file: File): Promise<boolean> => {
+	return new Promise((resolve) => {
+		const img = new Image();
+		img.onload = () => {
+			const width = img.width;
+			const height = img.height;
+
+			// Backend requires: min 8x8, max 512x512
+			if (width < 8 || height < 8) {
+				toast.addNotification({
+					header: 'Image too small!',
+					message: 'Emoji must be at least 8x8 pixels',
+					type: 'error'
+				});
+				resolve(false);
+				return;
+			}
+
+			if (width > 512 || height > 512) {
+				toast.addNotification({
+					header: 'Image too large!',
+					message: 'Emoji must be no larger than 512x512 pixels',
+					type: 'error'
+				});
+				resolve(false);
+				return;
+			}
+
+			resolve(true);
+		};
+
+		img.onerror = () => {
+			toast.addNotification({
+				header: 'Invalid image!',
+				message: 'Could not read image file',
+				type: 'error'
+			});
+			resolve(false);
+		};
+
+		img.src = URL.createObjectURL(file);
+	});
+};
+
 /**
  * Determine whether an image can be embedded.
  * 
@@ -34,14 +79,35 @@ export const canEmbedImage = (link: string): boolean => {
 };
 
 /// Call this when the file of a file input changes. Sets the crop modal.
-export const onFileChange = (e: InputEvent, type: 'avatar' | 'default_avatar' | 'banner' | 'background') => {
+export const onFileChange = async (e: InputEvent, type: 'avatar' | 'default_avatar' | 'banner' | 'background' | 'emoji') => {
 	const file = e.target!.files[0];
 
-	const maxFileSize = type == "avatar" ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
+	// For emojis, use 5MB default (backend configurable limit)
+	// For other types, keep existing limits
+	const maxFileSize = type == "emoji" ? 5 * 1024 * 1024 : (type == "avatar" ? 2 * 1024 * 1024 : 5 * 1024 * 1024);
 
 	if (file.size > maxFileSize) {
-		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${type == 'avatar' ? 2 : 5}MB.`, type: 'error' });
+		const sizeText = type == "emoji" ? "5" : (type == "avatar" ? "2" : "5");
+		toast.addNotification({ header: 'Your files are too large!', message: `Max size for ${type}s is ${sizeText}MB.`, type: 'error' });
 		return;
+	}
+
+	// Backend requires minimum 100 bytes for emojis
+	if (type === "emoji" && file.size < 100) {
+		toast.addNotification({
+			header: 'File too small!',
+			message: 'Emoji file appears to be corrupted or too small (minimum 100 bytes).',
+			type: 'error'
+		});
+		return;
+	}
+
+	// Validate emoji dimensions before processing
+	if (type === "emoji") {
+		const isValid = await validateEmojiDimensions(file);
+		if (!isValid) {
+			return;
+		}
 	}
 
 	// cropping modal butchers the gif, so we skip it
@@ -64,6 +130,9 @@ export const onFileChange = (e: InputEvent, type: 'avatar' | 'default_avatar' | 
 						break;
 					case 'banner':
 						imageStore.setBanner(reader.result);
+						break;
+					case 'emoji':
+						imageStore.setEmoji(reader.result);
 						break;
 					default:
 						if (process.dev) console.error(`unexpected file type ${type}`);

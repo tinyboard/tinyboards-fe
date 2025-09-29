@@ -40,14 +40,23 @@
 <script setup>
 import { useSiteStore } from "@/stores/StoreSite";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { useLoggedInUser } from '@/stores/StoreAuth';
+import { requireModPermission } from '@/composables/mod';
 const route = useRoute();
 const site = useSiteStore();
 const boardStore = useBoardStore();
+const user = useLoggedInUser();
 
 const isBoardActive = boardStore.board && Object.keys(boardStore.board).length > 0;
 const board = isBoardActive ? boardStore.board : null;
 const boardName = isBoardActive ? board?.name : "";
-const isMod = isBoardActive ? board?.myModPermissions !== 0 : false;
+const isMod = isBoardActive ? (board?.myModPermissions !== 0 || user.adminLevel > 0) : false;
+
+// Check specific mod permissions (admins have all permissions)
+const hasConfigPerms = computed(() => user.adminLevel > 0 || (isBoardActive && requireModPermission(board?.myModPermissions || 0, 'config')));
+const hasAppearancePerms = computed(() => user.adminLevel > 0 || (isBoardActive && requireModPermission(board?.myModPermissions || 0, 'appearance')));
+const hasEmojiPerms = computed(() => user.adminLevel > 0 || (isBoardActive && requireModPermission(board?.myModPermissions || 0, 'emoji')));
+const hasUserPerms = computed(() => user.adminLevel > 0 || (isBoardActive && requireModPermission(board?.myModPermissions || 0, 'users')));
 
 definePageMeta({
     isLeftNavbarDisabled: true,
@@ -68,11 +77,27 @@ const profileLinks = [
     { name: "Hidden", href: "/settings/hidden" },
 ];
 
-const boardLinks = [
-    { name: "General", href: `/b/${boardName}/mod/settings` },
-    { name: "Appearance", href: `/b/${boardName}/mod/appearance` },
-    { name: "Sidebar", href: `/b/${boardName}/mod/sidebar` },
-    { name: "Mods", href: `/b/${boardName}/mod/mods` },
-    { name: "Banned Users", href: `/b/${boardName}/mod/bans` },
-];
+const boardLinks = computed(() => {
+    const links = [];
+
+    if (hasConfigPerms.value) {
+        links.push({ name: "General", href: `/b/${boardName}/mod/` });
+        links.push({ name: "Sidebar", href: `/b/${boardName}/mod/sidebar` });
+    }
+
+    if (hasAppearancePerms.value) {
+        links.push({ name: "Appearance", href: `/b/${boardName}/mod/appearance` });
+    }
+
+    if (hasEmojiPerms.value) {
+        links.push({ name: "Emojis", href: `/b/${boardName}/mod/emojis` });
+    }
+
+    if (hasUserPerms.value) {
+        links.push({ name: "Mods", href: `/b/${boardName}/mod/mods` });
+        links.push({ name: "Banned Users", href: `/b/${boardName}/mod/bans` });
+    }
+
+    return links;
+});
 </script>

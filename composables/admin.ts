@@ -2,56 +2,55 @@ import { useLoggedInUser } from "@/stores/StoreAuth";
 import type { AdminPermission } from "@/types/types";
 
 export const PERMISSIONS: { [key: string]: number } = {
-  appearance: 2,
-  config: 4,
-  content: 8,
-  users: 16,
-  boards: 32,
-  full: 64,
-  owner: 128,
-  system: 256,
+  appearance: 1,
+  config: 2,
+  content: 3,
+  users: 4,
+  boards: 5,
+  emoji: 2,
+  full: 6,
+  owner: 7,
+  system: 8,
 };
 
 export const requirePermission = (permission: AdminPermission) => {
   const u = useLoggedInUser();
-  return (
-    ((u.adminLevel ?? 0) &
-      (PERMISSIONS[permission] + PERMISSIONS["full"] + PERMISSIONS["owner"] + PERMISSIONS["system"])) >
-    0
-  );
+  return (u.adminLevel ?? 0) >= PERMISSIONS[permission];
 };
 
 export const requireFullPerms = () => {
   const u = useLoggedInUser();
-
-  return ((u.adminLevel ?? 0) & (PERMISSIONS["full"] + PERMISSIONS["owner"] + PERMISSIONS["system"])) > 0;
+  return (u.adminLevel ?? 0) >= PERMISSIONS["full"];
 };
 
 export const requireOwnerPerms = () => {
   const u = useLoggedInUser();
-
-  return ((u.adminLevel ?? 0) & (PERMISSIONS["owner"] + PERMISSIONS["system"])) > 0;
+  return (u.adminLevel ?? 0) >= PERMISSIONS["owner"];
 };
 
 export const createPermissionString = (adminLevel: number) => {
-  if (adminLevel & PERMISSIONS["system"]) {
+  if (adminLevel >= PERMISSIONS["system"]) {
     return "system";
   }
 
-  if (adminLevel & PERMISSIONS["owner"]) {
+  if (adminLevel >= PERMISSIONS["owner"]) {
     return "owner";
   }
 
-  if (adminLevel & PERMISSIONS["full"]) {
+  if (adminLevel >= PERMISSIONS["full"]) {
     return "full permissions";
   }
 
+  if (adminLevel === 0) {
+    return "no permissions";
+  }
+
   let perms = [];
-  for (const [permission, code] of Object.entries(PERMISSIONS)) {
-    if (adminLevel & code) {
+  for (const [permission, level] of Object.entries(PERMISSIONS)) {
+    if (adminLevel >= level) {
       perms.push(permission);
     }
   }
 
-  return perms.join(",");
+  return perms.join(", ");
 };

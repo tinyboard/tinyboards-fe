@@ -13,6 +13,17 @@
 @tailwind utilities;
 @tailwind screens;
 
+/* Custom Emoji Styles */
+img.emoji {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: text-bottom;
+  margin: 0 0.1em;
+  object-fit: contain;
+  background: transparent;
+}
+
 /* Core */
 @layer base {
 	:root {

@@ -26,13 +26,20 @@
                 }" :check-orientation="false" @change="onChange" />
               </div>
               <!-- Footer -->
-              <div class="mt-4 flex space-x-2 justify-end">
-                <button type="button" class="button gray" @click="close">
-                  Discard
-                </button>
-                <button class="button green" @click="modalStore.closeModal">
-                  Looks good!
-                </button>
+              <div class="mt-4 flex space-x-2 justify-between">
+                <div>
+                  <button type="button" class="button gray" @click="close">
+                    Discard
+                  </button>
+                </div>
+                <div class="flex space-x-2">
+                  <button type="button" class="button blue" @click="useOriginal">
+                    Use Original
+                  </button>
+                  <button class="button green" @click="modalStore.closeModal">
+                    Looks good!
+                  </button>
+                </div>
               </div>
             </DialogPanel>
           </TransitionChild>
@@ -83,10 +90,72 @@ const close = () => {
     imageStore.purgeAvatar();
   } else if (props.type == "default_avatar") {
     imageStore.purgeDefaultAvatar();
+  } else if (props.type == "emoji") {
+    imageStore.purgeEmoji();
   } else {
     imageStore.purgeBanner()
   }
   modalStore.closeModal();
+}
+
+const useOriginal = () => {
+  // Create an image element to load the original image
+  const img = new Image();
+  img.onload = () => {
+    // Create a canvas to convert the image to data URL
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // For emojis, ensure dimensions are within backend limits (8x8 to 512x512)
+    if (props.type === "emoji") {
+      const width = img.width;
+      const height = img.height;
+
+      // Check if dimensions are within limits
+      if (width < 8 || height < 8) {
+        // Scale up maintaining aspect ratio to meet minimum 8x8
+        const scale = Math.max(8 / width, 8 / height);
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+      } else if (width > 512 || height > 512) {
+        // Scale down maintaining aspect ratio to fit within 512x512
+        const scale = Math.min(512 / width, 512 / height);
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+      } else {
+        // Use original dimensions
+        canvas.width = width;
+        canvas.height = height;
+      }
+    } else {
+      // For non-emoji types, use original dimensions
+      canvas.width = img.width;
+      canvas.height = img.height;
+    }
+
+    // Draw the image onto the canvas
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // Convert to data URL and store in appropriate store
+    // For emojis, use PNG to preserve transparency
+    const dataUrl = props.type === "emoji" ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg');
+
+    if (props.type == "avatar") {
+      imageStore.setAvatar(dataUrl);
+    } else if (props.type == "default_avatar") {
+      imageStore.setDefaultAvatar(dataUrl);
+    } else if (props.type == "emoji") {
+      imageStore.setEmoji(dataUrl);
+    } else {
+      imageStore.setBanner(dataUrl);
+    }
+
+    // Close the modal
+    modalStore.closeModal();
+  };
+
+  // Load the original image
+  img.src = props.options.image;
 }
 
 const onChange = ({ canvas }) => {
@@ -94,6 +163,27 @@ const onChange = ({ canvas }) => {
     imageStore.setAvatar(canvas.toDataURL('image/jpeg'));
   } else if (props.type == "default_avatar") {
     imageStore.setDefaultAvatar(canvas.toDataURL('image/jpeg'));
+  } else if (props.type == "emoji") {
+    // For emojis, ensure dimensions are within backend limits (8x8 to 512x512)
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Create a canvas with constrained dimensions if needed
+    let outputCanvas = canvas;
+    if (width > 512 || height > 512 || width < 8 || height < 8) {
+      outputCanvas = document.createElement('canvas');
+      const ctx = outputCanvas.getContext('2d');
+
+      // Calculate new dimensions maintaining aspect ratio within 8x8 to 512x512
+      let newWidth = Math.max(8, Math.min(512, width));
+      let newHeight = Math.max(8, Math.min(512, height));
+
+      outputCanvas.width = newWidth;
+      outputCanvas.height = newHeight;
+      ctx.drawImage(canvas, 0, 0, newWidth, newHeight);
+    }
+
+    imageStore.setEmoji(outputCanvas.toDataURL('image/png'));
   } else {
     imageStore.setBanner(canvas.toDataURL('image/jpeg'));
   }

@@ -83,6 +83,20 @@
 						</a>
 					</NuxtLink>
 				</li>
+				<li v-if="emojiPerms" class="relative">
+					<NuxtLink to="/admin/emojis" custom v-slot="{ href, navigate, isActive }">
+						<a :href="href" @click="navigate" class="flex items-center px-4 py-2.5 rounded-md font-bold" :class="isActive ? 'text-primary bg-primary bg-opacity-20 shadow-inner-white' : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-transparent'">
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+								<circle cx="12" cy="12" r="9"/>
+								<line x1="9" y1="9" x2="9.01" y2="9"/>
+								<line x1="15" y1="9" x2="15.01" y2="9"/>
+								<path d="M8 13a4 4 0 1 0 8 0m0 0H8"/>
+							</svg>
+							Site Emojis
+						</a>
+					</NuxtLink>
+				</li>
 			</ul>
 			<p v-if="contentPerms" class="text-sm text-gray-500 uppercase px-4 pt-4 font-bold">Content</p>
 			<ul v-if="contentPerms" class="flex flex-col z-10 text-sm overflow-y-auto pt-1">
@@ -280,4 +294,5 @@ const configPerms = requirePermission("config");
 const contentPerms = requirePermission("content");
 const userPerms = requirePermission("users");
 const boardPerms = requirePermission("boards");
+const emojiPerms = requirePermission("emoji");
 </script>

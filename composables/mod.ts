@@ -7,7 +7,8 @@ export const MOD_PERMISSIONS: { [key: string]: number } = {
   appearance: 4,
   content: 8,
   users: 16,
-  full: 32
+  emoji: 32,
+  full: 64
 };
 
 /**
