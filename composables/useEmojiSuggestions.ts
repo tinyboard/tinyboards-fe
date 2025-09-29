@@ -49,20 +49,23 @@ export const useEmojiSuggestions = (boardId?: number) => {
       const variables = {
         input: {
           boardId: boardId,
-          scope: boardId ? "Board" : "Site",
+          scope: boardId ? "BOARD" : "SITE",
           activeOnly: true,
           limit: 200,
           offset: 0
         }
       }
 
-      const response = await $fetch('#gql', {
-        method: 'POST',
-        body: { query, variables }
-      })
+      const { useGraphQLQuery } = await import('@/composables/useGraphQL')
+      const { data, error } = await useGraphQLQuery(query, { variables })
 
-      if (response?.data?.listEmojis) {
-        emojiCache.value = response.data.listEmojis
+      if (error.value) {
+        console.error('Failed to load emojis for suggestions:', error.value)
+        return
+      }
+
+      if (data.value?.listEmojis) {
+        emojiCache.value = data.value.listEmojis
         cacheLoaded.value = true
       }
     } catch (error) {
@@ -70,31 +73,58 @@ export const useEmojiSuggestions = (boardId?: number) => {
     }
   }
 
-  const filteredSuggestions = computed(() => {
-    if (!currentQuery.value) return []
+  // Search emojis with backend query
+  const searchEmojis = async (query: string): Promise<EmojiSuggestion[]> => {
+    if (!query) return []
 
-    const query = currentQuery.value.toLowerCase()
-    return emojiCache.value
-      .filter(emoji =>
-        emoji.shortcode.toLowerCase().includes(query) ||
-        emoji.altText.toLowerCase().includes(query)
-      )
-      .slice(0, 10) // Limit to 10 suggestions
-      .map(emoji => ({
-        ...emoji,
-        displayText: `:${emoji.shortcode}:`
-      }))
-      .sort((a, b) => {
-        // Prioritize exact matches and usage count
-        const aExact = a.shortcode.toLowerCase().startsWith(query)
-        const bExact = b.shortcode.toLowerCase().startsWith(query)
+    try {
+      const queryGql = `
+        query ListEmojis($input: ListEmojisInput) {
+          listEmojis(input: $input) {
+            id
+            shortcode
+            imageUrl
+            altText
+            category
+            emojiScope
+            isActive
+            usageCount
+          }
+        }
+      `
 
-        if (aExact && !bExact) return -1
-        if (!aExact && bExact) return 1
+      const variables = {
+        input: {
+          boardId: boardId,
+          scope: boardId ? "BOARD" : "SITE",
+          activeOnly: true,
+          limit: 10,
+          offset: 0,
+          search: query
+        }
+      }
 
-        return b.usageCount - a.usageCount
-      })
-  })
+      const { useGraphQLQuery } = await import('@/composables/useGraphQL')
+      const { data, error } = await useGraphQLQuery(queryGql, { variables })
+
+      if (error.value) {
+        console.error('Failed to search emojis:', error.value)
+        return []
+      }
+
+      if (data.value?.listEmojis) {
+        return data.value.listEmojis.map((emoji: CustomEmoji) => ({
+          ...emoji,
+          displayText: `:${emoji.shortcode}:`
+        }))
+      }
+
+      return []
+    } catch (error) {
+      console.error('Failed to search emojis:', error)
+      return []
+    }
+  }
 
   const detectEmojiTrigger = (text: string, cursorPosition: number): { query: string; position: number } | null => {
     // Look backwards from cursor to find the last ':'
@@ -124,11 +154,6 @@ export const useEmojiSuggestions = (boardId?: number) => {
   }
 
   const showSuggestions = async (text: string, cursorPosition: number, element: HTMLElement) => {
-    // Emojis should already be loaded, but check just in case
-    if (!cacheLoaded.value) {
-      await loadEmojis()
-    }
-
     const trigger = detectEmojiTrigger(text, cursorPosition)
 
     if (!trigger) {
@@ -146,7 +171,9 @@ export const useEmojiSuggestions = (boardId?: number) => {
       left: rect.left + window.scrollX
     }
 
-    suggestions.value = filteredSuggestions.value
+    // Search for emojis with the current query
+    const searchResults = await searchEmojis(trigger.query)
+    suggestions.value = searchResults
     selectedIndex.value = 0
     isVisible.value = suggestions.value.length > 0
   }

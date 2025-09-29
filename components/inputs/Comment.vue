@@ -157,17 +157,18 @@ const handleTextareaClick = () => {
 
 // Insert emoji into textarea
 const insertEmoji = (emoji: string) => {
-	const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-	if (textarea) {
-		const start = textarea.selectionStart;
-		const end = textarea.selectionEnd;
+	if (textareaRef.value) {
+		const start = textareaRef.value.selectionStart;
+		const end = textareaRef.value.selectionEnd;
 		const text = body.value;
 		body.value = text.substring(0, start) + emoji + text.substring(end);
 
 		// Restore cursor position
 		nextTick(() => {
-			textarea.focus();
-			textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+			if (textareaRef.value) {
+				textareaRef.value.focus();
+				textareaRef.value.setSelectionRange(start + emoji.length, start + emoji.length);
+			}
 		});
 	}
 };

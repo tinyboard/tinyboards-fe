@@ -647,6 +647,19 @@ const toggleReplying = () => {
   }
 }
 
+/* Preserve emoji styling within comment body */
+.comment-body :deep(img.emoji) {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  max-width: 1.5em;
+  vertical-align: text-bottom;
+  margin: 0 0.1em;
+  object-fit: contain;
+  background: transparent;
+  aspect-ratio: 1;
+}
+
 /* Collapse Bar */
 .comment-collapse-bar {
   @apply cursor-pointer;

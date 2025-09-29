@@ -789,4 +789,17 @@ const percentUpvoted = computed(() => {
     max-width: 240px;
   }
 }
+
+/* Preserve emoji styling within prose content */
+.prose :deep(img.emoji) {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  max-width: 1.5em;
+  vertical-align: text-bottom;
+  margin: 0 0.1em;
+  object-fit: contain;
+  background: transparent;
+  aspect-ratio: 1;
+}
 </style>

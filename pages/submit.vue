@@ -15,7 +15,7 @@
             <div class="col-span-full flex flex-row gap-6">
                 <!-- Form -->
                 <form @submit.prevent="submit" class="block w-full">
-                    <div class="bg-white overflow-hidden shadow-inner-xs sm:border sm:rounded-md">
+                    <div class="bg-white overflow-visible shadow-inner-xs sm:border sm:rounded-md">
                         <div v-if="!isEditingBoard && site.enableBoards"
                             class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
                             <div class="flex flex-row space-x-2 items-center">
@@ -93,7 +93,7 @@
                                     </label>
                                     <div class="relative">
                                         <div id="post-body"
-                                            class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
+                                            class="relative mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
                                             <!-- <InputsTiptap class="bg-white"/> -->
                                             <textarea
                                                 ref="textareaRef"
@@ -122,7 +122,7 @@
                                         :selected-index="emojiSuggestions.selectedIndex.value"
                                         @select="selectEmojiSuggestion"
                                     />
-                                </div>
+
                                     <p
                                         class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24"
@@ -271,7 +271,7 @@ let hasFocusedBody = ref(false);
 // Emoji functionality
 const textareaRef = ref<HTMLTextAreaElement>();
 const boardId = computed(() => boardStore.hasBoard ? boardStore.board.id : (defaultBoard.value?.id || null));
-const emojiSuggestions = useEmojiSuggestions(boardId.value);
+const emojiSuggestions = useEmojiSuggestions();
 
 // Set image and then destroy in storage.
 const setImage = () => {
@@ -492,16 +492,16 @@ const handleKeydown = (e: KeyboardEvent) => {
 };
 
 const handleInput = () => {
-    if (textareaRef.value && body.value) {
+    if (textareaRef.value && body.value !== null) {
         const cursorPosition = textareaRef.value.selectionStart;
-        emojiSuggestions.showSuggestions(body.value, cursorPosition, textareaRef.value);
+        emojiSuggestions.showSuggestions(body.value || '', cursorPosition, textareaRef.value);
     }
 };
 
 const handleTextareaClick = () => {
-    if (textareaRef.value && body.value) {
+    if (textareaRef.value && body.value !== null) {
         const cursorPosition = textareaRef.value.selectionStart;
-        emojiSuggestions.showSuggestions(body.value, cursorPosition, textareaRef.value);
+        emojiSuggestions.showSuggestions(body.value || '', cursorPosition, textareaRef.value);
     }
 };
 

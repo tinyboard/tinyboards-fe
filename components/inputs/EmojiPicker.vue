@@ -51,6 +51,7 @@
           <button
             v-for="category in categories"
             :key="category.id"
+            type="button"
             @click="selectedCategory = category.id"
             class="w-8 h-8 flex items-center justify-center text-lg rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             :class="selectedCategory === category.id
@@ -75,6 +76,7 @@
             <button
               v-for="emoji in filteredStandardEmojis"
               :key="emoji.id"
+              type="button"
               @click="selectEmoji(emoji.native)"
               class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-lg flex-shrink-0"
               :title="emoji.name"
@@ -88,6 +90,7 @@
             <button
               v-for="customEmoji in filteredCustomEmojis"
               :key="customEmoji.id"
+              type="button"
               @click="selectEmoji(`:${customEmoji.shortcode}:`)"
               class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded overflow-hidden flex-shrink-0"
               :title="customEmoji.altText"
@@ -95,7 +98,7 @@
               <img
                 :src="customEmoji.imageUrl"
                 :alt="customEmoji.altText"
-                class="w-full h-full object-cover"
+                class="w-5 h-5 object-contain"
               />
             </button>
           </template>
@@ -114,11 +117,12 @@
           <button
             v-for="recentEmoji in recentEmojis.slice(0, 10)"
             :key="recentEmoji"
+            type="button"
             @click="selectEmoji(recentEmoji)"
             class="w-6 h-6 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-sm"
           >
             <span v-if="!recentEmoji.startsWith(':')">{{ recentEmoji }}</span>
-            <img v-else :src="getCustomEmojiUrl(recentEmoji)" class="w-full h-full object-cover" />
+            <img v-else :src="getCustomEmojiUrl(recentEmoji)" class="w-4 h-4 object-contain" />
           </button>
         </div>
       </div>
@@ -259,20 +263,23 @@ const loadCustomEmojis = async () => {
     const variables = {
       input: {
         boardId: props.boardId,
-        scope: props.boardId ? "Board" : "Site",
+        scope: props.boardId ? "BOARD" : "SITE",
         activeOnly: true,
         limit: 100,
         offset: 0
       }
     };
 
-    const response = await $fetch('#gql', {
-      method: 'POST',
-      body: { query, variables }
-    });
+    const { useGraphQLQuery } = await import('@/composables/useGraphQL');
+    const { data, error } = await useGraphQLQuery(query, { variables });
 
-    if (response?.data?.listEmojis) {
-      customEmojis.value = response.data.listEmojis;
+    if (error.value) {
+      console.error('Failed to load custom emojis:', error.value);
+      return;
+    }
+
+    if (data.value?.listEmojis) {
+      customEmojis.value = data.value.listEmojis;
 
       // Update categories if we have custom emojis
       if (customEmojis.value.length > 0 && !categories.find(c => c.id === 'custom')) {
