@@ -125,8 +125,6 @@ import { useSiteStore } from "@/stores/StoreSite";
 import { usePosts } from "@/composables/posts";
 import { mapToListingType } from "@/types/types";
 
-console.log("hi from the feed page");
-
 // Import sidebar components
 const Sidebar = defineAsyncComponent(
     () => import("@/components/containers/Sidebar.vue"),
@@ -135,15 +133,11 @@ const SidebarBoard = defineAsyncComponent(
     () => import("@/components/containers/SidebarBoard.vue"),
 );
 
-console.log("and hi again after some imports");
-
 const router = useRouter();
 const route = useRoute();
 const site = useSiteStore();
 const userStore = useLoggedInUser();
 const v = userStore.user;
-
-console.log("stores have been set up");
 
 definePageMeta({
     alias: ["", "/feed/:sort?"],
@@ -151,18 +145,11 @@ definePageMeta({
     title: "Home",
 });
 
-console.log("page meta is good");
 const preferCardView = useCookie("preferCardView") ?? false;
 
 const isHomeFeed = computed(() => userStore.isAuthed && site.enableBoards);
 
-console.log("before fetch");
-
 const { hasPosts, error, loadMore, loading } = await usePosts(
     mapToListingType(isHomeFeed.value ? "subscribed" : "local")
 );
-
-console.log("posts saved");
-
-console.log("links are okay");
 </script>

@@ -170,41 +170,59 @@ const authCookie = useCookie("token").value;
 const toast = useToastStore();
 
 const submitAdmin = async () => {
-  //const isAdmin = props.options.user.isAdmin;
   const username = props.options.user?.name || target.value;
   if (remove.value) {
     permissionCode.value = 0;
   }
-  await useAPI('/admin/add_admin', {
-    body: {
-      "username": username,
-      "level": permissionCode.value
-    },
-    method: "post"
-  })
-    .then(({ data }) => {
-      if (data.value) {
-        // Parse response.
-        data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
-        // Show success toast.
-        toast.addNotification({
-          header: `${username} ${remove.value ? 'removed as admin' : (props.options.user?.isAdmin ? '- permissions updated' : 'was made an admin')}`,
-          message: 'Reload the page to see changes.',
-          type: 'success'
-        });
-      } else {
-        // Show error toast.
-        toast.addNotification({
-          header: `${remove.value ? 'Removing' : 'Adding'} admin failed`,
-          message: `Failed to ${remove.value ? 'remove' : 'make'} admin. Please try again.`,
-          type: 'error'
-        });
-      };
-    })
-    .finally(() => {
-      // Close the modal.
-      modalStore.closeModal();
+
+  try {
+    const { useGraphQLQuery } = await import('@/composables/useGraphQL');
+
+    const mutation = `
+      mutation SetAdminLevel($input: SetAdminLevelInput!) {
+        setAdminLevel(input: $input) {
+          success
+          message
+        }
+      }
+    `;
+
+    const variables = {
+      input: {
+        username: username,
+        level: permissionCode.value,
+        reason: remove.value ? 'Admin level removed via admin panel' : 'Admin level set via admin panel'
+      }
+    };
+
+    const { data, error } = await useGraphQLQuery(mutation, { variables });
+
+    if (error.value) {
+      console.error('GraphQL error:', error.value);
+      throw new Error(error.value.message || 'Failed to update admin level');
+    }
+
+    if (data.value?.setAdminLevel?.success) {
+      // Show success toast
+      toast.addNotification({
+        header: `${username} ${remove.value ? 'removed as admin' : (props.options.user?.isAdmin ? '- permissions updated' : 'was made an admin')}`,
+        message: data.value.setAdminLevel.message || 'Reload the page to see changes.',
+        type: 'success'
+      });
+    } else {
+      throw new Error(data.value?.setAdminLevel?.message || 'Failed to update admin level');
+    }
+  } catch (err) {
+    console.error('Error updating admin level:', err);
+    // Show error toast
+    toast.addNotification({
+      header: `${remove.value ? 'Removing' : 'Adding'} admin failed`,
+      message: err.message || `Failed to ${remove.value ? 'remove' : 'make'} admin. Please try again.`,
+      type: 'error'
     });
+  } finally {
+    // Close the modal
+    modalStore.closeModal();
+  }
 };
 </script>

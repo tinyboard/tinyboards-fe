@@ -83,15 +83,11 @@ const SidebarBoard = defineAsyncComponent(
     () => import("@/components/containers/SidebarBoard.vue"),
 );
 
-console.log("and hi again after some imports");
-
 const router = useRouter();
 const route = useRoute();
 const site = useSiteStore();
 const userStore = useLoggedInUser();
 const v = userStore.user;
-
-console.log("stores have been set up");
 
 definePageMeta({
     alias: ["/all/:sort?"],
