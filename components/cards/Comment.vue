@@ -10,7 +10,12 @@
       <!-- Comment -->
       <div class="relative flex flex-col flex-shrink-0 comments-center mr-2">
         <!-- User Avatar -->
-        <NuxtLink v-if="comment.creator"
+        <!-- Avatar for deleted comment - show placeholder -->
+        <div v-if="comment.isDeleted" class="z-10">
+          <div class="flex-shrink-0 w-6 h-6 md:w-9 md:h-9 rounded bg-gray-300 dark:bg-gray-700"></div>
+        </div>
+        <!-- Avatar for normal comment -->
+        <NuxtLink v-else-if="comment.creator"
           :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
           class="z-10">
           <img loading="lazy" :src="comment.creator?.avatar || 'https://placekitten.com/36/36'" alt="avatar"
@@ -25,7 +30,12 @@
         <div :class="{ 'flex flex-grow comments-center leading-none': isCollapsed }">
           <div class="flex comments-center min-h-[24px] sm:min-h-[36px] items-center">
             <div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <NuxtLink v-if="comment.creator"
+              <!-- Deleted comment - show [deleted] instead of author -->
+              <span v-if="comment.isDeleted" class="flex comments-center text-sm text-gray-400 italic">
+                <strong>[deleted]</strong>
+              </span>
+              <!-- Normal comment - show author info -->
+              <NuxtLink v-else-if="comment.creator"
                 :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
                 class="flex comments-center text-sm">
                 <strong>{{ comment.creator?.displayName ?? comment.creator?.name }}</strong>
@@ -83,35 +93,13 @@
                   {{ comment.replies?.length === 1 ? "reply" : "replies" }}
                 </span>
               </span>
-              <span class="ml-2 text-red-600 text-xs" v-if="comment.isRemoved && canMod"
-                title="Comment removed by moderator or admin">
+              <span v-if="comment.isRemoved && canMod" class="ml-2" title="Comment removed by moderator or admin">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="20" height="20"
-                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path
-                    d="M13.593 19.855a9.96 9.96 0 0 1 -5.893 -.855l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c2.128 1.816 3.053 4.363 2.693 6.813">
-                  </path>
-                  <path d="M22 22l-5 -5"></path>
-                  <path d="M17 22l5 -5"></path>
-                </svg>
-                <span class="hidden sm:inline">Removed</span>
+                <span class="badge badge-red">Removed</span>
               </span>
-              <span class="ml-2 text-yellow-600 text-xs" v-else-if="comment.isDeleted && canMod"
-                title="Comment deleted by its creator">
+              <span v-else-if="comment.isDeleted && canMod" class="ml-2" title="Comment deleted by its creator">
                 <span class="font-black text-gray-400 dark:text-gray-500 mr-1">·</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline sm:hidden ml-1" width="16" height="16"
-                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                  <path d="M4 7l16 0"></path>
-                  <path d="M10 11l0 6"></path>
-                  <path d="M14 11l0 6"></path>
-                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                </svg>
-                <span class="hidden sm:inline">Deleted</span>
+                <span class="badge badge-yellow">Deleted</span>
               </span>
               <span class="ml-2 text-green-600 text-xs" v-else-if="comment.isPinned"
                 title="Comment pinned by moderators">

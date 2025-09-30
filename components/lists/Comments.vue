@@ -34,11 +34,13 @@ import { useBoardStore } from "~/stores/StoreBoard";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
+import { useAdminContentFilter } from "@/composables/adminFilter";
 
 const v = useLoggedInUser().user;
 const modPermissions = useBoardStore().modPermissions;
 const site = useSiteStore();
 const commentStore = useCommentsStore();
+const { hideDeletedContent, canModerate } = useAdminContentFilter();
 
 const props = defineProps({
     comments: {
@@ -79,8 +81,17 @@ const comments = computed(() => {
     const baseComments = props.mode === "tree" ? props.comments : commentStore.comments;
     // Filter out deleted comments unless user is admin/mod or the comment owner
     return baseComments.filter(comment => {
-        // Admin or mod can see everything
-        if (requirePermission("content") || requireModPermission(modPermissions, "content")) {
+        const isMod = requirePermission("content") || requireModPermission(modPermissions, "content");
+
+        // If admin/mod has filter enabled, hide deleted/removed content
+        if (isMod && hideDeletedContent.value) {
+            if (comment.isDeleted || comment.isRemoved) {
+                return false;
+            }
+        }
+
+        // Admin or mod can see everything (when filter is off)
+        if (isMod) {
             return true;
         }
 

@@ -66,6 +66,15 @@
                 </svg>
                 ???
               </span>
+              <!-- Deleted/Removed Status (Admin View) -->
+              <span v-if="canMod && post.isRemoved" class="ml-2" title="Removed by moderator">
+                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
+                <span class="badge badge-red">Removed</span>
+              </span>
+              <span v-else-if="canMod && post.isDeleted" class="ml-2" title="Deleted by author">
+                <span class="font-black text-gray-400 dark:text-gray-500">·</span>
+                <span class="badge badge-yellow">Deleted</span>
+              </span>
             </p>
           </div>
           <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">

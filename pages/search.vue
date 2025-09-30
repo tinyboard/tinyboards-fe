@@ -45,6 +45,7 @@
 					<!-- Sorts -->
 					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border shadow-inner-white sm:rounded-md">
 						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
+						<MenusAdminContentFilter class="ml-4" />
 						<div v-if="type !== 'comment'" class="ml-auto flex space-x-2">
                         <button class="ml-auto" @click="preferCardView = true">
                               <!-- Rows Icon -->
