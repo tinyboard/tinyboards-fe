@@ -249,7 +249,7 @@
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ post.score + 1 }}
+              {{ displayScore }}
             </span>
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'
@@ -604,6 +604,17 @@ const save = async () => {
 const onCommentPublished = (comment: Comment) => {
   props.comments.unshift(comment);
 };
+
+// Display score with conditional author vote
+const displayScore = computed(() => {
+  const baseScore = props.post.score ?? 0;
+  // If author has removed their vote, don't add the implicit +1
+  if (isAuthor.value && voteType.value === 0) {
+    return baseScore;
+  }
+  // Otherwise, add the author's implicit self-vote
+  return baseScore + 1;
+});
 
 // Utils
 const percentUpvoted = computed(() => {

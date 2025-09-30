@@ -471,7 +471,11 @@ const vote = async (type = 0) => {
 
 const score = computed(() => {
   const commentScore = comment.value?.score ?? 0;
-  // Backend score excludes author's self-vote, so add 1 to display it
+  // If author has removed their vote, don't add the implicit +1
+  if (isAuthor.value && voteType.value === 0) {
+    return commentScore;
+  }
+  // Otherwise, add the author's implicit self-vote
   return commentScore + 1;
 });
 
@@ -479,8 +483,13 @@ const score = computed(() => {
 const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);
 
 const upvotes = computed(() => {
-  // Backend upvotes exclude author's self-upvote, so add 1 to display it
-  return (comment.value?.upvotes ?? 0) + 1;
+  const baseUpvotes = comment.value?.upvotes ?? 0;
+  // If author has removed their vote, don't add the implicit +1
+  if (isAuthor.value && voteType.value === 0) {
+    return baseUpvotes;
+  }
+  // Otherwise, add the author's implicit self-upvote
+  return baseUpvotes + 1;
 });
 const downvotes = computed(() => {
   return comment.value?.downvotes ?? 0;
