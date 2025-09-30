@@ -67,7 +67,7 @@
                 </span>
               </span>
               <!-- Score -->
-              <span :title="`+${comment.upvotes ?? 0} | -${comment.downvotes ?? 0}`"
+              <span :title="`+${upvotes} | -${downvotes}`"
                 class="hidden sm:flex comments-center space-x-2">
                 <span class="font-black text-gray-400 dark:text-gray-500">·</span>
                 <span>
@@ -174,7 +174,7 @@
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Upvote ({{ comment.upvotes }})</span>
+              <span class="hidden sm:inline">Upvote ({{ upvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -190,7 +190,7 @@
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ comment.score }}
+              {{ comment.score + 1 }}
             </span>
           </li>
           <li>
@@ -212,7 +212,7 @@
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Downvote ({{ comment.downvotes }})</span>
+              <span class="hidden sm:inline">Downvote ({{ downvotes }})</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -471,15 +471,16 @@ const vote = async (type = 0) => {
 
 const score = computed(() => {
   const commentScore = comment.value?.score ?? 0;
-  const currentVoteType = voteType.value ?? 0;
-  return commentScore + currentVoteType;
+  // Backend score excludes author's self-vote, so add 1 to display it
+  return commentScore + 1;
 });
 
 // TODO: figure this out
 const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.creatorId);
 
 const upvotes = computed(() => {
-  return comment.value?.upvotes ?? 0;
+  // Backend upvotes exclude author's self-upvote, so add 1 to display it
+  return (comment.value?.upvotes ?? 0) + 1;
 });
 const downvotes = computed(() => {
   return comment.value?.downvotes ?? 0;

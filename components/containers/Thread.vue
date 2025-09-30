@@ -249,7 +249,7 @@
               'text-secondary': voteType === -1,
               'text-gray-900 dark:text-gray-300': voteType === 0,
             }">
-              {{ post.score + voteType }}
+              {{ post.score + 1 }}
             </span>
             <!-- If logged in, allow downvoting -->
             <button v-if="isAuthed" @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'
