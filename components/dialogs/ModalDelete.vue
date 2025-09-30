@@ -122,6 +122,11 @@
             message: 'Your post was deleted successfully.',
             type: 'success'
           });
+
+          // Refresh the page to remove the deleted post from view
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
       } else {
         // Use GraphQL mutation for comment deletion
@@ -151,6 +156,11 @@
             message: 'Your comment was deleted successfully.',
             type: 'success'
           });
+
+          // Refresh the page to remove the deleted comment from view
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
       }
     } catch (error) {

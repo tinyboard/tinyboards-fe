@@ -75,7 +75,23 @@ const CommentRemoved = defineAsyncComponent(
     This is to make pagination and eventually infinite scroll easier.
 */
 
-const comments = props.mode === "tree" ? props.comments : commentStore.comments;
+const comments = computed(() => {
+    const baseComments = props.mode === "tree" ? props.comments : commentStore.comments;
+    // Filter out deleted comments unless user is admin/mod or the comment owner
+    return baseComments.filter(comment => {
+        // Admin or mod can see everything
+        if (requirePermission("content") || requireModPermission(modPermissions, "content")) {
+            return true;
+        }
+
+        // Users can see their own removed content but deleted comments should be hidden
+        if (comment.isDeleted) {
+            return false; // Hide deleted comments completely
+        }
+
+        return true; // Show everything else (including removed comments which get handled by canViewComment)
+    });
+});
 
 function canViewComment(comment) {
     // Admin or mod

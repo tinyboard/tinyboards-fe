@@ -20,22 +20,23 @@
 							<input type="text" name="name" id="name" class="mt-1 form-input gray"
 								placeholder="..." v-model="settings.title" />
 							<p class="mt-2 text-sm text-gray-500">
-								The big bold name in the board banner. Takes precedence everywhere over the +name.
+								The big bold name in the board banner. Takes precedence everywhere over the name.
 							</p>
 						</div>
 					</div>
-					<!-- +name -->
+					<!-- Board name (read-only info) -->
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4">
 						<!-- Label -->
 						<div class="md:col-span-1">
-							<label class="text-base font-bold leading-6 text-gray-900">Name</label>
+							<label class="text-base font-bold leading-6 text-gray-900">Board Name</label>
 						</div>
-						<!-- Inputs -->
+						<!-- Display only -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<input type="text" name="name" id="name" class="mt-1 form-input gray"
-								placeholder="..." v-model="settings.name" />
+							<div class="mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-700">
+								{{ settings.name }}
+							</div>
 							<p class="mt-2 text-sm text-gray-500">
-								The +name of your board. Only the capitalization can be changed.
+								Board names cannot be changed after creation.
 							</p>
 						</div>
 					</div>
@@ -136,7 +137,6 @@ const submitSettings = async () => {
 			variables: {
 				input: {
 					boardId: board.id,
-					name: settings.value.name,
 					title: settings.value.title,
 					description: settings.value.description
 				}

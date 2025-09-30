@@ -43,8 +43,8 @@ import { requirePermission } from '@/composables/admin';
 import { useImageStore } from '@/stores/StoreImages';
 import { useToastStore } from '@/stores/StoreToast';
 import { toRGB } from '@/composables/colors';
-import { uploadFile } from '@/composables/images';
 import { dataURLtoFile } from '@/utils/files';
+import { useGqlMultipart } from '@/composables/graphql_multipart';
 
 const route = useRoute();
 const router = useRouter();
@@ -142,42 +142,24 @@ const next = () => {
     const createBoard = async () => {
         isLoading.value = true;
 
-        let [icon, banner] = ['', ''];
-
-        // upload images
-        if (imageStore.avatar) {
-            const avatar = dataURLtoFile(imageStore.avatar);
-            // after converting to file is finished, delete the original b64 url
-            imageStore.purgeAvatar();
-
-            try {
-                icon = await uploadFile(avatar, 'avatar');
-            } catch (e) {
-                console.error(e);
-                isLoading.value = false;
-                return;
-            }
-        }
-
-        if (imageStore.banner) {
-            const bannerFile = dataURLtoFile(imageStore.banner);
-            // after converting to file is finished, delete the original b64 url
-            imageStore.purgeBanner();
-
-            try {
-                banner = await uploadFile(bannerFile, 'banner');
-            } catch (e) {
-                console.error(e);
-                isLoading.value = false;
-                return;
-            }
-        }
-
         try {
-            // Use GraphQL mutation for board creation
-            const { data: response } = await useGraphQLMutation(`
-                mutation createBoard($input: CreateBoardInput!) {
-                    createBoard(input: $input) {
+            // Prepare file uploads
+            let iconFile = null;
+            let bannerFile = null;
+
+            if (imageStore.avatar) {
+                iconFile = dataURLtoFile(imageStore.avatar);
+                imageStore.purgeAvatar();
+            }
+
+            if (imageStore.banner) {
+                bannerFile = dataURLtoFile(imageStore.banner);
+                imageStore.purgeBanner();
+            }
+
+            const mutation = `
+                mutation createBoard($input: CreateBoardInput!, $iconFile: Upload, $bannerFile: Upload) {
+                    createBoard(input: $input, iconFile: $iconFile, bannerFile: $bannerFile) {
                         board {
                             id
                             name
@@ -197,21 +179,38 @@ const next = () => {
                         }
                     }
                 }
-            `, {
-                variables: {
-                    input: {
-                        name: board.name,
-                        title: board.displayName,
-                        description: board.description,
-                        primaryColor: toRGB(board.primaryColor),
-                        secondaryColor: toRGB(board.secondaryColor),
-                        hoverColor: toRGB(board.hoverColor),
-                        icon: icon,
-                        banner: banner
-                    }
+            `;
+
+            const variables = {
+                input: {
+                    name: board.name,
+                    title: board.displayName,
+                    description: board.description,
+                    primaryColor: toRGB(board.primaryColor),
+                    secondaryColor: toRGB(board.secondaryColor),
+                    hoverColor: toRGB(board.hoverColor),
+                    // Remove icon and banner strings - files are handled separately
                 }
+            };
+
+            const files = {};
+            if (iconFile) files.iconFile = iconFile;
+            if (bannerFile) files.bannerFile = bannerFile;
+
+            // Use GraphQL multipart for board creation with file uploads
+            const response = await useGqlMultipart({
+                query: mutation,
+                variables,
+                files
             });
-            const { createBoard: createBoardResponse } = response.value;
+
+            // Handle different response formats
+            let createBoardResponse;
+            if (response.data?.value?.createBoard) {
+                createBoardResponse = response.data.value.createBoard;
+            } else if (response.data?.createBoard) {
+                createBoardResponse = response.data.createBoard;
+            }
 
             if (createBoardResponse?.board) {
                 const boardData = createBoardResponse.board;
@@ -238,7 +237,7 @@ const next = () => {
             console.error('Board creation error:', error);
             toast.addNotification({
                 header: 'Creation failed',
-                message: 'Failed to create board. Please try again.',
+                message: error.message || 'Failed to create board. Please try again.',
                 type: 'error'
             });
             isLoading.value = false;

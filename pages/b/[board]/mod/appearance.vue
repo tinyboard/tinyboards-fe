@@ -309,8 +309,16 @@ const submitSettings = async () => {
             files
         });
 
+        // Handle different response formats from GraphQL multipart
+        let updateBoardResponse;
         if (result.value?.updateBoardSettings) {
-            const updatedBoard = result.value.updateBoardSettings.board;
+            updateBoardResponse = result.value.updateBoardSettings;
+        } else if (result?.updateBoardSettings) {
+            updateBoardResponse = result.updateBoardSettings;
+        }
+
+        if (updateBoardResponse?.board) {
+            const updatedBoard = updateBoardResponse.board;
 
             // Update the board store with new data
             boardStore.setBoard({
@@ -335,13 +343,13 @@ const submitSettings = async () => {
             throw new Error('Failed to update board appearance');
         }
     } catch (error) {
-        // Show error toast.
+        console.error('Board appearance update error:', error);
+        // Show error toast with more specific information
         toast.addNotification({
             header: "Saving failed",
-            message: "Board appearance failed to save.",
+            message: error.message || "Board appearance failed to save. Please try again.",
             type: "error",
         });
-        console.error(error);
     } finally {
         isLoading.value = false;
     }
