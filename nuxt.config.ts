@@ -54,33 +54,40 @@ export default defineNuxtConfig({
 
   //i18n: {},
   routeRules: {
-    // Static pages without prerender
+    // Static pages with long cache
     "/help/**": {
       static: true,
       headers: { 'Cache-Control': 's-maxage=86400' }
     },
 
-    // SSR with caching for user profiles
+    // SSR with caching for user profiles (SEO-critical)
     "/@**": {
       ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300' }
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
     },
 
-    // Hybrid rendering for feeds
+    // SPA for feeds (user-specific content, auth-dependent)
     "/feed/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300' }
+      ssr: false,
+      headers: { 'Cache-Control': 'no-store' }
+    },
+    "/all/**": {
+      ssr: false,
+      headers: { 'Cache-Control': 'no-store' }
     },
 
-    // SPA for admin interfaces
+    // SPA for admin interfaces (no caching, auth-required)
     "/admin/**": {
       ssr: false,
-      index: false
+      index: false,
+      headers: { 'Cache-Control': 'no-store, must-revalidate' }
     },
     "/settings/**": {
       ssr: false,
-      index: false
+      index: false,
+      headers: { 'Cache-Control': 'no-store, must-revalidate' }
     },
+
     // SPA for auth pages to avoid SSR redirect issues
     "/login": {
       ssr: false
@@ -89,15 +96,16 @@ export default defineNuxtConfig({
       ssr: false
     },
 
-    // Board pages without SSR to avoid production GraphQL context issues
-    "/b/**": {
-      ssr: false,
-      prerender: false
-    },
-    // Post pages without SSR to avoid auth context issues
+    // CRITICAL: Enable SSR for post pages (SEO, social sharing, link previews)
     "/p/**": {
-      ssr: false,
-      prerender: false
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=600, stale-while-revalidate=3600' }
+    },
+
+    // CRITICAL: Enable SSR for board pages (SEO, discovery)
+    "/b/**": {
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
     },
 
     // Homepage redirect

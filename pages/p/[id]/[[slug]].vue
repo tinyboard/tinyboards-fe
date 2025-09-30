@@ -197,22 +197,60 @@ watch(() => route.query, () => commentsRefresh());*/
 // Links
 const links = [{ name: 'Comments', href: '#comments' }];
 
-// Document head
-// useHead({
-//       title: `${site.name} | ${item.value.post.title}`,
-//       meta: [
-//             {
-//                   property: 'og:title',
-//                   content: `${site.name} | ${item.value.post.title}`
-//             },
-//             {
-//                   name: 'og:description',
-//                   content: item.value.post.body.substring(0, 60)
-//             },
-//             {
-//                   name: 'description',
-//                   content: item.value.post.body.substring(0, 160)
-//             }
-//       ]
-// });
+// Document head - SEO and social sharing meta tags
+if (postResult.post?.value) {
+  const post = postResult.post.value;
+  const description = post.body?.substring(0, 160) || post.title;
+  const imageUrl = post.thumbnail || post.url;
+
+  useHead({
+    title: title.value,
+    meta: [
+      // Open Graph
+      {
+        property: 'og:title',
+        content: post.title
+      },
+      {
+        property: 'og:description',
+        content: description
+      },
+      {
+        property: 'og:type',
+        content: 'article'
+      },
+      {
+        property: 'og:url',
+        content: `https://${site.domain}/p/${post.id}/${post.titleChunk || 'post'}`
+      },
+      // Add image if available
+      ...(imageUrl ? [{
+        property: 'og:image',
+        content: imageUrl
+      }] : []),
+      // Twitter Card
+      {
+        name: 'twitter:card',
+        content: imageUrl ? 'summary_large_image' : 'summary'
+      },
+      {
+        name: 'twitter:title',
+        content: post.title
+      },
+      {
+        name: 'twitter:description',
+        content: description
+      },
+      ...(imageUrl ? [{
+        name: 'twitter:image',
+        content: imageUrl
+      }] : []),
+      // Standard meta
+      {
+        name: 'description',
+        content: description
+      }
+    ]
+  });
+}
 </script>

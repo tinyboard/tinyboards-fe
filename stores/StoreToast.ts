@@ -1,9 +1,32 @@
 import { defineStore } from 'pinia';
 
+// GraphQL error details for debugging
+interface GraphQLErrorDetail {
+  message: string;
+  path?: string[];
+  code?: string;
+  field?: string;
+  line?: number;
+  column?: number;
+}
+
+// Optional detailed error information
+interface ToastErrorDetails {
+  errors?: GraphQLErrorDetail[];
+  errorId?: string;
+  requestId?: string;
+  timestamp?: string;
+  showDetails?: boolean;
+}
+
 interface ToastOptions {
   header: string;
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning' | 'info';
+  // Optional error details for GraphQL errors
+  details?: ToastErrorDetails;
+  // Optional duration override (ms)
+  duration?: number;
 }
 
 type Toast = ToastOptions & { id: string }; // Toast ID does not have to be specified by the callee
