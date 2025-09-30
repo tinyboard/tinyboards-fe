@@ -96,6 +96,24 @@
                         <span>All Posts</span>
                     </NuxtLink>
                     </MenuItem>
+                    <!-- Boards -->
+                    <MenuItem as="div" v-slot="{ active, close }">
+                    <NuxtLink to="/boards" :class="[
+                        active
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-800',
+                        'text-md font-semibold group flex items-center w-full px-4 py-1.5',
+                    ]" @click="close">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-2" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M9 4h3l2 2h5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+                            <path d="M17 17v2a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
+                        </svg>
+                        <span>Boards</span>
+                    </NuxtLink>
+                    </MenuItem>
                 </div>
                 <div v-if="recentBoards && recentBoards.length > 0" class="py-2 text-sm">
                     <!-- Recently visited boards -->
@@ -169,7 +187,7 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useBoardStore } from "~/stores/StoreBoard";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const recentBoardsUnfiltered = useCookie("recentBoards") ?? [];
 const userStore = useLoggedInUser();
@@ -278,4 +296,12 @@ const SVG_PATHS = {
 const pageIcon = computed(
     () => SVG_PATHS[route.meta.title?.toLowerCase()] || SVG_PATHS["default"],
 );
+
+// Clear board store when navigating away from board pages
+watch(() => route.path, (newPath) => {
+    // If we're not on a board page (/b/*), clear the board store
+    if (!newPath.startsWith('/b/')) {
+        boardStore.clear();
+    }
+}, { immediate: true });
 </script>

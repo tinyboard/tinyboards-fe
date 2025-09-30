@@ -115,6 +115,39 @@
 						</div>-->
                     </button>
                 </NuxtLink>
+                <NuxtLink to="/boards" custom v-slot="{ isActive, navigate }">
+                    <button
+                        title="Boards"
+                        class="relative flex group border p-[1px] transition-all duration-100"
+                        :class="[
+                            isActive
+                                ? 'bg-primary border-primary text-primary'
+                                : 'bg-white border-gray-300 dark:bg-gray-900 dark:border-gray-800 text-gray-300 hover:bg-primary/70 hover:text-primary/70',
+                        ]"
+                        @click="() => navigate('/boards')"
+                    >
+                        <div
+                            class="my-auto mx-auto w-12 h-12 bg-white dark:bg-gray-900 text-center flex justify-center items-center"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-8 h-8 inline-block"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M9 4h3l2 2h5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+                                <path d="M17 17v2a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2h2" />
+                            </svg>
+                        </div>
+                    </button>
+                </NuxtLink>
             </div>
             <div
                 v-if="joinedBoards.length > 0"

@@ -6,8 +6,12 @@
             <div
                 class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
                 <!-- Banner -->
-                <CardsBanner title="Create new post" sub-title="Share a link, image or text with the community."
-                    image-url="https://i.imgur.com/4MvaMAI.jpg" class="col-span-full" />
+                <CardsSubmitBanner
+                    :board="selectedBoard"
+                    :title="selectedBoard ? `Create new post in ${selectedBoard.name}` : 'Create new post'"
+                    :sub-title="selectedBoard ? selectedBoard.description || 'Share a link, image or text with the community.' : 'Share a link, image or text with the community.'"
+                    class="col-span-full"
+                />
             </div>
         </section>
         <!-- Main Content -->
@@ -19,14 +23,14 @@
                         <div v-if="!isEditingBoard && site.enableBoards"
                             class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
                             <div class="flex flex-row space-x-2 items-center">
-                                <img :src="boardStore.board.icon" class="hidden md:block w-11 h-11 object-cover rounded"
+                                <img :src="selectedBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-11 h-11 object-cover rounded"
                                     alt="board icon" />
                                 <div class="w-full text-center md:text-left">
                                     <p class="font-bold text-gray-700">
                                         You are posting to {{ boardName }}
                                     </p>
                                     <p class="text-sm text-gray-500">
-                                        {{ boardStore.board.description }}
+                                        {{ selectedBoard?.description || 'No description available' }}
                                     </p>
                                 </div>
                             </div>
@@ -54,10 +58,15 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <!-- Board -->
                                 <div v-if="isEditingBoard && site.enableBoards" class="col-span-full">
-                                    <label for="title" class="block text-sm font-bold">Board</label>
-                                    <input type="text" name="title" id="title"
-                                        placeholder="Enter board to post to, without the +" class="mt-1 form-input gray"
-                                        v-model="boardName" required />
+                                    <label for="board-selector" class="block text-sm font-bold">Board</label>
+                                    <InputsBoardSelector
+                                        id="board-selector"
+                                        :boards="allBoards"
+                                        :model-value="selectedBoard"
+                                        @board-selected="onBoardSelected"
+                                        placeholder="Search for a board to post to..."
+                                        class="mt-1"
+                                    />
                                 </div>
                                 <!-- Title -->
                                 <div class="col-span-full">
@@ -207,7 +216,7 @@ definePageMeta({
     key: (route) => route.fullPath,
 });
 
-import { ref, computed, nextTick } from "vue";
+import { ref, computed, nextTick, watch } from "vue";
 // import { baseURL } from "@/server/constants";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
@@ -217,8 +226,15 @@ import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useGraphQLMutation } from '@/composables/useGraphQL';
 import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
+import CardsSubmitBanner from "@/components/cards/SubmitBanner.vue";
+import InputsBoardSelector from "@/components/inputs/BoardSelector.vue";
 
-const pageTitle = ref("Submit");
+const pageTitle = computed(() => selectedBoard.value?.name
+    ? `Submit to ${selectedBoard.value.name}`
+    : site.enableBoards
+        ? "Submit"
+        : `Submit to ${boardName.value}`
+);
 
 useHead({
     title: pageTitle,
@@ -233,6 +249,23 @@ const route = useRoute();
 
 const isEditingBoard = ref(!boardStore.hasBoard);
 
+// Fetch all boards for the dropdown
+const { data: allBoardsData } = await useGraphQLQuery(`
+  query GetAllBoards {
+    listBoards(limit: 100) {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      primaryColor
+      secondaryColor
+      hoverColor
+    }
+  }
+`);
+
 // Fetch default board for auto-selection
 const { data: defaultBoardData } = await useGraphQLQuery(`
   query GetDefaultBoard {
@@ -240,30 +273,83 @@ const { data: defaultBoardData } = await useGraphQLQuery(`
       id
       name
       title
+      icon
+      banner
+      primaryColor
+      secondaryColor
+      hoverColor
     }
   }
 `);
 
 const defaultBoard = computed(() => defaultBoardData.value?.listBoards?.[0]);
+const allBoards = computed(() => allBoardsData.value?.listBoards || []);
+
+// Fetch board data if we have a board from query parameter
+const queryBoard = route.query.board?.toString() || null;
+const { data: queryBoardData } = queryBoard ? await useGraphQLQuery(`
+  query GetBoardByName($name: String!) {
+    board(name: $name) {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      primaryColor
+      secondaryColor
+      hoverColor
+    }
+  }
+`, { variables: { name: queryBoard } }) : { data: ref(null) };
+
+// Reactive selected board for dropdown and banner updates
+const selectedBoardForDropdown = ref(null);
+const selectedBoard = computed(() =>
+  selectedBoardForDropdown.value ||
+  queryBoardData.value?.board ||
+  (boardStore.hasBoard ? boardStore.board : defaultBoard.value)
+);
 
 // Using createPost mutation from GraphQL files
 
-const boardName = ref(
-  boardStore.hasBoard
-    ? boardStore.board.name
-    : (defaultBoard.value?.name || "general")
-);
+// Initialize selectedBoardForDropdown based on initial state
+// Watch for when boards data becomes available
+watch(allBoards, (boards) => {
+  if (boards.length && !selectedBoardForDropdown.value) {
+    if (queryBoard) {
+      const initialBoard = boards.find(board => board.name === queryBoard);
+      if (initialBoard) {
+        selectedBoardForDropdown.value = initialBoard;
+      }
+    } else if (boardStore.hasBoard) {
+      const storeBoard = boards.find(board => board.name === boardStore.board.name);
+      if (storeBoard) {
+        selectedBoardForDropdown.value = storeBoard;
+      }
+    }
+  }
+}, { immediate: true });
+
+const boardName = computed(() => selectedBoard.value?.name || "general");
+
+// Handle board selection from dropdown
+const onBoardSelected = (board) => {
+  selectedBoardForDropdown.value = board;
+  // Update the URL without navigation to reflect the current board
+  if (board && board.name !== route.query.board) {
+    navigateTo({
+      path: route.path,
+      query: { ...route.query, board: board.name }
+    }, { replace: true });
+  }
+};
 const title = ref(route.query.title?.toString() || "");
 const url = ref(route.query.url?.toString() || "");
 const image: Ref<string | ArrayBuffer | null> = ref(null);
 const body: Ref<string | null> = ref(null);
 const isNsfw = ref(false);
 
-pageTitle.value = boardStore.hasBoard
-    ? `Submit to ${boardStore.board.name}`
-    : site.enableBoards
-        ? "Submit"
-        : `Submit to ${boardName.value}`;
 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);

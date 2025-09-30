@@ -7,7 +7,7 @@
         <!-- Create Post -->
         <NuxtLink
             v-if="!postPage"
-            :to="`/b/${board.name}/submit`"
+            :to="`/submit?board=${board.name}`"
             class="flex items-center button primary"
         >
             <svg
