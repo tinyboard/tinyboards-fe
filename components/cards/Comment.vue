@@ -162,7 +162,7 @@
                 ? 'upvoted text-primary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
             ]" @click="vote(1)">
-              <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }} ({{ upvotes }})</span>
+              <span class="hidden sm:inline">{{ voteType === 1 ? 'Upvoted' : 'Upvote' }}</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -174,7 +174,7 @@
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Upvote ({{ upvotes }})</span>
+              <span class="hidden sm:inline">Upvote</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:hidden">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -200,7 +200,7 @@
                 ? 'downvoted text-secondary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
             ]" @click="vote(-1)">
-              <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }} ({{ downvotes }})</span>
+              <span class="hidden sm:inline">{{ voteType === -1 ? 'Downvoted' : 'Downvote' }}</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -212,7 +212,7 @@
             <!-- Else, redirect to login -->
             <NuxtLink v-else to="/login"
               class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 font-medium">
-              <span class="hidden sm:inline">Downvote ({{ downvotes }})</span>
+              <span class="hidden sm:inline">Downvote</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="sm:hidden w-5 h-5">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -471,12 +471,12 @@ const vote = async (type = 0) => {
 
 const score = computed(() => {
   const commentScore = comment.value?.score ?? 0;
-  // If author has removed their vote, don't add the implicit +1
-  if (isAuthor.value && voteType.value === 0) {
-    return commentScore;
+  if (isAuthor.value) {
+    // Author viewing their own comment - add their current vote to base score
+    return commentScore + voteType.value;
   }
-  // Otherwise, add the author's implicit self-vote
-  return commentScore + 1;
+  // Non-author viewing comment - add author's actual vote from creatorVote field
+  return commentScore + (comment.value?.creatorVote ?? 1);
 });
 
 // TODO: figure this out
@@ -484,12 +484,12 @@ const isOP = computed(() => (parentPost?.creatorId ?? -1) === comment.value.crea
 
 const upvotes = computed(() => {
   const baseUpvotes = comment.value?.upvotes ?? 0;
-  // If author has removed their vote, don't add the implicit +1
-  if (isAuthor.value && voteType.value === 0) {
-    return baseUpvotes;
+  if (isAuthor.value) {
+    // Author viewing their own comment - add upvote only if they upvoted
+    return baseUpvotes + (voteType.value === 1 ? 1 : 0);
   }
-  // Otherwise, add the author's implicit self-upvote
-  return baseUpvotes + 1;
+  // Non-author viewing comment - add 1 only if author upvoted (creatorVote === 1)
+  return baseUpvotes + (comment.value?.creatorVote === 1 ? 1 : 0);
 });
 const downvotes = computed(() => {
   return comment.value?.downvotes ?? 0;

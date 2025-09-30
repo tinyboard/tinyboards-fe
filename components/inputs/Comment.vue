@@ -233,6 +233,7 @@ function submitComment() {
 				updated
 				score
 				myVote
+				creatorVote
 				creator {
 					id
 					name

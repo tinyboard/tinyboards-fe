@@ -79,6 +79,7 @@ const { data: savedPostsData, error: savedError, pending: savedPending } = await
             updated
             isSaved
             myVote
+            creatorVote
             featuredLocal
             featuredBoard
             commentCount

@@ -52,6 +52,7 @@ export async function useFetchUser(username: string, query = {}) {
           updated
           score
           myVote
+          creatorVote
           board @include(if: $includeBoard) {
             id
             name
@@ -80,6 +81,7 @@ export async function useFetchUser(username: string, query = {}) {
           updated
           score
           myVote
+          creatorVote
           creator {
             id
             name

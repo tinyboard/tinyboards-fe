@@ -160,6 +160,7 @@
 					score
 					upvotes
 					downvotes
+					creatorVote
 					isNSFW
 					isRemoved
 					isDeleted
@@ -202,6 +203,7 @@
 					score
 					upvotes
 					downvotes
+					creatorVote
 					creationDate
 					updated
 					isSaved

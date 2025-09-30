@@ -249,6 +249,7 @@ export async function getModQueue(query: any, type_: string) {
             updated
             score
             myVote
+            creatorVote
             board {
               id
               name
@@ -277,6 +278,7 @@ export async function getModQueue(query: any, type_: string) {
             updated
             score
             myVote
+            creatorVote
             creator {
               id
               name

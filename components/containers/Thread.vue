@@ -533,6 +533,7 @@ const vote = async (type = 0) => {
           upvotes
           downvotes
           myVote
+          creatorVote
         }
       }
     `, {
@@ -608,12 +609,12 @@ const onCommentPublished = (comment: Comment) => {
 // Display score with conditional author vote
 const displayScore = computed(() => {
   const baseScore = props.post.score ?? 0;
-  // If author has removed their vote, don't add the implicit +1
-  if (isAuthor.value && voteType.value === 0) {
-    return baseScore;
+  if (isAuthor.value) {
+    // Author viewing their own post - add their current vote to base score
+    return baseScore + voteType.value;
   }
-  // Otherwise, add the author's implicit self-vote
-  return baseScore + 1;
+  // Non-author viewing post - add author's actual vote from creatorVote field
+  return baseScore + (props.post.creatorVote ?? 1);
 });
 
 // Utils
