@@ -173,6 +173,38 @@
           <img :src="post.url" alt="Post image" class="sm:max-w-xs object-cover img-expand" />
         </span>
       </div>
+      <!-- Post Video -->
+      <div v-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4">
+        <!-- YouTube -->
+        <lite-youtube
+          v-if="videoEmbedProps.component === 'lite-youtube'"
+          :videoid="videoEmbedProps.props.videoid"
+          :playlabel="videoEmbedProps.props.playlabel"
+          class="max-w-full"
+        />
+        <!-- Vimeo/Twitch -->
+        <iframe
+          v-else-if="videoEmbedProps.component === 'iframe'"
+          :src="videoEmbedProps.props.src"
+          :frameborder="videoEmbedProps.props.frameborder"
+          :allow="videoEmbedProps.props.allow"
+          :allowfullscreen="videoEmbedProps.props.allowfullscreen"
+          :scrolling="videoEmbedProps.props.scrolling"
+          class="w-full max-w-2xl aspect-video rounded"
+        />
+        <!-- Link to original -->
+        <div class="mt-2 text-sm">
+          <a :href="post.url" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+            {{ post.url }}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 inline ml-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"></path>
+              <line x1="10" y1="14" x2="20" y2="4"></line>
+              <polyline points="15,4 20,4 20,9"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
       <!-- Post Edit Form -->
       <LazyInputsEdit v-if="isEditing" :id="post.id" :body="post.body" @closed="isEditing = false" @has-edited="(editResp) => {
         post.bodyHTML = editResp.bodyHTML;
@@ -469,6 +501,7 @@ import { useToastStore } from "@/stores/StoreToast";
 import { formatDate } from "@/utils/formatDate";
 import { toPercent } from "@/utils/percent";
 import { canEmbedImage } from "@/composables/images";
+import { canEmbedVideo, getVideoEmbedProps } from "@/composables/videos";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useSiteStore } from "@/stores/StoreSite";
@@ -580,6 +613,10 @@ const percentUpvoted = computed(() => {
 });
 
 const hasImage = computed(() => props.post.url && canEmbedImage(props.post.url));
+
+// Video
+const hasVideo = computed(() => props.post.url && canEmbedVideo(props.post.url));
+const videoEmbedProps = computed(() => hasVideo.value ? getVideoEmbedProps(props.post.url) : null);
 
 // Author
 const isAuthor = computed(() => {
