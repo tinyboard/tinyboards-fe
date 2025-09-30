@@ -487,7 +487,7 @@ const saveEmoji = async () => {
           altText: emojiForm.value.altText,
           category: emojiForm.value.category,
           boardId: boardId.value,
-          emojiScope: 'board'
+          emojiScope: 'BOARD'
         }
       };
 

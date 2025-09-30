@@ -476,7 +476,7 @@ const saveEmoji = async () => {
           imageFile: null, // Will be replaced with actual file
           altText: emojiForm.value.altText,
           category: emojiForm.value.category,
-          emojiScope: 'site'
+          emojiScope: 'SITE'
         }
       };
 

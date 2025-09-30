@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { useAPI } from "@/composables/api";
+import { useGraphQLMutation } from "@/composables/useGraphQL";
 import { useToastStore } from "@/stores/StoreToast";
 import { useModalStore } from "@/stores/StoreModal";
 //import { useSiteStore } from "@/stores/StoreSite";
@@ -135,40 +135,50 @@ const board = boardStore.board;
 const u = userStore.user;
 
 const leave = async () => {
-    await useAPI(`/boards/${board.id}/mods/${u.id}`, {
-        body: {},
-        method: "DELETE",
-    })
-        .then(({ data }) => {
-            if (data.value) {
-                // Parse response.
-                /*data = JSON.parse(JSON.stringify(data.value));
-                console.log(data);*/
-                // Show success toast.
-                setTimeout(() => {
-                    window.location.reload(true);
-
-                    toast.addNotification({
-                        header: "You have resigned as a mod",
-                        message: "So long!",
-                        type: "success",
-                    });
-                }, 400);
-            } else {
-                // Show error toast.
-                setTimeout(() => {
-                    toast.addNotification({
-                        header: "Failed to resign.",
-                        message:
-                            "Something went wrong. Try again a bit later, or verify that you're still a mod.",
-                        type: "error",
-                    });
-                }, 400);
+    try {
+        const { data } = await useGraphQLMutation(`
+            mutation removeBoardModerator($boardId: Int!, $userId: Int!) {
+                removeBoardModerator(boardId: $boardId, userId: $userId) {
+                    success
+                    message
+                }
             }
-        })
-        .finally(() => {
-            // Close the modal.
-            modalStore.closeModal();
+        `, {
+            boardId: board.id,
+            userId: u.id
         });
+
+        if (data.value?.removeBoardModerator?.success) {
+            // Show success toast.
+            toast.addNotification({
+                header: "You have resigned as a mod",
+                message: "So long!",
+                type: "success",
+            });
+
+            // Reload the page to update mod status
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 400);
+        } else {
+            // Show error toast.
+            toast.addNotification({
+                header: "Failed to resign.",
+                message: data.value?.removeBoardModerator?.message ||
+                        "Something went wrong. Try again a bit later, or verify that you're still a mod.",
+                type: "error",
+            });
+        }
+    } catch (error) {
+        console.error('Error removing moderator:', error);
+        toast.addNotification({
+            header: "Failed to resign.",
+            message: "Something went wrong. Try again a bit later, or verify that you're still a mod.",
+            type: "error",
+        });
+    } finally {
+        // Close the modal.
+        modalStore.closeModal();
+    }
 };
 </script>
