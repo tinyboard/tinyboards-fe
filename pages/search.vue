@@ -6,9 +6,9 @@
 			<div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
 				<!-- Banner -->
 				<CardsBanner
-				title="Search"
-				:sub-title="`Showing 25 of 500 results`"
-				image-url="https://i.imgur.com/kGhynxn.png"
+				:title="`Search ${searchTypeLabel}`"
+				:sub-title="route.query?.query ? `Found ${resultCount} ${searchTypeLabel.toLowerCase()} for '${route.query.query}'` : 'Enter a search query to begin'"
+				:icon-type="type"
 				class="col-span-full"/>
 			</div>
 		</section>
@@ -307,6 +307,27 @@
 
 	postStore.posts = posts.value;
 
+	// Computed values for dynamic search banner
+	const searchTypeLabel = computed(() => {
+		const labels = {
+			'posts': 'Posts',
+			'comments': 'Comments',
+			'users': 'Users',
+			'boards': 'Boards'
+		};
+		return labels[type.value] || 'Posts';
+	});
+
+	const resultCount = computed(() => {
+		switch (type.value) {
+			case 'posts': return posts.value.length;
+			case 'comments': return comments.value.length;
+			case 'users': return users.value.length;
+			case 'boards': return boards.value.length;
+			default: return 0;
+		}
+	});
+
 	// Handle search input.
 	const submitSearch = (text) => router.push({
 		path: '/search',
@@ -317,13 +338,13 @@
 		}
 	});
 
-	// Links for sub navbar.
-	const links = [
-		{ name: 'Posts', href: { query: { query: text.value || '', type: 'posts' } } },
-		{ name: 'Comments', href: { query: { query: text.value || '', type: 'comments' } } },
-		{ name: 'Users', href: { query: { query: text.value || '', type: 'users' } } },
-		{ name: 'Boards', href: { query: { query: text.value || '', type: 'boards' } } },
-	];
+	// Links for sub navbar - reactive to preserve current query params
+	const links = computed(() => [
+		{ name: 'Posts', href: { query: { ...route.query, type: 'posts' } } },
+		{ name: 'Comments', href: { query: { ...route.query, type: 'comments' } } },
+		{ name: 'Users', href: { query: { ...route.query, type: 'users' } } },
+		{ name: 'Boards', href: { query: { ...route.query, type: 'boards' } } },
+	]);
 
 	// Post sort options.
 	const postSorts = [

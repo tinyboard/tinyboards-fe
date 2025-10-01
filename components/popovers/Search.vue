@@ -54,7 +54,7 @@
 					</div>
 					<div class="py-2">
 						<ul class="flex flex-col-reverse mb-0">
-							<router-link :to="`/search?q=${item}`" v-for="(item, index) in searchHistory" :key="index" custom v-slot="{ navigate }">
+							<router-link :to="`/search?query=${item}&type=posts&sort=new`" v-for="(item, index) in searchHistory" :key="index" custom v-slot="{ navigate }">
 								<PopoverButton as="li" class="appearance-none flex items-center w-full px-3 py-1.5 text-base text-gray-700 hover:text-primary hover:bg-gray-100 focus:bg-gray-100 cursor-pointer group" @click="navigate" @keypress.enter="navigate" role="link">
 									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-3 opacity-30 group-hover:opacity-100">
 									  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -87,7 +87,7 @@
 		methods: {
 			// ...mapActions("persist", ["clearSearchHistory"]),
 			search() {
-				if (this.searchTerm) this.$router.push(`/search?q=${this.searchTerm}&sort=new`);
+				if (this.searchTerm) this.$router.push(`/search?query=${this.searchTerm}&type=posts&sort=new`);
 			}
 		}
 	}
