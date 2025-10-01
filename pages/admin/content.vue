@@ -18,7 +18,7 @@
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
 							<div class="flex items-center text-sm">
-								<InputsSwitch id="nsfw" :isEnabled="settings.enable_nsfw" @enabled="settings.enable_nsfw = !settings.enable_nsfw" />
+								<InputsSwitch id="nsfw" :isEnabled="settings.enableNSFW" @enabled="settings.enableNSFW = !settings.enableNSFW" />
 								<label for="nsfw" class="ml-2 font-medium text-gray-900 dark:text-gray-300">Allow NSFW
 									content</label>
 							</div>
@@ -35,7 +35,7 @@
 						</div>
 						<!-- Inputs -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
-							<img v-if="imageStore.default_avatar || settings.default_avatar" :src="imageStore.default_avatar ?? settings.default_avatar" class="w-20 h-20 object-cover p-0.5 border bg-white rounded" />
+							<img v-if="imageStore.default_avatar || settings.defaultAvatar" :src="imageStore.default_avatar ?? settings.defaultAvatar" class="w-20 h-20 object-cover p-0.5 border bg-white rounded" />
 							<div v-else class="w-20 h-20 rounded border border-gray-300 border-dashed flex items-center justify-center bg-blue-50">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-10 h-10 text-blue-400">
 									<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -44,7 +44,7 @@
 							</div>
 							<div class="ml-5">
 								<label for="avatar-upload" class="inline-block button gray cursor-pointer">
-									{{ settings.default_avatar ? 'Change default avatar' : 'Upload default avatar' }}
+									{{ settings.defaultAvatar ? 'Change default avatar' : 'Upload default avatar' }}
 								</label>
 								<input id="avatar-upload" type="file" class="hidden" accept="image/png, image/jpeg, image/gif" @change="e => onFileChange(e, 'default_avatar')" />
 								<small class="block mt-2 text-gray-400">
@@ -90,17 +90,17 @@ const imageStore = useImageStore();
 const { data, pending, error, refresh } = await useGraphQLQuery(`
     query GetSite {
         site {
-            enable_nsfw
-            enable_downvotes
-            private_instance
-            email_verification_required
-            application_question
-            default_avatar
+            enableNSFW
+            enableDownvotes
+            privateInstance
+            requireEmailVerification
+            applicationQuestion
+            defaultAvatar
         }
     }
 `);
 
-// Settings.
+// Settings
 const settings = ref({});
 
 if (data.value?.site) {
@@ -116,12 +116,12 @@ const submitSettings = async () => {
 	try {
 		const variables = {
 			input: {
-				enableNsfw: settings.value.enable_nsfw,
-				enableDownvotes: settings.value.enable_downvotes,
-				privateInstance: settings.value.private_instance,
-				requireEmailVerification: settings.value.email_verification_required,
-				applicationQuestion: settings.value.application_question,
-				defaultAvatar: settings.value.default_avatar
+				enableNsfw: settings.value.enableNSFW,
+				enableDownvotes: settings.value.enableDownvotes,
+				privateInstance: settings.value.privateInstance,
+				requireEmailVerification: settings.value.requireEmailVerification,
+				applicationQuestion: settings.value.applicationQuestion,
+				defaultAvatar: settings.value.defaultAvatar
 			},
 			defaultAvatarFile: null
 		};
@@ -136,12 +136,12 @@ const submitSettings = async () => {
 		}
 
 		const mutation = `
-			mutation UpdateSiteConfig($input: SiteConfigInput!, $defaultAvatarFile: Upload) {
+			mutation UpdateSiteConfig($input: UpdateSiteConfigInput!, $defaultAvatarFile: Upload) {
 				updateSiteConfig(input: $input, defaultAvatarFile: $defaultAvatarFile) {
-					enableNsfw
+					enableNSFW
 					enableDownvotes
 					privateInstance
-					emailVerificationRequired
+					requireEmailVerification
 					applicationQuestion
 					defaultAvatar
 				}
