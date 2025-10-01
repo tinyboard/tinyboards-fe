@@ -244,20 +244,46 @@ const {
   }
 });
 
-// Compute total stats
+// Fetch real site statistics
+const {
+  data: siteStatsData,
+  pending: siteStatsPending,
+  error: siteStatsError,
+  refresh: siteStatsRefresh,
+} = await useGraphQLQuery(`
+  query GetSiteStats {
+    siteStats {
+      users
+      posts
+      comments
+      boards
+      usersActiveDay
+      usersActiveWeek
+      usersActiveMonth
+      usersActiveHalfYear
+      upvotes
+      downvotes
+    }
+  }
+`);
+
 const totalStats = computed(() => {
-  // Use actual data from members
-  const topMembers = members.value?.listUsers || [];
-  const totalMembers = topMembers.length > 0 ? 328 : 0; // Fallback to estimate
-  const estimatedPosts = topMembers.reduce((sum, m) => sum + (m.postScore || 0), 0) * 10;
-  const estimatedComments = topMembers.reduce((sum, m) => sum + (m.commentScore || 0), 0) * 10;
-  const estimatedVotes = (estimatedPosts + estimatedComments) * 15;
+  if (!siteStatsData.value?.siteStats) {
+    return {
+      totalMembers: 0,
+      totalPosts: 0,
+      totalComments: 0,
+      totalVotes: 0
+    };
+  }
+
+  const stats = siteStatsData.value.siteStats;
 
   return {
-    totalMembers,
-    totalPosts: Math.max(estimatedPosts, 0),
-    totalComments: Math.max(estimatedComments, 0),
-    totalVotes: Math.max(estimatedVotes, 0)
+    totalMembers: stats.users,
+    totalPosts: stats.posts,
+    totalComments: stats.comments,
+    totalVotes: stats.upvotes + stats.downvotes
   };
 });
 
