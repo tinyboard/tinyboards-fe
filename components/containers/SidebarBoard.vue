@@ -37,7 +37,7 @@
                 >
             </h2>
             <div class="prose prose-sm text-gray-900">
-                <div v-if="board.sidebar_html" v-html="board.sidebar_html" />
+                <div v-if="board.sidebarHTML" v-html="board.sidebarHTML" />
                 <p v-else>{{ board.description }}</p>
             </div>
             <div class="text-gray-600 mt-4">
