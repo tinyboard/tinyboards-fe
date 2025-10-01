@@ -60,10 +60,10 @@ export default defineNuxtConfig({
       headers: { 'Cache-Control': 's-maxage=86400' }
     },
 
-    // SSR with caching for user profiles (SEO-critical)
+    // SPA for user profiles (avoid SSR caching issues with dynamic user content)
     "/@**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+      ssr: false,
+      headers: { 'Cache-Control': 'no-store' }
     },
 
     // SPA for feeds (user-specific content, auth-dependent)

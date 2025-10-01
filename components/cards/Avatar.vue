@@ -1,9 +1,9 @@
 <template>
   <div :class="containerClass">
     <img
-      v-if="src"
+      v-if="imageSrc"
       loading="lazy"
-      :src="src"
+      :src="imageSrc"
       :alt="alt"
       :class="imageClass"
       @error="handleError"
@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useSiteStore } from '@/stores/StoreSite';
 
 const props = defineProps({
   src: {
@@ -48,12 +49,14 @@ const props = defineProps({
   }
 });
 
-const imageSrc = ref(props.src);
-const showFallback = ref(!props.src);
+const site = useSiteStore();
+
+// Use src prop, fallback to site default avatar, or show SVG icon
+const imageSrc = computed(() => props.src || site.defaultAvatar);
+const showFallback = computed(() => !imageSrc.value);
 
 const handleError = () => {
-  showFallback.value = true;
-  imageSrc.value = null;
+  // If image fails to load, component will show SVG fallback via v-else
 };
 
 const sizeClasses = computed(() => {
@@ -70,7 +73,7 @@ const containerClass = computed(() => [
   'flex-shrink-0 flex items-center justify-center overflow-hidden',
   sizeClasses.value,
   props.rounded ? 'rounded' : '',
-  !imageSrc.value ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500' : ''
+  showFallback.value ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
 ]);
 
 const imageClass = computed(() => [

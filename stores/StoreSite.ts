@@ -4,6 +4,7 @@ interface SiteStore {
   name: string;
   description: string;
   icon: string;
+  defaultAvatar: string | null;
   primaryColor: string;
   secondaryColor: string;
   hoverColor: string;
@@ -26,6 +27,7 @@ export const useSiteStore = defineStore("site", {
       name: "tinyboards",
       description: "",
       icon: "",
+      defaultAvatar: null,
       primaryColor: "60, 105, 145",
       secondaryColor: "96, 128, 63",
       hoverColor: "54, 94, 129",
