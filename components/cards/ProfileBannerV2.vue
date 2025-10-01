@@ -12,10 +12,12 @@
             <!-- Avatar and FRAME!! :DD -->
             <div class="relative w-24 h-24 md:w-44 md:h-44">
                 <!--<img v-if="user.avatarFrame" id="frame" :src="user.avatarFrame" class="z-10 absolute w-full h-full" />-->
-                <img :src="isEditing
-                    ? (imageStore.avatar ?? (settings.avatar || '/media/file_not_found.png'))
-                    : user.avatar || '/media/file_not_found.png'" alt="avatar" class="absolute rounded-sm w-full
-                    h-full object-cover" />
+                <CardsAvatar
+                    :src="isEditing ? (imageStore.avatar ?? settings.avatar) : user.avatar"
+                    :alt="`${user.name} avatar`"
+                    size="lg"
+                    class="!w-full !h-full !rounded-sm"
+                />
             </div>
             <div class="flex flex-col" :class="{ 'mt-2': !isEditing }">
                 <input v-if="isEditing" type="text" id="display-name" name="display-name" maxlength="30"
