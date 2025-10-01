@@ -60,6 +60,7 @@
 <script setup>
 import { usePostsStore } from '@/stores/StorePosts';
 import { useGraphQLQuery } from '~/composables/useGraphQL';
+import { SortType, ListingType } from '@/types/types';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -119,8 +120,8 @@ const { data: postsData, pending, error, refresh } = await useGraphQLQuery(`
 	variables: {
 		limit: limit.value,
 		page: page.value,
-		sort: 'NEW',
-		listingType: 'ALL',
+		sort: SortType.NEW,
+		listingType: ListingType.ALL,
 		removedOnly: true
 	},
 	ssr: false  // Force client-side execution for authentication

@@ -17,9 +17,6 @@
         <svg  xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
         Create board
       </NuxtLink>
-
-      <!-- Admin/Mod Content Filter -->
-      <MenusAdminContentFilter v-if="canModerate" class="w-full" />
     </div>
     <div
       class="p-2.5 bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-polaroid"
@@ -100,16 +97,12 @@ import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
 import { useGraphQLQuery } from "@/composables/useGraphQL";
-import { useAdminContentFilter } from "@/composables/adminFilter";
 
 const site = useSiteStore();
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
 
 const canCreateBoard = (!site.boardCreationAdminOnly && isAuthed) || (site.boardCreationAdminOnly && requirePermission("boards"));
-
-// Admin/mod filter
-const { canModerate } = useAdminContentFilter();
 
 // Define spotlight users
 // Use GraphQL query instead of REST API
