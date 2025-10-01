@@ -3,11 +3,13 @@
 		<!-- Avatar -->
 		<div class="flex-shrink-0">
 			<NuxtLink v-if="creator" :to="`/@${creator.name}`">
-				<img loading="lazy" :src="creator.avatar || 'https://placekitten.com/36/36'" :alt="`${creator.displayName || creator.name} avatar`"
-					class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent rounded" />
+				<div class="sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent">
+					<CardsAvatar :src="creator.avatar" :alt="`${creator.displayName || creator.name} avatar`" size="xs" class="md:!w-16 md:!h-16" />
+				</div>
 			</NuxtLink>
-			<img v-else loading="lazy" src="https://placekitten.com/36/36" alt="System notification"
-				class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white rounded" />
+			<div v-else class="sm:p-0.5 sm:border bg-white">
+				<CardsAvatar :src="null" alt="System notification" size="xs" class="md:!w-16 md:!h-16" />
+			</div>
 		</div>
 
 		<!-- Content -->

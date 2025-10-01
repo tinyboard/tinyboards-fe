@@ -1,12 +1,14 @@
 <template>
 	<!-- Avatar -->
 	<NuxtLink v-if="!!notification.creator" class="flex-shrink-0" :to="`/@${notification.creator.name}`">
-		<img loading="lazy" :src="notification.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-			class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
+		<div class="sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent">
+			<CardsAvatar :src="notification.creator.avatar" alt="avatar" size="xs" class="md:!w-16 md:!h-16" />
+		</div>
 	</NuxtLink>
 	<div v-else class="flex-shrink-0">
-		<img loading="lazy" src="https://placekitten.com/36/36" alt="avatar"
-			class="object-cover w-6 h-6 md:w-16 md:h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
+		<div class="sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent">
+			<CardsAvatar :src="null" alt="avatar" size="xs" class="md:!w-16 md:!h-16" />
+		</div>
 	</div>
 	<!-- Details -->
 	<div class="w-full ml-2">
@@ -28,11 +30,12 @@
 		</p>
 		<ul v-if="replies.length" class="mt-2 space-y-2">
 			<li v-for="(reply, i) in replies" :key="i" class="flex">
-				<img v-if="!!reply.creator" loading="lazy"
-					:src="reply.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-					class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
-				<img v-else loading="lazy" src="https://placekitten.com/36/36" alt="avatar"
-					class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
+				<div v-if="!!reply.creator" class="flex-shrink-0 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent">
+					<CardsAvatar :src="reply.creator.avatar" alt="avatar" size="xs" class="md:!w-9 md:!h-9" />
+				</div>
+				<div v-else class="flex-shrink-0 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent">
+					<CardsAvatar :src="null" alt="avatar" size="xs" class="md:!w-9 md:!h-9" />
+				</div>
 				<div class="w-full ml-2">
 					<p class="text-sm text-gray-600">
 						<!-- This Comment object was just added by the logged in user: creator is not null -->

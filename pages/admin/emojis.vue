@@ -540,15 +540,11 @@ const saveEmoji = async () => {
         'input.imageFile': imageFile
       };
 
-      const { data, error } = await useGqlMultipart({
+      const result = await useGqlMultipart({
         query: mutation,
         variables,
         files
       });
-
-      if (error.value) {
-        throw new Error(error.value.message || 'Failed to create emoji');
-      }
 
       toast.addNotification({
         header: 'Success',
@@ -588,15 +584,11 @@ const saveEmoji = async () => {
           'input.imageFile': emojiForm.value.imageFile
         };
 
-        const { data, error } = await useGqlMultipart({
+        const result = await useGqlMultipart({
           query: mutation,
           variables,
           files
         });
-
-        if (error.value) {
-          throw new Error(error.value.message || 'Failed to update emoji');
-        }
       } else {
         // Without file upload - use regular JSON
         const mutation = `

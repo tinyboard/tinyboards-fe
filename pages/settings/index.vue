@@ -406,7 +406,7 @@ const submitSettings = async () => {
 	}
 
 	try {
-		const { data: result } = await useGqlMultipart({
+		const result = await useGqlMultipart({
 			query: `
 				mutation UpdateSettings(
 					$displayName: String,
@@ -453,47 +453,10 @@ const submitSettings = async () => {
 			files
 		});
 
-		// Avoid JSON.stringify on reactive objects - causes circular reference errors
+		// Handle response from GraphQL multipart
+		const updateResult = result.data?.updateSettings;
 
-		// Check multiple possible response structures - handle Proxy objects
-		let updateResult = null;
-
-		// Try to access the actual data from various possible structures
-		try {
-			// Direct access patterns
-			updateResult = result.value?.data?.updateSettings ||
-			              result.data?.value?.updateSettings ||
-			              result.value?.updateSettings ||
-			              result.data?.updateSettings ||
-			              result.value?.updateUserSettings ||
-			              result.data?.updateUserSettings ||
-			              result.updateSettings ||
-			              result.updateUserSettings;
-
-			// If still not found, try accessing through result.value itself if it's the data
-			if (!updateResult && result.value && typeof result.value === 'object') {
-				updateResult = result.value.updateSettings || result.value.updateUserSettings;
-			}
-
-			// Handle case where result.value might be the direct response object
-			if (!updateResult && result.value?.data) {
-				updateResult = result.value.data.updateSettings || result.value.data.updateUserSettings;
-			}
-		} catch (error) {
-			console.warn('Error accessing result structure:', error);
-		}
-
-
-		// Check if the operation was successful based on response structure
-		// From the logs, we can see the response has data but the structure is complex
-		const hasResponseData = result.value || result.data;
-		const hasError = result.error?.value || result.error;
-
-		// Consider it successful if we have response data and no errors
-		const isSuccess = updateResult || (hasResponseData && !hasError);
-
-
-		if (isSuccess) {
+		if (updateResult) {
 			toast.addNotification({
 				header: "Settings saved",
 				message: "Your profile settings have been updated successfully.",
@@ -502,7 +465,6 @@ const submitSettings = async () => {
 			// Refresh the page to show updated images
 			window.location.reload(true);
 		} else {
-			console.warn('No updateSettings found in response:', result);
 			throw new Error("Failed to update settings");
 		}
 	} catch (error) {

@@ -198,19 +198,14 @@ const next = () => {
             if (bannerFile) files.bannerFile = bannerFile;
 
             // Use GraphQL multipart for board creation with file uploads
-            const response = await useGqlMultipart({
+            const result = await useGqlMultipart({
                 query: mutation,
                 variables,
                 files
             });
 
-            // Handle different response formats
-            let createBoardResponse;
-            if (response.data?.value?.createBoard) {
-                createBoardResponse = response.data.value.createBoard;
-            } else if (response.data?.createBoard) {
-                createBoardResponse = response.data.createBoard;
-            }
+            // Handle response from GraphQL multipart
+            const createBoardResponse = result.data?.createBoard;
 
             if (createBoardResponse?.board) {
                 const boardData = createBoardResponse.board;

@@ -71,7 +71,7 @@
 					<!-- Users -->
 					<div v-else-if="type === 'users' && users?.length" class="flex flex-col space-y-2 bg-white dark:bg-gray-950 border-y sm:border dark:border-gray-800 sm:rounded-md sm:shadow-inner-xs p-4">
 						<NuxtLink v-for="user in users" :key="user.id" :to="`/@${user.name}`" class="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-md">
-							<img :src="user.avatar || 'https://placekitten.com/48/48'" class="w-12 h-12 rounded-full object-cover" />
+							<CardsAvatar :src="user.avatar" alt="avatar" size="lg" />
 							<div class="flex-1">
 								<div class="flex items-center gap-2">
 									<strong class="text-gray-900 dark:text-gray-100">{{ user.displayName || user.name }}</strong>

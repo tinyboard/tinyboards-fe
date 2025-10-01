@@ -13,12 +13,11 @@
       <NuxtLink v-if="!!post.creator" v-show="isCompact"
         :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
         class="hidden sm:flex flex-shrink-0">
-        <img loading="lazy" :src="post.creator?.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-          class="w-10 h-10 object-cover rounded" />
+        <CardsAvatar :src="post.creator?.avatar" alt="avatar" size="md" />
       </NuxtLink>
       <!-- TODO: "avatar" for deleted users / put some ghost here :P -->
       <div v-else class="hidden sm:flex flex-shrink-0">
-        <img loading="lazy" src="https://placekitten.com/36/36" alt="avatar" class="w-10 h-10 object-cover rounded" />
+        <CardsAvatar :src="null" alt="avatar" size="md" />
       </div>
       <div class="w-full" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
         <!-- Author & Post Meta -->
@@ -28,8 +27,9 @@
               <NuxtLink :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
                 class="flex items-center">
                 <!-- Avatar (mobile only) -->
-                <img loading="lazy" :src="post.creator?.avatar || 'https://placekitten.com/24/24'" alt="avatar"
-                  class="sm:hidden flex-shrink-0 w-6 h-6 object-cover rounded" />
+                <div class="sm:hidden">
+                  <CardsAvatar :src="post.creator?.avatar" alt="avatar" size="xs" />
+                </div>
                 <!-- Username -->
                 <strong class="ml-2 sm:ml-0">{{ post.creator?.displayName ?? post.creator?.name }}</strong>
                 <span v-if="post.creator?.instance">@{{ post.creator.instance }}</span>
@@ -121,7 +121,7 @@
               </svg>
             </span>
             <!-- Video Icon -->
-            <span v-if="hasVideo" title="Post contains a video">
+            <span v-if="hasVideo || hasUploadedVideo" title="Post contains a video">
               <svg xmlns="http://www.w3.org/2000/svg" class="text-red-500 w-4 h-4" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -161,13 +161,19 @@
             'max-h-56 overlay': !isExpanded && (post.bodyHTML && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img')))
           }">
             <!-- Post Image -->
-            <div v-if="hasImage && !!post.url" class="mt-2.5 md:mt-4">
+            <div v-if="(hasImage && !!post.url) || (hasUploadedImage && !!post.image)" class="mt-2.5 md:mt-4">
               <span class="inline-block p-2.5 bg-white border shadow-polaroid">
-                <img loading="lazy" :src="post.url" :alt="post.altText || 'Post image'" class="sm:max-w-xs object-cover img-expand" />
+                <img loading="lazy" :src="post.url || post.image" :alt="post.altText || 'Post image'" class="sm:max-w-xs object-cover img-expand" />
               </span>
             </div>
-            <!-- Post Video -->
-            <div v-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4">
+            <!-- Uploaded Video -->
+            <div v-if="hasUploadedVideo && !!post.image" class="mt-2.5 md:mt-4">
+              <video :src="post.image" controls class="w-full max-w-2xl rounded shadow-lg bg-black">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <!-- Embedded Video (YouTube, Vimeo, etc) -->
+            <div v-else-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4">
               <!-- YouTube -->
               <lite-youtube
                 v-if="videoEmbedProps.component === 'lite-youtube'"
@@ -515,11 +521,10 @@
     <NuxtLink v-if="!!post.creator" v-show="!isCompact"
       :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
       class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full arrow__right">
-      <img loading="lazy" :src="post.creator?.avatar || 'https://placekitten.com/64/64'" alt="avatar"
-        class="w-16 h-16 object-cover rounded" />
+      <CardsAvatar :src="post.creator?.avatar" alt="avatar" size="lg" class="!w-16 !h-16" />
     </NuxtLink>
-    <div v-else-if="!post.creator" v-show="!isCompact">
-      <!-- TODO: Placeholder for deleted accounts here -->
+    <div v-else-if="!post.creator" v-show="!isCompact" class="z-10 sticky top-28 hidden sm:inline flex-shrink-0 h-full">
+      <CardsAvatar :src="null" alt="avatar" size="lg" class="!w-16 !h-16" />
     </div>
   </div>
 </template>
@@ -615,9 +620,17 @@ const status = computed(() => {
 
 // Image
 const hasImage = computed(() => props.post.url && canEmbedImage(props.post.url));
+const hasUploadedImage = computed(() => {
+  if (!props.post.image) return false;
+  return /\.(jpe?g|png|gif|webp)$/i.test(props.post.image);
+});
 
 // Video
 const hasVideo = computed(() => props.post.url && canEmbedVideo(props.post.url));
+const hasUploadedVideo = computed(() => {
+  if (!props.post.image) return false;
+  return /\.(mp4|webm|mov|3gp|m4v|mpeg|mpg|ogv|avi|mkv)$/i.test(props.post.image);
+});
 const videoEmbedProps = computed(() => hasVideo.value ? getVideoEmbedProps(props.post.url) : null);
 
 // Vote

@@ -378,34 +378,37 @@ const submitSettings = async () => {
         imageStore.purgeBackground();
     }
 
-    useGqlMultipart({
-        query: SAVE_SETTINGS_QUERY,
-        variables: {
-            displayName: settings.value.displayName,
-            bio: settings.value.bio,
-            avatar: null,
-            banner: null,
-            profileBackground: null
-        },
-        files
-    }).then(({ data }) => {
+    try {
+        const result = await useGqlMultipart({
+            query: SAVE_SETTINGS_QUERY,
+            variables: {
+                displayName: settings.value.displayName,
+                bio: settings.value.bio,
+                avatar: null,
+                banner: null,
+                profileBackground: null
+            },
+            files
+        });
+
         isLoading.value = false;
-        // @ts-ignore Ignored: this returns a GraphQL response, but the exact fields are unknown to TS
-        if (!!data.value.data) {
+
+        if (result.data?.updateSettings) {
             if (process.client && typeof window !== 'undefined') {
                 window.location.reload();
             }
         } else {
-            // @ts-ignore
-            console.error("Error: " + data.value.errors[0].message);
-            toast.addNotification({
-                header: "Failed to save settings",
-                // @ts-ignore
-                message: data.value.errors[0].message,
-                type: "error"
-            });
+            throw new Error("Failed to update settings");
         }
-    });
+    } catch (error) {
+        isLoading.value = false;
+        console.error("Error saving settings:", error);
+        toast.addNotification({
+            header: "Failed to save settings",
+            message: error.message || "An error occurred while saving your settings.",
+            type: "error"
+        });
+    }
 };
 </script>
 

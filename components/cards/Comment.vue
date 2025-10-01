@@ -12,14 +12,13 @@
         <!-- User Avatar -->
         <!-- Avatar for deleted comment - show placeholder -->
         <div v-if="comment.isDeleted" class="z-10">
-          <div class="flex-shrink-0 w-6 h-6 md:w-9 md:h-9 rounded bg-gray-300 dark:bg-gray-700"></div>
+          <CardsAvatar :src="null" alt="avatar" size="xs" class="md:!w-9 md:!h-9" />
         </div>
         <!-- Avatar for normal comment -->
         <NuxtLink v-else-if="comment.creator"
           :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
           class="z-10">
-          <img loading="lazy" :src="comment.creator?.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-            class="flex-shrink-0 object-cover w-6 h-6 md:w-9 md:h-9 rounded" />
+          <CardsAvatar :src="comment.creator?.avatar" alt="avatar" size="xs" class="md:!w-9 md:!h-9" />
         </NuxtLink>
         <!-- Comment Collapse Bar -->
         <div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed"

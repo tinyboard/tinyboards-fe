@@ -93,11 +93,10 @@
         <div class="flex items-center w-full overflow-x-auto">
           <!-- Avatar -->
           <NuxtLink v-if="post.creator" :to="`/@${post.creator.name}`">
-            <img :src="post.creator.avatar || 'https://placekitten.com/36/36'" alt="avatar"
-              class="flex-shrink-0 w-9 h-9 object-cover rounded" />
+            <CardsAvatar :src="post.creator.avatar" alt="avatar" size="sm" class="!w-9 !h-9" />
           </NuxtLink>
           <!-- Deleted User -->
-          <img v-else src="" alt="avatar" class="flex-shrink-0 w-9 h-9 object-cover rounded" />
+          <CardsAvatar v-else :src="null" alt="avatar" size="sm" class="!w-9 !h-9" />
           <div class="flex flex-col leading-normal ml-2">
             <NuxtLink v-if="post.creator"
               :to="`/@${post.creator.name}${post.creator.instance ? '@' + post.creator.instance : ''}`"
@@ -168,13 +167,19 @@
 				/> -->
       </div>
       <!-- Post Image -->
-      <div v-if="hasImage" class="mt-2.5 md:mt-4">
+      <div v-if="hasImage || hasUploadedImage" class="mt-2.5 md:mt-4">
         <span class="inline-block p-2.5 bg-white border shadow-polaroid">
-          <img :src="post.url" alt="Post image" class="sm:max-w-xs object-cover img-expand" />
+          <img :src="post.url || post.image" alt="Post image" class="sm:max-w-xs object-cover img-expand" />
         </span>
       </div>
-      <!-- Post Video -->
-      <div v-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4">
+      <!-- Uploaded Video -->
+      <div v-if="hasUploadedVideo && !!post.image" class="mt-2.5 md:mt-4">
+        <video :src="post.image" controls class="w-full max-w-2xl rounded shadow-lg bg-black">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <!-- Embedded Video (YouTube, Vimeo, etc) -->
+      <div v-else-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4">
         <!-- YouTube -->
         <lite-youtube
           v-if="videoEmbedProps.component === 'lite-youtube'"
@@ -625,9 +630,17 @@ const percentUpvoted = computed(() => {
 });
 
 const hasImage = computed(() => props.post.url && canEmbedImage(props.post.url));
+const hasUploadedImage = computed(() => {
+  if (!props.post.image) return false;
+  return /\.(jpe?g|png|gif|webp)$/i.test(props.post.image);
+});
 
 // Video
 const hasVideo = computed(() => props.post.url && canEmbedVideo(props.post.url));
+const hasUploadedVideo = computed(() => {
+  if (!props.post.image) return false;
+  return /\.(mp4|webm|mov|3gp|m4v|mpeg|mpg|ogv|avi|mkv)$/i.test(props.post.image);
+});
 const videoEmbedProps = computed(() => hasVideo.value ? getVideoEmbedProps(props.post.url) : null);
 
 // Author

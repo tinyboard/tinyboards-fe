@@ -80,14 +80,9 @@
                             :to="`/@${mod.moderator.name}`"
                             class="flex space-x-2"
                         >
-                            <img
-                                loading="lazy"
-                                class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-                                :src="
-                                    mod.moderator.avatar ??
-                                    'https://placekitten.com/36/36'
-                                "
-                            />
+                            <div class="p-0.5 bg-white border hover:bg-gray-200">
+                                <CardsAvatar :src="mod.moderator.avatar" alt="avatar" size="sm" class="!w-8 !h-8" />
+                            </div>
                             <div
                                 class="flex flex-col justify-center leading-normal"
                             >

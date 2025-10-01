@@ -145,26 +145,34 @@
                                         Markdown supported
                                     </p>
                                 </div>
-                                <!-- TO-DO: Media Preview -->
+                                <!-- Media Preview -->
                                 <div class="col-span-full">
-                                    <label for="title" class="block text-sm font-bold">Image</label>
+                                    <label for="title" class="block text-sm font-bold">Image or Video</label>
                                     <div class="mt-2 flex items-center">
-                                        <img v-if="image" :src="image"
+                                        <!-- Image preview -->
+                                        <img v-if="image && !isVideo" :src="image"
                                             class="inline-block w-56 object-contain p-0.5 border bg-white mr-5"
                                             @click="preview" />
+                                        <!-- Video preview -->
+                                        <video v-else-if="image && isVideo" :src="image" controls
+                                            class="inline-block w-56 object-contain p-0.5 border bg-white mr-5">
+                                            Your browser does not support the video tag.
+                                        </video>
                                         <div>
-                                            <label v-if="!image" for="image-upload"
+                                            <label v-if="!image" for="media-upload"
                                                 class="inline-block button button-small gray cursor-pointer">
-                                                Pick image
+                                                Pick image or video
                                             </label>
-                                            <button v-else class="button gray" @click="image = null">
-                                                <span class="text-red-500">Remove image</span>
+                                            <button v-else class="button gray" @click="clearMedia">
+                                                <span class="text-red-500">Remove {{ isVideo ? 'video' : 'image' }}</span>
                                             </button>
-                                            <input id="image-upload" type="file" class="hidden"
-                                                accept="image/png, image/jpeg, image/gif"
+                                            <input id="media-upload" type="file" class="hidden"
+                                                accept="image/png, image/jpeg, image/gif, image/webp, video/mp4, video/webm, video/quicktime, video/3gpp, video/x-m4v, video/mpeg, video/ogg"
                                                 @change="onFileChange($event)" />
                                             <small class="block mt-2 text-gray-400">
-                                                PNG, JPG and GIF up to 25MB.
+                                                Images (PNG, JPG, GIF, WebP) up to 10MB
+                                                <br />
+                                                Videos (MP4, WebM, MOV, 3GP, M4V, MPEG, OGV) up to 100MB
                                             </small>
                                         </div>
                                     </div>
@@ -217,14 +225,12 @@ definePageMeta({
 });
 
 import { ref, computed, nextTick, watch } from "vue";
-// import { baseURL } from "@/server/constants";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
-import { useAPI } from "@/composables/api";
 import { dataURLtoFile } from "@/utils/files";
-import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useGraphQLMutation } from '@/composables/useGraphQL';
+import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
 import CardsSubmitBanner from "@/components/cards/SubmitBanner.vue";
 import InputsBoardSelector from "@/components/inputs/BoardSelector.vue";
@@ -349,7 +355,8 @@ const url = ref(route.query.url?.toString() || "");
 const image: Ref<string | ArrayBuffer | null> = ref(null);
 const body: Ref<string | null> = ref(null);
 const isNsfw = ref(false);
-
+const isVideo = ref(false);
+const fileType = ref<string | null>(null);
 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);
@@ -377,26 +384,68 @@ if (process.client) {
 // File input
 const onFileChange = (e: InputEvent) => {
     const file = (e.target as HTMLInputElement).files![0];
-    // Check for valid image file type and size
-    if (
-        /\.(jpe?g|png|gif)$/i.test(file.name) &&
-        file.size <= 25 * 1024 * 1024
-    ) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            image.value = reader.result;
-            if (process.client && typeof sessionStorage !== 'undefined') {
-                sessionStorage.removeItem("image");
-            }
-        };
-        reader.readAsDataURL(file);
+    if (!file) return;
+
+    const fileName = file.name.toLowerCase();
+    const fileSize = file.size;
+    fileType.value = file.type;
+
+    // Check if it's a video
+    const videoExtensions = /\.(mp4|webm|mov|3gp|m4v|mpeg|mpg|ogv|avi|mkv)$/i;
+    const isVideoFile = videoExtensions.test(fileName) || file.type.startsWith('video/');
+
+    // Check if it's an image
+    const imageExtensions = /\.(jpe?g|png|gif|webp)$/i;
+    const isImageFile = imageExtensions.test(fileName) || file.type.startsWith('image/');
+
+    // Validate file type and size
+    if (isVideoFile) {
+        // Videos up to 100MB
+        if (fileSize > 100 * 1024 * 1024) {
+            toast.addNotification({
+                header: "File too large",
+                message: "Videos must be under 100MB.",
+                type: "error",
+            });
+            return;
+        }
+        isVideo.value = true;
+    } else if (isImageFile) {
+        // Images up to 10MB
+        if (fileSize > 10 * 1024 * 1024) {
+            toast.addNotification({
+                header: "File too large",
+                message: "Images must be under 10MB.",
+                type: "error",
+            });
+            return;
+        }
+        isVideo.value = false;
     } else {
         toast.addNotification({
-            header: "Wrong format or size",
-            message: "Try a PNG, JPG and GIF up to 1MB.",
+            header: "Wrong format",
+            message: "Please upload an image (PNG, JPG, GIF, WebP) or video (MP4, WebM, MOV, 3GP, M4V, MPEG, OGV).",
             type: "error",
         });
+        return;
     }
+
+    // Read file
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        image.value = reader.result;
+        if (process.client && typeof sessionStorage !== 'undefined') {
+            sessionStorage.removeItem("image");
+        }
+    };
+    reader.readAsDataURL(file);
+};
+
+// Clear media
+const clearMedia = () => {
+    image.value = null;
+    isVideo.value = false;
+    fileType.value = null;
 };
 
 // Image preview
@@ -434,12 +483,12 @@ async function submit() {
 
         const variables = {
             title: title.value,
-            board: finalBoardName && finalBoardName.trim() !== '' ? finalBoardName : null,  // Let backend handle default if empty
+            board: finalBoardName && finalBoardName.trim() !== '' ? finalBoardName : null,
             body: body.value && body.value.trim() !== '' ? body.value : null,
-            link: linkValue,  // Only send valid URLs, not empty strings
+            link: linkValue,
             isNSFW: isNsfw.value || false,
-            altText: null,  // Optional alt text for images
-            file: null  // Will be replaced by multipart upload
+            altText: null,
+            file: null
         };
 
         const createPostQuery = `
@@ -468,77 +517,49 @@ async function submit() {
             }
         `;
 
-        let result;
+        let post;
+
         if (image.value) {
             // Use multipart upload for files
             const file = dataURLtoFile(image.value);
-            try {
-                const response = await useGqlMultipart({
-                    query: createPostQuery,
-                    variables: { ...variables, file: file },
-                    files: { file: file }
-                });
+            const result = await useGqlMultipart({
+                query: createPostQuery,
+                variables: { ...variables, file: file },
+                files: { file: file }
+            });
 
-                // Handle different response formats from multipart upload
-                if (response.data?.value?.createPost) {
-                    result = response.data.value;
-                } else if (response.data?.createPost) {
-                    result = response.data;
-                } else if (response.createPost) {
-                    result = response;
-                } else {
-                    result = response.data?.value || response.data || response;
-                }
-            } catch (uploadError) {
-                if (process.dev) console.error('Multipart upload error:', uploadError);
-                // If multipart fails, still try to show a meaningful error
-                throw uploadError;
-            }
+            // Extract post from GraphQL response
+            post = result.data?.createPost || result.createPost;
         } else {
             // Use regular GraphQL for non-file posts
-            const response = await useGraphQLMutation(createPostQuery, {
+            const { data, error } = await useGraphQLMutation(createPostQuery, {
                 variables
             });
-            result = response.data?.value || response;
-        }
-        if (result.createPost) {
-            const post = result.createPost;
-            // Debug: Log the post data to see what we actually received
-            if (process.dev) {
-                console.log('Post creation response:', {
-                    id: post.id,
-                    title: post.title,
-                    titleChunk: post.titleChunk,
-                    fullPost: post
-                });
+
+            if (error.value) {
+                throw new Error(error.value.message || 'Failed to create post');
             }
 
-            // Use the backend's titleChunk directly
-            const titleSlug = post.titleChunk || 'post';
-
-            if (site.enableBoards) {
-                navigateTo(
-                    `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
-                );
-            } else {
-                navigateTo(
-                    `/p/${post.id}/${titleSlug}`
-                );
-            }
-        } else {
-            if (process.dev) console.error("Error: Failed to create post");
-            toast.addNotification({
-                header: "Failed to create post",
-                message: "An error occurred while creating the post.",
-                type: "error",
-                isVisibleOnRouteChange: true,
-            });
+            post = data.value?.createPost;
         }
-    } catch (e) {
-        if (process.dev) console.error("Error: " + e);
+
+        if (!post || !post.id) {
+            throw new Error('Invalid response from server');
+        }
+
+        // Successfully created - redirect immediately
+        const titleSlug = post.titleChunk || 'post';
+        const redirectPath = site.enableBoards
+            ? `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
+            : `/p/${post.id}/${titleSlug}`;
+
+        await navigateTo(redirectPath);
+
+    } catch (e: any) {
+        if (process.dev) console.error("Error creating post:", e);
         toast.addNotification({
-            header: "Network error",
-            message: "Failed to submit post due to a network error. Please try again.",
+            header: "Failed to create post",
+            message: e.message || "An error occurred while creating the post. Please try again.",
             type: "error",
             isVisibleOnRouteChange: true,
         });

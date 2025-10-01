@@ -289,7 +289,7 @@ const submitSettings = async () => {
 	}
 
 	try {
-		const { data: result } = await useGqlMultipart({
+		const result = await useGqlMultipart({
 			query: `
 				mutation UpdateSiteConfig(
 					$input: UpdateSiteConfigInput!,
@@ -339,7 +339,7 @@ const submitSettings = async () => {
 			files
 		});
 
-		if (result.value?.updateSiteConfig) {
+		if (result.data?.updateSiteConfig) {
 			// Show success toast
 			toast.addNotification({
 				header: 'Settings saved',

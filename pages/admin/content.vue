@@ -84,8 +84,9 @@ import { useToastStore } from '@/stores/StoreToast';
 import { useImageStore } from '@/stores/StoreImages';
 import { useModalStore } from "@/stores/StoreModal";
 import { dataURLtoFile } from '@/utils/files';
-import { onFileChange, uploadFile } from '@/composables/images';
-import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
+import { onFileChange } from '@/composables/images';
+import { useGraphQLQuery } from '~/composables/useGraphQL';
+import { useGqlMultipart } from '@/composables/graphql_multipart';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -129,25 +130,32 @@ const isLoading = ref(false);
 const submitSettings = async () => {
 	isLoading.value = true;
 
-	// upload default avatar
-	if (imageStore.default_avatar) {
-		const default_avatar = dataURLtoFile(imageStore.default_avatar);
-		// after converting to file is finished, delete the original b64 url
-		imageStore.purgeDefaultAvatar();
-
-		try {
-			settings.value.default_avatar = await uploadFile(default_avatar, 'avatar');
-		} catch (e) {
-			console.error(e);
-			isLoading.value = false;
-			return;
-		}
-	}
-
 	try {
-		const { data: result } = await useGraphQLMutation(`
-			mutation UpdateSiteConfig($input: SiteConfigInput!) {
-				updateSiteConfig(input: $input) {
+		const variables = {
+			input: {
+				enableNSFW: settings.value.enable_nsfw,
+				federationEnabled: settings.value.enable_federation,
+				defaultAvatar: settings.value.default_avatar,
+				enableDownvotes: settings.value.enable_downvotes,
+				privateInstance: settings.value.private_instance,
+				requireEmailVerification: settings.value.email_verification_required,
+				applicationQuestion: settings.value.application_question
+			},
+			defaultAvatarFile: null
+		};
+
+		const files = {};
+
+		// Handle default avatar upload
+		if (imageStore.default_avatar) {
+			const default_avatar = dataURLtoFile(imageStore.default_avatar);
+			imageStore.purgeDefaultAvatar();
+			files.defaultAvatarFile = default_avatar;
+		}
+
+		const mutation = `
+			mutation UpdateSiteConfig($input: SiteConfigInput!, $defaultAvatarFile: Upload) {
+				updateSiteConfig(input: $input, defaultAvatarFile: $defaultAvatarFile) {
 					enable_nsfw
 					enable_federation
 					default_avatar
@@ -157,21 +165,15 @@ const submitSettings = async () => {
 					application_question
 				}
 			}
-		`, {
-			variables: {
-				input: {
-					enableNSFW: settings.value.enable_nsfw,
-					federationEnabled: settings.value.enable_federation,
-					defaultAvatar: settings.value.default_avatar,
-					enableDownvotes: settings.value.enable_downvotes,
-					privateInstance: settings.value.private_instance,
-					requireEmailVerification: settings.value.email_verification_required,
-					applicationQuestion: settings.value.application_question
-				}
-			}
+		`;
+
+		const result = await useGqlMultipart({
+			query: mutation,
+			variables,
+			files
 		});
 
-		if (result.value?.updateSiteConfig) {
+		if (result.data?.updateSiteConfig) {
 			// Show success toast.
 			toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
 			window.location.reload(true);

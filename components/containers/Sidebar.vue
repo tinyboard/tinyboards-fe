@@ -59,11 +59,9 @@
           class="pt-2 first:pt-0"
         >
           <NuxtLink :to="`/@${user.name}`" class="flex space-x-2">
-            <img
-              loading="lazy"
-              class="p-0.5 w-9 h-9 object-cover bg-white border hover:bg-gray-200"
-              :src="user.avatar ?? 'https://placekitten.com/36/36'"
-            />
+            <div class="p-0.5 bg-white border hover:bg-gray-200">
+              <CardsAvatar :src="user.avatar" alt="avatar" size="sm" class="!w-8 !h-8" />
+            </div>
             <div class="flex flex-col justify-center leading-normal">
               <div class="flex">
                 <strong class="text-sm">{{ user.name }}</strong>

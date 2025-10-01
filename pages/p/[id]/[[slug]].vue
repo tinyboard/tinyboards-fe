@@ -200,57 +200,182 @@ const links = [{ name: 'Comments', href: '#comments' }];
 // Document head - SEO and social sharing meta tags
 if (postResult.post?.value) {
   const post = postResult.post.value;
-  const description = post.body?.substring(0, 160) || post.title;
-  const imageUrl = post.thumbnail || post.url;
+
+  // Strip HTML tags and get plain text description
+  const stripHtml = (html: string) => html?.replace(/<[^>]*>/g, '') || '';
+  const description = post.body ? stripHtml(post.body).substring(0, 200) : post.title;
+
+  // Determine media type and URL
+  const isVideo = post.image && /\.(mp4|webm|mov|3gp|m4v|mpeg|mpg|ogv|avi|mkv)$/i.test(post.image);
+  const isImage = post.image && /\.(jpe?g|png|gif|webp)$/i.test(post.image);
+  const mediaUrl = post.image || post.thumbnailUrl || post.url;
+
+  // Build full URL for sharing
+  const config = useRuntimeConfig();
+  const protocol = config.public.useHttps === 'true' ? 'https' : 'http';
+  const fullUrl = site.enableBoards && post.board
+    ? `${protocol}://${site.domain}/b/${post.board.name}/p/${post.id}/${post.titleChunk || 'post'}`
+    : `${protocol}://${site.domain}/p/${post.id}/${post.titleChunk || 'post'}`;
+
+  const metaTags = [
+    // Open Graph - Basic
+    {
+      property: 'og:title',
+      content: post.title
+    },
+    {
+      property: 'og:description',
+      content: description
+    },
+    {
+      property: 'og:type',
+      content: 'article'
+    },
+    {
+      property: 'og:url',
+      content: fullUrl
+    },
+    {
+      property: 'og:site_name',
+      content: site.name || 'TinyBoards'
+    },
+  ];
+
+  // Add video-specific meta tags for Discord/social media
+  if (isVideo && mediaUrl) {
+    metaTags.push(
+      {
+        property: 'og:video',
+        content: mediaUrl
+      },
+      {
+        property: 'og:video:url',
+        content: mediaUrl
+      },
+      {
+        property: 'og:video:secure_url',
+        content: mediaUrl
+      },
+      {
+        property: 'og:video:type',
+        content: 'video/mp4' // Discord works best with mp4 declaration
+      },
+      {
+        property: 'og:video:width',
+        content: '1280'
+      },
+      {
+        property: 'og:video:height',
+        content: '720'
+      }
+    );
+  }
+  // Add image meta tags
+  else if (mediaUrl) {
+    metaTags.push(
+      {
+        property: 'og:image',
+        content: mediaUrl
+      },
+      {
+        property: 'og:image:url',
+        content: mediaUrl
+      },
+      {
+        property: 'og:image:secure_url',
+        content: mediaUrl
+      },
+      {
+        property: 'og:image:type',
+        content: isImage ? 'image/jpeg' : undefined
+      },
+      {
+        property: 'og:image:width',
+        content: '1200'
+      },
+      {
+        property: 'og:image:height',
+        content: '630'
+      }
+    );
+  }
+
+  // Twitter Card
+  metaTags.push(
+    {
+      name: 'twitter:card',
+      content: isVideo ? 'player' : (mediaUrl ? 'summary_large_image' : 'summary')
+    },
+    {
+      name: 'twitter:title',
+      content: post.title
+    },
+    {
+      name: 'twitter:description',
+      content: description
+    }
+  );
+
+  if (isVideo && mediaUrl) {
+    metaTags.push(
+      {
+        name: 'twitter:player',
+        content: mediaUrl
+      },
+      {
+        name: 'twitter:player:width',
+        content: '1280'
+      },
+      {
+        name: 'twitter:player:height',
+        content: '720'
+      }
+    );
+  } else if (mediaUrl) {
+    metaTags.push({
+      name: 'twitter:image',
+      content: mediaUrl
+    });
+  }
+
+  // Standard meta
+  metaTags.push(
+    {
+      name: 'description',
+      content: description
+    },
+    // Discord-specific
+    {
+      name: 'theme-color',
+      content: post.board?.primaryColor ? `rgb(${post.board.primaryColor})` : '#3C6991'
+    }
+  );
+
+  // Article meta
+  if (post.creationDate) {
+    metaTags.push({
+      property: 'article:published_time',
+      content: new Date(post.creationDate).toISOString()
+    });
+  }
+
+  if (post.updated) {
+    metaTags.push({
+      property: 'article:modified_time',
+      content: new Date(post.updated).toISOString()
+    });
+  }
+
+  if (post.creator?.name) {
+    metaTags.push({
+      property: 'article:author',
+      content: post.creator.name
+    });
+  }
 
   useHead({
     title: title.value,
-    meta: [
-      // Open Graph
-      {
-        property: 'og:title',
-        content: post.title
-      },
-      {
-        property: 'og:description',
-        content: description
-      },
-      {
-        property: 'og:type',
-        content: 'article'
-      },
-      {
-        property: 'og:url',
-        content: `https://${site.domain}/p/${post.id}/${post.titleChunk || 'post'}`
-      },
-      // Add image if available
-      ...(imageUrl ? [{
-        property: 'og:image',
-        content: imageUrl
-      }] : []),
-      // Twitter Card
-      {
-        name: 'twitter:card',
-        content: imageUrl ? 'summary_large_image' : 'summary'
-      },
-      {
-        name: 'twitter:title',
-        content: post.title
-      },
-      {
-        name: 'twitter:description',
-        content: description
-      },
-      ...(imageUrl ? [{
-        name: 'twitter:image',
-        content: imageUrl
-      }] : []),
-      // Standard meta
-      {
-        name: 'description',
-        content: description
-      }
-    ]
+    meta: metaTags.filter(tag => tag.content !== undefined)
   });
 }
 </script>

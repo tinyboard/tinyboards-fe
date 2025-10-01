@@ -270,7 +270,7 @@ const submitSettings = async () => {
             throw new Error('Invalid color values. Please check your color selections.');
         }
 
-        const { data: result } = await useGqlMultipart({
+        const result = await useGqlMultipart({
             query: `
                 mutation UpdateBoardSettings(
                     $input: UpdateBoardSettingsInput!,
@@ -309,13 +309,8 @@ const submitSettings = async () => {
             files
         });
 
-        // Handle different response formats from GraphQL multipart
-        let updateBoardResponse;
-        if (result.value?.updateBoardSettings) {
-            updateBoardResponse = result.value.updateBoardSettings;
-        } else if (result?.updateBoardSettings) {
-            updateBoardResponse = result.updateBoardSettings;
-        }
+        // Handle response from GraphQL multipart
+        const updateBoardResponse = result.data?.updateBoardSettings;
 
         if (updateBoardResponse?.board) {
             const updatedBoard = updateBoardResponse.board;
