@@ -233,7 +233,7 @@ const hoverColor = ref(toHexCode(settings.value.hoverColor || '#2563EB'));
 
 definePageMeta({
     hasAuthRequired: true,
-    alias: ["/+:board/mod/a", "/+:board/mod/appearance"],
+    alias: ["/:board/mod/a", "/:board/mod/appearance"],
     isLeftNavbarDisabled: true,
 });
 

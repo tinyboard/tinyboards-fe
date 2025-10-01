@@ -277,6 +277,7 @@ if (route.params?.board) {
                 secondaryColor
                 creationDate
                 isRemoved
+                sidebarHTML
             }
         }
     `;

@@ -217,7 +217,7 @@ import { useSiteStore } from "@/stores/StoreSite";
 const site = useSiteStore();
 
 definePageMeta({
-    alias: ["", "/+:board?/submit"],
+    alias: ["", "/:board?/submit"],
     hasAuthRequired: true,
     isDropzoneDisabled: true,
     title: "Create Post",

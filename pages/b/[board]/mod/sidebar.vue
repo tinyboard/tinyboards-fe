@@ -101,7 +101,7 @@ const settings = ref(JSON.parse(JSON.stringify(board)));
 
 definePageMeta({
     hasAuthRequired: true,
-    alias: ["/+:board/mod/s", "/+:board/mod/sidebar"],
+    alias: ["/:board/mod/s", "/:board/mod/sidebar"],
     isLeftNavbarDisabled: true,
 });
 

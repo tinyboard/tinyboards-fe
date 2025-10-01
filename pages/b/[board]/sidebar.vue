@@ -142,7 +142,7 @@ const mods = board.moderators;
 
 
 definePageMeta({
-    alias: ["/+:board/s", "/+:board/sidebar"],
+    alias: ["/:board/s", "/:board/sidebar"],
     key: (route) => route.fullPath,
 });
 

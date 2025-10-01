@@ -449,7 +449,7 @@ const router = useRouter();
 
 definePageMeta({
     //hasAuthRequired: true,
-    alias: ["/+:board/mod/m", "/+:board/mod/mods"],
+    alias: ["/:board/mod/m", "/:board/mod/mods"],
     isLeftNavbarDisabled: true,
     //maxWidth: '5xl'
 });

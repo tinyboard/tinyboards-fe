@@ -32,6 +32,7 @@ export async function useFetchUser(username: string, query = {}) {
         banner
         profileBackground
         bio
+        bioHTML
         isAdmin
         isBanned
         creationDate
