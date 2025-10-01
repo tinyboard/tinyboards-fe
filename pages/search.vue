@@ -89,7 +89,7 @@
 					</div>
 					<!-- Boards -->
 					<div v-else-if="type === 'boards' && boards?.length" class="flex flex-col space-y-2 bg-white dark:bg-gray-950 border-y sm:border dark:border-gray-800 sm:rounded-md sm:shadow-inner-xs p-4">
-						<NuxtLink v-for="board in boards" :key="board.id" :to="`/+${board.name}`" class="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-md">
+						<NuxtLink v-for="board in boards" :key="board.id" :to="`/b/${board.name}`" class="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-md">
 							<img v-if="board.icon" :src="board.icon" class="w-12 h-12 rounded-md object-cover" />
 							<div v-else class="w-12 h-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
 								<span class="text-xl font-bold text-gray-500 dark:text-gray-400">{{ board.name[0].toUpperCase() }}</span>
