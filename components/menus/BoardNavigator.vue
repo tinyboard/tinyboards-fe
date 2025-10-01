@@ -51,7 +51,7 @@
                             <path d="M7 14a6 6 0 0 0 -3 6a6 6 0 0 0 6 -3" />
                             <path d="M15 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                         </svg>
-                        <span>Go to +{{ searchQuery }}</span>
+                        <span>Go to {{ searchQuery }}</span>
                     </NuxtLink>
                     </MenuItem>
                 </div>

@@ -84,7 +84,7 @@
                                                                     : 'text-gray-800 dark:text-gray-100',
                                                             ]"
                                                         >
-                                                            Pin to +{{
+                                                            Pin to {{
                                                                 board.name
                                                             }}
                                                             as mod

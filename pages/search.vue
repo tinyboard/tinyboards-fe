@@ -95,11 +95,11 @@
 								<span class="text-xl font-bold text-gray-500 dark:text-gray-400">{{ board.name[0].toUpperCase() }}</span>
 							</div>
 							<div class="flex-1">
-								<strong class="text-gray-900 dark:text-gray-100">+{{ board.name }}</strong>
+								<strong class="text-gray-900 dark:text-gray-100">{{ board.name }}</strong>
 								<p class="text-sm text-gray-600 dark:text-gray-400">{{ board.title }}</p>
 								<p v-if="board.description" class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ board.description }}</p>
 								<div class="flex gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
-									<span>{{ board.subscriberCount }} subscribers</span>
+									<span>{{ board.subscribers }} subscribers</span>
 									<span>{{ board.postCount }} posts</span>
 								</div>
 							</div>
@@ -284,7 +284,7 @@
 					description
 					icon
 					banner
-					subscriberCount
+					subscribers
 					postCount
 					commentCount
 					creationDate
