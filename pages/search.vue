@@ -148,7 +148,7 @@
 
 	// Fetch search results.
 	const { data: results, pending, error, refresh } = await useGraphQLQuery(`
-		query searchContent($q: String!, $searchType: String!, $page: Int!, $limit: Int!) {
+		query searchContent($q: String!, $searchType: SearchType, $page: Int, $limit: Int) {
 			searchContent(q: $q, searchType: $searchType, page: $page, limit: $limit) {
 				posts {
 					id
@@ -228,13 +228,36 @@
 						titleChunk
 					}
 				}
-				total_count
+				users {
+					id
+					name
+					displayName
+					avatar
+					bio
+					isAdmin
+					creationDate
+					rep
+					postCount
+					commentCount
+				}
+				boards {
+					id
+					name
+					title
+					description
+					icon
+					banner
+					subscriberCount
+					postCount
+					commentCount
+					creationDate
+				}
 			}
 		}
 	`, {
 		variables: {
 			q: route.query?.query || '',
-			searchType: type.value.toUpperCase(),
+			searchType: type.value,
 			page: page.value,
 			limit: limit.value
 		}
