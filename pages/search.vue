@@ -43,9 +43,9 @@
 						</div>
 					</div>
 					<!-- Sorts -->
-					<div class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border shadow-inner-white sm:rounded-md">
-						<MenusSort :sorts="type === 'post' ? postSorts : commentSorts"/>
-						<div v-if="type !== 'comment'" class="ml-auto flex space-x-2">
+					<div v-if="type === 'posts' || type === 'comments'" class="flex items-center mb-4 p-2.5 sm:p-4 bg-gray-100 border-y sm:border shadow-inner-white sm:rounded-md">
+						<MenusSort :sorts="type === 'posts' ? postSorts : commentSorts"/>
+						<div v-if="type === 'posts'" class="ml-auto flex space-x-2">
                         <button class="ml-auto" @click="preferCardView = true">
                               <!-- Rows Icon -->
                               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" :class="preferCardView ? 'text-red-500' : 'text-gray-500'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -65,21 +65,58 @@
                   </div>
 					</div>
 					<!-- Posts -->
-               <LazyListsPosts v-if="type !== 'comment' && posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
+               <LazyListsPosts v-if="type === 'posts' && posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending" :hasError="error"/>
 					<!-- Comments -->
-					<LazyListsComments v-else-if="results?.searchContent?.comments?.length" :comments="results.searchContent.comments" class="p-4 bg-white md:border md:rounded-md md:shadow-inner-white"/>
+					<LazyListsComments v-else-if="type === 'comments' && comments?.length" :comments="comments" class="p-4 bg-white dark:bg-gray-950 md:border dark:border-gray-800 md:rounded-md md:shadow-inner-white"/>
+					<!-- Users -->
+					<div v-else-if="type === 'users' && users?.length" class="flex flex-col space-y-2 bg-white dark:bg-gray-950 border-y sm:border dark:border-gray-800 sm:rounded-md sm:shadow-inner-xs p-4">
+						<NuxtLink v-for="user in users" :key="user.id" :to="`/@${user.name}`" class="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-md">
+							<img :src="user.avatar || 'https://placekitten.com/48/48'" class="w-12 h-12 rounded-full object-cover" />
+							<div class="flex-1">
+								<div class="flex items-center gap-2">
+									<strong class="text-gray-900 dark:text-gray-100">{{ user.displayName || user.name }}</strong>
+									<span v-if="user.isAdmin" class="badge badge-red">Admin</span>
+								</div>
+								<p class="text-sm text-gray-500 dark:text-gray-400">@{{ user.name }}</p>
+								<p v-if="user.bio" class="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{{ user.bio }}</p>
+								<div class="flex gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+									<span>{{ user.postCount }} posts</span>
+									<span>{{ user.commentCount }} comments</span>
+									<span>{{ user.rep }} rep</span>
+								</div>
+							</div>
+						</NuxtLink>
+					</div>
+					<!-- Boards -->
+					<div v-else-if="type === 'boards' && boards?.length" class="flex flex-col space-y-2 bg-white dark:bg-gray-950 border-y sm:border dark:border-gray-800 sm:rounded-md sm:shadow-inner-xs p-4">
+						<NuxtLink v-for="board in boards" :key="board.id" :to="`/+${board.name}`" class="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-md">
+							<img v-if="board.icon" :src="board.icon" class="w-12 h-12 rounded-md object-cover" />
+							<div v-else class="w-12 h-12 rounded-md bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+								<span class="text-xl font-bold text-gray-500 dark:text-gray-400">{{ board.name[0].toUpperCase() }}</span>
+							</div>
+							<div class="flex-1">
+								<strong class="text-gray-900 dark:text-gray-100">+{{ board.name }}</strong>
+								<p class="text-sm text-gray-600 dark:text-gray-400">{{ board.title }}</p>
+								<p v-if="board.description" class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ board.description }}</p>
+								<div class="flex gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+									<span>{{ board.subscriberCount }} subscribers</span>
+									<span>{{ board.postCount }} posts</span>
+								</div>
+							</div>
+						</NuxtLink>
+					</div>
 					<!-- Empty State -->
-					<div v-else-if="!error" class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+					<div v-else-if="!error && !pending" class="px-4 py-24 text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-950 border-y sm:border dark:border-gray-800 sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
-								We could not find any {{ `${type}s` }} matching "{{ route.query?.query }}"
+								We could not find any {{ type }} matching "{{ route.query?.query }}"
 							</span>
 							<br/>
 							Try searching something else
 						</p>
 					</div>
 					<!-- Error State -->
-					<div v-else class="px-4 py-24 text-center text-gray-500 bg-white border-y sm:border sm:rounded-md sm:shadow-inner-xs">
+					<div v-else-if="error" class="px-4 py-24 text-center text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-950 border-y sm:border dark:border-gray-800 sm:rounded-md sm:shadow-inner-xs">
 						<p>
 							<span class="font-medium">
 								There was an error fetching results for "{{ route.query?.query }}".
@@ -137,11 +174,11 @@
 	};
 
 	// Search params.
-	const type = computed(() => route.query?.type || 'post');
+	const type = computed(() => route.query?.type || 'posts');
 	const text = ref(route.query?.query);
 	const sort = ref(route.query?.sort) || 'new';
 	const hasNsfw = ref(false);
-	const limit = computed(() => route.query?.limit || 5);
+	const limit = computed(() => route.query?.limit || 20);
 
 	// Posts & comments store.
 	const postStore = usePostsStore();
@@ -264,21 +301,17 @@
 	});
 
 	const posts = computed(() => results.value?.searchContent?.posts || []);
+	const comments = computed(() => results.value?.searchContent?.comments || []);
+	const users = computed(() => results.value?.searchContent?.users || []);
+	const boards = computed(() => results.value?.searchContent?.boards || []);
+
 	postStore.posts = posts.value;
 
-	const totalPages = computed(() => {
-		if (type.value === 'post') {
-			return Math.ceil(posts.length / results.value.total_count) || 1;
-		} else {
-			return Math.ceil(results.value.comments.length / results.value.total_count) || 1;
-		}
-	});
-
 	// Handle search input.
-	const submitSearch = (text) => router.push({ 
+	const submitSearch = (text) => router.push({
 		path: '/search',
 		query: {
-			type: type.value ?? 'post',
+			type: type.value ?? 'posts',
 			query: text,
 			sort: sort.value
 		}
@@ -286,9 +319,11 @@
 
 	// Links for sub navbar.
 	const links = [
-		{ name: 'Posts', href: { query: { query: text.value || '', type: 'post' } } },
-		{ name: 'Comments', href: { query: { query: text.value || '', type: 'comment' } } },
-		];
+		{ name: 'Posts', href: { query: { query: text.value || '', type: 'posts' } } },
+		{ name: 'Comments', href: { query: { query: text.value || '', type: 'comments' } } },
+		{ name: 'Users', href: { query: { query: text.value || '', type: 'users' } } },
+		{ name: 'Boards', href: { query: { query: text.value || '', type: 'boards' } } },
+	];
 
 	// Post sort options.
 	const postSorts = [

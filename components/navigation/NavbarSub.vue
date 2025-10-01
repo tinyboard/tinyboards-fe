@@ -4,7 +4,7 @@
 			<ul class="menu flex items-center h-full overflow-x-auto scrollbar-hidden box-content p-[1px] m-[-1px]">
 				<li class="menu-item flex-shrink-0 h-full text-sm leading-6" v-for="link in links" :key="link.name">
 					<NuxtLink :external="link.isExternal" :to="link.href" custom v-slot="{ href, navigate, isActive }">
-						<a :href="href" :target="link.target" @click="navigate" :class="[isActive && !disableActiveClass ? 'text-primary shadow-[0_1px_0_rgba(var(--color-primary))]' : 'text-gray-500 hover:text-primary', 'inline-flex items-center h-full px-4']">
+						<a :href="href" :target="link.target" @click="navigate" :class="[isActive && !disableActiveClass ? 'text-primary font-semibold border-b-2 border-primary' : 'text-gray-500 hover:text-primary border-b-2 border-transparent', 'inline-flex items-center h-full px-4 transition-colors']">
 							{{ link.name }}
 						</a>
 					</NuxtLink>
