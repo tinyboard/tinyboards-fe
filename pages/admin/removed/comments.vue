@@ -125,10 +125,10 @@ const route = useRoute();
 const page = computed(() => Number.parseInt(route.query.page) || 1);
 const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
-// Fetch comments using GraphQL (client-side only)
+// Fetch removed comments using GraphQL
 const { data: commentsData, pending, error, refresh } = await useGraphQLQuery(`
-	query GetComments($postId: Int, $limit: Int, $page: Int) {
-		comments(postId: $postId, limit: $limit, page: $page) {
+	query GetRemovedComments($limit: Int!, $page: Int!, $removedOnly: Boolean!) {
+		comments(limit: $limit, page: $page, removedOnly: $removedOnly) {
 			id
 			body
 			bodyHTML
@@ -149,20 +149,22 @@ const { data: commentsData, pending, error, refresh } = await useGraphQLQuery(`
 			upvotes
 			downvotes
 			score
+			myVote
+			creatorVote
 		}
 	}
 `, {
 	variables: {
-		postId: null, // Get all comments
-		limit: limit.value * 5, // Get more to filter removed ones
-		page: page.value
+		limit: limit.value,
+		page: page.value,
+		removedOnly: true
 	},
 	ssr: false  // Force client-side execution for authentication
 });
 
-// Filter only removed comments
+// Backend already filters for removed comments
 const removedComments = computed(() => {
-	return commentsData.value?.comments?.filter(comment => comment.isRemoved) || [];
+	return commentsData.value?.comments || [];
 });
 
 const totalCount = computed(() => removedComments.value.length);

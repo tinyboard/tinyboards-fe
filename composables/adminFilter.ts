@@ -1,16 +1,24 @@
 import { ref, computed } from 'vue';
 import { useLoggedInUser } from '@/stores/StoreAuth';
+import { useBoardStore } from '@/stores/StoreBoard';
 import { requirePermission } from '@/composables/admin';
+import { requireModPermission } from '@/composables/mod';
 
 /**
  * Admin filter for hiding deleted/removed content
  * This composable provides a reactive filter state that persists across sessions
+ * Works for both site admins and board moderators
  */
 export function useAdminContentFilter() {
   const userStore = useLoggedInUser();
+  const boardStore = useBoardStore();
 
-  // Check if user is admin or mod
-  const canModerate = computed(() => requirePermission('content'));
+  // Check if user is admin or mod (board-specific if on board page)
+  const canModerate = computed(() => {
+    const isAdmin = requirePermission('content');
+    const isBoardMod = boardStore.hasBoard && requireModPermission(boardStore.modPermissions, 'content');
+    return isAdmin || isBoardMod;
+  });
 
   // Get filter preference from cookie (defaults to false - show all content)
   const hideDeletedContent = useCookie('admin_hide_deleted', {
@@ -28,14 +36,19 @@ export function useAdminContentFilter() {
     const userId = userStore.user?.id;
 
     return posts.filter(post => {
-      // Hide posts deleted by the author from the author's own view
-      if (post.isDeleted && userId === post.creator?.id) {
-        return false;
-      }
-
-      // Apply admin filter if enabled
+      // If user is admin/mod with filter ON, hide all deleted/removed content
       if (canModerate.value && hideDeletedContent.value) {
         return !post.isDeleted && !post.isRemoved;
+      }
+
+      // If user is admin/mod with filter OFF, show everything (including own deleted posts)
+      if (canModerate.value && !hideDeletedContent.value) {
+        return true;
+      }
+
+      // Regular users: hide posts they deleted themselves
+      if (post.isDeleted && userId === post.creator?.id) {
+        return false;
       }
 
       return true;

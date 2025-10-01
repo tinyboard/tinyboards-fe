@@ -81,8 +81,8 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 25);
 
 // Fetch removed posts using GraphQL (client-side only)
 const { data: postsData, pending, error, refresh } = await useGraphQLQuery(`
-	query GetRemovedPosts($limit: Int!, $page: Int!) {
-		posts(limit: $limit, page: $page, listingType: all, sort: new) {
+	query GetRemovedPosts($limit: Int!, $page: Int!, $sort: SortType!, $listingType: ListingType!, $removedOnly: Boolean!) {
+		listPosts(limit: $limit, page: $page, sort: $sort, listingType: $listingType, removedOnly: $removedOnly) {
 			id
 			title
 			body
@@ -105,24 +105,30 @@ const { data: postsData, pending, error, refresh } = await useGraphQLQuery(`
 			isLocked
 			isRemoved
 			isDeleted
-			isFeatured
+			featuredBoard
+			featuredLocal
 			upvotes
 			downvotes
 			score
+			myVote
+			creatorVote
 			commentCount
 		}
 	}
 `, {
 	variables: {
 		limit: limit.value,
-		page: page.value
+		page: page.value,
+		sort: 'NEW',
+		listingType: 'ALL',
+		removedOnly: true
 	},
 	ssr: false  // Force client-side execution for authentication
 });
 
-// Filter only removed posts
+// Backend already filters for removed posts
 const removedPosts = computed(() => {
-	return postsData.value?.posts?.filter(post => post.isRemoved) || [];
+	return postsData.value?.listPosts || [];
 });
 
 const totalCount = computed(() => removedPosts.value.length);

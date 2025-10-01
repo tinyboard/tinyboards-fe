@@ -100,6 +100,7 @@
                             class="flex items-center mb-4 p-2.5 sm:px-4 sm:py-3 bg-white dark:bg-gray-950 border-b sm:border sm:shadow-inner-white sm:rounded-md dark:border-gray-800 dark:shadow-none"
                         >
                             <MenusSort />
+                            <MenusAdminContentFilter class="ml-4" />
                             <div class="ml-auto flex space-x-2">
                                 <button
                                     class="ml-auto"
