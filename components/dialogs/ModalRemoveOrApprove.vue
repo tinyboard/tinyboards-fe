@@ -106,6 +106,8 @@
             mutation approvePost($postId: Int!) {
               approvePost(postId: $postId) {
                 success
+                contentId
+                message
               }
             }
           `, { postId: id });
@@ -114,20 +116,37 @@
             mutation approveComment($commentId: Int!) {
               approveComment(commentId: $commentId) {
                 success
+                contentId
+                message
               }
             }
           `, { commentId: id });
         }
 
         const mutationKey = type === 'post' ? 'approvePost' : 'approveComment';
-        if (result.data?.[mutationKey]?.success) {
+        const mutationData = result.data?.[mutationKey];
+
+        // Log for debugging
+        if (process.dev) {
+          console.log('Approve mutation result:', result);
+          console.log('Mutation data:', mutationData);
+        }
+
+        if (mutationData?.success) {
           toast.addNotification({
             header: `${type} approved`,
-            message: `The ${type} was successfully approved.`,
+            message: mutationData.message || `The ${type} was successfully approved.`,
             type: 'success'
           });
+
+          // Refresh the page to update the list
+          if (process.client) {
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          }
         } else {
-          throw new Error(`Failed to approve ${type}`);
+          throw new Error(mutationData?.message || `Failed to approve ${type}`);
         }
       } else {
         // Use removal mutations
@@ -164,11 +183,39 @@
       }
     } catch (error) {
       console.error(`Error with ${type} operation:`, error);
-      toast.addNotification({
-        header: 'Operation failed',
-        message: `Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
-        type: 'error'
-      });
+
+      // Check if we still got valid data despite the error
+      // This can happen if GraphQL returns both data and errors
+      let wasSuccessful = false;
+
+      if (props.options.approve && error.data) {
+        const mutationKey = type === 'post' ? 'approvePost' : 'approveComment';
+        const mutationData = error.data?.[mutationKey];
+
+        if (mutationData?.success) {
+          wasSuccessful = true;
+          toast.addNotification({
+            header: `${type} approved`,
+            message: mutationData.message || `The ${type} was successfully approved.`,
+            type: 'success'
+          });
+
+          // Refresh the page to update the list
+          if (process.client) {
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          }
+        }
+      }
+
+      if (!wasSuccessful) {
+        toast.addNotification({
+          header: 'Operation failed',
+          message: error.message || `Failed to ${props.options.approve ? 'approve' : 'remove'} ${type}. Please try again.`,
+          type: 'error'
+        });
+      }
     } finally {
       isLoading.value = false;
       modalStore.closeModal();

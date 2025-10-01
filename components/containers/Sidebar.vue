@@ -107,28 +107,24 @@ const canCreateBoard = (!site.boardCreationAdminOnly && isAuthed) || (site.board
 // Define spotlight users
 // Use GraphQL query instead of REST API
 const query_str = `
-  query ListMembers($page: Int!, $limit: Int!, $sort: String!, $listingType: String!) {
-    listMembers(page: $page, limit: $limit, sort: $sort, listingType: $listingType) {
-      members {
-        id
-        name
-        displayName
-        avatar
-        bio
-        creationDate
-        reputation
-        adminLevel
-      }
+  query ListUsers($limit: Int!, $sort: UserSortType!) {
+    listUsers(limit: $limit, sort: $sort) {
+      id
+      name
+      displayName
+      avatar
+      bio
+      creationDate
+      reputation
+      adminLevel
     }
   }
 `;
 
 const { data: usersData, error } = await useGraphQLQuery(query_str, {
   variables: {
-    page: 1,
     limit: 8,
-    sort: 'new',
-    listingType: 'all'
+    sort: 'new'
   }
 });
 
@@ -137,10 +133,10 @@ const refresh = () => Promise.resolve();
 
 // Transform GraphQL response to match expected format
 const users = computed(() => {
-  if (!usersData.value?.listMembers?.members) return { members: [] };
+  if (!usersData.value?.listUsers) return { members: [] };
 
   return {
-    members: usersData.value.listMembers.members.map(user => ({
+    members: usersData.value.listUsers.map(user => ({
       id: user.id,
       name: user.name,
       displayName: user.displayName,
