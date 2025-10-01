@@ -37,8 +37,8 @@
 				</span>
 			</div>
 			<!-- Rows -->
-			<ul v-if="members?.listMembers?.members?.length" class="flex flex-col">
-				<li v-for="v in members.listMembers.members" :key="v.id"
+			<ul v-if="members?.listUsers?.length" class="flex flex-col">
+				<li v-for="v in members.listUsers" :key="v.id"
 					class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
 					:class="v.isBanned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
 					<NuxtLink external :to="`/@${v.name}`" target="_blank" class="col-span-3">
@@ -136,30 +136,29 @@ const searchTerm = ref(route.query.search_term || "");
 
 // Fetch users using GraphQL with explicit query string (client-side only)
 const { data: members, pending, error, refresh } = await useGraphQLQuery(`
-	query ListMembers($limit: Int!, $page: Int!, $search: String) {
-		listMembers(limit: $limit, page: $page, search: $search) {
-			members {
-				id
-				name
-				avatar
-				adminLevel
-				isBanned
-				creationDate
-			}
-			total_count
+	query ListMembers($limit: Int, $page: Int, $searchTerm: String, $listingType: UserListingType, $sort: UserSortType) {
+		listUsers(limit: $limit, page: $page, searchTerm: $searchTerm, listingType: $listingType, sort: $sort) {
+			id
+			name
+			avatar
+			adminLevel
+			isBanned
+			creationDate
 		}
 	}
 `, {
 	variables: {
 		limit: limit.value,
 		page: page.value,
-		search: route.query.search_term || undefined
+		searchTerm: route.query.search_term || undefined,
+		listingType: undefined,
+		sort: undefined
 	},
 	ssr: false  // Force client-side execution for authentication
 });
 
 const totalPages = computed(() => {
-	return Math.ceil((members.value?.listMembers?.total_count || 0) / limit.value) || 1;
+	return Math.ceil((members.value?.listUsers?.length || 0) / limit.value) || 1;
 })
 
 watch(

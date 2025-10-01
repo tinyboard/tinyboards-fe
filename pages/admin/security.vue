@@ -263,14 +263,6 @@ const submitSettings = async () => {
 	try {
 		// Map the field names to GraphQL field names
 		const input = {
-			// Keep existing site info
-			name: settings.value.name,
-			description: settings.value.description,
-			icon: settings.value.icon,
-			primaryColor: settings.value.primaryColor,
-			secondaryColor: settings.value.secondaryColor,
-			hoverColor: settings.value.hoverColor,
-
 			// Security-related settings
 			registrationMode: settings.value.registrationMode,
 			requireEmailVerification: settings.value.requireEmailVerification,
@@ -280,39 +272,7 @@ const submitSettings = async () => {
 			openRegistration: !settings.value.disable_registrations && settings.value.registrationMode === 'OpenMode',
 			inviteOnly: settings.value.registrationMode === 'InviteMode',
 			requireApplication: settings.value.registrationMode === 'ApplicationMode',
-			applicationQuestion: settings.value.applicationQuestion,
-
-			// Keep other existing settings to prevent overwrites
-			enableDownvotes: settings.value.enableDownvotes,
-			enableNSFW: settings.value.enableNSFW,
-			boardCreationAdminOnly: settings.value.boardCreationAdminOnly,
-			defaultTheme: settings.value.defaultTheme,
-			defaultPostListingType: settings.value.defaultPostListingType,
-			defaultAvatar: settings.value.defaultAvatar,
-			legalInformation: settings.value.legalInformation,
-			hideModlogModNames: settings.value.hideModlogModNames,
-			applicationEmailAdmins: settings.value.applicationEmailAdmins,
-			captchaEnabled: settings.value.captchaEnabled,
-			captchaDifficulty: settings.value.captchaDifficulty,
-			reportsEmailAdmins: settings.value.reportsEmailAdmins,
-			welcomeMessage: settings.value.welcomeMessage,
-			boardsEnabled: settings.value.boardsEnabled,
-			boardCreationMode: settings.value.boardCreationMode,
-			trustedUserMinReputation: settings.value.trustedUserMinReputation,
-			trustedUserMinAccountAgeDays: settings.value.trustedUserMinAccountAgeDays,
-			trustedUserManualApproval: settings.value.trustedUserManualApproval,
-			trustedUserMinPosts: settings.value.trustedUserMinPosts,
-			allowedPostTypes: settings.value.allowedPostTypes,
-			enableNSFWTagging: settings.value.enableNSFWTagging,
-			wordFilterEnabled: settings.value.wordFilterEnabled,
-			filteredWords: settings.value.filteredWords,
-			wordFilterAppliesToPosts: settings.value.wordFilterAppliesToPosts,
-			wordFilterAppliesToComments: settings.value.wordFilterAppliesToComments,
-			wordFilterAppliesToUsernames: settings.value.wordFilterAppliesToUsernames,
-			linkFilterEnabled: settings.value.linkFilterEnabled,
-			bannedDomains: settings.value.bannedDomains,
-			approvedImageHosts: settings.value.approvedImageHosts,
-			imageEmbedHostsOnly: settings.value.imageEmbedHostsOnly
+			applicationQuestion: settings.value.applicationQuestion
 		};
 
 		const { data: result } = await useGraphQLMutation(`

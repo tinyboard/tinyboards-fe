@@ -59,8 +59,8 @@
                 </span>
             </div>
             <!-- Rows -->
-            <ul v-if="members?.listMembers?.members?.length" class="flex flex-col">
-                <li v-for="v in members.listMembers.members" :key="v?.id || Math.random()"
+            <ul v-if="filteredAdmins?.length" class="flex flex-col">
+                <li v-for="v in filteredAdmins" :key="v?.id || Math.random()"
                     class="relative group grid grid-cols-6 px-4 py-2 border-b last:border-0 shadow-inner-white"
                     :class="v?.isBanned ? 'bg-red-100 hover:bg-red-200' : 'odd:bg-gray-50 hover:bg-gray-100'">
                     <NuxtLink external :to="`/@${v?.name || 'unknown'}`" target="_blank" class="col-span-3">
@@ -159,37 +159,23 @@ const searchTerm = ref(route.query.search_term || "");
 
 // Fetch admin users using GraphQL with explicit query string
 const { data: members, pending, error, refresh } = await useGraphQLQuery(`
-    query ListAdminMembers($limit: Int!, $page: Int!, $search: String) {
-        listMembers(limit: $limit, page: $page, search: $search) {
-            members {
-                id
-                name
-                avatar
-                adminLevel
-                isBanned
-                creationDate
-            }
-            total_count
+    query ListAdminMembers($limit: Int, $page: Int, $searchTerm: String, $listingType: UserListingType, $sort: UserSortType) {
+        listUsers(limit: $limit, page: $page, searchTerm: $searchTerm, listingType: $listingType, sort: $sort) {
+            id
+            name
+            avatar
+            adminLevel
+            isBanned
+            creationDate
         }
     }
 `, {
     variables: {
         limit: limit.value,
         page: page.value,
-        search: route.query.search_term || undefined
-    },
-    transform: (data) => {
-        // Filter to only show admin users
-        if (data?.listMembers?.members) {
-            return {
-                ...data,
-                listMembers: {
-                    ...data.listMembers,
-                    members: data.listMembers.members.filter(member => member?.adminLevel > 0)
-                }
-            };
-        }
-        return data;
+        searchTerm: route.query.search_term || undefined,
+        listingType: undefined,
+        sort: undefined
     }
 });
 
@@ -202,8 +188,13 @@ if (error.value) {
     });
 }
 
+// Filter to only show admin users
+const filteredAdmins = computed(() => {
+    return (members.value?.listUsers || []).filter(member => member?.adminLevel > 0);
+});
+
 const totalPages = computed(() => {
-    return Math.ceil((members.value?.listMembers?.total_count || 0) / limit.value) || 1;
+    return Math.ceil((filteredAdmins.value?.length || 0) / limit.value) || 1;
 })
 
 watch(

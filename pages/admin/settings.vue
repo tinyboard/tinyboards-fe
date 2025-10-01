@@ -120,7 +120,7 @@
 							<textarea id="welcome" name="welcome" maxlength="255" rows="4"
 								class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
 								:placeholder="`Welcome to ${settings.name}! Here are the top things to do here...`"
-								v-model="settings.welcome_message" />
+								v-model="settings.welcomeMessage" />
 							<div class="flex justify-between">
 								<p class="mt-1 flex justify-end items-center text-sm text-gray-400">
 									<svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24" height="24"
@@ -134,8 +134,8 @@
 									Short message users receive after signing up. Markdown supported.
 								</p>
 								<p class="mt-2 text-xs"
-									:class="settings.welcome_message?.length ?? 0 > 230 ? 'text-red-600' : 'text-gray-500'">{{
-										settings.welcome_message?.length ?? 0 }} / 255</p>
+									:class="settings.welcomeMessage?.length ?? 0 > 230 ? 'text-red-600' : 'text-gray-500'">{{
+										settings.welcomeMessage?.length ?? 0 }} / 255</p>
 							</div>
 						</div>
 					</div>
@@ -147,7 +147,7 @@
 						</div>
 						<!-- Input -->
 						<div class="mt-4 md:col-span-2 md:mt-0">
-							<select v-model="settings.registration_mode" 
+							<select v-model="settings.registrationMode"
 								class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
 								<option value="Open">Open Registration</option>
 								<option value="OpenWithEmailVerification">Open with Email Verification</option>
@@ -160,10 +160,10 @@
 								Controls how new users can register on your site.
 							</p>
 							<!-- Application Question (only show when RequireApplication is selected) -->
-							<div v-if="settings.registration_mode === 'RequireApplication'" class="mt-4">
+							<div v-if="settings.registrationMode === 'RequireApplication'" class="mt-4">
 								<label class="block text-sm font-medium text-gray-700 mb-2">Application Question</label>
-								<textarea 
-									v-model="settings.application_question"
+								<textarea
+									v-model="settings.applicationQuestion"
 									rows="3"
 									class="block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
 									placeholder="Why do you want to join this community?"
@@ -209,19 +209,18 @@ const { data: siteData, pending, error, refresh } = await useGraphQLQuery(`
     site {
       name
       description
-      welcome_message
+      welcomeMessage
       icon
-      enable_downvotes
-      primary_color
-      secondary_color
-      hover_color
-      site_mode
-      registration_mode
-      enable_nsfw
-      application_question
-      private_instance
-      email_verification_required
-      default_avatar
+      enableDownvotes
+      primaryColor
+      secondaryColor
+      hoverColor
+      registrationMode
+      enableNSFW
+      applicationQuestion
+      privateInstance
+      requireEmailVerification
+      defaultAvatar
     }
   }
 `);
@@ -250,9 +249,9 @@ if (data.value) {
 	settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
 };
 
-const primaryColor = ref(toHexCode(settings.value.primary_color));
-const secondaryColor = ref(toHexCode(settings.value.secondary_color));
-const hoverColor = ref(toHexCode(settings.value.hover_color));
+const primaryColor = ref(toHexCode(settings.value.primaryColor));
+const secondaryColor = ref(toHexCode(settings.value.secondaryColor));
+const hoverColor = ref(toHexCode(settings.value.hoverColor));
 
 const icon = ref('');
 
@@ -301,19 +300,18 @@ const submitSettings = async () => {
 					) {
 						name
 						description
-						welcome_message
+						welcomeMessage
 						icon
-						enable_downvotes
-						primary_color
-						secondary_color
-						hover_color
-						site_mode
-						registration_mode
-						enable_nsfw
-						application_question
-						private_instance
-						email_verification_required
-						default_avatar
+						enableDownvotes
+						primaryColor
+						secondaryColor
+						hoverColor
+						registrationMode
+						enableNSFW
+						applicationQuestion
+						privateInstance
+						requireEmailVerification
+						defaultAvatar
 					}
 				}
 			`,
@@ -321,18 +319,17 @@ const submitSettings = async () => {
 				input: {
 					name: settings.value.name,
 					description: settings.value.description,
-					welcome_message: settings.value.welcome_message,
-					enable_downvotes: settings.value.enable_downvotes,
-					primary_color: toRGB(primaryColor.value),
-					secondary_color: toRGB(secondaryColor.value),
-					hover_color: toRGB(hoverColor.value),
-					site_mode: settings.value.site_mode,
-					registration_mode: settings.value.registration_mode,
-					enable_nsfw: settings.value.enable_nsfw,
-					application_question: settings.value.application_question,
-					private_instance: settings.value.private_instance,
-					email_verification_required: settings.value.email_verification_required,
-					default_avatar: settings.value.default_avatar
+					welcomeMessage: settings.value.welcomeMessage,
+					enableDownvotes: settings.value.enableDownvotes,
+					primaryColor: toRGB(primaryColor.value),
+					secondaryColor: toRGB(secondaryColor.value),
+					hoverColor: toRGB(hoverColor.value),
+					registrationMode: settings.value.registrationMode,
+					enableNsfw: settings.value.enableNSFW,
+					applicationQuestion: settings.value.applicationQuestion,
+					privateInstance: settings.value.privateInstance,
+					requireEmailVerification: settings.value.requireEmailVerification,
+					defaultAvatar: settings.value.defaultAvatar
 				},
 				iconFile: null
 			},

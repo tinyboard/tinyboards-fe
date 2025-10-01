@@ -299,14 +299,15 @@ const selectedApplications = ref([]);
 
 // Fetch applications using GraphQL with explicit query string
 const { data: applications, pending, error, refresh } = await useGraphQLQuery(`
-	query ListRegistrationApplications($limit: Int!, $offset: Int!) {
+	query ListRegistrationApplications($limit: Int, $offset: Int) {
 		listRegistrationApplications(limit: $limit, offset: $offset) {
 			id
 			username
 			userId
 			answer
 			creationDate
-			status
+			adminId
+			denyReason
 		}
 	}
 `, {
