@@ -85,16 +85,14 @@ watch(
 
         // Use GraphQL query instead of REST API
         const query_str = `
-            query ListMembers($page: Int!, $limit: Int!, $search: String, $listingType: String!, $sort: String!, $showBanned: Boolean) {
-                listMembers(page: $page, limit: $limit, search: $search, listingType: $listingType, sort: $sort) {
-                    members {
-                        id
-                        name
-                        displayName
-                        avatar
-                        bio
-                        isBanned
-                    }
+            query ListUsers($page: Int, $limit: Int, $searchTerm: String) {
+                listUsers(page: $page, limit: $limit, searchTerm: $searchTerm) {
+                    id
+                    name
+                    displayName
+                    avatar
+                    bio
+                    isBanned
                 }
             }
         `;
@@ -103,10 +101,7 @@ watch(
             variables: {
                 page: params.page,
                 limit: params.limit,
-                search: params.search_term,
-                listingType: 'all',
-                sort: 'name',
-                showBanned: allowBanned
+                searchTerm: params.search_term
             }
         });
 
@@ -114,15 +109,18 @@ watch(
         const refresh = () => Promise.resolve();
 
         // Transform GraphQL response to match expected format
-        if (data.value?.listMembers?.members) {
-            users.value = data.value.listMembers.members.map(user => ({
-                user: {
-                    name: user.name,
-                    displayName: user.displayName,
-                    avatar: user.avatar,
-                    bio: user.bio
-                }
-            }));
+        if (data.value?.listUsers) {
+            users.value = data.value.listUsers
+                .filter(user => allowBanned || !user.isBanned)
+                .map(user => ({
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        displayName: user.displayName,
+                        avatar: user.avatar,
+                        bio: user.bio
+                    }
+                }));
         } else {
             users.value = [];
         }

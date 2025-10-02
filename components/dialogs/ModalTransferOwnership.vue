@@ -219,15 +219,25 @@ const transfer = async () => {
 
         if (result.data?.transferBoardOwnership?.success) {
             // Show success toast
-            setTimeout(() => {
-                window.location.reload(true);
+            toast.addNotification({
+                header: "Ownership transferred",
+                message: 'So long!',
+                type: 'success'
+            });
 
-                toast.addNotification({
-                    header: "Ownership transferred",
-                    message: 'So long!',
-                    type: 'success'
-                });
-            }, 400);
+            // Close modal
+            modalStore.closeModal();
+
+            // Navigate to board after a short delay
+            const router = useRouter();
+            setTimeout(() => {
+                const boardName = props.options?.boardName;
+                if (boardName) {
+                    router.push(`/b/${boardName}`);
+                } else {
+                    router.push('/feed');
+                }
+            }, 500);
         } else {
             throw new Error('Transfer operation failed');
         }

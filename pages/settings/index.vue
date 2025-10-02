@@ -226,6 +226,9 @@ const [userResult, settingsResult] = await Promise.all([
 	useGraphQLQuery(settingsQuery)
 ]);
 
+// Extract refresh functions for later use
+const refreshUser = userResult.refresh;
+const refreshSettings = settingsResult.refresh;
 
 if (userResult.error.value) {
 	console.error('GraphQL Error in user query:', userResult.error.value);
@@ -457,13 +460,33 @@ const submitSettings = async () => {
 		const updateResult = result.data?.updateSettings;
 
 		if (updateResult) {
+			// Update local settings with the returned data
+			settings.value = {
+				...settings.value,
+				bio: updateResult.bio,
+				displayName: updateResult.displayName,
+				avatar: updateResult.avatar,
+				banner: updateResult.banner,
+				profileBackground: updateResult.profileBackground,
+				email: updateResult.email,
+				showBots: updateResult.showBots,
+				showNsfw: updateResult.showNSFW,
+				defaultListingType: updateResult.defaultListingType,
+				defaultSortType: updateResult.defaultSortType,
+				emailNotificationsEnabled: updateResult.emailNotificationsEnabled
+			};
+
+			// Clear image store
+			imageStore.purgeImages();
+
+			// Refresh queries to get latest data from server
+			await Promise.all([refreshUser(), refreshSettings()]);
+
 			toast.addNotification({
 				header: "Settings saved",
 				message: "Your profile settings have been updated successfully.",
 				type: "success"
 			});
-			// Refresh the page to show updated images
-			window.location.reload(true);
 		} else {
 			throw new Error("Failed to update settings");
 		}

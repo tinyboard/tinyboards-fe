@@ -139,12 +139,8 @@
             type: 'success'
           });
 
-          // Refresh the page to update the list
-          if (process.client) {
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          }
+          // Close modal
+          modalStore.closeModal();
         } else {
           throw new Error(mutationData?.message || `Failed to approve ${type}`);
         }
@@ -200,12 +196,8 @@
             type: 'success'
           });
 
-          // Refresh the page to update the list
-          if (process.client) {
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          }
+          // Close modal
+          modalStore.closeModal();
         }
       }
 

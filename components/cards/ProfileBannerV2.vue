@@ -144,28 +144,37 @@
                     </button>
                 </li>
             </ul>
-            <ul v-else-if="isAuthed" class="flex flex-row space-x-2 w-full text-center">
-                <li class="flex-grow" v-if="isSelf">
-                    <button class="button white w-full" @click="isEditing = true">
+            <ul v-else-if="isAuthed" class="flex flex-col space-y-2 w-full text-center">
+                <!-- Primary Actions -->
+                <li class="flex flex-row space-x-2">
+                    <button v-if="isSelf" class="button white w-full" @click="isEditing = true">
                         Edit my profile
                     </button>
-                </li>
-                <li class="flex-grow" v-if="!isSelf">
                     <button
-                        class="button white w-full"
+                        v-if="!isSelf"
+                        class="button white flex-grow"
                         @click="toggleFollow"
                         :disabled="isFollowLoading"
                     >
                         {{ followButtonText }}
                     </button>
-                </li>
-                <li class="flex-grow" v-if="!isSelf">
-                    <button class="button white w-full" disabled>
+                    <button v-if="!isSelf" class="button white flex-grow" disabled>
                         Send message
                     </button>
+                    <div v-if="!isSelf">
+                        <LazyMenusActionsProfile :user="user" :isAdmin="isAdmin" :isSelf="isSelf" :isLeft="true" />
+                    </div>
                 </li>
-                <li v-if="!isSelf">
-                    <LazyMenusActionsProfile :user="user" :isAdmin="isAdmin" :isSelf="isSelf" :isLeft="true" />
+                <!-- Admin: Board Creation Approval Button -->
+                <li v-if="isAdmin && !isSelf">
+                    <button
+                        class="button w-full"
+                        :class="isBoardCreationApproved ? 'red' : 'green'"
+                        @click="toggleBoardCreationApproval"
+                        :disabled="boardCreationApprovalLoading"
+                    >
+                        {{ boardCreationApprovalLoading ? 'Loading...' : (isBoardCreationApproved ? 'Revoke Board Creation' : 'Trust for Board Creation') }}
+                    </button>
                 </li>
             </ul>
         </div>
@@ -197,6 +206,10 @@ const isLoading = ref(false);
 const isFollowing = ref(false);
 const isFollowLoading = ref(false);
 const followStatusChecked = ref(false);
+
+// Board creation approval state
+const isBoardCreationApproved = ref(false);
+const boardCreationApprovalLoading = ref(false);
 
 const props = defineProps<{
     user: User;
@@ -344,9 +357,60 @@ const toggleFollow = async () => {
     }
 };
 
+// Toggle board creation approval (admin only)
+const toggleBoardCreationApproval = async () => {
+    if (!isAdmin || isSelf.value || boardCreationApprovalLoading.value) {
+        return;
+    }
+
+    boardCreationApprovalLoading.value = true;
+
+    try {
+        const newApprovalStatus = !isBoardCreationApproved.value;
+
+        // NOTE: This mutation needs to be implemented in the backend
+        const mutation = `
+            mutation UpdateUserBoardCreationApproval($userId: Int!, $approved: Bool!) {
+                updateUserBoardCreationApproval(userId: $userId, approved: $approved) {
+                    id
+                }
+            }
+        `;
+
+        const { data: result } = await useGraphQLMutation(mutation, {
+            variables: {
+                userId: props.user.id,
+                approved: newApprovalStatus
+            }
+        });
+
+        if (result.value?.updateUserBoardCreationApproval) {
+            isBoardCreationApproved.value = newApprovalStatus;
+            toast.addNotification({
+                header: newApprovalStatus ? "Trust granted" : "Trust revoked",
+                message: newApprovalStatus
+                    ? `@${props.user.name} can now create boards`
+                    : `@${props.user.name} can no longer create boards`,
+                type: "success"
+            });
+        }
+    } catch (error) {
+        console.error('Error updating board creation approval:', error);
+        toast.addNotification({
+            header: "Action failed",
+            message: "Could not update board creation approval. This feature requires backend implementation.",
+            type: "error"
+        });
+    } finally {
+        boardCreationApprovalLoading.value = false;
+    }
+};
+
 // Check follow status on component mount
 onMounted(() => {
     checkFollowStatus();
+    // Initialize boardCreationApproved from props
+    isBoardCreationApproved.value = props.user.boardCreationApproved ?? false;
 });
 
 // Settings
@@ -396,9 +460,27 @@ const submitSettings = async () => {
         isLoading.value = false;
 
         if (result.data?.updateSettings) {
-            if (process.client && typeof window !== 'undefined') {
-                window.location.reload();
-            }
+            // Update local user data
+            const updatedData = result.data.updateSettings;
+            Object.assign(user, {
+                displayName: updatedData.displayName,
+                bio: updatedData.bio,
+                avatar: updatedData.avatar,
+                banner: updatedData.banner,
+                profileBackground: updatedData.profileBackground
+            });
+
+            // Clear image store
+            imageStore.purgeImages();
+
+            // Exit editing mode
+            isEditing.value = false;
+
+            toast.addNotification({
+                header: "Profile updated",
+                message: "Your profile has been updated successfully.",
+                type: "success"
+            });
         } else {
             throw new Error("Failed to update settings");
         }

@@ -155,8 +155,13 @@ const submitSettings = async () => {
 		});
 
 		if (result.data?.updateSiteConfig) {
+			// Update local settings with returned data
+			settings.value = { ...result.data.updateSiteConfig };
+
+			// Refresh the data from server
+			await refresh();
+
 			toast.addNotification({ header: 'Settings saved', message: 'Site settings were updated!', type: 'success' });
-			window.location.reload(true);
 		} else {
 			throw new Error('Update failed');
 		}

@@ -156,10 +156,13 @@ const leave = async () => {
                 type: "success",
             });
 
-            // Reload the page to update mod status
+            // Close modal and navigate to board
+            modalStore.closeModal();
+
+            const router = useRouter();
             setTimeout(() => {
-                window.location.reload(true);
-            }, 400);
+                router.push(`/b/${board.name}`);
+            }, 500);
         } else {
             // Show error toast.
             toast.addNotification({

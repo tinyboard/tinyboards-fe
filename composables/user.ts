@@ -39,6 +39,7 @@ export async function useFetchUser(username: string, query = {}) {
         postCount
         commentCount
         rep
+        boardCreationApproved
         posts(sort: hot, limit: $limit, page: $page) {
           id
           title

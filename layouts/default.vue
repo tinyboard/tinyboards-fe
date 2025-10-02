@@ -46,16 +46,27 @@ function hexToRgb(hex) {
     return `${r}, ${g}, ${b}`;
 }
 
-const hasBoard = boardStore.hasBoard;
-const primaryColor = hasBoard
-    ? hexToRgb(boardStore.board?.primaryColor) || "60, 105, 145"
-    : site.primaryColor || "60, 105, 145";
-const secondaryColor = hasBoard
-    ? hexToRgb(boardStore.board?.secondaryColor) || "96, 128, 63"
-    : site.secondaryColor || "96, 128, 63";
-const hoverColor = hasBoard
-    ? hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129"
-    : site.hoverColor || "54, 94, 129";
+// Make colors reactive computed values so they update when board changes
+const primaryColor = computed(() => {
+    const hasBoard = boardStore.hasBoard;
+    return hasBoard
+        ? hexToRgb(boardStore.board?.primaryColor) || "60, 105, 145"
+        : site.primaryColor || "60, 105, 145";
+});
+
+const secondaryColor = computed(() => {
+    const hasBoard = boardStore.hasBoard;
+    return hasBoard
+        ? hexToRgb(boardStore.board?.secondaryColor) || "96, 128, 63"
+        : site.secondaryColor || "96, 128, 63";
+});
+
+const hoverColor = computed(() => {
+    const hasBoard = boardStore.hasBoard;
+    return hasBoard
+        ? hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129"
+        : site.hoverColor || "54, 94, 129";
+});
 
 
 useHead({
@@ -73,11 +84,11 @@ useHead({
         },
     ],
     style: [
-        `
+        () => `
 			:root {
-				--color-primary: ${primaryColor} !important;
-				--color-secondary: ${secondaryColor} !important;
-				--color-primary-hover: ${hoverColor} !important;
+				--color-primary: ${primaryColor.value} !important;
+				--color-secondary: ${secondaryColor.value} !important;
+				--color-primary-hover: ${hoverColor.value} !important;
 			}
 			`,
     ],

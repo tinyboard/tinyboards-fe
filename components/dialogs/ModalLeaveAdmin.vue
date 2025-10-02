@@ -94,16 +94,20 @@ const leave = async () => {
                 // Parse response.
                 /*data = JSON.parse(JSON.stringify(data.value));
                 console.log(data);*/
-                // Show success toast.
-                setTimeout(() => {
-                    window.location.reload(true);
+                // Show success toast and navigate home
+                toast.addNotification({
+                    header: "You have resigned as admin",
+                    message: 'So long!',
+                    type: 'success'
+                });
 
-                    toast.addNotification({
-                        header: "You have resigned as admin",
-                        message: 'So long!',
-                        type: 'success'
-                    });
-                }, 400);
+                modalStore.closeModal();
+
+                // Navigate to home page after a short delay
+                const router = useRouter();
+                setTimeout(() => {
+                    router.push('/feed');
+                }, 500);
             } else {
                 // Show error toast.
                 setTimeout(() => {

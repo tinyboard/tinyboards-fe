@@ -123,10 +123,17 @@
             type: 'success'
           });
 
-          // Refresh the page to remove the deleted post from view
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // Close modal and navigate back if on post detail page
+          modalStore.closeModal();
+          const router = useRouter();
+          const route = useRoute();
+
+          // If we're on a post detail page, navigate back to the board or feed
+          if (route.path.includes('/p/')) {
+            setTimeout(() => {
+              router.push('/feed');
+            }, 500);
+          }
         }
       } else {
         // Use GraphQL mutation for comment deletion
@@ -157,10 +164,8 @@
             type: 'success'
           });
 
-          // Refresh the page to remove the deleted comment from view
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // Close modal - the comment will show as deleted in the UI
+          modalStore.closeModal();
         }
       }
     } catch (error) {

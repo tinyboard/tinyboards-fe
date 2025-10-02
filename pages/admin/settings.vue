@@ -1,6 +1,17 @@
 <template>
 	<NuxtLayout name="admin">
-		<div class="flex flex-col">
+		<!-- Loading State -->
+		<div v-if="pending" class="flex justify-center items-center p-8">
+			<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+		</div>
+
+		<!-- Error State -->
+		<div v-else-if="error" class="bg-red-50 border border-red-200 rounded-md p-4 m-4">
+			<p class="text-red-800">Failed to load site settings: {{ error.message }}</p>
+		</div>
+
+		<!-- Main Content -->
+		<div v-else class="flex flex-col">
 			<!-- Page Heading & Description -->
 			<div class="p-4">
 				<h3 class="text-lg font-medium leading-6 text-gray-900">Site</h3>
@@ -180,6 +191,7 @@
 				</div>
 			</form>
 		</div>
+		<!-- End Main Content -->
 	</NuxtLayout>
 </template>
 
@@ -245,13 +257,13 @@ const toRGB = hex => {
 // Settings.
 const settings = ref({});
 
-if (data.value) {
-	settings.value = { ...JSON.parse(JSON.stringify(data.value)) };
-};
+if (data.value?.value) {
+	settings.value = { ...JSON.parse(JSON.stringify(data.value.value)) };
+}
 
-const primaryColor = ref(toHexCode(settings.value.primaryColor));
-const secondaryColor = ref(toHexCode(settings.value.secondaryColor));
-const hoverColor = ref(toHexCode(settings.value.hoverColor));
+const primaryColor = ref(settings.value?.primaryColor ? toHexCode(settings.value.primaryColor) : '#3c6991');
+const secondaryColor = ref(settings.value?.secondaryColor ? toHexCode(settings.value.secondaryColor) : '#60803f');
+const hoverColor = ref(settings.value?.hoverColor ? toHexCode(settings.value.hoverColor) : '#4b7faf');
 
 const icon = ref('');
 
@@ -337,15 +349,33 @@ const submitSettings = async () => {
 		});
 
 		if (result.data?.updateSiteConfig) {
+			// Update local settings with returned data
+			const updatedData = result.data.updateSiteConfig;
+			settings.value = { ...updatedData };
+
+			// Update color pickers with new values
+			if (updatedData.primaryColor) {
+				primaryColor.value = toHexCode(updatedData.primaryColor);
+			}
+			if (updatedData.secondaryColor) {
+				secondaryColor.value = toHexCode(updatedData.secondaryColor);
+			}
+			if (updatedData.hoverColor) {
+				hoverColor.value = toHexCode(updatedData.hoverColor);
+			}
+
+			// Clear the icon preview
+			icon.value = '';
+
+			// Refresh the data from server
+			await refresh();
+
 			// Show success toast
 			toast.addNotification({
 				header: 'Settings saved',
 				message: 'Site settings were updated!',
 				type: 'success'
 			});
-
-			// refresh to purge outdated stuff
-			window.location.reload(true);
 		}
 	} catch (error) {
 		// Show error toast
