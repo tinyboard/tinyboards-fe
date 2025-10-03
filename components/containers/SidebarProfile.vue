@@ -171,7 +171,7 @@
             </ul>
         </div>
         <div
-            v-if="site.enableBoards && u.moderates.length"
+            v-if="site.enableBoards && u.moderates && u.moderates.length"
             :class="{
                 'bg-white rounded border border-gray-200 p-4':
                     imageStore.background || u.profileBackground,

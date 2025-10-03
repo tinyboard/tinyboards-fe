@@ -56,6 +56,10 @@ export const useImageStore = defineStore('image', {
 			this.purgeBackground();
 			this.purgeDefaultAvatar();
 			this.purgeEmoji();
+		},
+		purgeImages() {
+			// Alias for purge() to maintain backwards compatibility
+			this.purge();
 		}
 	}
 })
