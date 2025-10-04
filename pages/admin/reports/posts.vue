@@ -32,44 +32,71 @@
 				</button>
 			</div>
 		</div>
-		<!-- Posts -->
-		<LazyListsPosts v-if="posts?.length" :posts="posts" :isCompact="!preferCardView" :isLoading="pending"
-			:hasError="error" />
+		<!-- Reports List -->
+		<div v-if="reports?.length" class="space-y-2">
+			<div v-for="report in reports" :key="report.id" class="bg-white dark:bg-gray-950 border-b sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800 p-4">
+				<div class="flex items-start justify-between gap-4">
+					<div class="flex-1 min-w-0">
+						<div class="flex items-center gap-2 mb-2">
+							<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+								Report #{{ report.id }}
+							</span>
+							<span class="text-sm text-gray-500">{{ formatDate(report.creationDate) }}</span>
+						</div>
+						<h4 class="text-base font-medium text-gray-900 dark:text-gray-100 mb-1">{{ report.originalPostTitle }}</h4>
+						<p class="text-sm text-gray-600 dark:text-gray-400 mb-2"><strong>Reason:</strong> {{ report.reason }}</p>
+						<NuxtLink :to="`/p/${report.postId}`" class="text-sm text-primary hover:underline">View post →</NuxtLink>
+					</div>
+					<button
+						@click="openResolveModal(report)"
+						class="button green button-sm flex-shrink-0"
+					>
+						Resolve
+					</button>
+				</div>
+			</div>
+		</div>
 		<!-- Empty State -->
 		<div v-else
 			class="px-4 py-24 text-center text-gray-500 bg-white dark:bg-gray-950 border-y sm:border sm:rounded-md sm:shadow-inner-xs dark:border-gray-800">
 			<p>
 				<span class="font-medium">
-					There are no posts
+					No unresolved reports
 				</span>
 				<br />
-				but you can be the first...
+				All reports have been handled.
 			</p>
 		</div>
 		<!-- Pagination -->
 		<div v-if="totalPages > 1" class="w-full mt-4 px-2.5 sm:px-0">
 			<LazyNavigationPaginate :total-pages="totalPages" :per-page="limit" :current-page="page" />
 		</div>
+
+		<!-- Resolve Modal -->
+		<LazyDialogsModalResolveReport
+			:is-open="modalStore.modal === 'resolveReport'"
+			type="post"
+			:options="resolveOptions"
+		/>
 	</NuxtLayout>
 </template>
 
 <script setup>
-import { usePostsStore } from '@/stores/StorePosts';
+import { useModalStore } from '@/stores/StoreModal';
 import { useGraphQLQuery } from '~/composables/useGraphQL';
+import { format } from 'date-fns';
 
 definePageMeta({
 	'hasAuthRequired': true,
-	'title': 'Queue',
+	'title': 'Post Reports',
 	isFooterDisabled: true,
 	isScrollDisabled: true,
 	requirePermission: "content",
     'isLeftNavbarDisabled': true
 });
 
-const preferCardView = useCookie('preferCardView') ?? false;
-
 const route = useRoute();
-const postsStore = usePostsStore();
+const modalStore = useModalStore();
 
 // Pagination
 const page = computed(() => Number.parseInt(route.query.page) || 1);
@@ -100,33 +127,16 @@ const { data: reportsData, pending, error, refresh } = await useGraphQLQuery(`
 	ssr: false  // Force client-side execution for authentication
 });
 
-// Transform the data to match the expected format for posts
-const items = computed(() => {
+// Filter only unresolved reports
+const reports = computed(() => {
 	if (!reportsData.value?.getPostReports) return [];
-
-	return reportsData.value.getPostReports.map(report => ({
-		id: report.postId,
-		title: report.originalPostTitle,
-		body: report.originalPostBody,
-		url: report.originalPostUrl,
-		creation_date: report.creationDate,
-		// Add minimal required fields for the list component
-		author: { name: 'Reported User' },
-		board: { name: 'Unknown Board' },
-		is_nsfw: false,
-		is_locked: false,
-		is_removed: false,
-		is_featured: false,
-		votes: 0,
-		comment_count: 0
-	}));
+	return reportsData.value.getPostReports.filter(report => !report.resolved);
 });
 
 // Since backend doesn't provide total count, we'll estimate based on results
 const totalCount = computed(() => {
-	const reports = reportsData.value?.getPostReports || [];
 	// If we got a full page, assume there might be more
-	return reports.length === limit.value ? (page.value * limit.value) + 1 : (page.value - 1) * limit.value + reports.length;
+	return reports.value.length === limit.value ? (page.value * limit.value) + 1 : (page.value - 1) * limit.value + reports.value.length;
 });
 
 if (error.value && error.value.response) {
@@ -137,11 +147,31 @@ if (error.value && error.value.response) {
 	})
 };
 
-postsStore.posts = items.value;
-const posts = postsStore.posts;
-
 const totalPages = computed(() => {
 	return Math.ceil(totalCount.value / limit.value || 1);
 });
+
+// Resolve modal
+const resolveOptions = ref({});
+
+const openResolveModal = (report) => {
+	resolveOptions.value = {
+		reportId: report.id,
+		reason: report.reason,
+		postTitle: report.originalPostTitle,
+		onResolved: () => {
+			refresh();
+		}
+	};
+	modalStore.openModal('resolveReport');
+};
+
+const formatDate = (dateString) => {
+	try {
+		return format(new Date(dateString), 'MMM d, yyyy h:mm a');
+	} catch (e) {
+		return dateString;
+	}
+};
 
 </script>

@@ -203,12 +203,9 @@ const ban = async () => {
       }
     } else {
       // Ban user
-      let expirationDate = null;
-      if (!permanent.value) {
-        const expiration = new Date();
-        expiration.setDate(expiration.getDate() + duration.value);
-        expirationDate = expiration.toISOString();
-      }
+      // Use expires_days (number of days) instead of expires (date string)
+      // None/null for permanent ban
+      const expiresDays = permanent.value ? null : duration.value;
 
       if (boardId) {
         // Board-specific ban
@@ -225,7 +222,7 @@ const ban = async () => {
               boardId,
               userId,
               reason: reason.value || 'breaking board rules',
-              expires: expirationDate
+              expiresDays
             }
           }
         });
@@ -253,7 +250,7 @@ const ban = async () => {
             input: {
               userId,
               reason: reason.value || `breaking ${site.name} rules`,
-              expires: expirationDate
+              expiresDays
             }
           }
         });
