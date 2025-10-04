@@ -165,12 +165,16 @@ const moderates = computed(() => user.value?.moderates || []);
 
 // Update title reactively
 watch(user, (newUser) => {
-    if (newUser?.isDeleted) {
+    if (!newUser) {
+        title.value = "Loading profile...";
+    } else if (newUser.isDeleted) {
         title.value = "Deleted Account";
-    } else if (newUser?.isBanned) {
-        title.value = `@${newUser.name} - Banned`;
-    } else if (newUser) {
-        title.value = `${newUser.displayName ?? newUser.name} (@${newUser.name})`;
+    } else if (newUser.isBanned) {
+        title.value = `@${newUser.name || username.value} - Banned`;
+    } else {
+        const displayName = newUser.displayName || newUser.name || username.value;
+        const userName = newUser.name || username.value;
+        title.value = `${displayName} (@${userName})`;
     }
 }, { immediate: true });
 

@@ -5,12 +5,8 @@
     >
         <NuxtLoadingIndicator color="rgba(255,255,255,0.45)" :height="3" />
         <!-- Navigation Bar -->
-        <ClientOnly>
-            <component :is="isAuthed ? NavbarAuthenticated : Navbar" />
-            <template #fallback>
-                <Navbar />
-            </template>
-        </ClientOnly>
+        <NavbarAuthenticated v-if="isAuthed" />
+        <Navbar v-else />
         <!-- Side Navigation -->
         <!--<NavbarLeft
             v-if="site.enableBoards && !route.meta.isLeftNavbarDisabled"

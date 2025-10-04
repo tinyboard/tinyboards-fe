@@ -1,17 +1,20 @@
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useDirectGraphQLRequest } from '@/composables/useGraphQL';
 
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(() => {
   const userStore = useLoggedInUser();
 
-  // Only run on client side and if not already authenticated
-  if (process.client && !userStore.isAuthed) {
+  // Only run on client side
+  if (process.client) {
     const token = useCookie('token');
 
-    // If there's a token, try to fetch user data
-    if (token.value) {
-      try {
-        const { data, error } = await useDirectGraphQLRequest(`
+    // If there's a token and not already authenticated, try to fetch user data
+    if (token.value && !userStore.isAuthed) {
+      // Set a temporary auth state to prevent flash
+      userStore.isAuthed = true;
+
+      // Fetch user data in the background
+      useDirectGraphQLRequest(`
           query GetLoggedInUser {
             me {
               id
@@ -30,32 +33,31 @@ export default defineNuxtPlugin(async () => {
             unreadMentionsCount
             unreadRepliesCount
           }
-        `);
+        `).then(({ data, error }) => {
+          if (data.value?.me && !error.value) {
+            const user = data.value.me;
+            const moderates = user.moderates?.map((m: any) => m.board) || [];
+            const joined = user.joinedBoards || [];
 
-        if (data.value?.me && !error.value) {
-          const user = data.value.me;
-          const moderates = user.moderates?.map((m: any) => m.board) || [];
-          const joined = user.joinedBoards || [];
-
-          // Set auth state
-          userStore.user = user;
-          userStore.joinedBoards = joined;
-          userStore.moddedBoards = moderates;
-          userStore.adminLevel = user.adminLevel || 0;
-          userStore.isAuthed = true;
-          userStore.token = token.value;
-          userStore.unread = (data.value.unreadMentionsCount || 0) + (data.value.unreadRepliesCount || 0);
-        } else {
-          // Invalid token, remove it
+            // Set auth state
+            userStore.user = user;
+            userStore.joinedBoards = joined;
+            userStore.moddedBoards = moderates;
+            userStore.adminLevel = user.adminLevel || 0;
+            userStore.isAuthed = true;
+            userStore.token = token.value;
+            userStore.unread = (data.value.unreadMentionsCount || 0) + (data.value.unreadRepliesCount || 0);
+          } else {
+            // Invalid token, remove it
+            token.value = null;
+            userStore.logout();
+          }
+        }).catch((error) => {
+          console.error('Auth initialization error:', error);
+          // Error fetching user, remove token
           token.value = null;
           userStore.logout();
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        // Error fetching user, remove token
-        token.value = null;
-        userStore.logout();
-      }
+        });
     }
   }
 });
