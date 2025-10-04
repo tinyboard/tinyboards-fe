@@ -192,7 +192,7 @@ watch(
 );
 
 const userStore = useLoggedInUser();
-const isAuthed = computed(() => userStore.isAuthed);
+const isAuthed = computed(() => userStore.isAuthed && !!userStore.user);
 
 const modalStore = useModalStore();
 const toastStore = useToastStore();
