@@ -27,11 +27,15 @@ interface UserStore {
 
 export const useLoggedInUser = defineStore("auth", {
   state: (): UserStore => {
+    // Check for token cookie to initialize auth state
+    const tokenCookie = process.client ? Cookies.get('token') : null;
+    const hasToken = !!tokenCookie;
+
     return {
       user: null,
       //counts: null,
       unread: null,
-      token: null,
+      token: tokenCookie || null,
       /*permissions: {
         appearance: false,
         config: false,
@@ -44,7 +48,8 @@ export const useLoggedInUser = defineStore("auth", {
       adminLevel: null,
       joinedBoards: [],
       moddedBoards: [],
-      isAuthed: false,
+      // Initialize as authed if token exists (will be validated by plugin)
+      isAuthed: hasToken,
     };
   },
   actions: {

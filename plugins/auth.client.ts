@@ -8,11 +8,9 @@ export default defineNuxtPlugin(() => {
   if (process.client) {
     const token = useCookie('token');
 
-    // If there's a token and not already authenticated, try to fetch user data
-    if (token.value && !userStore.isAuthed) {
-      // Set a temporary auth state to prevent flash
-      userStore.isAuthed = true;
-
+    // If there's a token, validate it and fetch user data
+    // Note: isAuthed is already set to true in store initial state if token exists
+    if (token.value && !userStore.user) {
       // Fetch user data in the background
       useDirectGraphQLRequest(`
           query GetLoggedInUser {
