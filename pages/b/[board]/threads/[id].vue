@@ -113,13 +113,13 @@
                             Reply to thread
                         </h3>
                         <form @submit.prevent="submitComment">
-                            <textarea
+                            <InputsTiptap
                                 v-model="commentBody"
-                                rows="4"
-                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                                 placeholder="Write your reply..."
+                                :board-id="board?.id"
                                 :disabled="submitting"
-                            ></textarea>
+                                class="min-h-[200px]"
+                            />
                             <div class="flex items-center gap-2 mt-3">
                                 <button
                                     type="submit"

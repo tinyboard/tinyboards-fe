@@ -74,8 +74,8 @@
                                     <input type="text" name="title" id="title" placeholder="Pick an interesting title"
                                         class="mt-1 form-input gray" v-model="title" required />
                                 </div>
-                                <!-- Link -->
-                                <div class="relative col-span-full">
+                                <!-- Link (feed posts only) -->
+                                <div v-if="!isThread" class="relative col-span-full">
                                     <label for="link">
                                         <span class="flex justify-between text-sm font-bold">
                                             Link
@@ -96,14 +96,26 @@
                                 <div class="relative col-span-full">
                                     <label for="body" class="flex justify-between text-sm font-bold">
                                         Body
-                                        <em class="text-gray-400 font-normal">
+                                        <em v-if="!isThread" class="text-gray-400 font-normal">
                                             optional if you have a link or image
                                         </em>
+                                        <em v-else class="text-red-600 font-normal">
+                                            required
+                                        </em>
                                     </label>
-                                    <div class="relative">
+                                    <!-- Rich text editor for threads -->
+                                    <div v-if="isThread" class="mt-1">
+                                        <InputsTiptap
+                                            v-model="body"
+                                            placeholder="Start your discussion..."
+                                            :board-id="boardId"
+                                            class="min-h-[300px]"
+                                        />
+                                    </div>
+                                    <!-- Markdown textarea for feed posts -->
+                                    <div v-else class="relative">
                                         <div id="post-body"
                                             class="relative mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
-                                            <!-- <InputsTiptap class="bg-white"/> -->
                                             <textarea
                                                 ref="textareaRef"
                                                 placeholder="Enter some words worth reading..."
@@ -123,8 +135,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- Emoji Suggestions -->
+                                    <!-- Emoji Suggestions (feed posts only) -->
                                     <InputsEmojiSuggestions
+                                        v-if="!isThread"
                                         :suggestions="emojiSuggestions.suggestions.value"
                                         :is-visible="emojiSuggestions.isVisible.value"
                                         :position="emojiSuggestions.position.value"
@@ -132,7 +145,7 @@
                                         @select="selectEmojiSuggestion"
                                     />
 
-                                    <p
+                                    <p v-if="!isThread"
                                         class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24"
                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -145,8 +158,8 @@
                                         Markdown supported
                                     </p>
                                 </div>
-                                <!-- Media Preview -->
-                                <div class="col-span-full">
+                                <!-- Media Preview (feed posts only) -->
+                                <div v-if="!isThread" class="col-span-full">
                                     <label for="title" class="block text-sm font-bold">Image or Video</label>
                                     <div class="mt-2 flex items-center">
                                         <!-- Image preview -->
@@ -480,6 +493,17 @@ async function submit() {
     isLoading.value = true;
 
     try {
+        // Validate threads have body content
+        if (isThread.value && (!body.value || body.value.trim() === '')) {
+            toast.addNotification({
+                header: 'Body required',
+                message: 'Thread posts must have body content.',
+                type: 'error'
+            });
+            isLoading.value = false;
+            return;
+        }
+
         // Ensure board is always set - use current board name or default
         const finalBoardName = boardName.value || defaultBoard.value?.name || "general";
 
