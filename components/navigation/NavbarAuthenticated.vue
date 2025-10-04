@@ -363,6 +363,18 @@
 					</svg>
 					<span>Browse All Boards</span>
 				</NuxtLink>
+				<!-- Create Board Button (if user has permission) -->
+				<NuxtLink v-if="canCreateBoard" to="/createBoard" class="flex items-center px-4 py-2 text-primary dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+					@click="isOpen = false">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
+						stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<circle cx="12" cy="12" r="9" />
+						<line x1="9" y1="12" x2="15" y2="12" />
+						<line x1="12" y1="9" x2="12" y2="15" />
+					</svg>
+					<span>Create Board</span>
+				</NuxtLink>
 			</div>
 			<!-- Joined Boards (Mobile) -->
 			<div v-if="site.enableBoards && joinedBoards.length > 0" class="py-2">
@@ -428,6 +440,7 @@ import { useBoardStore } from '~/stores/StoreBoard.js';
 import { useNotificationRefresh } from '@/composables/notificationRefresh';
 import { useGraphQLQuery } from "@/composables/useGraphQL";
 import { shuffle } from "@/utils/shuffleArray";
+import { requirePermission } from '@/composables/admin';
 import Cookies from 'js-cookie';
 
 const route = useRoute();
@@ -458,6 +471,13 @@ const unread = ref(userStore.unread);
 // Board lists for mobile menu
 const joinedBoards = computed(() => userStore.joinedBoards || []);
 const moddedBoards = computed(() => userStore.moddedBoards || []);
+
+// Board creation permission check
+const canCreateBoard = computed(() => {
+    const isAuthed = userStore.isAuthed && !!userStore.user;
+    return (!site.boardCreationAdminOnly && isAuthed) ||
+           (site.boardCreationAdminOnly && requirePermission("boards"));
+});
 
 // Notifications count
 const authCookie = useCookie("token").value;

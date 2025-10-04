@@ -124,6 +124,16 @@
                         </svg>
                         <span class="text-gray-900 dark:text-gray-100 font-medium">Browse All Boards</span>
                     </NuxtLink>
+                    <!-- Create Board Button (if user has permission) -->
+                    <NuxtLink v-if="canCreateBoard" to="/createBoard" @click="showBoardsSheet = false" class="flex items-center px-4 py-3 text-primary dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <circle cx="12" cy="12" r="9"/>
+                            <line x1="9" y1="12" x2="15" y2="12"/>
+                            <line x1="12" y1="9" x2="12" y2="15"/>
+                        </svg>
+                        <span>Create Board</span>
+                    </NuxtLink>
                 </div>
 
                 <!-- Joined Boards -->
@@ -183,6 +193,7 @@ import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useLoggedInUser } from '@/stores/StoreAuth';
 import { useSiteStore } from '@/stores/StoreSite';
+import { requirePermission } from '@/composables/admin';
 
 const route = useRoute();
 const userStore = useLoggedInUser();
@@ -193,6 +204,12 @@ const user = computed(() => userStore.user);
 const unread = computed(() => userStore.unread || 0);
 const joinedBoards = computed(() => userStore.joinedBoards || []);
 const moddedBoards = computed(() => userStore.moddedBoards || []);
+
+// Board creation permission check
+const canCreateBoard = computed(() => {
+    return (!site.boardCreationAdminOnly && isAuthed.value) ||
+           (site.boardCreationAdminOnly && requirePermission("boards"));
+});
 
 const showBoardsSheet = ref(false);
 
