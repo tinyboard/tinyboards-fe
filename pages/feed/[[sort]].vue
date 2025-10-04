@@ -122,7 +122,8 @@
 <script lang="ts" setup>
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useSiteStore } from "@/stores/StoreSite";
-import { usePosts } from "@/composables/posts";
+import { usePostsStore } from "@/stores/StorePosts";
+import { usePosts, usePagination } from "@/composables/posts";
 import { mapToListingType } from "@/types/types";
 
 // Import sidebar components
@@ -149,7 +150,24 @@ const preferCardView = useCookie("preferCardView") ?? false;
 
 const isHomeFeed = computed(() => userStore.isAuthed && site.enableBoards);
 
-const { hasPosts, error, loadMore, loading } = await usePosts(
+// Fetch initial posts
+await usePosts(
     mapToListingType(isHomeFeed.value ? "subscribed" : "local")
 );
+
+// Create reactive computed for hasPosts from store
+const postsStore = usePostsStore();
+const hasPosts = computed(() => postsStore.posts.length > 0);
+const error = ref(null);
+const { loading, loadMore } = usePagination();
+
+// Watch for route changes and refetch posts
+watch(() => route.fullPath, async (newPath, oldPath) => {
+    // Only refetch if we're navigating back to feed from elsewhere
+    if (newPath.startsWith('/feed') || newPath === '/') {
+        await usePosts(
+            mapToListingType(isHomeFeed.value ? "subscribed" : "local")
+        );
+    }
+}, { immediate: false });
 </script>
