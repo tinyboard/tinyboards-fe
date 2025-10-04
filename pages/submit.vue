@@ -494,7 +494,13 @@ async function submit() {
 
     try {
         // Validate threads have body content
-        if (isThread.value && (!body.value || body.value.trim() === '')) {
+        // TipTap returns HTML, so check if it's empty or just contains empty tags
+        const stripHtml = (html) => {
+            if (!html) return '';
+            return html.replace(/<[^>]*>/g, '').trim();
+        };
+
+        if (isThread.value && (!body.value || stripHtml(body.value) === '')) {
             toast.addNotification({
                 header: 'Body required',
                 message: 'Thread posts must have body content.',

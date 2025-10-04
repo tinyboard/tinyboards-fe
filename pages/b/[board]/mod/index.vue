@@ -128,6 +128,8 @@ const submitSettings = async () => {
 						usersActiveHalfYear
 						myModPermissions
 						subscribedType
+						hasFeed
+						hasThreads
 					}
 				}
 			}

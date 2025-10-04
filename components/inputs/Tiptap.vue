@@ -437,7 +437,7 @@
 :deep(.ProseMirror img) {
   max-width: 100%;
   height: auto;
-};
+}
 
 :deep(.ProseMirror img.ProseMirror-selectednode) {
   outline: 3px solid #7DD3FC;

@@ -153,6 +153,7 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue';
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
@@ -323,6 +324,11 @@ onMounted(() => {
 });
 
 definePageMeta({
-	middleware: 'auth'
+	hasAuthRequired: true,
+	isLeftNavbarDisabled: true
+});
+
+useHead({
+	title: `${boardName} - Reaction Settings`
 });
 </script>

@@ -127,6 +127,8 @@ const submitSettings = async () => {
                         description
                         sidebar
                         sidebarHTML
+                        hasFeed
+                        hasThreads
                     }
                 }
             }
@@ -150,11 +152,7 @@ const submitSettings = async () => {
             });
 
             // Update the board store with new data
-            boardStore.setBoard({
-                ...board,
-                sidebar: result.value.updateBoardSettings.board.sidebar,
-                sidebarHTML: result.value.updateBoardSettings.board.sidebarHTML
-            });
+            boardStore.updateBoard(result.value.updateBoardSettings.board);
 
             // Refresh settings to reflect changes
             settings.value.sidebar = result.value.updateBoardSettings.board.sidebar;
