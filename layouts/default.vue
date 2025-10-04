@@ -32,40 +32,47 @@ const route = useRoute();
 const router = useRouter();
 const boardStore = useBoardStore();
 
-// Helper function to convert hex to RGB
-function hexToRgb(hex) {
-    if (!hex) return null;
-    // Remove # if present
-    hex = hex.replace('#', '');
-    if (hex.length !== 6) return null;
+// Helper function to normalize color format (handles both hex and RGB string formats)
+function normalizeColor(color) {
+    if (!color) return null;
 
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
+    // If already in RGB format (e.g., "60, 105, 145"), return as-is
+    if (/^\d+,\s*\d+,\s*\d+$/.test(color)) {
+        return color;
+    }
 
-    return `${r}, ${g}, ${b}`;
+    // If hex format, convert to RGB
+    const hex = color.replace('#', '');
+    if (hex.length === 6) {
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        return `${r}, ${g}, ${b}`;
+    }
+
+    return null;
 }
 
 // Make colors reactive computed values so they update when board changes
 const primaryColor = computed(() => {
     const hasBoard = boardStore.hasBoard;
     return hasBoard
-        ? hexToRgb(boardStore.board?.primaryColor) || "60, 105, 145"
-        : site.primaryColor || "60, 105, 145";
+        ? normalizeColor(boardStore.board?.primaryColor) || "60, 105, 145"
+        : normalizeColor(site.primaryColor) || "60, 105, 145";
 });
 
 const secondaryColor = computed(() => {
     const hasBoard = boardStore.hasBoard;
     return hasBoard
-        ? hexToRgb(boardStore.board?.secondaryColor) || "96, 128, 63"
-        : site.secondaryColor || "96, 128, 63";
+        ? normalizeColor(boardStore.board?.secondaryColor) || "96, 128, 63"
+        : normalizeColor(site.secondaryColor) || "96, 128, 63";
 });
 
 const hoverColor = computed(() => {
     const hasBoard = boardStore.hasBoard;
     return hasBoard
-        ? hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129"
-        : site.hoverColor || "54, 94, 129";
+        ? normalizeColor(boardStore.board?.hoverColor) || "54, 94, 129"
+        : normalizeColor(site.hoverColor) || "54, 94, 129";
 });
 
 
@@ -111,33 +118,33 @@ watch(
                 if (boardStore.hasBoard) {
                     r.style.setProperty(
                         "--color-primary",
-                        hexToRgb(boardStore.board?.primaryColor) || "60, 105, 145",
+                        normalizeColor(boardStore.board?.primaryColor) || "60, 105, 145",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-secondary",
-                        hexToRgb(boardStore.board?.secondaryColor) || "96, 128, 63",
+                        normalizeColor(boardStore.board?.secondaryColor) || "96, 128, 63",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-primary-hover",
-                        hexToRgb(boardStore.board?.hoverColor) || "54, 94, 129",
+                        normalizeColor(boardStore.board?.hoverColor) || "54, 94, 129",
                         "important",
                     );
                 } else {
                     r.style.setProperty(
                         "--color-primary",
-                        site.primaryColor || "60, 105, 145",
+                        normalizeColor(site.primaryColor) || "60, 105, 145",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-secondary",
-                        site.secondaryColor || "96, 128, 63",
+                        normalizeColor(site.secondaryColor) || "96, 128, 63",
                         "important",
                     );
                     r.style.setProperty(
                         "--color-primary-hover",
-                        site.hoverColor || "54, 94, 129",
+                        normalizeColor(site.hoverColor) || "54, 94, 129",
                         "important",
                     );
                 }

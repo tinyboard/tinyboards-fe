@@ -624,9 +624,11 @@ const displayScore = computed(() => {
 
 // Utils
 const percentUpvoted = computed(() => {
-  const num = 1 - props.post.downvotes / props.post.upvotes;
-  if (!isFinite(num)) return 0;
-  return toPercent(num);
+  const upvotes = props.post.upvotes ?? 0;
+  const downvotes = props.post.downvotes ?? 0;
+  const total = upvotes + downvotes;
+  if (total === 0) return 0;
+  return toPercent(upvotes / total);
 });
 
 const hasImage = computed(() => props.post.url && canEmbedImage(props.post.url));

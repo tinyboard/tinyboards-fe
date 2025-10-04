@@ -78,6 +78,8 @@ export const usePostsStore = defineStore("posts", {
             creationDate
             updated
             score
+            upvotes
+            downvotes
             myVote
             creatorVote
             board @include(if: $includeBoard) {
@@ -140,6 +142,8 @@ export const usePostsStore = defineStore("posts", {
             creationDate
             updated
             score
+            upvotes
+            downvotes
             myVote
             creatorVote
             board @include(if: $withBoard) {
@@ -240,6 +244,8 @@ export const usePostsStore = defineStore("posts", {
             creationDate
             updated
             score
+            upvotes
+            downvotes
             myVote
             creatorVote
             board @include(if: $includeBoard) {
