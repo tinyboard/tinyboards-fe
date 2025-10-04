@@ -252,12 +252,12 @@
   });
 
   import { ref } from 'vue';
-  import Link from '@tiptap/extension-link';
-  import Image from '@tiptap/extension-image';
-  import TextAlign from '@tiptap/extension-text-align';
-  import TextStyle from '@tiptap/extension-text-style';
-  import Color from '@tiptap/extension-color';
-  import Highlight from '@tiptap/extension-highlight';
+  import { Link } from '@tiptap/extension-link';
+  import { Image } from '@tiptap/extension-image';
+  import { TextAlign } from '@tiptap/extension-text-align';
+  import { TextStyle } from '@tiptap/extension-text-style';
+  import { Color } from '@tiptap/extension-color';
+  import { Highlight } from '@tiptap/extension-highlight';
   import { useEditor, EditorContent } from '@tiptap/vue-3';
   import StarterKit from '@tiptap/starter-kit';
   import EmojiPicker from './EmojiPicker.vue';
