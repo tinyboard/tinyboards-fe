@@ -83,6 +83,7 @@ const boardLinks = computed(() => {
     if (hasConfigPerms.value) {
         links.push({ name: "General", href: `/b/${boardName}/mod/` });
         links.push({ name: "Sections", href: `/b/${boardName}/mod/sections` });
+        links.push({ name: "Reactions", href: `/b/${boardName}/mod/reactions` });
         links.push({ name: "Sidebar", href: `/b/${boardName}/mod/sidebar` });
     }
 
