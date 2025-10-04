@@ -8,8 +8,8 @@
                 <!-- Banner -->
                 <CardsSubmitBanner
                     :board="selectedBoard"
-                    :title="selectedBoard ? `Create new post in ${selectedBoard.name}` : 'Create new post'"
-                    :sub-title="selectedBoard ? selectedBoard.description || 'Share a link, image or text with the community.' : 'Share a link, image or text with the community.'"
+                    :title="selectedBoard ? (isThread ? `Create new thread in ${selectedBoard.name}` : `Create new post in ${selectedBoard.name}`) : (isThread ? 'Create new thread' : 'Create new post')"
+                    :sub-title="selectedBoard ? selectedBoard.description || (isThread ? 'Start a new discussion thread' : 'Share a link, image or text with the community.') : (isThread ? 'Start a new discussion thread' : 'Share a link, image or text with the community.')"
                     class="col-span-full"
                 />
             </div>
@@ -291,6 +291,10 @@ const { data: defaultBoardData } = await useGraphQLQuery(`
 const defaultBoard = computed(() => defaultBoardData.value?.listBoards?.[0]);
 const allBoards = computed(() => allBoardsData.value?.listBoards || []);
 
+// Check if we're creating a thread
+const postType = route.query.type?.toString() || 'feed';
+const isThread = computed(() => postType === 'thread');
+
 // Fetch board data if we have a board from query parameter
 const queryBoard = route.query.board?.toString() || null;
 const { data: queryBoardData } = queryBoard ? await useGraphQLQuery(`
@@ -488,7 +492,8 @@ async function submit() {
             link: linkValue,
             isNSFW: isNsfw.value || false,
             altText: null,
-            file: null
+            file: null,
+            postType: isThread.value ? 'thread' : 'feed'
         };
 
         const createPostQuery = `
@@ -500,6 +505,7 @@ async function submit() {
                 $isNSFW: Boolean
                 $altText: String
                 $file: Upload
+                $postType: String
             ) {
                 createPost(
                     title: $title
@@ -509,10 +515,12 @@ async function submit() {
                     isNSFW: $isNSFW
                     altText: $altText
                     file: $file
+                    postType: $postType
                 ) {
                     id
                     title
                     titleChunk
+                    postType
                 }
             }
         `;
@@ -549,9 +557,19 @@ async function submit() {
 
         // Successfully created - redirect immediately
         const titleSlug = post.titleChunk || 'post';
-        const redirectPath = site.enableBoards
-            ? `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
-            : `/p/${post.id}/${titleSlug}`;
+        let redirectPath;
+
+        if (post.postType === 'thread') {
+            // Redirect to thread detail page
+            redirectPath = site.enableBoards
+                ? `/b/${finalBoardName}/threads/${post.id}`
+                : `/threads/${post.id}`;
+        } else {
+            // Redirect to regular post page
+            redirectPath = site.enableBoards
+                ? `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
+                : `/p/${post.id}/${titleSlug}`;
+        }
 
         await navigateTo(redirectPath);
 
