@@ -8,12 +8,18 @@
     </span>
 
     <!-- Editor Container -->
-    <div class="relative">
+    <div v-show="!showPreview" class="relative">
       <editor-content :editor="editor" :style="`min-height:170px`"/>
       <!-- Emoji Picker inside editor -->
       <div class="absolute bottom-3 right-3">
         <EmojiPicker @emoji-selected="insertEmoji" />
       </div>
+    </div>
+
+    <!-- Preview Container -->
+    <div v-show="showPreview" class="relative min-h-[170px] p-3 overflow-auto">
+      <div v-if="editor && editor.getHTML()" class="prose dark:prose-invert prose-sm max-w-none" v-html="editor.getHTML()"></div>
+      <div v-else class="text-gray-400 italic">Nothing to preview yet...</div>
     </div>
 
     <!-- Editor Menu Buttons -->
@@ -183,6 +189,23 @@
            <path d="M15 13l4 -4l-4 -4m4 4h-11a4 4 0 0 0 0 8h1"></path>
         </svg>
       </button>
+      <!-- Divider -->
+      <span class="border-r border-gray-300 mx-1"></span>
+      <!-- Preview Toggle -->
+      <button type="button" class="px-3 h-7 hover:text-gray-700 rounded text-xs font-semibold" @click="showPreview = !showPreview" :class="showPreview ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        <svg v-if="!showPreview" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <circle cx="12" cy="12" r="2"></circle>
+           <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"></path>
+        </svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+           <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+           <path d="M16 5l3 3"></path>
+        </svg>
+        {{ showPreview ? 'Edit' : 'Preview' }}
+      </button>
     </div>
 
     <!-- Fake bar while loading -->
@@ -206,6 +229,7 @@
     }
   });
 
+  import { ref } from 'vue';
   import Link from '@tiptap/extension-link';
   import Image from '@tiptap/extension-image';
   import TextAlign from '@tiptap/extension-text-align';
@@ -215,6 +239,9 @@
   import { useEditor, EditorContent } from '@tiptap/vue-3';
   import StarterKit from '@tiptap/starter-kit';
   import EmojiPicker from './EmojiPicker.vue';
+
+  // Preview toggle state
+  const showPreview = ref(false);
 
   const editor = useEditor({
     // enablePasteRules: false, // disable Markdown when pasting
