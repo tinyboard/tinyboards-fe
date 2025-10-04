@@ -5,14 +5,21 @@
     >
         <NuxtLoadingIndicator color="rgba(255,255,255,0.45)" :height="3" />
         <!-- Navigation Bar -->
-        <NavbarAuthenticated v-if="isAuthed" />
-        <Navbar v-else />
+        <!-- Use v-show instead of v-if to prevent component destruction/recreation -->
+        <!-- This prevents board colors from resetting when auth state changes -->
+        <NavbarAuthenticated v-show="isAuthed" />
+        <Navbar v-show="!isAuthed" />
         <!-- Side Navigation -->
         <!--<NavbarLeft
             v-if="site.enableBoards && !route.meta.isLeftNavbarDisabled"
         />-->
-        <slot />
+        <!-- Main content with bottom padding for mobile nav -->
+        <div :class="{ 'pb-16 md:pb-0': isAuthed }">
+            <slot />
+        </div>
         <NavigationFooter v-if="!route.meta.isFooterDisabled" />
+        <!-- Mobile Bottom Navigation -->
+        <NavigationBottomNav />
         <LazyDialogsToastList v-if="toastStore.hasInit" />
         <LazyDialogsModalList v-if="modalStore.hasInit" />
     </div>
@@ -39,11 +46,31 @@ const isOnBoardRoute = computed(() => {
 });
 
 // Store last known board colors to prevent flash during hydration
-const lastBoardColors = ref({
-    primary: null,
-    secondary: null,
-    hover: null
-});
+// Try to restore from sessionStorage if available
+const getStoredColors = () => {
+    if (process.client) {
+        try {
+            const stored = sessionStorage.getItem('lastBoardColors');
+            return stored ? JSON.parse(stored) : { primary: null, secondary: null, hover: null };
+        } catch {
+            return { primary: null, secondary: null, hover: null };
+        }
+    }
+    return { primary: null, secondary: null, hover: null };
+};
+
+const lastBoardColors = ref(getStoredColors());
+
+// Save colors to sessionStorage when they change
+watch(lastBoardColors, (newColors) => {
+    if (process.client) {
+        try {
+            sessionStorage.setItem('lastBoardColors', JSON.stringify(newColors));
+        } catch {
+            // Ignore storage errors
+        }
+    }
+}, { deep: true });
 
 // Helper function to normalize color format (handles both hex and RGB string formats)
 function normalizeColor(color) {
@@ -73,7 +100,9 @@ const primaryColor = computed(() => {
     const hasBoard = boardStore.hasBoard;
     // If we have board data, use and cache board colors
     if (hasBoard) {
-        const color = normalizeColor(boardStore.board?.primaryColor) || "60, 105, 145";
+        const normalizedBoardColor = normalizeColor(boardStore.board?.primaryColor);
+        const normalizedSiteColor = normalizeColor(site.primaryColor);
+        const color = normalizedBoardColor || normalizedSiteColor || "60, 105, 145";
         lastBoardColors.value.primary = color;
         return color;
     }
@@ -82,34 +111,63 @@ const primaryColor = computed(() => {
     if (isOnBoardRoute.value && lastBoardColors.value.primary) {
         return lastBoardColors.value.primary;
     }
-    // Otherwise use site colors
-    return normalizeColor(site.primaryColor) || "60, 105, 145";
+    // Otherwise use site colors - if site colors aren't loaded yet, use cached colors
+    const normalizedSiteColor = normalizeColor(site.primaryColor);
+    if (normalizedSiteColor) {
+        lastBoardColors.value.primary = normalizedSiteColor;
+        return normalizedSiteColor;
+    }
+    // During hydration before site data loads, use cached color if available
+    if (lastBoardColors.value.primary) {
+        return lastBoardColors.value.primary;
+    }
+    return "60, 105, 145";
 });
 
 const secondaryColor = computed(() => {
     const hasBoard = boardStore.hasBoard;
     if (hasBoard) {
-        const color = normalizeColor(boardStore.board?.secondaryColor) || "96, 128, 63";
+        const normalizedBoardColor = normalizeColor(boardStore.board?.secondaryColor);
+        const normalizedSiteColor = normalizeColor(site.secondaryColor);
+        const color = normalizedBoardColor || normalizedSiteColor || "96, 128, 63";
         lastBoardColors.value.secondary = color;
         return color;
     }
     if (isOnBoardRoute.value && lastBoardColors.value.secondary) {
         return lastBoardColors.value.secondary;
     }
-    return normalizeColor(site.secondaryColor) || "96, 128, 63";
+    const normalizedSiteColor = normalizeColor(site.secondaryColor);
+    if (normalizedSiteColor) {
+        lastBoardColors.value.secondary = normalizedSiteColor;
+        return normalizedSiteColor;
+    }
+    if (lastBoardColors.value.secondary) {
+        return lastBoardColors.value.secondary;
+    }
+    return "96, 128, 63";
 });
 
 const hoverColor = computed(() => {
     const hasBoard = boardStore.hasBoard;
     if (hasBoard) {
-        const color = normalizeColor(boardStore.board?.hoverColor) || "54, 94, 129";
+        const normalizedBoardColor = normalizeColor(boardStore.board?.hoverColor);
+        const normalizedSiteColor = normalizeColor(site.hoverColor);
+        const color = normalizedBoardColor || normalizedSiteColor || "54, 94, 129";
         lastBoardColors.value.hover = color;
         return color;
     }
     if (isOnBoardRoute.value && lastBoardColors.value.hover) {
         return lastBoardColors.value.hover;
     }
-    return normalizeColor(site.hoverColor) || "54, 94, 129";
+    const normalizedSiteColor = normalizeColor(site.hoverColor);
+    if (normalizedSiteColor) {
+        lastBoardColors.value.hover = normalizedSiteColor;
+        return normalizedSiteColor;
+    }
+    if (lastBoardColors.value.hover) {
+        return lastBoardColors.value.hover;
+    }
+    return "54, 94, 129";
 });
 
 

@@ -1,5 +1,34 @@
 <template>
-  <div class="relative w-full sm:rounded-md sm:border overflow-x-auto">
+  <!-- Mobile: Card View -->
+  <div class="md:hidden space-y-2">
+    <div v-if="isLoading" class="space-y-2">
+      <div v-for="i in 5" :key="i" class="bg-white border rounded p-4 animate-pulse">
+        <div class="flex items-center space-x-3 mb-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+          <div class="flex-1">
+            <div class="h-3 bg-gray-200 rounded w-1/3 mb-2"></div>
+            <div class="h-2 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+        <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+        <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+      </div>
+    </div>
+    <div v-else-if="posts.length" class="space-y-2">
+      <LazyCardsPost
+        v-for="item in posts"
+        :key="item.post.id"
+        :post="item.post"
+        :isCompact="true"
+      />
+    </div>
+    <div v-else class="bg-white border rounded p-8 text-center text-gray-400">
+      <p>No posts found</p>
+    </div>
+  </div>
+
+  <!-- Desktop: Table View -->
+  <div class="hidden md:block relative w-full sm:rounded-md sm:border overflow-x-auto">
     <table
       class="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400 bg-white"
     >

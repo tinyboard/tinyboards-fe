@@ -232,6 +232,21 @@ img.emoji {
 	.downvoted > svg {
 		fill: rgba(var(--color-secondary));
 	}
+	/* Mobile Touch Targets - Minimum 44x44px for accessibility */
+	@media (max-width: 768px) {
+		/* Ensure all interactive elements have minimum touch target */
+		button, a.button, .clickable {
+			min-height: 44px;
+			min-width: 44px;
+		}
+
+		/* Add padding to small icons/buttons on mobile */
+		.comment button:not(.button),
+		.post-actions button:not(.button) {
+			padding: 0.5rem;
+		}
+	}
+
 	/* Embeds */
 	.lite-youtube {
 		display: inline-block;

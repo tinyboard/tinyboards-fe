@@ -153,6 +153,9 @@ export const usePostsStore = defineStore("posts", {
               description
               icon
               banner
+              primaryColor
+              secondaryColor
+              hoverColor
               isNSFW
               subscribedType
               creationDate

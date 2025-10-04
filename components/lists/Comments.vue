@@ -1,6 +1,7 @@
 <template>
     <!-- List of Comments -->
-    <ul id="comments-list" v-if="comments" class="mt-4 first:mt-0 first-of-type:mt-0">
+    <!-- Responsive indentation: ml-2 on mobile (8px), ml-4 on tablet+ (16px) -->
+    <ul id="comments-list" v-if="comments" class="mt-4 first:mt-0 first-of-type:mt-0 ml-2 sm:ml-4">
         <li v-for="comment in comments" :key="comment.id" class="mt-2 first:mt-0">
             <div v-if="cards" class="bg-white border border-gray-200 p-4 mb-4 rounded">
                 <div class="mb-2 text-gray-700" v-if="site.enableBoards">
