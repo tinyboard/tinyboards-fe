@@ -7,7 +7,7 @@
         >
             <NavigationNavbarSub
                 :links="links"
-                class="sm:order-first sm:hidden"
+                class="sm:order-first"
             />
             <div
                 class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6"

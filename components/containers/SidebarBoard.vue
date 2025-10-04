@@ -4,10 +4,10 @@
         id="sidebar-board"
         class="w-[290px] hidden lg:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
-        <!-- Create Post -->
+        <!-- Create Post/Thread -->
         <NuxtLink
             v-if="!postPage"
-            :to="`/submit?board=${board.name}`"
+            :to="isThreadsSection ? `/submit?board=${board.name}&type=thread` : `/submit?board=${board.name}`"
             class="flex items-center button primary"
         >
             <svg
@@ -26,7 +26,7 @@
                 ></path>
                 <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
             </svg>
-            Create post
+            {{ isThreadsSection ? 'Create thread' : 'Create post' }}
         </NuxtLink>
         <!-- Board Details -->
         <div>
@@ -388,9 +388,15 @@ const props = defineProps({
     },
 });
 
+const route = useRoute();
 const board = computed(() => boardStore.board);
 const isMod = computed(() => board.value?.myModPermissions !== 0);
 const mods = computed(() => board.value?.moderators || []);
+
+// Check if we're in the threads section
+const isThreadsSection = computed(() => {
+    return route.path.includes('/threads');
+});
 
 const modSelf = async () => {
     if (!board.value) return;
