@@ -17,15 +17,28 @@
     </div>
 
     <!-- Editor Menu Buttons -->
-    <div v-if="editor" id="editor" class="hidden md:flex space-x-2 p-2 text-sm font-bold opacity-70 hover:opacity-100 bg-gray-100 border-t border-dashed">
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
+    <div v-if="editor" id="editor" class="hidden md:flex flex-wrap gap-1 p-2 text-sm font-bold opacity-70 hover:opacity-100 bg-gray-100 border-t border-dashed">
+      <!-- Headings -->
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="editor.isActive('heading', { level: 1 }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        H1
+      </button>
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="editor.isActive('heading', { level: 2 }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        H2
+      </button>
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="editor.isActive('heading', { level: 3 }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        H3
+      </button>
+      <!-- Divider -->
+      <span class="border-r border-gray-300 mx-1"></span>
+      <!-- Text Formatting -->
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6z"></path>
            <path d="M13 12h1a3.5 3.5 0 0 1 0 7h-7v-7"></path>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="11" y1="5" x2="17" y2="5"></line>
@@ -33,7 +46,7 @@
            <line x1="14" y1="5" x2="10" y2="19"></line>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -41,7 +54,7 @@
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300"></span>
+      <span class="border-r border-gray-300 mx-1"></span>
       <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="setLink()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -59,8 +72,39 @@
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300"></span>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
+      <span class="border-r border-gray-300 mx-1"></span>
+      <!-- Blockquote -->
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <path d="M6 15h15"></path>
+           <path d="M21 19h-15"></path>
+           <path d="M15 11h6"></path>
+           <path d="M21 7h-6"></path>
+           <path d="M9 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
+           <path d="M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
+        </svg>
+      </button>
+      <!-- Code Block -->
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <polyline points="7 8 3 12 7 16"></polyline>
+           <polyline points="17 8 21 12 17 16"></polyline>
+           <line x1="14" y1="4" x2="10" y2="20"></line>
+        </svg>
+      </button>
+      <!-- Horizontal Rule -->
+      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="editor.chain().focus().setHorizontalRule().run()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <!-- Divider -->
+      <span class="border-r border-gray-300 mx-1"></span>
+      <!-- Lists -->
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="9" y1="6" x2="20" y2="6"></line>
@@ -71,7 +115,7 @@
            <line x1="5" y1="18" x2="5" y2="18.01"></line>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('OrderedList') ? 'text-gray-900' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M11 6h9"></path>
@@ -82,7 +126,51 @@
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300"></span>
+      <span class="border-r border-gray-300 mx-1"></span>
+      <!-- Text Alignment -->
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('left').run()" :class="editor.isActive({ textAlign: 'left' }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <line x1="4" y1="6" x2="20" y2="6"></line>
+           <line x1="4" y1="12" x2="14" y2="12"></line>
+           <line x1="4" y1="18" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('center').run()" :class="editor.isActive({ textAlign: 'center' }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <line x1="4" y1="6" x2="20" y2="6"></line>
+           <line x1="8" y1="12" x2="16" y2="12"></line>
+           <line x1="6" y1="18" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('right').run()" :class="editor.isActive({ textAlign: 'right' }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+           <line x1="4" y1="6" x2="20" y2="6"></line>
+           <line x1="10" y1="12" x2="20" y2="12"></line>
+           <line x1="6" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+      <!-- Divider -->
+      <span class="border-r border-gray-300 mx-1"></span>
+      <!-- Text Color -->
+      <input
+        type="color"
+        @input="editor.chain().focus().setColor($event.target.value).run()"
+        :value="editor.getAttributes('textStyle').color || '#000000'"
+        class="w-7 h-7 rounded cursor-pointer border border-gray-300"
+        title="Text color"
+      />
+      <!-- Highlight -->
+      <input
+        type="color"
+        @input="editor.chain().focus().toggleHighlight({ color: $event.target.value }).run()"
+        class="w-7 h-7 rounded cursor-pointer border border-gray-300"
+        title="Highlight color"
+      />
+      <!-- Divider -->
+      <span class="border-r border-gray-300 mx-1"></span>
       <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="editor.chain().focus().undo().run()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -120,6 +208,10 @@
 
   import Link from '@tiptap/extension-link';
   import Image from '@tiptap/extension-image';
+  import TextAlign from '@tiptap/extension-text-align';
+  import TextStyle from '@tiptap/extension-text-style';
+  import Color from '@tiptap/extension-color';
+  import Highlight from '@tiptap/extension-highlight';
   import { useEditor, EditorContent } from '@tiptap/vue-3';
   import StarterKit from '@tiptap/starter-kit';
   import EmojiPicker from './EmojiPicker.vue';
@@ -130,6 +222,14 @@
     extensions: [
       Link,
       Image,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      TextStyle,
+      Color,
+      Highlight.configure({
+        multicolor: true
+      }),
       StarterKit
     ]
   });
