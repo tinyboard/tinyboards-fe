@@ -500,14 +500,18 @@ async function submit() {
             return html.replace(/<[^>]*>/g, '').trim();
         };
 
-        if (isThread.value && (!body.value || stripHtml(body.value) === '')) {
-            toast.addNotification({
-                header: 'Body required',
-                message: 'Thread posts must have body content.',
-                type: 'error'
-            });
-            isLoading.value = false;
-            return;
+        if (isThread.value) {
+            const strippedBody = stripHtml(body.value);
+
+            if (!body.value || strippedBody === '') {
+                toast.addNotification({
+                    header: 'Body required',
+                    message: 'Thread posts must have body content.',
+                    type: 'error'
+                });
+                isLoading.value = false;
+                return;
+            }
         }
 
         // Ensure board is always set - use current board name or default

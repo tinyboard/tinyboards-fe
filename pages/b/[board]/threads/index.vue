@@ -5,17 +5,14 @@
             class="flex-col"
             :class="route.params?.board ? 'flex' : 'hidden md:flex'"
         >
-            <NavigationNavbarSub
-                :links="links"
-                class="sm:order-first"
-            />
             <div
-                class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6"
+                class="container mx-auto max-w-8xl grid grid-cols-12 sm:mt-20 sm:px-4 md:px-6"
             >
                 <!-- Banner -->
                 <CardsBoardBanner
                     v-if="shouldShowBoardBanner"
                     :board="board"
+                    :section-links="links"
                     :key="board?.id"
                     class="col-span-full"
                 />

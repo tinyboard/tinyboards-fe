@@ -17,11 +17,14 @@
     </button>
 
     <!-- Emoji Picker Dropdown -->
-    <div
-      v-if="isOpen"
-      class="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg w-80 h-96 z-50 flex flex-col"
-      @click.stop
-    >
+    <Teleport to="body">
+      <div
+        v-if="isOpen"
+        ref="dropdown"
+        class="fixed bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg w-80 h-96 z-50 flex flex-col"
+        :style="dropdownStyle"
+        @click.stop
+      >
       <!-- Header -->
       <div class="p-3 border-b dark:border-gray-700">
         <div class="flex items-center justify-between mb-2">
@@ -127,6 +130,7 @@
         </div>
       </div>
     </div>
+    </Teleport>
   </div>
 </template>
 
@@ -161,6 +165,8 @@ const searchQuery = ref('');
 const selectedCategory = ref('people');
 const customEmojis = ref<CustomEmoji[]>([]);
 const recentEmojis = ref<string[]>([]);
+const dropdown = ref<HTMLElement | null>(null);
+const dropdownStyle = ref({});
 
 // Categories - add custom category to imported categories
 const categories = [
@@ -206,9 +212,22 @@ const filteredEmojis = computed(() => {
 });
 
 // Methods
-const togglePicker = () => {
+const togglePicker = (event: MouseEvent) => {
   isOpen.value = !isOpen.value;
-  // Custom emojis are now pre-loaded on mount, no need to load here
+
+  if (isOpen.value) {
+    // Calculate position relative to the button
+    nextTick(() => {
+      const button = event.currentTarget as HTMLElement;
+      const rect = button.getBoundingClientRect();
+
+      // Position below the button, aligned to the right
+      dropdownStyle.value = {
+        top: `${rect.bottom + 8}px`,
+        right: `${window.innerWidth - rect.right}px`,
+      };
+    });
+  }
 };
 
 const closePicker = () => {

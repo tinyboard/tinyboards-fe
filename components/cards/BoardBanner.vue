@@ -116,6 +116,28 @@
                     <LazyMenusActionsBoard />
                 </div>
             </div>
+
+            <!-- Section Navigation Tabs -->
+            <div v-if="sectionLinks && sectionLinks.length > 0" class="mt-4 border-t pt-3">
+                <ul class="flex items-center gap-1">
+                    <li v-for="link in sectionLinks" :key="link.name" class="flex-shrink-0">
+                        <NuxtLink :to="link.href" custom v-slot="{ href, navigate, isActive }">
+                            <a
+                                :href="href"
+                                @click="navigate"
+                                :class="[
+                                    isActive
+                                        ? 'text-primary font-semibold border-b-2 border-primary'
+                                        : 'text-gray-600 hover:text-primary border-b-2 border-transparent hover:border-gray-300',
+                                    'inline-flex items-center px-4 py-2 text-sm transition-all'
+                                ]"
+                            >
+                                {{ link.name }}
+                            </a>
+                        </NuxtLink>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
@@ -130,8 +152,14 @@ import { useBoardStore } from "@/stores/StoreBoard";
 import { toCSSColor } from "@/composables/colors";
 import type { Board } from "@/types/types";
 
+interface SectionLink {
+    name: string;
+    href: string;
+}
+
 const props = defineProps<{
     board?: Board;
+    sectionLinks?: SectionLink[];
 }>();
 
 const boardStore = useBoardStore();

@@ -237,6 +237,10 @@
 
 <script setup>
   const props = defineProps({
+    modelValue: {
+      type: String,
+      default: ''
+    },
     placeholder: {
       type: String,
       default: 'Type something interesting here...'
@@ -248,10 +252,16 @@
     menubarBottom: {
       type: Boolean,
       default: false
+    },
+    boardId: {
+      type: Number,
+      default: null
     }
   });
 
-  import { ref } from 'vue';
+  const emit = defineEmits(['update:modelValue']);
+
+  import { ref, watch } from 'vue';
   import { Link } from '@tiptap/extension-link';
   import { Image } from '@tiptap/extension-image';
   import { TextAlign } from '@tiptap/extension-text-align';
@@ -266,8 +276,7 @@
   const showPreview = ref(false);
 
   const editor = useEditor({
-    // enablePasteRules: false, // disable Markdown when pasting
-    // enableInputRules: false, // disable Markdown when typing
+    content: props.modelValue || '',
     extensions: [
       Link,
       Image,
@@ -280,11 +289,26 @@
         multicolor: true
       }),
       StarterKit
-    ]
+    ],
+    onCreate: ({ editor }) => {
+      // Emit initial content
+      emit('update:modelValue', editor.getHTML());
+    },
+    onUpdate: ({ editor }) => {
+      emit('update:modelValue', editor.getHTML());
+    }
+  });
+
+  // Watch for external changes to modelValue
+  watch(() => props.modelValue, (newValue) => {
+    const isSame = editor.value?.getHTML() === newValue;
+    if (!isSame && editor.value) {
+      editor.value.commands.setContent(newValue, false);
+    }
   });
 
   const setLink = () => {
-      const previousUrl = editor.getAttributes('link').href
+      const previousUrl = editor.value?.getAttributes('link').href
       const url = window.prompt('URL', previousUrl)
 
       // cancelled
