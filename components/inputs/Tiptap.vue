@@ -8,11 +8,25 @@
     </span>
 
     <!-- Editor Container -->
-    <div v-show="!showPreview" class="relative">
+    <div
+      v-show="!showPreview"
+      class="relative"
+      @drop.prevent="handleDrop"
+      @dragover.prevent
+      @dragenter.prevent="isDragging = true"
+      @dragleave.prevent="isDragging = false"
+    >
+      <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20">
+        <p class="text-primary font-semibold">Drop images here</p>
+      </div>
       <editor-content :editor="editor" :style="`min-height:170px`"/>
       <!-- Emoji Picker inside editor -->
       <div class="absolute bottom-3 right-3">
         <EmojiPicker @emoji-selected="insertEmoji" />
+      </div>
+      <!-- Upload progress indicator -->
+      <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700">
+        <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
       </div>
     </div>
 
@@ -68,7 +82,7 @@
            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="addImage()">
+      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="triggerFileUpload()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="15" y1="8" x2="15.01" y2="8"></line>
@@ -77,6 +91,14 @@
            <path d="M14 14l1 -1a3 5 0 0 1 3 0l2 2"></path>
         </svg>
       </button>
+      <input
+        ref="fileInput"
+        type="file"
+        accept="image/*"
+        multiple
+        class="hidden"
+        @change="handleFileUpload"
+      />
       <!-- Divider -->
       <span class="border-r border-gray-300 mx-1"></span>
       <!-- Blockquote -->
@@ -303,6 +325,93 @@
     if (editor.value) {
       editor.value.chain().focus().insertContent(emoji).run()
     }
+  }
+
+  // File upload state
+  const fileInput = ref(null)
+  const isDragging = ref(false)
+  const uploading = ref(false)
+  const uploadProgress = ref(0)
+  const uploadTotal = ref(0)
+
+  const triggerFileUpload = () => {
+    fileInput.value?.click()
+  }
+
+  const uploadFile = async (file) => {
+    const formData = new FormData()
+    formData.append('operations', JSON.stringify({
+      query: `
+        mutation UploadFile($file: Upload!) {
+          uploadFile(file: $file)
+        }
+      `,
+      variables: { file: null }
+    }))
+    formData.append('map', JSON.stringify({ '0': ['variables.file'] }))
+    formData.append('0', file)
+
+    try {
+      const response = await fetch('/api/v2/graphql', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      })
+
+      const result = await response.json()
+      if (result.errors) {
+        throw new Error(result.errors[0].message)
+      }
+
+      return result.data.uploadFile
+    } catch (error) {
+      console.error('Upload failed:', error)
+      throw error
+    }
+  }
+
+  const handleFileUpload = async (event) => {
+    const files = event.target.files
+    if (!files || files.length === 0) return
+
+    await processFiles(Array.from(files))
+
+    // Reset input
+    event.target.value = ''
+  }
+
+  const handleDrop = async (event) => {
+    isDragging.value = false
+    const files = event.dataTransfer?.files
+    if (!files) return
+
+    const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'))
+    if (imageFiles.length > 0) {
+      await processFiles(imageFiles)
+    }
+  }
+
+  const processFiles = async (files) => {
+    uploading.value = true
+    uploadTotal.value = files.length
+    uploadProgress.value = 0
+
+    for (const file of files) {
+      try {
+        const url = await uploadFile(file)
+
+        // Insert image into editor at cursor position
+        editor.value?.chain().focus().setImage({ src: url }).run()
+
+        uploadProgress.value++
+      } catch (error) {
+        console.error('Failed to upload file:', error)
+        // Continue with other files even if one fails
+        uploadProgress.value++
+      }
+    }
+
+    uploading.value = false
   }
 </script>
 
