@@ -42,7 +42,7 @@
                     u.creationDate ? format(parseISO(u.creationDate), "yyyy MMM. dd") : 'Unknown'
                 }}</span>
             </div>
-            <div v-if="u.isAdmin" class="text-red-600 mt-4">
+            <div v-if="u.adminLevel > 0" class="text-red-600 mt-4">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="inline-block w-6 h-6"

@@ -5,7 +5,12 @@
     >
         <NuxtLoadingIndicator color="rgba(255,255,255,0.45)" :height="3" />
         <!-- Navigation Bar -->
-        <component :is="isAuthed ? NavbarAuthenticated : Navbar" />
+        <ClientOnly>
+            <component :is="isAuthed ? NavbarAuthenticated : Navbar" />
+            <template #fallback>
+                <Navbar />
+            </template>
+        </ClientOnly>
         <!-- Side Navigation -->
         <!--<NavbarLeft
             v-if="site.enableBoards && !route.meta.isLeftNavbarDisabled"
@@ -151,10 +156,11 @@ watch(
             }
         }
     },
+    { immediate: true }
 );
 
 const userStore = useLoggedInUser();
-const isAuthed = userStore.isAuthed;
+const isAuthed = computed(() => userStore.isAuthed);
 
 const modalStore = useModalStore();
 const toastStore = useToastStore();

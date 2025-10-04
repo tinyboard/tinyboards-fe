@@ -113,7 +113,7 @@ const query_str = `
       avatar
       bio
       creationDate
-      reputation
+      rep
       adminLevel
     }
   }

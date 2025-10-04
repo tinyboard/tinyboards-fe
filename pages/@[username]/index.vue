@@ -111,7 +111,7 @@ definePageMeta({
     //isScrollDisabled: true
 });
 
-const title = ref(route.params?.username);
+const title = ref("Loading profile...");
 
 useHead({
     title: title,
@@ -131,7 +131,10 @@ const ProfileRemoved = defineAsyncComponent(
     () => import("@/components/pages/ProfileRemoved"),
 );
 
-const username = computed(() => route.params?.username);
+const username = computed(() => {
+    const param = route.params?.username;
+    return typeof param === 'string' ? param : undefined;
+});
 
 // Fetch user with posts and comments - don't destructure to preserve reactivity
 const userResult = await useFetchUser(username.value, {
