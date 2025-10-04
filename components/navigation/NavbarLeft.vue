@@ -8,7 +8,7 @@
             class="flex flex-col space-y-2 h-screen pb-32 overflow-scroll"
         >
             <div class="flex flex-col space-y-2">
-                <NuxtLink to="/feed" custom v-slot="{ isActive, navigate }">
+                <NuxtLink to="/home" custom v-slot="{ isActive, navigate }">
                     <button
                         title="Home"
                         class="relative flex group border p-[1px] transition-all duration-100"

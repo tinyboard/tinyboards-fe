@@ -7,7 +7,7 @@
 						<!-- Logo & Name -->
 						<div v-if="boardStore.boardActive"
 							class="header-brand font-bold text-lg text-white flex space-x-1 items-center">
-							<NuxtLink to="/feed">
+							<NuxtLink to="/home">
 								<img id="navbar-icon" :alt="site.name" :title="site.name" :src="site.icon"
 									class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							</NuxtLink>
@@ -20,7 +20,7 @@
 							<NuxtLink :to="`/b/${boardStore.board.name}`" class="font-bold text-lg text-white">{{
 								boardStore.board.name }}</NuxtLink>
 						</div>
-						<NuxtLink v-else to="/feed" class="header-brand font-bold text-lg text-white">
+						<NuxtLink v-else to="/home" class="header-brand font-bold text-lg text-white">
 							<img id="navbar-icon" :src="site.icon"
 								class="inline-block mr-2 max-w-[32px] max-h-[32px]" />
 							<span>{{ site.name }}</span>
@@ -328,7 +328,7 @@
 			<!-- Board Navigation Section (Mobile Only) -->
 			<div v-if="site.enableBoards" class="py-2">
 				<!-- Home -->
-				<NuxtLink to="/feed" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+				<NuxtLink to="/home" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
 					@click="isOpen = false">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
 						stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

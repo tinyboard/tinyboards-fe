@@ -67,6 +67,10 @@ export default defineNuxtConfig({
     },
 
     // SPA for feeds (user-specific content, auth-dependent)
+    "/home/**": {
+      ssr: false,
+      headers: { 'Cache-Control': 'no-store' }
+    },
     "/feed/**": {
       ssr: false,
       headers: { 'Cache-Control': 'no-store' }
@@ -110,7 +114,7 @@ export default defineNuxtConfig({
 
     // Homepage redirect
     "/": {
-      redirect: "/feed"
+      redirect: "/home"
     }
   },
 

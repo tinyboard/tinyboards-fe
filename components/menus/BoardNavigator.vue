@@ -58,7 +58,7 @@
                 <div v-else class="py-2 text-sm">
                     <!-- Home -->
                     <MenuItem as="div" v-slot="{ active, close }">
-                    <NuxtLink to="/feed" :class="[
+                    <NuxtLink to="/home" :class="[
                         active
                             ? 'bg-gray-100 text-gray-900'
                             : 'text-gray-800',

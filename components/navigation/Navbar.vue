@@ -8,7 +8,7 @@
                 <div class="flex flex-grow items-center">
                     <div class="relative flex-shrink-0">
                         <NuxtLink
-                            to="/feed"
+                            to="/home"
                             class="font-bold text-lg text-white dark:text-gray-100"
                         >
                             <img
@@ -183,7 +183,7 @@
                     <!-- Board Navigation (Mobile - Not Authenticated) -->
                     <hr v-if="site.enableBoards" class="my-2 dark:border-gray-700 dark:border-opacity-70">
                     <div v-if="site.enableBoards" class="py-2">
-                        <NuxtLink to="/feed" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        <NuxtLink to="/home" class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                             @click="isOpen = false">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
                                 stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

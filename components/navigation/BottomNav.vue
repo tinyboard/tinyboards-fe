@@ -2,7 +2,7 @@
     <nav v-if="isAuthed" class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40 safe-area-bottom">
         <div class="flex items-center justify-around h-16 px-2">
             <!-- Home -->
-            <NuxtLink to="/feed" class="flex flex-col items-center justify-center flex-1 h-full group" :class="isActive('/feed') ? 'text-primary' : 'text-gray-600 dark:text-gray-400'">
+            <NuxtLink to="/home" class="flex flex-col items-center justify-center flex-1 h-full group" :class="isActive('/home') ? 'text-primary' : 'text-gray-600 dark:text-gray-400'">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
@@ -97,7 +97,7 @@
             <div class="overflow-y-auto" style="max-height: calc(80vh - 80px);">
                 <!-- Quick Links -->
                 <div class="py-2">
-                    <NuxtLink to="/feed" @click="showBoardsSheet = false" class="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <NuxtLink to="/home" @click="showBoardsSheet = false" class="flex items-center px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 text-gray-600 dark:text-gray-400" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M5 12l-2 0l9 -9l9 9l-2 0" />

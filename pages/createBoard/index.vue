@@ -7,21 +7,21 @@
         <div v-if="!site.enableBoards">
             <h1 class="text-3xl font-bold">Boards are disabled</h1>
             <p class="text-gray-600 my-6">Boards are turned off for {{ site.name }}.<br /><br />Sorry, even the wizard can't do the impossible.</p>
-            <NuxtLink to="/feed" class="mt-6">
+            <NuxtLink to="/home" class="mt-6">
                 <button class="button gray">Go home</button>
             </NuxtLink>
         </div>
         <div v-else-if="isBanned">
             <h1 class="text-3xl font-bold">You are banned</h1>
             <p class="text-gray-600 my-6">Bruh.</p>
-            <NuxtLink to="/feed" class="mt-6">
+            <NuxtLink to="/home" class="mt-6">
                 <button class="button gray">Go home</button>
             </NuxtLink>
         </div>
         <div v-else-if="adminRequired">
             <h1 class="text-3xl font-bold">Board creation restricted</h1>
             <p class="text-gray-600 my-6">Only admins can create new boards for some reason, it seems.</p>
-            <NuxtLink to="/feed" class="mt-6">
+            <NuxtLink to="/home" class="mt-6">
                 <button class="button gray">Go home</button>
             </NuxtLink>
         </div>

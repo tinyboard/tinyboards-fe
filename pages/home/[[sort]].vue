@@ -163,8 +163,8 @@ const { loading, loadMore } = usePagination();
 
 // Watch for route changes and refetch posts
 watch(() => route.fullPath, async (newPath, oldPath) => {
-    // Only refetch if we're navigating back to feed from elsewhere
-    if (newPath.startsWith('/feed') || newPath === '/') {
+    // Only refetch if we're navigating back to home from elsewhere
+    if (newPath.startsWith('/home') || newPath.startsWith('/feed') || newPath === '/') {
         await usePosts(
             mapToListingType(isHomeFeed.value ? "subscribed" : "local")
         );

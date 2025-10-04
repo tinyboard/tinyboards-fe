@@ -59,7 +59,7 @@
                     </p>
                     <ul class="mt-2 pl-4 flex flex-col list-disc">
                         <li>
-                            <NuxtLink to="/feed">Go to home</NuxtLink>
+                            <NuxtLink to="/home">Go to home</NuxtLink>
                         </li>
                     </ul>
                 </div>

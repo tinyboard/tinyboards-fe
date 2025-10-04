@@ -20,7 +20,7 @@
 						<NuxtLink @click="router.go(-1)" to="#">Go back</NuxtLink>
 					</li>
 					<li>
-						<NuxtLink external to="/feed">Go to home</NuxtLink>
+						<NuxtLink external to="/home">Go to home</NuxtLink>
 					</li>
 					<li v-if="isDev && hasErrorDetails">
 						<button @click="showDetails = !showDetails" class="text-primary underline hover:no-underline">
