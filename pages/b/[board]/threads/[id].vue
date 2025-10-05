@@ -70,47 +70,49 @@
                         </div>
 
                         <!-- Thread Body with Forum-Style Layout -->
-                        <div class="flex border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex flex-col sm:flex-row border-b border-gray-200 dark:border-gray-700">
                             <!-- User Sidebar -->
-                            <div class="w-48 flex-shrink-0 p-4 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                                <div class="flex flex-col items-center text-center">
+                            <div class="p-3 sm:w-48 sm:flex-shrink-0 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <div class="flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
                                     <!-- Avatar -->
-                                    <NuxtLink :to="`/@${thread.creator?.name}`">
+                                    <NuxtLink :to="`/@${thread.creator?.name}`" class="flex-shrink-0">
                                         <img
                                             v-if="thread.creator?.avatar"
                                             :src="thread.creator.avatar"
                                             :alt="thread.creator.displayName || thread.creator.name"
-                                            class="w-24 h-24 rounded border-2 border-gray-300 dark:border-gray-600"
+                                            class="w-12 h-12 sm:w-24 sm:h-24 rounded border-2 border-gray-300 dark:border-gray-600"
                                         />
-                                        <div v-else class="w-24 h-24 rounded border-2 border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700"></div>
+                                        <div v-else class="w-12 h-12 sm:w-24 sm:h-24 rounded border-2 border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700"></div>
                                     </NuxtLink>
 
-                                    <!-- Display Name -->
-                                    <NuxtLink
-                                        :to="`/@${thread.creator?.name}`"
-                                        class="mt-3 font-bold text-base text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                                    >
-                                        {{ thread.creator?.displayName || thread.creator?.name }}
-                                    </NuxtLink>
+                                    <div class="flex-1 sm:flex-none sm:w-full">
+                                        <!-- Display Name -->
+                                        <NuxtLink
+                                            :to="`/@${thread.creator?.name}`"
+                                            class="sm:mt-3 font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 block"
+                                        >
+                                            {{ thread.creator?.displayName || thread.creator?.name }}
+                                        </NuxtLink>
 
-                                    <!-- Stats -->
-                                    <div class="mt-3 w-full text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                                        <div>Joined {{ formatDate(thread.creator?.creationDate) }}</div>
-                                        <div>{{ thread.creator?.postCount || 0 }} posts</div>
-                                        <div>{{ thread.creator?.commentCount || 0 }} comments</div>
+                                        <!-- Stats (horizontal on mobile, vertical on desktop) -->
+                                        <div class="mt-1 sm:mt-3 flex sm:flex-col sm:w-full text-xs text-gray-600 dark:text-gray-400 gap-2 sm:gap-1">
+                                            <div class="hidden sm:block">Joined {{ formatDate(thread.creator?.creationDate) }}</div>
+                                            <div>{{ thread.creator?.postCount || 0 }} posts</div>
+                                            <div>{{ thread.creator?.commentCount || 0 }} comments</div>
+                                        </div>
                                     </div>
 
-                                    <!-- Signature -->
+                                    <!-- Signature (hidden on mobile) -->
                                     <div
                                         v-if="thread.creator?.signature"
-                                        class="mt-4 pt-4 w-full text-xs text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700"
+                                        class="hidden sm:block mt-4 pt-4 w-full text-xs text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700"
                                         v-html="thread.creator.signature"
                                     ></div>
                                 </div>
                             </div>
 
                             <!-- Post Content -->
-                            <div class="flex-1 p-6">
+                            <div class="flex-1 p-4 sm:p-6">
                                 <div
                                     v-if="thread.bodyHTML"
                                     class="prose dark:prose-invert max-w-none"
@@ -156,46 +158,48 @@
                             class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md overflow-hidden"
                         >
                             <!-- Comment with Forum-Style Layout -->
-                            <div class="flex">
+                            <div class="flex flex-col sm:flex-row">
                                 <!-- User Sidebar -->
-                                <div class="w-48 flex-shrink-0 p-4 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                                    <div class="flex flex-col items-center text-center">
+                                <div class="p-3 sm:w-48 sm:flex-shrink-0 sm:p-4 border-b sm:border-b-0 sm:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                    <div class="flex sm:flex-col items-center sm:text-center gap-3 sm:gap-0">
                                         <!-- Avatar -->
-                                        <NuxtLink :to="`/@${comment.creator?.name}`">
+                                        <NuxtLink :to="`/@${comment.creator?.name}`" class="flex-shrink-0">
                                             <img
                                                 v-if="comment.creator?.avatar"
                                                 :src="comment.creator.avatar"
                                                 :alt="comment.creator.displayName || comment.creator.name"
-                                                class="w-20 h-20 rounded border-2 border-gray-300 dark:border-gray-600"
+                                                class="w-10 h-10 sm:w-20 sm:h-20 rounded border-2 border-gray-300 dark:border-gray-600"
                                             />
-                                            <div v-else class="w-20 h-20 rounded border-2 border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700"></div>
+                                            <div v-else class="w-10 h-10 sm:w-20 sm:h-20 rounded border-2 border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700"></div>
                                         </NuxtLink>
 
-                                        <!-- Display Name -->
-                                        <NuxtLink
-                                            :to="`/@${comment.creator?.name}`"
-                                            class="mt-2 font-bold text-sm text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                                        >
-                                            {{ comment.creator?.displayName || comment.creator?.name }}
-                                        </NuxtLink>
+                                        <div class="flex-1 sm:flex-none sm:w-full">
+                                            <!-- Display Name -->
+                                            <NuxtLink
+                                                :to="`/@${comment.creator?.name}`"
+                                                class="sm:mt-2 font-bold text-sm text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 block"
+                                            >
+                                                {{ comment.creator?.displayName || comment.creator?.name }}
+                                            </NuxtLink>
 
-                                        <!-- Stats -->
-                                        <div class="mt-2 w-full text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
-                                            <div>{{ comment.creator?.postCount || 0 }} posts</div>
-                                            <div>{{ comment.creator?.commentCount || 0 }} comments</div>
+                                            <!-- Stats (horizontal on mobile, vertical on desktop) -->
+                                            <div class="mt-0.5 sm:mt-2 flex sm:flex-col sm:w-full text-xs text-gray-600 dark:text-gray-400 gap-2 sm:gap-0.5">
+                                                <div>{{ comment.creator?.postCount || 0 }} posts</div>
+                                                <div>{{ comment.creator?.commentCount || 0 }} comments</div>
+                                            </div>
                                         </div>
 
-                                        <!-- Signature -->
+                                        <!-- Signature (hidden on mobile) -->
                                         <div
                                             v-if="comment.creator?.signature"
-                                            class="mt-3 pt-3 w-full text-xs text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700"
+                                            class="hidden sm:block mt-3 pt-3 w-full text-xs text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700"
                                             v-html="comment.creator.signature"
                                         ></div>
                                     </div>
                                 </div>
 
                                 <!-- Comment Content -->
-                                <div class="flex-1 p-4">
+                                <div class="flex-1 p-3 sm:p-4">
                                     <!-- Reply Number -->
                                     <div class="flex items-center justify-end mb-3">
                                         <span class="text-xs font-semibold text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">#{{ index + 1 }}</span>
