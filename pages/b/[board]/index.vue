@@ -277,6 +277,8 @@ if (route.params?.board) {
                 sidebarHTML
                 hasFeed
                 hasThreads
+                sectionOrder
+                defaultSection
             }
         }
     `;
@@ -410,21 +412,32 @@ const totalPages = computed(() => {
     return Math.ceil(totalCount.value / limit.value || 1);
     });*/
 
-// Links for sub navbar
-const links = computed(() => {
+// Parse section order
+const getSectionLinks = () => {
     const baseLinks = [];
+    const sectionOrder = board.value?.sectionOrder?.split(',').filter(s => s.trim()) || ['feed', 'threads'];
 
-    // Add Threads tab if enabled
-    if (board.value?.hasThreads) {
-        baseLinks.push({ name: "Threads", href: `/b/${board.value?.name}/threads` });
-    }
-
-
-    // Add Feed tab if enabled
-    if (board.value?.hasFeed) {
-        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
+    // Build links in the configured order
+    for (const section of sectionOrder) {
+        if (section === 'threads' && board.value?.hasThreads) {
+            baseLinks.push({ name: "Threads", href: `/b/${board.value?.name}/threads` });
+        } else if (section === 'feed' && board.value?.hasFeed) {
+            baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
+        }
     }
 
     return baseLinks;
+};
+
+// Links for sub navbar
+const links = computed(() => getSectionLinks());
+
+// Redirect to default section if this is the feed section but default is different
+onMounted(() => {
+    const defaultSection = board.value?.defaultSection;
+    if (defaultSection === 'threads' && board.value?.hasThreads) {
+        // If viewing feed but default is threads, redirect
+        navigateTo(`/b/${board.value?.name}/threads`);
+    }
 });
 </script>
