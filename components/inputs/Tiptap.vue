@@ -268,6 +268,7 @@
   import { TextStyle } from '@tiptap/extension-text-style';
   import { Color } from '@tiptap/extension-color';
   import { Highlight } from '@tiptap/extension-highlight';
+  import { Underline } from '@tiptap/extension-underline';
   import { useEditor, EditorContent } from '@tiptap/vue-3';
   import StarterKit from '@tiptap/starter-kit';
   import EmojiPicker from './EmojiPicker.vue';
@@ -278,18 +279,40 @@
   const editor = useEditor({
     content: props.modelValue || '',
     extensions: [
-      Link,
-      Image,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3]
+        }
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-600 hover:text-blue-700 underline'
+        }
+      }),
+      Image.configure({
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded'
+        }
+      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
       TextStyle,
       Color,
       Highlight.configure({
-        multicolor: true
+        multicolor: true,
+        HTMLAttributes: {
+          class: 'bg-yellow-200 dark:bg-yellow-800'
+        }
       }),
-      StarterKit
+      Underline
     ],
+    editorProps: {
+      attributes: {
+        class: 'prose prose-sm dark:prose-invert max-w-none focus:outline-none'
+      }
+    },
     onCreate: ({ editor }) => {
       // Emit initial content
       emit('update:modelValue', editor.getHTML());
@@ -443,34 +466,140 @@
 
 :deep(.ProseMirror) {
   min-height: 170px;
-  @apply bg-gray-100 focus:bg-white dark:bg-gray-900 dark:focus:bg-gray-900 text-lg sm:text-base px-3 py-2 shadow-inner-xs;
+  @apply bg-gray-100 focus:bg-white dark:bg-gray-900 dark:focus:bg-gray-950 px-3 py-3 shadow-inner-xs;
 }
 
 :deep(.ProseMirror:focus) {
   outline: none;
 }
 
-:deep(.ProseMirror>*+*) {
-  margin-top: 0.75em;
+/* Headings */
+:deep(.ProseMirror h1) {
+  @apply text-3xl font-bold mt-6 mb-4 text-gray-900 dark:text-gray-100;
 }
 
-:deep(.mention) {
-  @apply inline-flex text-primary leading-4 bg-primary bg-opacity-10 rounded-sm px-1 py-0.5
+:deep(.ProseMirror h2) {
+  @apply text-2xl font-bold mt-5 mb-3 text-gray-900 dark:text-gray-100;
 }
 
+:deep(.ProseMirror h3) {
+  @apply text-xl font-bold mt-4 mb-2 text-gray-900 dark:text-gray-100;
+}
+
+/* Paragraphs */
+:deep(.ProseMirror p) {
+  @apply text-gray-900 dark:text-gray-100 leading-relaxed mb-3;
+}
+
+:deep(.ProseMirror p:last-child) {
+  @apply mb-0;
+}
+
+/* Text formatting */
+:deep(.ProseMirror strong) {
+  @apply font-bold text-gray-900 dark:text-gray-100;
+}
+
+:deep(.ProseMirror em) {
+  @apply italic;
+}
+
+:deep(.ProseMirror s) {
+  @apply line-through;
+}
+
+:deep(.ProseMirror u) {
+  @apply underline;
+}
+
+/* Links */
+:deep(.ProseMirror a) {
+  @apply text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer;
+}
+
+/* Lists */
+:deep(.ProseMirror ul) {
+  @apply list-disc pl-6 mb-3 text-gray-900 dark:text-gray-100;
+}
+
+:deep(.ProseMirror ol) {
+  @apply list-decimal pl-6 mb-3 text-gray-900 dark:text-gray-100;
+}
+
+:deep(.ProseMirror li) {
+  @apply mb-1;
+}
+
+/* Blockquotes */
+:deep(.ProseMirror blockquote) {
+  @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800;
+}
+
+/* Code */
+:deep(.ProseMirror code) {
+  @apply bg-gray-200 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono text-pink-600 dark:text-pink-400;
+}
+
+:deep(.ProseMirror pre) {
+  @apply bg-gray-900 dark:bg-black text-gray-100 p-4 rounded-lg my-4 overflow-x-auto;
+}
+
+:deep(.ProseMirror pre code) {
+  @apply bg-transparent p-0 text-gray-100 text-sm;
+}
+
+/* Horizontal rule */
+:deep(.ProseMirror hr) {
+  @apply border-t-2 border-gray-300 dark:border-gray-700 my-6;
+}
+
+/* Images */
 :deep(.ProseMirror img) {
-  max-width: 100%;
-  height: auto;
+  @apply max-w-full h-auto rounded-lg my-4;
 }
 
 :deep(.ProseMirror img.ProseMirror-selectednode) {
-  outline: 3px solid #7DD3FC;
+  @apply outline outline-4 outline-blue-400;
 }
 
+/* Placeholder */
+:deep(.ProseMirror p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+  @apply text-gray-400 float-left h-0 pointer-events-none;
+}
+
+/* Mention styling */
+:deep(.mention) {
+  @apply inline-flex text-primary leading-4 bg-primary bg-opacity-10 rounded-sm px-1 py-0.5;
+}
+
+/* Text alignment */
+:deep(.ProseMirror .text-left) {
+  text-align: left;
+}
+
+:deep(.ProseMirror .text-center) {
+  text-align: center;
+}
+
+:deep(.ProseMirror .text-right) {
+  text-align: right;
+}
+
+/* Editor menu buttons */
 #editor > button {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s ease;
+}
+
+#editor > button:hover {
+  @apply transform scale-105;
+}
+
+#editor > button:active {
+  @apply transform scale-95;
 }
 
 </style>

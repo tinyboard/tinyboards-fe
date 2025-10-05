@@ -27,68 +27,111 @@
                     <!-- Thread Content -->
                     <article
                         v-if="thread"
-                        class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6 mb-6"
+                        class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md overflow-hidden mb-4"
                     >
-                        <!-- Pin indicator -->
-                        <div v-if="thread.featuredBoard" class="flex items-center gap-2 text-yellow-600 dark:text-yellow-500 text-sm font-medium mb-3">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-4 h-4"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
-                                <line x1="12" y1="16" x2="12" y2="21"></line>
-                                <line x1="8" y1="4" x2="16" y2="4"></line>
-                            </svg>
-                            <span>Pinned</span>
+                        <!-- Thread Header -->
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <!-- Title with pin indicator -->
+                                    <div class="flex items-start gap-2">
+                                        <svg
+                                            v-if="thread.featuredBoard"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="2"
+                                            stroke="currentColor"
+                                            fill="none"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
+                                            <line x1="12" y1="16" x2="12" y2="21"></line>
+                                            <line x1="8" y1="4" x2="16" y2="4"></line>
+                                        </svg>
+                                        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                            {{ thread.title }}
+                                        </h1>
+                                    </div>
+                                </div>
+
+                                <!-- Reply count badge -->
+                                <div class="flex-shrink-0 text-center px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md">
+                                    <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                        {{ thread.commentCount }}
+                                    </div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                                        {{ thread.commentCount === 1 ? 'reply' : 'replies' }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Title -->
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                            {{ thread.title }}
-                        </h1>
+                        <!-- Thread Body with Forum-Style Layout -->
+                        <div class="flex border-b border-gray-200 dark:border-gray-700">
+                            <!-- User Sidebar -->
+                            <div class="w-48 flex-shrink-0 p-4 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <div class="flex flex-col items-center text-center">
+                                    <!-- Avatar -->
+                                    <NuxtLink :to="`/@${thread.creator?.name}`">
+                                        <img
+                                            v-if="thread.creator?.avatar"
+                                            :src="thread.creator.avatar"
+                                            :alt="thread.creator.displayName || thread.creator.name"
+                                            class="w-24 h-24 rounded border-2 border-gray-300 dark:border-gray-600"
+                                        />
+                                        <div v-else class="w-24 h-24 rounded border-2 border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700"></div>
+                                    </NuxtLink>
 
-                        <!-- Metadata -->
-                        <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 mb-6">
-                            <NuxtLink
-                                :to="`/@${thread.creator?.name}`"
-                                class="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400"
-                            >
-                                <img
-                                    v-if="thread.creator?.avatar"
-                                    :src="thread.creator.avatar"
-                                    :alt="thread.creator.displayName || thread.creator.name"
-                                    class="w-6 h-6 rounded-full"
-                                />
-                                <strong>{{ thread.creator?.displayName || thread.creator?.name }}</strong>
-                            </NuxtLink>
-                            <span>·</span>
-                            <span>{{ formatDate(thread.creationDate) }}</span>
-                            <span>·</span>
-                            <span>{{ thread.commentCount }} {{ thread.commentCount === 1 ? 'reply' : 'replies' }}</span>
-                        </div>
+                                    <!-- Display Name -->
+                                    <NuxtLink
+                                        :to="`/@${thread.creator?.name}`"
+                                        class="mt-3 font-bold text-base text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                    >
+                                        {{ thread.creator?.displayName || thread.creator?.name }}
+                                    </NuxtLink>
 
-                        <!-- Body -->
-                        <div
-                            v-if="thread.bodyHTML"
-                            class="prose dark:prose-invert max-w-none"
-                            v-html="thread.bodyHTML"
-                        ></div>
-                        <div
-                            v-else-if="thread.body"
-                            class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
-                        >
-                            {{ thread.body }}
+                                    <!-- Stats -->
+                                    <div class="mt-3 w-full text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                                        <div>Joined {{ formatDate(thread.creator?.creationDate) }}</div>
+                                        <div>{{ thread.creator?.postCount || 0 }} posts</div>
+                                        <div>{{ thread.creator?.commentCount || 0 }} comments</div>
+                                    </div>
+
+                                    <!-- Signature -->
+                                    <div
+                                        v-if="thread.creator?.signature"
+                                        class="mt-4 pt-4 w-full text-xs text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700"
+                                        v-html="thread.creator.signature"
+                                    ></div>
+                                </div>
+                            </div>
+
+                            <!-- Post Content -->
+                            <div class="flex-1 p-6">
+                                <div
+                                    v-if="thread.bodyHTML"
+                                    class="prose dark:prose-invert max-w-none"
+                                    v-html="thread.bodyHTML"
+                                ></div>
+                                <div
+                                    v-else-if="thread.body"
+                                    class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
+                                >
+                                    {{ thread.body }}
+                                </div>
+
+                                <!-- Post Date -->
+                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-500">
+                                    Posted {{ formatDate(thread.creationDate) }}
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Thread Reactions -->
-                        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="px-6 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                             <CardsReactionBar
                                 :reaction-counts="thread.reactionCounts || []"
                                 :my-reaction="thread.myReaction?.emoji"
@@ -104,10 +147,212 @@
                         </div>
                     </article>
 
+                    <!-- Comments -->
+                    <div class="space-y-3">
+                        <div
+                            v-for="(comment, index) in comments"
+                            :key="comment.id"
+                            :id="`comment-${comment.id}`"
+                            class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md overflow-hidden"
+                        >
+                            <!-- Comment with Forum-Style Layout -->
+                            <div class="flex">
+                                <!-- User Sidebar -->
+                                <div class="w-48 flex-shrink-0 p-4 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                    <div class="flex flex-col items-center text-center">
+                                        <!-- Avatar -->
+                                        <NuxtLink :to="`/@${comment.creator?.name}`">
+                                            <img
+                                                v-if="comment.creator?.avatar"
+                                                :src="comment.creator.avatar"
+                                                :alt="comment.creator.displayName || comment.creator.name"
+                                                class="w-20 h-20 rounded border-2 border-gray-300 dark:border-gray-600"
+                                            />
+                                            <div v-else class="w-20 h-20 rounded border-2 border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700"></div>
+                                        </NuxtLink>
+
+                                        <!-- Display Name -->
+                                        <NuxtLink
+                                            :to="`/@${comment.creator?.name}`"
+                                            class="mt-2 font-bold text-sm text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                        >
+                                            {{ comment.creator?.displayName || comment.creator?.name }}
+                                        </NuxtLink>
+
+                                        <!-- Stats -->
+                                        <div class="mt-2 w-full text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
+                                            <div>{{ comment.creator?.postCount || 0 }} posts</div>
+                                            <div>{{ comment.creator?.commentCount || 0 }} comments</div>
+                                        </div>
+
+                                        <!-- Signature -->
+                                        <div
+                                            v-if="comment.creator?.signature"
+                                            class="mt-3 pt-3 w-full text-xs text-gray-500 dark:text-gray-500 border-t border-gray-200 dark:border-gray-700"
+                                            v-html="comment.creator.signature"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <!-- Comment Content -->
+                                <div class="flex-1 p-4">
+                                    <!-- Reply Number -->
+                                    <div class="flex items-center justify-end mb-3">
+                                        <span class="text-xs font-semibold text-gray-400 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">#{{ index + 1 }}</span>
+                                    </div>
+
+                                    <!-- Quoted Comment Reference -->
+                                    <div
+                                        v-if="comment.quotedCommentId"
+                                        class="mb-3 p-3 bg-blue-50 dark:bg-blue-950 border-l-4 border-l-blue-400 dark:border-l-blue-500 rounded"
+                                    >
+                                        <a
+                                            :href="`#comment-${comment.quotedCommentId}`"
+                                            class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 font-semibold mb-2"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M6 15h15l-3 -3m0 6l3 -3"></path>
+                                                <path d="M9 6h-3a2 2 0 0 0 -2 2v10"></path>
+                                            </svg>
+                                            <span>{{ getQuotedComment(comment.quotedCommentId)?.creator?.displayName || getQuotedComment(comment.quotedCommentId)?.creator?.name || 'User' }} said:</span>
+                                        </a>
+                                        <div
+                                            v-if="getQuotedComment(comment.quotedCommentId)?.bodyHTML"
+                                            class="prose dark:prose-invert prose-sm max-w-none text-gray-700 dark:text-gray-300"
+                                            v-html="getQuotedComment(comment.quotedCommentId).bodyHTML"
+                                        ></div>
+                                        <div
+                                            v-else-if="getQuotedComment(comment.quotedCommentId)?.body"
+                                            class="text-gray-700 dark:text-gray-300 text-sm"
+                                        >
+                                            {{ getQuotedComment(comment.quotedCommentId).body }}
+                                        </div>
+                                        <div v-else class="text-gray-500 dark:text-gray-500 text-sm italic">
+                                            [Comment not found or deleted]
+                                        </div>
+                                    </div>
+
+                                <!-- Edit Form -->
+                                <LazyInputsEdit
+                                    v-if="editingCommentId === comment.id"
+                                    :id="comment.id"
+                                    :body="comment.body"
+                                    type="comment"
+                                    :isThread="true"
+                                    @hasEdited="(payload) => onCommentEdited(comment, payload)"
+                                    @closed="editingCommentId = null"
+                                />
+
+                                <!-- Comment Body -->
+                                <div
+                                    v-else-if="comment.bodyHTML"
+                                    class="prose dark:prose-invert prose-sm max-w-none"
+                                    v-html="comment.bodyHTML"
+                                ></div>
+                                <div
+                                    v-else-if="comment.body"
+                                    class="text-gray-700 dark:text-gray-300 text-sm"
+                                >
+                                    {{ comment.body }}
+                                </div>
+
+                                <!-- Comment Meta -->
+                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                    <span class="text-xs text-gray-500 dark:text-gray-500">
+                                        Posted {{ formatDate(comment.creationDate) }}
+                                    </span>
+
+                                    <!-- Comment Actions -->
+                                    <ul class="flex flex-wrap items-center gap-4 mt-3 text-xs">
+                                        <li v-if="v">
+                                            <button
+                                                @click="quoteComment(comment)"
+                                                class="font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                                            >
+                                                Quote
+                                            </button>
+                                        </li>
+                                        <li v-if="v && comment.creator?.id === v.id">
+                                            <button
+                                                @click="editingCommentId = comment.id"
+                                                class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                                            >
+                                                Edit
+                                            </button>
+                                        </li>
+                                        <li v-if="v && comment.creator?.id === v.id">
+                                            <button
+                                                @click="confirmDeleteComment(comment.id)"
+                                                class="font-medium text-gray-500 hover:text-red-600 dark:text-gray-400"
+                                            >
+                                                Delete
+                                            </button>
+                                        </li>
+                                        <li v-if="v && comment.creator?.id !== v.id">
+                                            <button
+                                                @click="confirmReportComment(comment.id)"
+                                                class="font-medium text-gray-500 hover:text-yellow-600 dark:text-gray-400"
+                                            >
+                                                Report
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <a
+                                                :href="`#comment-${comment.id}`"
+                                                class="font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                                            >
+                                                Permalink
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            </div>
+
+                            <!-- Comment Reactions -->
+                            <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <CardsReactionBar
+                                    :reaction-counts="comment.reactionCounts || []"
+                                    :my-reaction="comment.myReaction?.emoji"
+                                    @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
+                                >
+                                    <template #add-reaction>
+                                        <InputsReactionPicker
+                                            :my-reaction="comment.myReaction?.emoji"
+                                            @select="(emoji) => toggleCommentReaction(comment, emoji)"
+                                        />
+                                    </template>
+                                </CardsReactionBar>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div
+                            v-if="comments.length === 0 && !loading"
+                            class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-12 text-center"
+                        >
+                            <p class="text-gray-500 dark:text-gray-400">
+                                No replies yet. Be the first to reply!
+                            </p>
+                        </div>
+
+                        <!-- Load More -->
+                        <button
+                            v-if="hasMoreComments"
+                            @click="loadMoreComments"
+                            :disabled="loading"
+                            class="w-full button secondary"
+                        >
+                            {{ loading ? 'Loading...' : 'Load More Replies' }}
+                        </button>
+                    </div>
+
                     <!-- Comment Form -->
                     <div
                         v-if="v"
-                        class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6 mb-6"
+                        id="reply-form"
+                        class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6 mt-6"
                     >
                         <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
                             Reply to thread
@@ -149,7 +394,7 @@
                     </div>
                     <div
                         v-else
-                        class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6 mb-6 text-center"
+                        class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6 mt-6 text-center"
                     >
                         <p class="text-gray-600 dark:text-gray-400 mb-3">
                             Please log in to reply to this thread
@@ -157,118 +402,6 @@
                         <NuxtLink to="/login" class="button primary">
                             Log In
                         </NuxtLink>
-                    </div>
-
-                    <!-- Comments -->
-                    <div class="space-y-4">
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                            Replies ({{ thread?.commentCount || 0 }})
-                        </h2>
-
-                        <div
-                            v-for="comment in comments"
-                            :key="comment.id"
-                            :id="`comment-${comment.id}`"
-                            class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-4"
-                        >
-                            <!-- Comment Header -->
-                            <div class="flex items-center gap-3 mb-3">
-                                <NuxtLink
-                                    :to="`/@${comment.creator?.name}`"
-                                    class="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400"
-                                >
-                                    <img
-                                        v-if="comment.creator?.avatar"
-                                        :src="comment.creator.avatar"
-                                        :alt="comment.creator.displayName || comment.creator.name"
-                                        class="w-8 h-8 rounded-full"
-                                    />
-                                    <strong class="text-gray-900 dark:text-gray-100">
-                                        {{ comment.creator?.displayName || comment.creator?.name }}
-                                    </strong>
-                                </NuxtLink>
-                                <span class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ formatDate(comment.creationDate) }}
-                                </span>
-                            </div>
-
-                            <!-- Quoted Comment Reference -->
-                            <div
-                                v-if="comment.quotedCommentId"
-                                class="mb-3 p-3 bg-gray-50 dark:bg-gray-800 rounded border-l-4 border-blue-400"
-                            >
-                                <a
-                                    :href="`#comment-${comment.quotedCommentId}`"
-                                    class="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                                >
-                                    In reply to comment #{{ comment.quotedCommentId }}
-                                </a>
-                            </div>
-
-                            <!-- Comment Body -->
-                            <div
-                                v-if="comment.bodyHTML"
-                                class="prose dark:prose-invert prose-sm max-w-none mb-3"
-                                v-html="comment.bodyHTML"
-                            ></div>
-                            <div
-                                v-else-if="comment.body"
-                                class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-3"
-                            >
-                                {{ comment.body }}
-                            </div>
-
-                            <!-- Comment Actions -->
-                            <div class="flex items-center gap-4 text-sm mb-3">
-                                <button
-                                    v-if="v"
-                                    @click="quoteComment(comment)"
-                                    class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
-                                >
-                                    Quote
-                                </button>
-                                <a
-                                    :href="`#comment-${comment.id}`"
-                                    class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-medium"
-                                >
-                                    Link
-                                </a>
-                            </div>
-
-                            <!-- Comment Reactions -->
-                            <CardsReactionBar
-                                :reaction-counts="comment.reactionCounts || []"
-                                :my-reaction="comment.myReaction?.emoji"
-                                @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
-                            >
-                                <template #add-reaction>
-                                    <InputsReactionPicker
-                                        :my-reaction="comment.myReaction?.emoji"
-                                        @select="(emoji) => toggleCommentReaction(comment, emoji)"
-                                    />
-                                </template>
-                            </CardsReactionBar>
-                        </div>
-
-                        <!-- Empty State -->
-                        <div
-                            v-if="comments.length === 0 && !loading"
-                            class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-12 text-center"
-                        >
-                            <p class="text-gray-500 dark:text-gray-400">
-                                No replies yet. Be the first to reply!
-                            </p>
-                        </div>
-
-                        <!-- Load More -->
-                        <button
-                            v-if="hasMoreComments"
-                            @click="loadMoreComments"
-                            :disabled="loading"
-                            class="w-full button secondary"
-                        >
-                            {{ loading ? 'Loading...' : 'Load More Replies' }}
-                        </button>
                     </div>
                 </div>
 
@@ -282,6 +415,7 @@
 <script setup>
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useModalStore } from "@/stores/StoreModal";
 import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
 import CardsBoardBanner from "@/components/cards/BoardBanner.vue";
 
@@ -293,6 +427,7 @@ const router = useRouter();
 const route = useRoute();
 const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
+const modalStore = useModalStore();
 const v = userStore.user;
 
 const boardName = route.params.board;
@@ -321,6 +456,10 @@ const boardQuery = `
             sidebarHTML
             hasFeed
             hasThreads
+            reactionSettings {
+                id
+                emojiWeights
+            }
         }
     }
 `;
@@ -399,6 +538,10 @@ const threadQuery = `
                 name
                 displayName
                 avatar
+                signature
+                creationDate
+                postCount
+                commentCount
             }
             board {
                 id
@@ -450,11 +593,9 @@ useHead({
 const fetchComments = async (pageNum = 1) => {
     loading.value = true;
     try {
-        // TODO: Create a chronological comments query on backend
-        // For now, we'll use a simple comment list query
         const commentsQuery = `
-            query GetComments($postId: Int!, $limit: Int, $offset: Int) {
-                comments(postId: $postId, limit: $limit, offset: $offset) {
+            query GetComments($postId: Int!, $limit: Int, $page: Int, $sort: CommentSortType) {
+                comments(postId: $postId, limit: $limit, page: $page, sort: $sort) {
                     id
                     body
                     bodyHTML
@@ -466,6 +607,10 @@ const fetchComments = async (pageNum = 1) => {
                         name
                         displayName
                         avatar
+                        signature
+                        creationDate
+                        postCount
+                        commentCount
                     }
                     reactionCounts {
                         id
@@ -485,7 +630,8 @@ const fetchComments = async (pageNum = 1) => {
             variables: {
                 postId: threadId,
                 limit,
-                offset: (pageNum - 1) * limit
+                page: pageNum,
+                sort: 'old' // Chronological order (oldest first)
             }
         });
 
@@ -518,12 +664,19 @@ const loadMoreComments = async () => {
 // Quote comment
 const quoteComment = (comment) => {
     quotedComment.value = comment;
-    // Scroll to comment form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to reply form at bottom
+    nextTick(() => {
+        document.getElementById('reply-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 };
 
 const clearQuote = () => {
     quotedComment.value = null;
+};
+
+// Get quoted comment by ID
+const getQuotedComment = (quotedCommentId) => {
+    return comments.value.find(c => c.id === quotedCommentId);
 };
 
 // Submit comment
@@ -574,9 +727,9 @@ const submitComment = async () => {
             return;
         }
 
-        // Add new comment to the list
+        // Add new comment to the end of the list (chronological order)
         if (data.value?.createComment) {
-            comments.value.unshift(data.value.createComment);
+            comments.value.push(data.value.createComment);
             thread.value.commentCount++;
         }
 
@@ -775,6 +928,35 @@ const toggleCommentReaction = async (comment, emoji) => {
     }
 };
 
+// Comment editing
+const editingCommentId = ref(null);
+
+const onCommentEdited = (comment, payload) => {
+    comment.body = payload.newBody;
+    comment.bodyHTML = payload.newBodyHTML;
+    editingCommentId.value = null;
+};
+
+// Delete comment
+const confirmDeleteComment = (commentId) => {
+    modalStore.setModal({
+        modal: "ModalDelete",
+        id: commentId,
+        contentType: "comment",
+        isOpen: true,
+    });
+};
+
+// Report comment
+const confirmReportComment = (commentId) => {
+    modalStore.setModal({
+        modal: "ModalReport",
+        id: commentId,
+        contentType: "comment",
+        isOpen: true,
+    });
+};
+
 // Format date helper
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -796,15 +978,13 @@ const formatDate = (dateString) => {
 const links = computed(() => {
     const baseLinks = [];
 
-    if (board.value?.hasFeed) {
-        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
-    }
-
     if (board.value?.hasThreads) {
         baseLinks.push({ name: "Threads", href: `/b/${board.value?.name}/threads` });
     }
 
-    baseLinks.push({ name: "About", href: `/b/${board.value?.name}/sidebar` });
+    if (board.value?.hasFeed) {
+        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
+    }
 
     return baseLinks;
 });

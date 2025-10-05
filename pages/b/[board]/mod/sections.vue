@@ -138,6 +138,60 @@
 						</div>
 					</div>
 
+					<!-- Section Order -->
+					<div class="border-t pt-6" v-if="enabledSectionsCount > 1">
+						<h4 class="font-medium text-gray-900 mb-3">Section Order</h4>
+						<p class="text-sm text-gray-600 mb-4">Drag to reorder how sections appear in the navigation</p>
+						<div class="space-y-2">
+							<div
+								v-for="(section, index) in orderedSections"
+								:key="section"
+								class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg cursor-move hover:border-blue-400 hover:bg-blue-50"
+								draggable="true"
+								@dragstart="onDragStart(index)"
+								@dragover.prevent
+								@drop="onDrop(index)"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+									<line x1="4" y1="6" x2="20" y2="6"></line>
+									<line x1="4" y1="12" x2="20" y2="12"></line>
+									<line x1="4" y1="18" x2="20" y2="18"></line>
+								</svg>
+								<span class="font-medium text-gray-900 capitalize">{{ section }}</span>
+								<span v-if="defaultSection === section" class="ml-auto text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+									Default
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Default Section -->
+					<div class="border-t pt-6" v-if="enabledSectionsCount > 0">
+						<h4 class="font-medium text-gray-900 mb-3">Default Section</h4>
+						<p class="text-sm text-gray-600 mb-4">Which section should load when users visit this board?</p>
+						<div class="space-y-2">
+							<label v-if="sections.feed" class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50">
+								<input
+									type="radio"
+									v-model="defaultSection"
+									value="feed"
+									class="h-4 w-4 text-blue-600 focus:ring-blue-500"
+								/>
+								<span class="font-medium text-gray-900">Feed</span>
+							</label>
+							<label v-if="sections.threads" class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50">
+								<input
+									type="radio"
+									v-model="defaultSection"
+									value="threads"
+									class="h-4 w-4 text-blue-600 focus:ring-blue-500"
+								/>
+								<span class="font-medium text-gray-900">Threads</span>
+							</label>
+						</div>
+					</div>
+
 					<!-- Current Configuration Summary -->
 					<div class="border-t pt-6">
 						<h4 class="font-medium text-gray-900 mb-2">Current Configuration</h4>
@@ -154,6 +208,8 @@
 									None (invalid - must enable at least one)
 								</span>
 							</div>
+							<p v-if="defaultSection" class="text-sm text-gray-600 mt-3">Default: <strong class="text-gray-900 capitalize">{{ defaultSection }}</strong></p>
+							<p v-if="sectionOrder" class="text-sm text-gray-600 mt-2">Order: <strong class="text-gray-900">{{ sectionOrder }}</strong></p>
 						</div>
 					</div>
 				</div>
@@ -174,7 +230,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { useBoardStore } from '@/stores/StoreBoard';
 import { useGraphQLMutation } from '@/composables/useGraphQL';
@@ -187,6 +243,16 @@ const sections = ref({
 	feed: (board.hasFeed !== undefined) ? board.hasFeed : true,
 	threads: (board.hasThreads !== undefined) ? board.hasThreads : false,
 });
+
+// Initialize section order from board
+const parseSectionOrder = (orderString) => {
+	if (!orderString) return [];
+	return orderString.split(',').filter(s => s.trim());
+};
+
+const orderedSections = ref(parseSectionOrder(board.sectionOrder || 'feed,threads'));
+const defaultSection = ref(board.defaultSection || 'feed');
+const draggedIndex = ref(null);
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -208,6 +274,46 @@ const enabledSectionsCount = computed(() => {
 	return count;
 });
 
+// Computed for section order string
+const sectionOrder = computed(() => {
+	return orderedSections.value.filter(s => sections.value[s]).join(',');
+});
+
+// Watch sections changes and update ordered list
+watch(sections, (newSections) => {
+	// Add newly enabled sections to the order
+	if (newSections.feed && !orderedSections.value.includes('feed')) {
+		orderedSections.value.push('feed');
+	}
+	if (newSections.threads && !orderedSections.value.includes('threads')) {
+		orderedSections.value.push('threads');
+	}
+
+	// Remove disabled sections from the order
+	orderedSections.value = orderedSections.value.filter(s => newSections[s]);
+
+	// Update default section if it was disabled
+	if (!newSections[defaultSection.value]) {
+		if (newSections.feed) defaultSection.value = 'feed';
+		else if (newSections.threads) defaultSection.value = 'threads';
+	}
+}, { deep: true });
+
+// Drag and drop handlers
+const onDragStart = (index) => {
+	draggedIndex.value = index;
+};
+
+const onDrop = (dropIndex) => {
+	if (draggedIndex.value === null) return;
+
+	const draggedItem = orderedSections.value[draggedIndex.value];
+	orderedSections.value.splice(draggedIndex.value, 1);
+	orderedSections.value.splice(dropIndex, 0, draggedItem);
+
+	draggedIndex.value = null;
+};
+
 // Convert sections object to bit flags
 const getSectionConfig = () => {
 	let config = 0;
@@ -223,10 +329,12 @@ const applyPreset = (preset) => {
 		case 'feed':
 			sections.value.feed = true;
 			sections.value.threads = false;
+			defaultSection.value = 'feed';
 			break;
 		case 'threads':
 			sections.value.feed = false;
 			sections.value.threads = true;
+			defaultSection.value = 'threads';
 			break;
 		case 'both':
 			sections.value.feed = true;
@@ -258,6 +366,8 @@ const submitSettings = async () => {
 						description
 						hasFeed
 						hasThreads
+						sectionOrder
+						defaultSection
 					}
 				}
 			}
@@ -269,7 +379,9 @@ const submitSettings = async () => {
 			variables: {
 				input: {
 					boardId: board.id,
-					sectionConfig: sectionConfig
+					sectionConfig: sectionConfig,
+					sectionOrder: sectionOrder.value,
+					defaultSection: defaultSection.value
 				}
 			}
 		});

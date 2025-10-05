@@ -1,22 +1,31 @@
 <template>
 	<form @submit.prevent="onSubmit" @submit="submitEdit()" class="edit-comment-form relative flex flex-col items-end w-full">
-		<!-- Textarea -->
-		<textarea v-show="!isPreviewVisible" required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
-		<!-- MD Preview -->
-		<div v-show="isPreviewVisible" class="w-full" style="min-height: 118px;">
-			<div class="prose prose-sm" v-html="preview"></div>
-		</div>
-		<button type="button" v-show="isPreviewVisible" class="absolute right-0 top-0 button button-sm gray" @click="isPreviewVisible = false">
-			<span class="text-xs text-gray-400 uppercase font-medium tracking-wide">Preview</span>
-			<span class="ml-2 text-red-500">&#10006;</span>
-		</button>
+		<!-- Rich Text Editor for Thread Comments -->
+		<LazyInputsTiptap
+			v-if="isThread"
+			v-model="localBody"
+			:placeholder="`Edit your ${type}...`"
+			class="w-full mb-2"
+		/>
+		<!-- Textarea for Regular Comments/Posts -->
+		<template v-else>
+			<textarea v-show="!isPreviewVisible" required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
+			<!-- MD Preview -->
+			<div v-show="isPreviewVisible" class="w-full" style="min-height: 118px;">
+				<div class="prose prose-sm" v-html="preview"></div>
+			</div>
+			<button type="button" v-show="isPreviewVisible" class="absolute right-0 top-0 button button-sm gray" @click="isPreviewVisible = false">
+				<span class="text-xs text-gray-400 uppercase font-medium tracking-wide">Preview</span>
+				<span class="ml-2 text-red-500">&#10006;</span>
+			</button>
+		</template>
 		<!-- Action Buttons -->
 		<div class="mt-2 flex w-full">
-			<!-- Show/hide MD Preview -->
-			<button type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible">
+			<!-- Show/hide MD Preview (only for non-thread) -->
+			<button v-if="!isThread" type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible">
 				{{ isPreviewVisible ? 'Edit' : 'Preview' }}
 			</button>
-			<button type="button" class="ml-auto button gray w-24" @click="close">
+			<button type="button" :class="isThread ? '' : 'ml-auto'" class="button gray w-24" @click="close">
 				Cancel
 			</button>
 			<button type="submit" class="ml-2 button primary" :class="{ 'loading':isLoading }" :disabled="props.body === localBody || isLoading">
@@ -49,6 +58,10 @@
 			default: 'post',
 			required: true,
 			validator: (value) => ['post', 'comment'].includes(value)
+		},
+		isThread: {
+			type: Boolean,
+			default: false
 		},
 	});
 

@@ -111,8 +111,8 @@
                                                 <span>{{ thread.commentCount }} {{ thread.commentCount === 1 ? 'reply' : 'replies' }}</span>
                                             </div>
                                             <!-- Preview -->
-                                            <p v-if="thread.body" class="mt-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                                                {{ thread.body.substring(0, 200) }}{{ thread.body.length > 200 ? '...' : '' }}
+                                            <p v-if="thread.bodyHTML" class="mt-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                                                {{ stripHtml(thread.bodyHTML).substring(0, 200) }}{{ stripHtml(thread.bodyHTML).length > 200 ? '...' : '' }}
                                             </p>
                                         </div>
                                     </div>
@@ -353,22 +353,25 @@ const formatDate = (dateString) => {
     return date.toLocaleDateString();
 };
 
+// Strip HTML tags for preview
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').trim();
+};
+
 // Links for sub navbar
 const links = computed(() => {
     const baseLinks = [];
-
-    // Add Feed tab if enabled
-    if (board.value?.hasFeed) {
-        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
-    }
 
     // Add Threads tab if enabled
     if (board.value?.hasThreads) {
         baseLinks.push({ name: "Threads", href: `/b/${board.value?.name}/threads` });
     }
 
-    // Always add About
-    baseLinks.push({ name: "About", href: `/b/${board.value?.name}/sidebar` });
+    // Add Feed tab if enabled
+    if (board.value?.hasFeed) {
+        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
+    }
 
     return baseLinks;
 });

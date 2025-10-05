@@ -143,6 +143,30 @@
 							</div>
 						</div>
 					</div>
+					<!-- Signature -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Signature</label>
+						</div>
+						<!-- Inputs -->
+						<div class="mt-4 md:col-span-2 md:mt-0">
+							<textarea id="signature" name="signature" rows="3"
+								class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary"
+								placeholder="Your signature text..." v-model="settings.signature" />
+							<div class="flex justify-between items-center mt-2">
+								<p class="text-sm text-gray-500">Displayed at the bottom of your posts in threads. Plain text only.</p>
+								<button
+									v-if="settings.signature && settings.signature.trim()"
+									@click="clearSignature"
+									type="button"
+									class="text-sm text-red-600 hover:text-red-800"
+									:disabled="isRemoving.signature">
+									{{ isRemoving.signature ? 'Clearing...' : 'Clear signature' }}
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
@@ -199,6 +223,7 @@ const userQuery = `
       avatar
       banner
       profileBackground
+      signature
     }
   }
 `;
@@ -267,6 +292,7 @@ settings.value = {
 	avatar: user.avatar,
 	banner: user.banner,
 	profileBackground: user.profileBackground,
+	signature: user.signature,
 	email: userSettings.email,
 	showBots: userSettings.showBots,
 	showNsfw: userSettings.showNSFW,
@@ -290,7 +316,8 @@ const files = {};
 const isRemoving = ref({
 	avatar: false,
 	banner: false,
-	bio: false
+	bio: false,
+	signature: false
 });
 
 // Remove Avatar
@@ -388,6 +415,39 @@ const clearBio = async () => {
 	}
 };
 
+// Clear Signature
+const clearSignature = async () => {
+	isRemoving.value.signature = true;
+	try {
+		const mutation = `
+			mutation UpdateProfile($signature: String) {
+				updateUserProfile(input: { signature: $signature })
+			}
+		`;
+		const result = await useGraphQLMutation(mutation, {
+			variables: { signature: "" }
+		});
+
+		if (result.data.value?.updateUserProfile) {
+			settings.value.signature = '';
+			toast.addNotification({
+				header: "Signature cleared",
+				message: "Your signature has been successfully cleared.",
+				type: "success"
+			});
+		}
+	} catch (error) {
+		console.error('Error clearing signature:', error);
+		toast.addNotification({
+			header: "Failed to clear signature",
+			message: error.message || "An error occurred while clearing your signature.",
+			type: "error"
+		});
+	} finally {
+		isRemoving.value.signature = false;
+	}
+};
+
 const submitSettings = async () => {
 	isLoading.value = true;
 
@@ -420,7 +480,8 @@ const submitSettings = async () => {
 					$email: String,
 					$avatar: Upload,
 					$banner: Upload,
-					$profileBackground: Upload
+					$profileBackground: Upload,
+					$signature: String
 				) {
 					updateSettings(
 						displayName: $displayName,
@@ -431,7 +492,8 @@ const submitSettings = async () => {
 						email: $email,
 						avatar: $avatar,
 						banner: $banner,
-						profileBackground: $profileBackground
+						profileBackground: $profileBackground,
+						signature: $signature
 					) {
 						id
 						displayName
@@ -439,6 +501,7 @@ const submitSettings = async () => {
 						avatar
 						banner
 						profileBackground
+						signature
 					}
 				}
 			`,
@@ -451,7 +514,8 @@ const submitSettings = async () => {
 				email: settings.value.email,
 				avatar: null,
 				banner: null,
-				profileBackground: null
+				profileBackground: null,
+				signature: settings.value.signature
 			},
 			files
 		});
@@ -468,6 +532,7 @@ const submitSettings = async () => {
 				avatar: updateResult.avatar,
 				banner: updateResult.banner,
 				profileBackground: updateResult.profileBackground,
+				signature: updateResult.signature,
 				email: updateResult.email,
 				showBots: updateResult.showBots,
 				showNsfw: updateResult.showNSFW,

@@ -193,14 +193,14 @@
                                             </NuxtLink>
                                         </div>
                                         <NuxtLink
-                                            :to="`/p/${comment.post.id}/${comment.post.titleChunk || 'post'}`"
+                                            :to="getPostLink(comment.post)"
                                             class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
                                         >
                                             <strong>{{ comment.post.title }}</strong>
                                         </NuxtLink>
                                     </div>
                                     <div class="mb-3">
-                                        <p class="text-gray-800 leading-relaxed">{{ comment.body }}</p>
+                                        <p class="text-gray-800 leading-relaxed">{{ stripHtml(comment.bodyHTML || comment.body) }}</p>
                                     </div>
                                     <div class="text-xs text-gray-500">
                                         {{ new Date(comment.creationDate).toLocaleDateString('en-US', {
@@ -377,6 +377,25 @@ const commentSorts = [
         href: { query: { ...route.query, sort: "top" } },
     },
 ];
+
+// Helper function to strip HTML tags from comment preview
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').trim();
+};
+
+// Helper function to get correct post link based on post type
+const getPostLink = (post) => {
+    if (!post) return '#';
+
+    // If it's a thread, redirect to thread view
+    if (post.postType === 'thread' && post.board) {
+        return `/b/${post.board.name}/threads/${post.id}`;
+    }
+
+    // Otherwise, use regular post view
+    return `/p/${post.id}/${post.titleChunk || 'post'}`;
+};
 
 // Sub navbar links
 const links = [

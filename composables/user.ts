@@ -78,6 +78,7 @@ export async function useFetchUser(username: string, query = {}) {
         comments(sort: new, limit: $limit, page: $page) {
           id
           body
+          bodyHTML
           isRemoved
           creationDate
           updated
@@ -97,6 +98,7 @@ export async function useFetchUser(username: string, query = {}) {
             id
             title
             titleChunk
+            postType
             board @include(if: $includeBoard) {
               id
               name

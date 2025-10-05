@@ -414,18 +414,16 @@ const totalPages = computed(() => {
 const links = computed(() => {
     const baseLinks = [];
 
-    // Add Feed tab if enabled
-    if (board.value?.hasFeed) {
-        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
-    }
-
     // Add Threads tab if enabled
     if (board.value?.hasThreads) {
         baseLinks.push({ name: "Threads", href: `/b/${board.value?.name}/threads` });
     }
 
-    // Always add About
-    baseLinks.push({ name: "About", href: `/b/${board.value?.name}/sidebar` });
+
+    // Add Feed tab if enabled
+    if (board.value?.hasFeed) {
+        baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
+    }
 
     return baseLinks;
 });
