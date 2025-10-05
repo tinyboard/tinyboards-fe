@@ -289,66 +289,66 @@ const getImages = () => {
     }
 };
 
-// Dropzone
-const hasDragged = ref(false);
-const isDragging = ref(false);
+// Dropzone - DISABLED (was causing issues with dragging UI elements)
+// const hasDragged = ref(false);
+// const isDragging = ref(false);
 
-const dropzone = () => {
-    if (process.client && typeof window !== 'undefined') {
-        window.addEventListener("dragenter", (event) => {
-            // Check boolean to fix multiple events from invoking modalStore method.
-            // We cannot use pointer-events: none; until headless-ui supports portal root styling.
-            // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
-            if (!modalStore.isOpen) {
-                modalStore.setModal({
-                    modal: "ModalDrop",
-                    id: 1,
-                    isOpen: true,
-                });
-            }
-            isDragging.value = true;
-        });
-        window.addEventListener("dragleave", (event) => {
-            event.preventDefault();
-            if (!isDragging.value) {
-                modalStore.closeModal();
-                isDragging.value = false;
-            }
-        });
-        window.addEventListener("dragover", (event) => {
-            event.preventDefault();
-            isDragging.value = false;
-        });
-        window.addEventListener("drop", (event) => {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            // Redirect to submit page with encoded image
-            const file = event.dataTransfer?.files?.[0];
-            // Check for valid image file type and size
-            if (file && /\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 1000000) {
-                if (typeof FileReader !== 'undefined') {
-                    let reader = new FileReader();
-                    reader.onload = () => {
-                        if (process.client && typeof sessionStorage !== 'undefined') {
-                            sessionStorage.setItem("image", reader.result);
-                            router.push("/submit");
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            } else {
-                toastStore.addNotification({
-                    header: "Wrong format or size",
-                    message: "Try a PNG, JPG and GIF up to 1MB.",
-                    type: "error",
-                });
-            }
-            // Close modal
-            isDragging.value = false;
-            modalStore.closeModal();
-        });
-    }
-};
+// const dropzone = () => {
+//     if (process.client && typeof window !== 'undefined') {
+//         window.addEventListener("dragenter", (event) => {
+//             // Check boolean to fix multiple events from invoking modalStore method.
+//             // We cannot use pointer-events: none; until headless-ui supports portal root styling.
+//             // https://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element
+//             if (!modalStore.isOpen) {
+//                 modalStore.setModal({
+//                     modal: "ModalDrop",
+//                     id: 1,
+//                     isOpen: true,
+//                 });
+//             }
+//             isDragging.value = true;
+//         });
+//         window.addEventListener("dragleave", (event) => {
+//             event.preventDefault();
+//             if (!isDragging.value) {
+//                 modalStore.closeModal();
+//                 isDragging.value = false;
+//             }
+//         });
+//         window.addEventListener("dragover", (event) => {
+//             event.preventDefault();
+//             isDragging.value = false;
+//         });
+//         window.addEventListener("drop", (event) => {
+//             event.preventDefault();
+//             event.stopImmediatePropagation();
+//             // Redirect to submit page with encoded image
+//             const file = event.dataTransfer?.files?.[0];
+//             // Check for valid image file type and size
+//             if (file && /\.(jpe?g|png|gif)$/i.test(file.name) && file.size <= 1000000) {
+//                 if (typeof FileReader !== 'undefined') {
+//                     let reader = new FileReader();
+//                     reader.onload = () => {
+//                         if (process.client && typeof sessionStorage !== 'undefined') {
+//                             sessionStorage.setItem("image", reader.result);
+//                             router.push("/submit");
+//                         }
+//                     };
+//                     reader.readAsDataURL(file);
+//                 }
+//             } else {
+//                 toastStore.addNotification({
+//                     header: "Wrong format or size",
+//                     message: "Try a PNG, JPG and GIF up to 1MB.",
+//                     type: "error",
+//                 });
+//             }
+//             // Close modal
+//             isDragging.value = false;
+//             modalStore.closeModal();
+//         });
+//     }
+// };
 
 // Watch for route changes
 watch(
@@ -357,7 +357,7 @@ watch(
         if (process.client) {
             // Get all images from DOM
             getImages();
-            dropzone();
+            // dropzone(); // DISABLED - was causing issues with dragging UI elements
         }
     },
     { immediate: true },

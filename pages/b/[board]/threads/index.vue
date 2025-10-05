@@ -380,13 +380,4 @@ const getSectionLinks = () => {
 
 // Links for sub navbar
 const links = computed(() => getSectionLinks());
-
-// Redirect to default section if this is the threads section but default is different
-onMounted(() => {
-    const defaultSection = board.value?.defaultSection;
-    if (defaultSection === 'feed' && board.value?.hasFeed) {
-        // If viewing threads but default is feed, redirect
-        navigateTo(`/b/${board.value?.name}`);
-    }
-});
 </script>
