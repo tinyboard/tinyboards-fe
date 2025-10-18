@@ -462,6 +462,12 @@
     const handleMouseDown = (e) => {
       const img = e.target;
       if (img.tagName === 'IMG' && img.classList.contains('ProseMirror-selectednode')) {
+        // Don't allow resizing images inside blockquotes (quoted content)
+        const isInBlockquote = img.closest('blockquote');
+        if (isInBlockquote) {
+          return;
+        }
+
         e.preventDefault();
         e.stopPropagation();
 
@@ -794,6 +800,19 @@
   @apply border-l-4 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300;
   border-left-color: rgb(var(--color-primary));
   background-color: rgba(var(--color-primary), 0.05);
+  quotes: none;
+}
+
+:deep(.ProseMirror blockquote)::before,
+:deep(.ProseMirror blockquote)::after {
+  content: '';
+  content: none;
+}
+
+:deep(.ProseMirror blockquote p)::before,
+:deep(.ProseMirror blockquote p)::after {
+  content: '';
+  content: none;
 }
 
 :deep(.ProseMirror blockquote a.quote-link) {
@@ -803,6 +822,17 @@
 
 :deep(.ProseMirror blockquote a.quote-link:hover) {
   @apply underline;
+}
+
+/* Images in blockquotes cannot be resized */
+:deep(.ProseMirror blockquote img) {
+  cursor: default !important;
+}
+
+:deep(.ProseMirror blockquote img.ProseMirror-selectednode) {
+  cursor: default !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Code */

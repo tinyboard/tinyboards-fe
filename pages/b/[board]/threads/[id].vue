@@ -685,38 +685,69 @@ const loadMoreComments = async () => {
     await fetchComments(page.value + 1);
 };
 
-// Extract images from HTML
-const extractImages = (html) => {
-    if (!html) return [];
+// Extract and truncate HTML content while preserving structure
+const extractQuoteContent = (html, maxLength = 500) => {
+    if (!html) return '';
+
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
+
+    // Limit to first 3 images to avoid clutter
     const images = doc.querySelectorAll('img');
-    return Array.from(images).map(img => ({
-        src: img.getAttribute('src'),
-        alt: img.getAttribute('alt') || '',
-        width: img.getAttribute('width'),
-        height: img.getAttribute('height')
-    }));
+    if (images.length > 3) {
+        Array.from(images).slice(3).forEach(img => img.remove());
+    }
+
+    // Get the innerHTML with preserved structure
+    let content = doc.body.innerHTML;
+
+    // If content is too long, truncate it intelligently
+    const textContent = doc.body.textContent || '';
+    if (textContent.length > maxLength) {
+        // Truncate at a reasonable point
+        const truncatePoint = maxLength;
+        let currentLength = 0;
+        const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const nodeText = node.textContent || '';
+
+            if (currentLength + nodeText.length > truncatePoint) {
+                // Truncate this text node
+                const remainingLength = truncatePoint - currentLength;
+                node.textContent = nodeText.substring(0, remainingLength) + '...';
+
+                // Remove all following siblings
+                let sibling = node.nextSibling;
+                while (sibling) {
+                    const next = sibling.nextSibling;
+                    sibling.parentNode?.removeChild(sibling);
+                    sibling = next;
+                }
+                break;
+            }
+            currentLength += nodeText.length;
+        }
+
+        content = doc.body.innerHTML;
+    }
+
+    return content;
 };
 
-// Quote comment - now inserts directly into editor with images
+// Quote comment - now inserts directly into editor with images in original order
 const quoteComment = (comment) => {
     const username = comment.creator?.displayName || comment.creator?.name || 'User';
-    const quotedText = stripHtml(comment.bodyHTML || comment.body || '');
-    const truncatedText = quotedText.length > 200 ? quotedText.substring(0, 200) + '...' : quotedText;
 
-    // Extract images from the comment (limit to first 3 to avoid clutter)
-    const images = extractImages(comment.bodyHTML).slice(0, 3);
-    const imagesHtml = images.map(img =>
-        `<img src="${img.src}" alt="${img.alt}" ${img.width ? `width="${img.width}"` : ''} ${img.height ? `height="${img.height}"` : ''} class="max-w-full h-auto rounded" />`
-    ).join('');
+    // Extract content with images and text in original order
+    const quotedContent = extractQuoteContent(comment.bodyHTML || comment.body || '', 500);
 
-    // Create a blockquote with the quoted content, comment ID, and images
+    // Create a blockquote with the quoted content and comment ID
     const quoteHtml = `
         <blockquote data-comment-id="${comment.id}">
             <p><strong><a href="#comment-${comment.id}" class="quote-link">${username} said:</a></strong></p>
-            ${imagesHtml ? `<div class="my-2">${imagesHtml}</div>` : ''}
-            <p>${truncatedText}</p>
+            ${quotedContent}
         </blockquote>
         <p><br></p>
     `;
@@ -1055,6 +1086,19 @@ const links = computed(() => {
   @apply border-l-4 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300;
   border-left-color: rgb(var(--color-primary));
   background-color: rgba(var(--color-primary), 0.05);
+  quotes: none;
+}
+
+:deep(.prose blockquote)::before,
+:deep(.prose blockquote)::after {
+  content: '';
+  content: none;
+}
+
+:deep(.prose blockquote p)::before,
+:deep(.prose blockquote p)::after {
+  content: '';
+  content: none;
 }
 
 :deep(.prose blockquote a.quote-link) {

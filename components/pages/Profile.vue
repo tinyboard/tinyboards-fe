@@ -200,7 +200,7 @@
                                         </NuxtLink>
                                     </div>
                                     <div class="mb-3">
-                                        <p class="text-gray-800 leading-relaxed">{{ stripHtml(comment.bodyHTML || comment.body) }}</p>
+                                        <p class="text-gray-800 leading-relaxed whitespace-pre-line">{{ stripHtml(comment.bodyHTML || comment.body) }}</p>
                                     </div>
                                     <div class="text-xs text-gray-500">
                                         {{ new Date(comment.creationDate).toLocaleDateString('en-US', {
@@ -378,11 +378,8 @@ const commentSorts = [
     },
 ];
 
-// Helper function to strip HTML tags from comment preview
-const stripHtml = (html) => {
-    if (!html) return '';
-    return html.replace(/<[^>]*>/g, '').trim();
-};
+// Import text utilities
+const { stripHtml } = await import('@/composables/text');
 
 // Helper function to get correct post link based on post type
 const getPostLink = (post) => {
