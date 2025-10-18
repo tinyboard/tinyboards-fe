@@ -414,24 +414,8 @@
                                     >
                                         {{ submitting ? 'Posting...' : 'Post Reply' }}
                                     </button>
-                                    <button
-                                        v-if="quotedComment"
-                                        type="button"
-                                        @click="clearQuote"
-                                        class="button secondary text-sm px-4 py-1.5"
-                                    >
-                                        Clear Quote
-                                    </button>
                                 </template>
                             </InputsTiptap>
-                            <div v-if="quotedComment" class="mt-3 p-3 bg-gray-100 dark:bg-gray-800 rounded border-l-4 border-blue-500">
-                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Quoting <strong>{{ quotedComment.creator?.displayName || quotedComment.creator?.name }}</strong>:
-                                </div>
-                                <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
-                                    {{ quotedComment.body?.substring(0, 200) }}{{ quotedComment.body?.length > 200 ? '...' : '' }}
-                                </div>
-                            </div>
                         </form>
                     </div>
                     <div
@@ -558,7 +542,6 @@ const hasMoreComments = ref(true);
 
 // Comment form
 const commentBody = ref('');
-const quotedComment = ref(null);
 const submitting = ref(false);
 
 // Fetch thread
@@ -703,22 +686,41 @@ const loadMoreComments = async () => {
     await fetchComments(page.value + 1);
 };
 
-// Quote comment
+// Quote comment - now inserts directly into editor
 const quoteComment = (comment) => {
-    quotedComment.value = comment;
+    const username = comment.creator?.displayName || comment.creator?.name || 'User';
+    const quotedText = stripHtml(comment.bodyHTML || comment.body || '');
+    const truncatedText = quotedText.length > 200 ? quotedText.substring(0, 200) + '...' : quotedText;
+
+    // Create a blockquote with the quoted content
+    const quoteHtml = `
+        <blockquote>
+            <p><strong>${username} said:</strong></p>
+            <p>${truncatedText}</p>
+        </blockquote>
+        <p><br></p>
+    `;
+
+    // Get current content and append the quote
+    const currentContent = commentBody.value || '';
+    commentBody.value = currentContent + quoteHtml;
+
     // Scroll to reply form at bottom
     nextTick(() => {
         document.getElementById('reply-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 };
 
-const clearQuote = () => {
-    quotedComment.value = null;
-};
-
 // Get quoted comment by ID
 const getQuotedComment = (quotedCommentId) => {
     return comments.value.find(c => c.id === quotedCommentId);
+};
+
+// Strip HTML tags from text
+const stripHtml = (html) => {
+    if (!html) return '';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
 };
 
 // Submit comment
@@ -759,7 +761,7 @@ const submitComment = async () => {
             variables: {
                 postId: threadId,
                 body: commentBody.value,
-                quotedCommentId: quotedComment.value?.id || null
+                quotedCommentId: null
             }
         });
 
@@ -777,7 +779,6 @@ const submitComment = async () => {
 
         // Clear form
         commentBody.value = '';
-        quotedComment.value = null;
     } finally {
         submitting.value = false;
     }

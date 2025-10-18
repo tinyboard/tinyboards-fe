@@ -11,11 +11,11 @@
       v-show="!showPreview"
       class="relative"
       @drop.prevent="handleDrop"
-      @dragover.prevent
-      @dragenter.prevent="isDragging = true"
-      @dragleave.prevent="isDragging = false"
+      @dragover.prevent="handleDragOver"
+      @dragenter.prevent="handleDragEnter"
+      @dragleave.prevent="handleDragLeave"
     >
-      <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20">
+      <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20 pointer-events-none">
         <p class="text-primary font-semibold">Drop images here</p>
       </div>
       <editor-content :editor="editor" :style="`min-height:170px`"/>
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Editor Menu Buttons -->
-    <div v-if="editor" id="editor" class="flex flex-wrap gap-1 p-2 text-sm font-bold bg-gray-200 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
+    <div v-if="editor" id="editor" class="flex flex-wrap items-center gap-1 p-2 text-sm font-bold bg-gray-200 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
       <!-- Headings -->
       <button type="button" class="w-7 h-7 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="editor.isActive('heading', { level: 1 }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         H1
@@ -248,9 +248,10 @@
            <path d="M16 5l3 3"></path>
         </svg>
       </button>
+      <!-- Spacer to push action buttons to the right -->
+      <div v-if="$slots.actions" class="flex-grow"></div>
       <!-- Action Buttons Slot (for submit button, etc) -->
-      <div v-if="$slots.actions" class="ml-auto flex items-center gap-2">
-        <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
+      <div v-if="$slots.actions" class="flex items-center gap-2 pl-2 border-l-2 border-gray-300 dark:border-gray-600 ml-2">
         <slot name="actions"></slot>
       </div>
     </div>
@@ -391,9 +392,37 @@
         }
       }),
       Image.configure({
+        inline: true,
+        allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded'
+          class: 'max-w-full h-auto rounded cursor-move'
         }
+      }).extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            width: {
+              default: null,
+              parseHTML: element => element.getAttribute('width'),
+              renderHTML: attributes => {
+                if (!attributes.width) {
+                  return {}
+                }
+                return { width: attributes.width }
+              },
+            },
+            height: {
+              default: null,
+              parseHTML: element => element.getAttribute('height'),
+              renderHTML: attributes => {
+                if (!attributes.height) {
+                  return {}
+                }
+                return { height: attributes.height }
+              },
+            },
+          }
+        },
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
@@ -418,12 +447,86 @@
       // Emit initial content
       emit('update:modelValue', editor.getHTML());
       isEditorEmpty.value = editor.isEmpty;
+
+      // Add image resize handler
+      setupImageResize(editor);
     },
     onUpdate: ({ editor }) => {
       emit('update:modelValue', editor.getHTML());
       isEditorEmpty.value = editor.isEmpty;
     }
   });
+
+  // Image resize functionality
+  const setupImageResize = (editor) => {
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+    let currentImage = null;
+    let currentPos = null;
+
+    const handleMouseDown = (e) => {
+      const img = e.target;
+      if (img.tagName === 'IMG' && img.classList.contains('ProseMirror-selectednode')) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = img.width || img.naturalWidth;
+        currentImage = img;
+
+        // Store the position in the document
+        currentPos = editor.view.posAtDOM(img, 0);
+
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Prevent text selection while resizing
+        document.body.style.userSelect = 'none';
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isResizing || !currentImage) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const deltaX = e.clientX - startX;
+      const newWidth = Math.max(100, Math.min(startWidth + deltaX, 1000));
+
+      // Apply the new width directly
+      currentImage.style.width = newWidth + 'px';
+      currentImage.style.height = 'auto';
+    };
+
+    const handleMouseUp = () => {
+      if (isResizing && currentImage && currentPos !== null) {
+        const newWidth = parseInt(currentImage.style.width);
+
+        // Update the node attributes in the editor
+        const transaction = editor.view.state.tr.setNodeMarkup(currentPos, null, {
+          ...editor.view.state.doc.nodeAt(currentPos)?.attrs,
+          width: newWidth,
+        });
+
+        editor.view.dispatch(transaction);
+      }
+
+      isResizing = false;
+      currentImage = null;
+      currentPos = null;
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    // Add event listener to editor element
+    if (editor.view?.dom) {
+      editor.view.dom.addEventListener('mousedown', handleMouseDown);
+    }
+  };
 
   // Watch for external changes to modelValue
   watch(() => props.modelValue, (newValue) => {
@@ -509,6 +612,29 @@
   const uploading = ref(false)
   const uploadProgress = ref(0)
   const uploadTotal = ref(0)
+  let dragCounter = 0
+
+  const handleDragEnter = (e) => {
+    // Only show overlay for file drags, not internal editor drags
+    if (e.dataTransfer?.types?.includes('Files')) {
+      dragCounter++
+      isDragging.value = true
+    }
+  }
+
+  const handleDragLeave = (e) => {
+    dragCounter--
+    if (dragCounter === 0) {
+      isDragging.value = false
+    }
+  }
+
+  const handleDragOver = (e) => {
+    // Check if we're dragging files
+    if (e.dataTransfer?.types?.includes('Files')) {
+      isDragging.value = true
+    }
+  }
 
   const triggerFileUpload = () => {
     fileInput.value?.click()
@@ -528,10 +654,19 @@
     formData.append('0', file)
 
     try {
+      // Get the auth token from cookie
+      const authStore = useLoggedInUser()
+      const token = authStore.token
+
+      const headers = {
+        ...(token && { 'Authorization': `Bearer ${token}` })
+      }
+
       const response = await fetch('/api/v2/graphql', {
         method: 'POST',
         body: formData,
-        credentials: 'include'
+        credentials: 'include',
+        headers
       })
 
       const result = await response.json()
@@ -558,6 +693,7 @@
 
   const handleDrop = async (event) => {
     isDragging.value = false
+    dragCounter = 0
     const files = event.dataTransfer?.files
     if (!files) return
 
@@ -685,10 +821,15 @@
 /* Images */
 :deep(.ProseMirror img) {
   @apply max-w-full h-auto rounded-lg my-4;
+  display: block;
+  position: relative;
+  cursor: default;
 }
 
 :deep(.ProseMirror img.ProseMirror-selectednode) {
   @apply outline outline-4 outline-blue-400;
+  cursor: nwse-resize;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
 /* Placeholder - handled in template, not via CSS */
