@@ -2,9 +2,8 @@
   <div class="relative flex flex-col bg-gray-100 dark:bg-gray-900 border dark:border-gray-700/70 focus:bg-white dark:focus:bg-gray-950 focus:ring-2 focus:border-primary focus:ring-primary rounded-md overflow-hidden" :style="[ccsProps, 'min-height:210px']">
 
     <!-- Placeholder -->
-    <span class="z-10 absolute top-3 left-3 pointer-events-none text-gray-400">
-      <span v-if="editor" v-show="editor.isEmpty">{{ placeholder }}</span>
-      <span v-else>{{ placeholder }}</span>
+    <span v-if="isEditorEmpty" class="z-10 absolute top-3 left-3 pointer-events-none text-gray-400">
+      {{ placeholder }}
     </span>
 
     <!-- Editor Container -->
@@ -20,10 +19,6 @@
         <p class="text-primary font-semibold">Drop images here</p>
       </div>
       <editor-content :editor="editor" :style="`min-height:170px`"/>
-      <!-- Emoji Picker inside editor -->
-      <div class="absolute bottom-3 right-3">
-        <EmojiPicker @emoji-selected="insertEmoji" />
-      </div>
       <!-- Upload progress indicator -->
       <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700">
         <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
@@ -37,28 +32,28 @@
     </div>
 
     <!-- Editor Menu Buttons -->
-    <div v-if="editor" id="editor" class="hidden md:flex flex-wrap gap-1 p-2 text-sm font-bold opacity-70 hover:opacity-100 bg-gray-100 border-t border-dashed">
+    <div v-if="editor" id="editor" class="flex flex-wrap gap-1 p-2 text-sm font-bold bg-gray-200 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
       <!-- Headings -->
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="editor.isActive('heading', { level: 1 }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="editor.isActive('heading', { level: 1 }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         H1
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="editor.isActive('heading', { level: 2 }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="editor.isActive('heading', { level: 2 }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         H2
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="editor.isActive('heading', { level: 3 }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="editor.isActive('heading', { level: 3 }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         H3
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
       <!-- Text Formatting -->
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6z"></path>
            <path d="M13 12h1a3.5 3.5 0 0 1 0 7h-7v-7"></path>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="11" y1="5" x2="17" y2="5"></line>
@@ -66,7 +61,7 @@
            <line x1="14" y1="5" x2="10" y2="19"></line>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -74,15 +69,15 @@
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
-      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="setLink()">
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
+      <button type="button" class="w-7 h-7 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded" @click="setLink()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="triggerFileUpload()">
+      <button type="button" class="w-7 h-7 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded" @click="triggerFileUpload()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="15" y1="8" x2="15.01" y2="8"></line>
@@ -100,9 +95,9 @@
         @change="handleFileUpload"
       />
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
       <!-- Blockquote -->
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M6 15h15"></path>
@@ -114,7 +109,7 @@
         </svg>
       </button>
       <!-- Code Block -->
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <polyline points="7 8 3 12 7 16"></polyline>
@@ -123,27 +118,27 @@
         </svg>
       </button>
       <!-- Horizontal Rule -->
-      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="editor.chain().focus().setHorizontalRule().run()">
+      <button type="button" class="w-7 h-7 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded" @click="editor.chain().focus().setHorizontalRule().run()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
       <!-- Lists -->
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-           <line x1="9" y1="6" x2="20" y2="6"></line>
-           <line x1="9" y1="12" x2="20" y2="12"></line>
-           <line x1="9" y1="18" x2="20" y2="18"></line>
-           <line x1="5" y1="6" x2="5" y2="6.01"></line>
-           <line x1="5" y1="12" x2="5" y2="12.01"></line>
-           <line x1="5" y1="18" x2="5" y2="18.01"></line>
+           <line x1="9" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2"></line>
+           <line x1="9" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"></line>
+           <line x1="9" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2"></line>
+           <circle cx="5" cy="6" r="1.5" fill="currentColor"></circle>
+           <circle cx="5" cy="12" r="1.5" fill="currentColor"></circle>
+           <circle cx="5" cy="18" r="1.5" fill="currentColor"></circle>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M11 6h9"></path>
@@ -154,9 +149,9 @@
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
       <!-- Text Alignment -->
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('left').run()" :class="editor.isActive({ textAlign: 'left' }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('left').run()" :class="editor.isActive({ textAlign: 'left' }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="4" y1="6" x2="20" y2="6"></line>
@@ -164,7 +159,7 @@
            <line x1="4" y1="18" x2="18" y2="18"></line>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('center').run()" :class="editor.isActive({ textAlign: 'center' }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('center').run()" :class="editor.isActive({ textAlign: 'center' }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="4" y1="6" x2="20" y2="6"></line>
@@ -172,7 +167,7 @@
            <line x1="6" y1="18" x2="18" y2="18"></line>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('right').run()" :class="editor.isActive({ textAlign: 'right' }) ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="editor.chain().focus().setTextAlign('right').run()" :class="editor.isActive({ textAlign: 'right' }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <line x1="4" y1="6" x2="20" y2="6"></line>
@@ -181,58 +176,152 @@
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
       <!-- Text Color -->
-      <input
-        type="color"
-        @input="editor.chain().focus().setColor($event.target.value).run()"
-        :value="editor.getAttributes('textStyle').color || '#000000'"
-        class="w-7 h-7 rounded cursor-pointer border border-gray-300"
-        title="Text color"
-      />
-      <!-- Highlight -->
-      <input
-        type="color"
-        @input="editor.chain().focus().toggleHighlight({ color: $event.target.value }).run()"
-        class="w-7 h-7 rounded cursor-pointer border border-gray-300"
-        title="Highlight color"
-      />
+      <div class="relative">
+        <input
+          ref="textColorInput"
+          type="color"
+          @input="editor.chain().focus().setColor($event.target.value).run()"
+          :value="editor.getAttributes('textStyle').color || '#000000'"
+          class="absolute opacity-0 w-0 h-0"
+        />
+        <button
+          type="button"
+          @click="$refs.textColorInput.click()"
+          class="w-7 h-7 flex items-center justify-center rounded border border-gray-400 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 text-xs font-bold"
+          :style="{ color: editor.getAttributes('textStyle').color || '#000000' }"
+          title="Text color"
+        >
+          A
+        </button>
+      </div>
+      <!-- Highlight Color -->
+      <div class="relative">
+        <input
+          ref="highlightColorInput"
+          type="color"
+          @input="editor.chain().focus().toggleHighlight({ color: $event.target.value }).run()"
+          class="absolute opacity-0 w-0 h-0"
+        />
+        <button
+          type="button"
+          @click="$refs.highlightColorInput.click()"
+          class="w-7 h-7 flex items-center justify-center rounded border border-gray-400 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-700 text-xs font-bold text-gray-900 dark:text-white"
+          :style="{ backgroundColor: editor.isActive('highlight') ? (editor.getAttributes('highlight').color || '#ffff00') : 'transparent' }"
+          title="Highlight color"
+        >
+          A
+        </button>
+      </div>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
-      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="editor.chain().focus().undo().run()">
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
+      <!-- Emoji Picker -->
+      <EmojiPicker @emoji-selected="insertEmoji" />
+      <!-- Divider -->
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
+      <button type="button" class="w-7 h-7 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded" @click="editor.chain().focus().undo().run()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M9 13l-4 -4l4 -4m-4 4h11a4 4 0 0 1 0 8h-1"></path>
         </svg>
       </button>
-      <button type="button" class="w-7 h-7 text-gray-500 hover:bg-gray-200 hover:text-gray-700 rounded" @click="editor.chain().focus().redo().run()">
+      <button type="button" class="w-7 h-7 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded" @click="editor.chain().focus().redo().run()">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M15 13l4 -4l-4 -4m4 4h-11a4 4 0 0 0 0 8h1"></path>
         </svg>
       </button>
       <!-- Divider -->
-      <span class="border-r border-gray-300 mx-1"></span>
+      <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
       <!-- Preview Toggle -->
-      <button type="button" class="px-3 h-7 hover:text-gray-700 rounded text-xs font-semibold" @click="showPreview = !showPreview" :class="showPreview ? 'text-gray-900 bg-gray-200' : 'text-gray-500 hover:bg-gray-200'">
-        <svg v-if="!showPreview" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <button type="button" class="w-7 h-7 hover:text-gray-700 rounded" @click="showPreview = !showPreview" :class="showPreview ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'" :title="showPreview ? 'Edit' : 'Preview'">
+        <svg v-if="!showPreview" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <circle cx="12" cy="12" r="2"></circle>
            <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7"></path>
         </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
            <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
            <path d="M16 5l3 3"></path>
         </svg>
-        {{ showPreview ? 'Edit' : 'Preview' }}
       </button>
+      <!-- Action Buttons Slot (for submit button, etc) -->
+      <div v-if="$slots.actions" class="ml-auto flex items-center gap-2">
+        <span class="border-r border-gray-400 dark:border-gray-600 mx-1"></span>
+        <slot name="actions"></slot>
+      </div>
     </div>
 
     <!-- Fake bar while loading -->
-    <div v-else class="hidden md:block bg-gray-100 border-t border-dashed h-[45px]"></div>
+    <div v-else class="bg-gray-200 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600 h-[45px]"></div>
   </div>
+
+  <!-- Link Modal -->
+  <Teleport to="body">
+    <div
+      v-if="showLinkModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      @click.self="cancelLink"
+    >
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Insert Link</h3>
+
+        <div class="space-y-4">
+          <!-- URL Input -->
+          <div>
+            <label for="link-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              URL
+            </label>
+            <input
+              id="link-url"
+              v-model="linkUrl"
+              type="url"
+              placeholder="https://example.com"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+              @keydown.enter="insertLink"
+            />
+          </div>
+
+          <!-- Display Text Input -->
+          <div>
+            <label for="link-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Display Text
+            </label>
+            <input
+              id="link-text"
+              v-model="linkText"
+              type="text"
+              placeholder="Click here"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+              @keydown.enter="insertLink"
+            />
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2 mt-6">
+          <button
+            type="button"
+            @click="cancelLink"
+            class="button secondary px-4 py-2"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            @click="insertLink"
+            class="button primary px-4 py-2"
+            :disabled="!linkUrl"
+          >
+            Insert Link
+          </button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -261,7 +350,7 @@
 
   const emit = defineEmits(['update:modelValue']);
 
-  import { ref, watch } from 'vue';
+  import { ref, watch, computed } from 'vue';
   import { Link } from '@tiptap/extension-link';
   import { Image } from '@tiptap/extension-image';
   import { TextAlign } from '@tiptap/extension-text-align';
@@ -276,13 +365,24 @@
   // Preview toggle state
   const showPreview = ref(false);
 
+  // Track editor empty state for placeholder
+  const isEditorEmpty = ref(true);
+
+  // Link modal state
+  const showLinkModal = ref(false);
+  const linkUrl = ref('');
+  const linkText = ref('');
+
   const editor = useEditor({
     content: props.modelValue || '',
     extensions: [
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3]
-        }
+        },
+        italic: true,
+        bold: true,
+        strike: true
       }),
       Link.configure({
         openOnClick: false,
@@ -297,6 +397,7 @@
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
+        defaultAlignment: 'left',
       }),
       TextStyle,
       Color,
@@ -316,9 +417,11 @@
     onCreate: ({ editor }) => {
       // Emit initial content
       emit('update:modelValue', editor.getHTML());
+      isEditorEmpty.value = editor.isEmpty;
     },
     onUpdate: ({ editor }) => {
       emit('update:modelValue', editor.getHTML());
+      isEditorEmpty.value = editor.isEmpty;
     }
   });
 
@@ -327,38 +430,64 @@
     const isSame = editor.value?.getHTML() === newValue;
     if (!isSame && editor.value) {
       editor.value.commands.setContent(newValue, false);
+      isEditorEmpty.value = editor.value.isEmpty;
     }
   });
 
   const setLink = () => {
-      const previousUrl = editor.value?.getAttributes('link').href
-      const url = window.prompt('URL', previousUrl)
+    // Get selected text and existing link if any
+    const { state } = editor.value;
+    const { from, to } = state.selection;
+    const selectedText = state.doc.textBetween(from, to, ' ');
+    const previousUrl = editor.value?.getAttributes('link').href;
 
-      // cancelled
-      if (url === null) {
-        return
-      }
+    // Pre-fill the form
+    linkUrl.value = previousUrl || '';
+    linkText.value = selectedText || '';
 
-      // empty
-      if (url === '') {
-        editor
-          .chain()
-          .focus()
-          .extendMarkRange('link')
-          .unsetLink()
-          .run()
+    // Show modal
+    showLinkModal.value = true;
+  };
 
-        return
-      }
+  const insertLink = () => {
+    if (!linkUrl.value) {
+      // Remove link if URL is empty
+      editor.value?.chain().focus().extendMarkRange('link').unsetLink().run();
+      showLinkModal.value = false;
+      return;
+    }
 
-      // update link
-      editor
-        .chain()
+    const { state } = editor.value;
+    const { from, to } = state.selection;
+
+    if (linkText.value && linkText.value !== state.doc.textBetween(from, to, ' ')) {
+      // Insert new text with link
+      editor.value
+        ?.chain()
+        .focus()
+        .insertContent(`<a href="${linkUrl.value}">${linkText.value}</a>`)
+        .run();
+    } else {
+      // Just add link to selected text
+      editor.value
+        ?.chain()
         .focus()
         .extendMarkRange('link')
-        .setLink({ href: url })
-        .run()
+        .setLink({ href: linkUrl.value })
+        .run();
     }
+
+    // Reset and close
+    linkUrl.value = '';
+    linkText.value = '';
+    showLinkModal.value = false;
+  };
+
+  const cancelLink = () => {
+    linkUrl.value = '';
+    linkText.value = '';
+    showLinkModal.value = false;
+  };
 
   const addImage = () => {
     const url = window.prompt('Image URL')
@@ -562,11 +691,7 @@
   @apply outline outline-4 outline-blue-400;
 }
 
-/* Placeholder */
-:deep(.ProseMirror p.is-editor-empty:first-child::before) {
-  content: attr(data-placeholder);
-  @apply text-gray-400 float-left h-0 pointer-events-none;
-}
+/* Placeholder - handled in template, not via CSS */
 
 /* Mention styling */
 :deep(.mention) {

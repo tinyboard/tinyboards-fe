@@ -221,10 +221,39 @@ const togglePicker = (event: MouseEvent) => {
       const button = event.currentTarget as HTMLElement;
       const rect = button.getBoundingClientRect();
 
-      // Position below the button, aligned to the right
+      // Dropdown dimensions
+      const dropdownWidth = 320; // w-80 = 20rem = 320px
+      const dropdownHeight = 384; // h-96 = 24rem = 384px
+      const padding = 8;
+
+      // Calculate horizontal position
+      let left = rect.left;
+      let right: string | undefined = undefined;
+
+      // Check if dropdown would go off right edge
+      if (left + dropdownWidth > window.innerWidth - padding) {
+        // Align to right edge of button instead
+        right = `${window.innerWidth - rect.right}px`;
+        left = undefined as any;
+      }
+
+      // Calculate vertical position
+      let top = rect.bottom + padding;
+      let bottom: string | undefined = undefined;
+
+      // Check if dropdown would go off bottom edge
+      if (top + dropdownHeight > window.innerHeight - padding) {
+        // Position above the button instead
+        bottom = `${window.innerHeight - rect.top + padding}px`;
+        top = undefined as any;
+      }
+
+      // Set the position style
       dropdownStyle.value = {
-        top: `${rect.bottom + 8}px`,
-        right: `${window.innerWidth - rect.right}px`,
+        ...(left !== undefined && { left: `${left}px` }),
+        ...(right !== undefined && { right }),
+        ...(top !== undefined && { top: `${top}px` }),
+        ...(bottom !== undefined && { bottom }),
       };
     });
   }

@@ -150,12 +150,11 @@
                     </article>
 
                     <!-- Comments -->
-                    <div class="space-y-3">
+                    <div class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md overflow-hidden divide-y divide-gray-200 dark:divide-gray-700">
                         <div
                             v-for="(comment, index) in comments"
                             :key="comment.id"
                             :id="`comment-${comment.id}`"
-                            class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md overflow-hidden"
                         >
                             <!-- Comment with Forum-Style Layout -->
                             <div class="flex flex-col sm:flex-row">
@@ -263,53 +262,91 @@
 
                                 <!-- Comment Meta -->
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <span class="text-xs text-gray-500 dark:text-gray-500">
-                                        Posted {{ formatDate(comment.creationDate) }}
-                                    </span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-500">
+                                            Posted {{ formatDate(comment.creationDate) }}
+                                        </span>
 
-                                    <!-- Comment Actions -->
-                                    <ul class="flex flex-wrap items-center gap-4 mt-3 text-xs">
-                                        <li v-if="v">
+                                        <!-- Comment Actions -->
+                                        <div class="flex items-center gap-1">
                                             <button
+                                                v-if="v"
                                                 @click="quoteComment(comment)"
-                                                class="font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 rounded transition-colors"
+                                                title="Quote this comment"
                                             >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M6 15h15"></path>
+                                                    <path d="M21 19h-15"></path>
+                                                    <path d="M15 11h6"></path>
+                                                    <path d="M21 7h-6"></path>
+                                                    <path d="M9 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
+                                                    <path d="M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2"></path>
+                                                </svg>
                                                 Quote
                                             </button>
-                                        </li>
-                                        <li v-if="v && comment.creator?.id === v.id">
                                             <button
+                                                v-if="v && comment.creator?.id === v.id"
                                                 @click="editingCommentId = comment.id"
-                                                class="font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                                                title="Edit comment"
                                             >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                    <path d="M16 5l3 3"></path>
+                                                </svg>
                                                 Edit
                                             </button>
-                                        </li>
-                                        <li v-if="v && comment.creator?.id === v.id">
                                             <button
+                                                v-if="v && comment.creator?.id === v.id"
                                                 @click="confirmDeleteComment(comment.id)"
-                                                class="font-medium text-gray-500 hover:text-red-600 dark:text-gray-400"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded transition-colors"
+                                                title="Delete comment"
                                             >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                </svg>
                                                 Delete
                                             </button>
-                                        </li>
-                                        <li v-if="v && comment.creator?.id !== v.id">
                                             <button
+                                                v-if="v && comment.creator?.id !== v.id"
                                                 @click="confirmReportComment(comment.id)"
-                                                class="font-medium text-gray-500 hover:text-yellow-600 dark:text-gray-400"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-950 rounded transition-colors"
+                                                title="Report comment"
                                             >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M3 3l18 18"></path>
+                                                    <path d="M5 5v16"></path>
+                                                    <path d="M19 5v.5"></path>
+                                                    <path d="M5 5h8m4 0h2"></path>
+                                                    <path d="M14.815 9.96a3.5 3.5 0 0 1 -1.785 3.017c-.936 .498 -1.093 .927 -1.03 2.023v.5"></path>
+                                                    <path d="M12 18h.01"></path>
+                                                </svg>
                                                 Report
                                             </button>
-                                        </li>
-                                        <li>
                                             <a
                                                 :href="`#comment-${comment.id}`"
-                                                class="font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 rounded transition-colors"
+                                                title="Permalink to this comment"
                                             >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
+                                                    <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
+                                                </svg>
                                                 Permalink
                                             </a>
-                                        </li>
-                                    </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             </div>
@@ -368,24 +405,25 @@
                                 :board-id="board?.id"
                                 :disabled="submitting"
                                 class="min-h-[200px]"
-                            />
-                            <div class="flex items-center gap-2 mt-3">
-                                <button
-                                    type="submit"
-                                    class="button primary"
-                                    :disabled="!commentBody.trim() || submitting"
-                                >
-                                    {{ submitting ? 'Posting...' : 'Post Reply' }}
-                                </button>
-                                <button
-                                    v-if="quotedComment"
-                                    type="button"
-                                    @click="clearQuote"
-                                    class="button secondary"
-                                >
-                                    Clear Quote
-                                </button>
-                            </div>
+                            >
+                                <template #actions>
+                                    <button
+                                        type="submit"
+                                        class="button primary text-sm px-4 py-1.5"
+                                        :disabled="!commentBody.trim() || submitting"
+                                    >
+                                        {{ submitting ? 'Posting...' : 'Post Reply' }}
+                                    </button>
+                                    <button
+                                        v-if="quotedComment"
+                                        type="button"
+                                        @click="clearQuote"
+                                        class="button secondary text-sm px-4 py-1.5"
+                                    >
+                                        Clear Quote
+                                    </button>
+                                </template>
+                            </InputsTiptap>
                             <div v-if="quotedComment" class="mt-3 p-3 bg-gray-100 dark:bg-gray-800 rounded border-l-4 border-blue-500">
                                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
                                     Quoting <strong>{{ quotedComment.creator?.displayName || quotedComment.creator?.name }}</strong>:
