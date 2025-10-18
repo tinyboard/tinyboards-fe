@@ -398,24 +398,23 @@
                         <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
                             Reply to thread
                         </h3>
-                        <form @submit.prevent="submitComment">
+                        <form @submit.prevent="submitComment" class="space-y-3">
                             <InputsTiptap
                                 v-model="commentBody"
                                 placeholder="Write your reply..."
                                 :board-id="board?.id"
                                 :disabled="submitting"
                                 class="min-h-[200px]"
-                            >
-                                <template #actions>
-                                    <button
-                                        type="submit"
-                                        class="button primary text-sm px-4 py-1.5"
-                                        :disabled="!commentBody.trim() || submitting"
-                                    >
-                                        {{ submitting ? 'Posting...' : 'Post Reply' }}
-                                    </button>
-                                </template>
-                            </InputsTiptap>
+                            />
+                            <div class="flex justify-end">
+                                <button
+                                    type="submit"
+                                    class="button primary px-4 py-2"
+                                    :disabled="!commentBody.trim() || submitting"
+                                >
+                                    {{ submitting ? 'Posting...' : 'Post Reply' }}
+                                </button>
+                            </div>
                         </form>
                     </div>
                     <div
@@ -686,16 +685,37 @@ const loadMoreComments = async () => {
     await fetchComments(page.value + 1);
 };
 
-// Quote comment - now inserts directly into editor
+// Extract images from HTML
+const extractImages = (html) => {
+    if (!html) return [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const images = doc.querySelectorAll('img');
+    return Array.from(images).map(img => ({
+        src: img.getAttribute('src'),
+        alt: img.getAttribute('alt') || '',
+        width: img.getAttribute('width'),
+        height: img.getAttribute('height')
+    }));
+};
+
+// Quote comment - now inserts directly into editor with images
 const quoteComment = (comment) => {
     const username = comment.creator?.displayName || comment.creator?.name || 'User';
     const quotedText = stripHtml(comment.bodyHTML || comment.body || '');
     const truncatedText = quotedText.length > 200 ? quotedText.substring(0, 200) + '...' : quotedText;
 
-    // Create a blockquote with the quoted content
+    // Extract images from the comment (limit to first 3 to avoid clutter)
+    const images = extractImages(comment.bodyHTML).slice(0, 3);
+    const imagesHtml = images.map(img =>
+        `<img src="${img.src}" alt="${img.alt}" ${img.width ? `width="${img.width}"` : ''} ${img.height ? `height="${img.height}"` : ''} class="max-w-full h-auto rounded" />`
+    ).join('');
+
+    // Create a blockquote with the quoted content, comment ID, and images
     const quoteHtml = `
-        <blockquote>
-            <p><strong>${username} said:</strong></p>
+        <blockquote data-comment-id="${comment.id}">
+            <p><strong><a href="#comment-${comment.id}" class="quote-link">${username} said:</a></strong></p>
+            ${imagesHtml ? `<div class="my-2">${imagesHtml}</div>` : ''}
             <p>${truncatedText}</p>
         </blockquote>
         <p><br></p>
@@ -716,12 +736,8 @@ const getQuotedComment = (quotedCommentId) => {
     return comments.value.find(c => c.id === quotedCommentId);
 };
 
-// Strip HTML tags from text
-const stripHtml = (html) => {
-    if (!html) return '';
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || '';
-};
+// Import text utilities
+const { stripHtml, truncateText } = await import('@/composables/text');
 
 // Submit comment
 const submitComment = async () => {
@@ -1032,3 +1048,25 @@ const links = computed(() => {
     return baseLinks;
 });
 </script>
+
+<style scoped>
+/* Themed blockquote styling for rendered content */
+:deep(.prose blockquote) {
+  @apply border-l-4 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300;
+  border-left-color: rgb(var(--color-primary));
+  background-color: rgba(var(--color-primary), 0.05);
+}
+
+:deep(.prose blockquote a.quote-link) {
+  @apply not-italic font-semibold no-underline;
+  color: rgb(var(--color-primary));
+}
+
+:deep(.prose blockquote a.quote-link:hover) {
+  @apply underline;
+}
+
+:deep(.prose blockquote strong) {
+  @apply not-italic;
+}
+</style>

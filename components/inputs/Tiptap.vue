@@ -1,38 +1,8 @@
 ><template>
   <div class="relative flex flex-col bg-gray-100 dark:bg-gray-900 border dark:border-gray-700/70 focus:bg-white dark:focus:bg-gray-950 focus:ring-2 focus:border-primary focus:ring-primary rounded-md overflow-hidden" :style="[ccsProps, 'min-height:210px']">
 
-    <!-- Placeholder -->
-    <span v-if="isEditorEmpty" class="z-10 absolute top-3 left-3 pointer-events-none text-gray-400">
-      {{ placeholder }}
-    </span>
-
-    <!-- Editor Container -->
-    <div
-      v-show="!showPreview"
-      class="relative"
-      @drop.prevent="handleDrop"
-      @dragover.prevent="handleDragOver"
-      @dragenter.prevent="handleDragEnter"
-      @dragleave.prevent="handleDragLeave"
-    >
-      <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20 pointer-events-none">
-        <p class="text-primary font-semibold">Drop images here</p>
-      </div>
-      <editor-content :editor="editor" :style="`min-height:170px`"/>
-      <!-- Upload progress indicator -->
-      <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700">
-        <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
-      </div>
-    </div>
-
-    <!-- Preview Container -->
-    <div v-show="showPreview" class="relative min-h-[170px] p-3 overflow-auto">
-      <div v-if="editor && editor.getHTML()" class="prose dark:prose-invert prose-sm max-w-none" v-html="editor.getHTML()"></div>
-      <div v-else class="text-gray-400 italic">Nothing to preview yet...</div>
-    </div>
-
-    <!-- Editor Menu Buttons -->
-    <div v-if="editor" id="editor" class="flex flex-wrap items-center gap-1 p-2 text-sm font-bold bg-gray-200 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
+    <!-- Editor Menu Buttons (moved to top) -->
+    <div v-if="editor" id="editor" class="flex flex-wrap items-center gap-1 p-2 text-sm font-bold bg-gray-200 dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-600">
       <!-- Headings -->
       <button type="button" class="w-7 h-7 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="editor.isActive('heading', { level: 1 }) ? 'text-gray-900 dark:text-white bg-white dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700'">
         H1
@@ -248,16 +218,40 @@
            <path d="M16 5l3 3"></path>
         </svg>
       </button>
-      <!-- Spacer to push action buttons to the right -->
-      <div v-if="$slots.actions" class="flex-grow"></div>
-      <!-- Action Buttons Slot (for submit button, etc) -->
-      <div v-if="$slots.actions" class="flex items-center gap-2 pl-2 border-l-2 border-gray-300 dark:border-gray-600 ml-2">
-        <slot name="actions"></slot>
-      </div>
     </div>
 
     <!-- Fake bar while loading -->
-    <div v-else class="bg-gray-200 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600 h-[45px]"></div>
+    <div v-else class="bg-gray-200 dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-600 h-[45px]"></div>
+
+    <!-- Placeholder -->
+    <span v-if="isEditorEmpty" class="z-10 absolute top-[53px] left-3 pointer-events-none text-gray-400">
+      {{ placeholder }}
+    </span>
+
+    <!-- Editor Container -->
+    <div
+      v-show="!showPreview"
+      class="relative"
+      @drop.prevent="handleDrop"
+      @dragover.prevent="handleDragOver"
+      @dragenter.prevent="handleDragEnter"
+      @dragleave.prevent="handleDragLeave"
+    >
+      <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20 pointer-events-none">
+        <p class="text-primary font-semibold">Drop images here</p>
+      </div>
+      <editor-content :editor="editor" :style="`min-height:170px`"/>
+      <!-- Upload progress indicator -->
+      <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700">
+        <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
+      </div>
+    </div>
+
+    <!-- Preview Container -->
+    <div v-show="showPreview" class="relative min-h-[170px] p-3 overflow-auto">
+      <div v-if="editor && editor.getHTML()" class="prose dark:prose-invert prose-sm max-w-none" v-html="editor.getHTML()"></div>
+      <div v-else class="text-gray-400 italic">Nothing to preview yet...</div>
+    </div>
   </div>
 
   <!-- Link Modal -->
@@ -797,7 +791,18 @@
 
 /* Blockquotes */
 :deep(.ProseMirror blockquote) {
-  @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800;
+  @apply border-l-4 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300;
+  border-left-color: rgb(var(--color-primary));
+  background-color: rgba(var(--color-primary), 0.05);
+}
+
+:deep(.ProseMirror blockquote a.quote-link) {
+  @apply not-italic font-semibold no-underline;
+  color: rgb(var(--color-primary));
+}
+
+:deep(.ProseMirror blockquote a.quote-link:hover) {
+  @apply underline;
 }
 
 /* Code */

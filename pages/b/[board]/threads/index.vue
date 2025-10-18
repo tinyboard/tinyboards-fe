@@ -355,11 +355,8 @@ const formatDate = (dateString) => {
     return date.toLocaleDateString();
 };
 
-// Strip HTML tags for preview
-const stripHtml = (html) => {
-    if (!html) return '';
-    return html.replace(/<[^>]*>/g, '').trim();
-};
+// Import text utilities
+const { stripHtml } = await import('@/composables/text');
 
 // Parse section order
 const getSectionLinks = () => {
