@@ -245,6 +245,16 @@
       <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700">
         <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
       </div>
+      <!-- Mention autocomplete dropdown -->
+      <MentionDropdown
+        :suggestions="suggestions"
+        :selected-index="mentionSelectedIndex"
+        :is-visible="mentionVisible"
+        :is-loading="mentionLoading"
+        :position="mentionPosition"
+        @select="insertMention"
+        @update:selected-index="mentionSelectedIndex = $event"
+      />
     </div>
 
     <!-- Preview Container -->
@@ -320,6 +330,21 @@
 </template>
 
 <script setup>
+  import { ref, watch, computed } from 'vue';
+  import { Link } from '@tiptap/extension-link';
+  import { Image } from '@tiptap/extension-image';
+  import { TextAlign } from '@tiptap/extension-text-align';
+  import { TextStyle } from '@tiptap/extension-text-style';
+  import { Color } from '@tiptap/extension-color';
+  import { Highlight } from '@tiptap/extension-highlight';
+  import { Underline } from '@tiptap/extension-underline';
+  import { useEditor, EditorContent } from '@tiptap/vue-3';
+  import StarterKit from '@tiptap/starter-kit';
+  import { Extension } from '@tiptap/core';
+  import EmojiPicker from './EmojiPicker.vue';
+  import MentionDropdown from './MentionDropdown.vue';
+  import { useMentionAutocomplete } from '@/composables/useMentionAutocomplete';
+
   const props = defineProps({
     modelValue: {
       type: String,
@@ -345,18 +370,6 @@
 
   const emit = defineEmits(['update:modelValue']);
 
-  import { ref, watch, computed } from 'vue';
-  import { Link } from '@tiptap/extension-link';
-  import { Image } from '@tiptap/extension-image';
-  import { TextAlign } from '@tiptap/extension-text-align';
-  import { TextStyle } from '@tiptap/extension-text-style';
-  import { Color } from '@tiptap/extension-color';
-  import { Highlight } from '@tiptap/extension-highlight';
-  import { Underline } from '@tiptap/extension-underline';
-  import { useEditor, EditorContent } from '@tiptap/vue-3';
-  import StarterKit from '@tiptap/starter-kit';
-  import EmojiPicker from './EmojiPicker.vue';
-
   // Preview toggle state
   const showPreview = ref(false);
 
@@ -367,6 +380,133 @@
   const showLinkModal = ref(false);
   const linkUrl = ref('');
   const linkText = ref('');
+
+  // Mention autocomplete state
+  const {
+    suggestions,
+    isLoading: mentionLoading,
+    selectedIndex: mentionSelectedIndex,
+    query: mentionQuery,
+    isVisible: mentionVisible,
+    debouncedSearch,
+    selectNext: selectNextMention,
+    selectPrevious: selectPreviousMention,
+    getSelectedUsername,
+    reset: resetMention
+  } = useMentionAutocomplete();
+
+  const mentionPosition = ref({ top: 0, left: 0 });
+  const mentionStartPos = ref(null);
+
+  // Insert mention into editor
+  const insertMention = (username) => {
+    if (!editor.value || mentionStartPos.value === null) return;
+
+    const { state } = editor.value;
+    const currentPos = state.selection.from;
+
+    // Calculate the range to replace (@query)
+    const from = mentionStartPos.value;
+    const to = currentPos;
+
+    // Create the mention link HTML
+    const mentionHtml = `<a href="/@${username}">@${username}</a>&nbsp;`;
+
+    // Replace the @query text with the mention link
+    editor.value
+      .chain()
+      .focus()
+      .deleteRange({ from, to })
+      .insertContent(mentionHtml)
+      .run();
+
+    // Reset mention state
+    resetMention();
+    mentionStartPos.value = null;
+  };
+
+  // Detect @ symbol and track position
+  const checkForMention = (editor) => {
+    const { state } = editor;
+    const { from } = state.selection;
+    const textBefore = state.doc.textBetween(Math.max(0, from - 50), from, '\n', '\ufffc');
+
+    // Look for @ followed by characters (not in a URL or existing link)
+    const mentionMatch = textBefore.match(/@(\w*)$/);
+
+    if (mentionMatch) {
+      const query = mentionMatch[1];
+      const atPos = from - query.length - 1; // Position of @
+
+      // Store the position for later replacement
+      mentionStartPos.value = atPos;
+
+      // Trigger search if query has content
+      if (query.length > 0) {
+        debouncedSearch(query);
+      } else {
+        // Show empty dropdown or reset
+        resetMention();
+      }
+
+      // Calculate dropdown position
+      const coords = editor.view.coordsAtPos(from);
+      if (coords) {
+        mentionPosition.value = {
+          top: coords.bottom + 5,
+          left: coords.left
+        };
+      }
+    } else {
+      // No @ detected, hide dropdown
+      if (mentionVisible.value) {
+        resetMention();
+        mentionStartPos.value = null;
+      }
+    }
+  };
+
+  // Create keyboard shortcut extension for mention navigation
+  const MentionKeyboardExtension = Extension.create({
+    name: 'mentionKeyboard',
+
+    addKeyboardShortcuts() {
+      return {
+        ArrowDown: () => {
+          if (mentionVisible.value) {
+            selectNextMention();
+            return true; // Prevent default behavior
+          }
+          return false;
+        },
+        ArrowUp: () => {
+          if (mentionVisible.value) {
+            selectPreviousMention();
+            return true;
+          }
+          return false;
+        },
+        Enter: () => {
+          if (mentionVisible.value) {
+            const username = getSelectedUsername();
+            if (username) {
+              insertMention(username);
+              return true;
+            }
+          }
+          return false;
+        },
+        Escape: () => {
+          if (mentionVisible.value) {
+            resetMention();
+            mentionStartPos.value = null;
+            return true;
+          }
+          return false;
+        }
+      };
+    }
+  });
 
   const editor = useEditor({
     content: props.modelValue || '',
@@ -430,7 +570,8 @@
           class: 'bg-yellow-200 dark:bg-yellow-800'
         }
       }),
-      Underline
+      Underline,
+      MentionKeyboardExtension
     ],
     editorProps: {
       attributes: {
@@ -448,6 +589,9 @@
     onUpdate: ({ editor }) => {
       emit('update:modelValue', editor.getHTML());
       isEditorEmpty.value = editor.isEmpty;
+
+      // Check for @ mentions on every update
+      checkForMention(editor);
     }
   });
 
