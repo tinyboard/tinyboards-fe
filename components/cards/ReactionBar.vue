@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reactionCounts && reactionCounts.length > 0" class="reaction-bar flex flex-wrap gap-2 items-center">
+  <div class="reaction-bar flex flex-wrap gap-2 items-center">
     <!-- Each reaction count -->
     <button
       v-for="reaction in reactionCounts"

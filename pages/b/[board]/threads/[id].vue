@@ -113,8 +113,20 @@
 
                             <!-- Post Content -->
                             <div class="flex-1 p-4 sm:p-6">
+                                <!-- Edit Form -->
+                                <LazyInputsEdit
+                                    v-if="editingThreadId === thread.id"
+                                    :id="thread.id"
+                                    :body="thread.body"
+                                    type="post"
+                                    :isThread="true"
+                                    @hasEdited="onThreadEdited"
+                                    @closed="editingThreadId = null"
+                                />
+
+                                <!-- Thread Body -->
                                 <div
-                                    v-if="thread.bodyHTML"
+                                    v-else-if="thread.bodyHTML"
                                     class="prose dark:prose-invert max-w-none"
                                     v-html="thread.bodyHTML"
                                 ></div>
@@ -125,9 +137,76 @@
                                     {{ thread.body }}
                                 </div>
 
-                                <!-- Post Date -->
-                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-500">
-                                    Posted {{ formatDate(thread.creationDate) }}
+                                <!-- Post Date and Actions -->
+                                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500 dark:text-gray-500">
+                                            Posted {{ formatDate(thread.creationDate) }}
+                                        </span>
+
+                                        <!-- Thread Actions -->
+                                        <div class="flex items-center gap-1">
+                                            <button
+                                                v-if="v && thread.creator?.id === v.id"
+                                                @click="editingThreadId = thread.id"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                                                title="Edit thread"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+                                                    <path d="M16 5l3 3"></path>
+                                                </svg>
+                                                Edit
+                                            </button>
+                                            <button
+                                                v-if="v && thread.creator?.id === v.id"
+                                                @click="confirmDeleteThread"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 rounded transition-colors"
+                                                title="Delete thread"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                                </svg>
+                                                Delete
+                                            </button>
+                                            <button
+                                                v-if="v && thread.creator?.id !== v.id"
+                                                @click="confirmReportThread"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-950 rounded transition-colors"
+                                                title="Report thread"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M3 3l18 18"></path>
+                                                    <path d="M5 5v16"></path>
+                                                    <path d="M19 5v.5"></path>
+                                                    <path d="M5 5h8m4 0h2"></path>
+                                                    <path d="M14.815 9.96a3.5 3.5 0 0 1 -1.785 3.017c-.936 .498 -1.093 .927 -1.03 2.023v.5"></path>
+                                                    <path d="M12 18h.01"></path>
+                                                </svg>
+                                                Report
+                                            </button>
+                                            <a
+                                                :href="`#thread-top`"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950 rounded transition-colors"
+                                                title="Permalink to this thread"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path>
+                                                    <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path>
+                                                </svg>
+                                                Permalink
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1018,6 +1097,15 @@ const toggleCommentReaction = async (comment, emoji) => {
     }
 };
 
+// Thread editing
+const editingThreadId = ref(null);
+
+const onThreadEdited = (payload) => {
+    thread.value.body = payload.newBody;
+    thread.value.bodyHTML = payload.newBodyHTML;
+    editingThreadId.value = null;
+};
+
 // Comment editing
 const editingCommentId = ref(null);
 
@@ -1025,6 +1113,26 @@ const onCommentEdited = (comment, payload) => {
     comment.body = payload.newBody;
     comment.bodyHTML = payload.newBodyHTML;
     editingCommentId.value = null;
+};
+
+// Delete thread
+const confirmDeleteThread = () => {
+    modalStore.setModal({
+        modal: "ModalDelete",
+        id: threadId,
+        contentType: "post",
+        isOpen: true,
+    });
+};
+
+// Report thread
+const confirmReportThread = () => {
+    modalStore.setModal({
+        modal: "ModalReport",
+        id: threadId,
+        contentType: "post",
+        isOpen: true,
+    });
 };
 
 // Delete comment
