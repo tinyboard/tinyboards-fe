@@ -73,8 +73,8 @@ const unreadCount = ref(0);
 const type = ref(route.params?.type || 'replies');
 
 const { data, pending, error, refresh } = await useGraphQLQuery(`
-	query getNotifications($unreadOnly: Boolean!, $limit: Int!, $page: Int!) {
-		getNotifications(unreadOnly: $unreadOnly, limit: $limit, page: $page) {
+	query getNotifications($unreadOnly: Boolean, $kindFilter: String, $limit: Int!, $page: Int!) {
+		getNotifications(unreadOnly: $unreadOnly, kindFilter: $kindFilter, limit: $limit, page: $page) {
 			id
 			isRead
 			type
@@ -97,7 +97,8 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 	}
 `, {
 	variables: {
-		unreadOnly: type.value === 'unread',
+		unreadOnly: type.value === 'unread' ? true : null,
+		kindFilter: type.value !== 'unread' && type.value !== 'replies' ? type.value : null,
 		limit: limit.value,
 		page: page.value
 	}
