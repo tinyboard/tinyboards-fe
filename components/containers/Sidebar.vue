@@ -42,110 +42,31 @@
         </p>
       </div>
     </div>
-    <div v-if="users">
-      <div class="flex items-end mb-3 pb-1 border-b">
-        <h2 class="font-bold leading-5 text-base">Newest Members</h2>
-        <NuxtLink
-          to="/members"
-          class="ml-auto text-sm font-normal hover:underline"
-        >
-          View all &#8594;
-        </NuxtLink>
-      </div>
-      <ul class="flex flex-col space-y-2 divide-y divide-gray-200/50">
-        <li
-          v-for="user in users.members"
-          :key="user.id"
-          class="pt-2 first:pt-0"
-        >
-          <NuxtLink :to="`/@${user.name}`" class="flex space-x-2">
-            <div class="p-0.5 bg-white border hover:bg-gray-200">
-              <CardsAvatar :src="user.avatar" alt="avatar" size="sm" class="!w-8 !h-8" />
-            </div>
-            <div class="flex flex-col justify-center leading-normal">
-              <div class="flex">
-                <strong class="text-sm">{{ user.name }}</strong>
-                <!-- Role -->
-                <span v-if="user.isAdmin" class="ml-1 badge badge-red"
-                  >Admin</span
-                >
-              </div>
-              <small class="text-gray-400 block">
-                Since
-                <span class="font-medium">
-                  {{
-                    user.creationDate ? format(parseISO(user.creationDate), "MMM dd, yyyy") : 'Unknown'
-                  }}
-                </span>
-              </small>
-            </div>
-          </NuxtLink>
-        </li>
-      </ul>
-    </div>
+    <!-- Active Threads -->
+    <ContainersSidebarActiveThreads :limit="10" />
+
+    <!-- New Submissions -->
+    <ContainersSidebarNewSubmissions :limit="3" />
+
+    <!-- Members Online -->
+    <ContainersSidebarMembersOnline :display-limit="50" />
+
+    <!-- Site Statistics -->
+    <ContainersSidebarSiteStatistics />
   </div>
 </template>
 
 <script setup>
-// import { baseURL } from "@/server/constants";
-import { format, parseISO } from "date-fns";
 import { shuffle } from "@/utils/shuffleArray";
-import { useAPI } from "@/composables/api";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { requirePermission } from "@/composables/admin";
-import { useGraphQLQuery } from "@/composables/useGraphQL";
 
 const site = useSiteStore();
 const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
 
 const canCreateBoard = (!site.boardCreationAdminOnly && isAuthed) || (site.boardCreationAdminOnly && requirePermission("boards"));
-
-// Define spotlight users
-// Use GraphQL query instead of REST API
-const query_str = `
-  query ListUsers($limit: Int!, $sort: UserSortType!) {
-    listUsers(limit: $limit, sort: $sort) {
-      id
-      name
-      displayName
-      avatar
-      bio
-      creationDate
-      rep
-      adminLevel
-    }
-  }
-`;
-
-const { data: usersData, error } = await useGraphQLQuery(query_str, {
-  variables: {
-    limit: 8,
-    sort: 'new'
-  }
-});
-
-const pending = ref(false);
-const refresh = () => Promise.resolve();
-
-// Transform GraphQL response to match expected format
-const users = computed(() => {
-  if (!usersData.value?.listUsers) return { members: [] };
-
-  return {
-    members: usersData.value.listUsers.map(user => ({
-      id: user.id,
-      name: user.name,
-      displayName: user.displayName,
-      avatar: user.avatar,
-      banner: user.banner || user.profileBackground,
-      bio: user.bio,
-      creationDate: user.creationDate,
-      isAdmin: user.adminLevel > 0
-    }))
-  };
-});
 
 // TO-DO
 // Refactor with proper `/img/sidebar-art` folder
