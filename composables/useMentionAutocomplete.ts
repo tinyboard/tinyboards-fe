@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { useGraphQLQuery } from '@/composables/useGraphQL'
 
 export interface MentionSuggestion {
   username: string
@@ -18,12 +19,11 @@ export function useMentionAutocomplete() {
     }
 
     try {
-      const { data } = await useAsyncGql({
-        operation: `
-          query searchUsernames($query: String!, $limit: Int) {
-            searchUsernames(query: $query, limit: $limit)
-          }
-        `,
+      const { data } = await useGraphQLQuery(`
+        query searchUsernames($query: String!, $limit: Int) {
+          searchUsernames(query: $query, limit: $limit)
+        }
+      `, {
         variables: {
           query: searchQuery,
           limit: 10
