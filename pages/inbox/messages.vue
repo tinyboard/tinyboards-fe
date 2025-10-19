@@ -34,42 +34,36 @@
 					<li v-if="conversations.length === 0" class="p-4 text-center text-gray-500">
 						No conversations found.
 					</li>
-					<li v-for="(conversation, i) in conversations" :key="conversation.id || i">
-						<!--<NuxtLink :to="`/inbox/messages`" custom v-slot="{ href, navigate, isActive }">
-							<a @click="navigate" class="flex p-2.5 hover:bg-gray-100 shadow-inner-white"
-								:class="{ 'bg-gray-100': isActive }">-->
-						<div class="p-2.5 hover:bg-gray-100 shadow-inner-white"
-							:class="conversation.notif?.read ? 'bg-gray-100' : 'bg-blue-100'">
-							<p class="mb-1 text-sm text-gray-900 font-bold">
-								<span v-if="conversation.creator.id == 1">
-									{{ site.name }} system notification
-								</span>
-								<span v-else>
-									Message from @{{ conversation.creator.name }}
-								</span>
-							</p>
-							<div class="flex">
-								<img loading="lazy" :src="conversation.creator.avatar" alt="avatar"
-									class="object-cover w-16 h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
-								<span class="ml-2 text-gray-900">
-									<strong class="text-sm"
-										:class="conversation.creator.isAdmin ? 'text-red-700' : 'text-gray-900'">
-										{{ userStore.user.name === conversation.creator.name ?
-											conversation.recipient_user.name : conversation.creator.name }}
-
-										<span v-if="conversation.creator.isAdmin" class="ml-1 badge badge-red">
-											{{ conversation.creator.id == 1 ? "System" : "Admin" }}
-										</span>
-									</strong>
-									<!--<p class="text-xs text-gray-600 font-medium">
-											{{ conversation.private_message.subject }}
-										</p>-->
-									<div class="msg-body" v-html="conversation.message.body_html"></div>
-								</span>
-							</div>
-						</div>
-						<!--</a>
-						</NuxtLink>-->
+					<li v-for="(conversation, i) in conversations" :key="conversation.lastMessage?.id || i">
+						<NuxtLink :to="`/inbox/messages/${conversation.otherUser.id}`" custom v-slot="{ href, navigate, isActive }">
+							<a @click="navigate" :href="href" class="flex p-2.5 hover:bg-gray-100 shadow-inner-white cursor-pointer"
+								:class="{ 'bg-blue-50': conversation.unreadCount > 0, 'bg-gray-50': isActive }">
+								<div class="flex w-full">
+									<img loading="lazy" :src="conversation.otherUser.avatar" alt="avatar"
+										class="object-cover w-16 h-16 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent" />
+									<div class="ml-3 flex-1">
+										<div class="flex items-center justify-between mb-1">
+											<strong class="text-sm"
+												:class="conversation.otherUser.isAdmin ? 'text-red-700' : 'text-gray-900'">
+												@{{ conversation.otherUser.name }}
+												<span v-if="conversation.otherUser.isAdmin" class="ml-1 badge badge-red">
+													{{ conversation.otherUser.id == 1 ? "System" : "Admin" }}
+												</span>
+											</strong>
+											<span v-if="conversation.unreadCount > 0" class="ml-2 px-2 py-0.5 text-xs font-medium bg-primary text-white rounded-full">
+												{{ conversation.unreadCount }}
+											</span>
+										</div>
+										<p class="text-xs text-gray-600 font-medium line-clamp-2">
+											{{ conversation.lastMessage.title }}
+										</p>
+										<p class="text-xs text-gray-500 line-clamp-1">
+											{{ conversation.lastMessage.body }}
+										</p>
+									</div>
+								</div>
+							</a>
+						</NuxtLink>
 					</li>
 				</ul>
 				<!-- Nested Page -->
@@ -129,23 +123,20 @@ const fetchConversations = async () => {
 		const { data: conversationsResult } = await useGraphQLQuery(`
 			query GetConversations {
 				listConversations {
-					id
-					creator {
+					otherUser {
 						id
 						name
 						avatar
 						isAdmin
 					}
-					recipient_user {
+					lastMessage {
 						id
-						name
+						title
+						body
+						published
 					}
-					message {
-						body_html
-					}
-					notif {
-						read
-					}
+					unreadCount
+					lastActivity
 				}
 			}
 		`);
@@ -180,21 +171,20 @@ const markRead = async () => {
 
 	isLoading.value = true;
 	try {
-		// Mark conversations as read - this mutation expects userId parameter
-		// We'll need to loop through conversations or implement a "mark all" mutation
-		const promises = conversations.value.map(conv =>
-			useGraphQLMutation(`
-				mutation markConversationRead($userId: Int!) {
-					markConversationRead(userId: $userId) {
-						success
+		// Mark all conversations as read
+		const promises = conversations.value
+			.filter(conv => conv.unreadCount > 0)
+			.map(conv =>
+				useGraphQLMutation(`
+					mutation MarkConversationRead($userId: Int!) {
+						markConversationRead(userId: $userId)
 					}
-				}
-			`, {
-				variables: {
-					userId: conv.otherUser?.id || conv.creator?.id
-				}
-			})
-		);
+				`, {
+					variables: {
+						userId: conv.otherUser.id
+					}
+				})
+			);
 
 		await Promise.all(promises);
 

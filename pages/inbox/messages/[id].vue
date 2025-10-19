@@ -41,7 +41,7 @@
 						</div>
 
 						<!-- Message content or edit form -->
-						<div v-if="editingMessageId !== message.id" v-html="message.private_message.body"></div>
+						<div v-if="editingMessageId !== message.id" v-html="message.body"></div>
 						<div v-else class="mt-2">
 							<textarea
 								v-model="editMessageText"
@@ -104,23 +104,22 @@
 
 		try {
 			const { data: result } = await useGraphQLQuery(`
-				query GetConversation($userId: Int!, $limit: Int!, $offset: Int!) {
+				query GetConversation($userId: Int!, $limit: Int, $offset: Int) {
 					getConversation(userId: $userId, limit: $limit, offset: $offset) {
 						id
+						title
+						body
+						published
+						updated
 						creator {
 							id
 							name
 							avatar
 						}
-						recipient_user {
+						recipient {
 							id
 							name
 						}
-						private_message {
-							body
-							body_html
-						}
-						createdAt
 					}
 				}
 			`, {
@@ -150,15 +149,8 @@
 	const textarea = ref(null);
 	const isSubmitting = ref(false);
 
-	// Get recipient information from the first message or route
+	// Get recipient information from route
 	const recipientId = computed(() => {
-		if (localMessages.value.length > 0) {
-			const firstMessage = localMessages.value[0];
-			// Return the other participant's ID (not the current user)
-			return firstMessage.creator.id !== firstMessage.recipient_user?.id
-				? firstMessage.creator.id
-				: firstMessage.recipient_user?.id;
-		}
 		return Number(route.params?.id) || null;
 	});
 
@@ -170,20 +162,22 @@
 
 		try {
 			const { data: result } = await useGraphQLMutation(`
-				mutation sendMessage($input: SendMessageInput!) {
+				mutation SendMessage($input: SendMessageInput!) {
 					sendMessage(input: $input) {
 						message {
 							id
+							title
+							body
+							published
 							creator {
 								id
 								name
 								avatar
 							}
-							private_message {
-								body
-								body_html
+							recipient {
+								id
+								name
 							}
-							createdAt
 						}
 					}
 				}
@@ -191,9 +185,8 @@
 				variables: {
 					input: {
 						recipientId: recipientId.value,
-						subject: "Message", // Default subject
-						body: messageContent,
-						conversationId: conversationId.value
+						title: "Message",
+						body: messageContent
 					}
 				}
 			});
@@ -249,7 +242,7 @@
 	// Start editing a message
 	const startEditMessage = (message) => {
 		editingMessageId.value = message.id;
-		editMessageText.value = message.private_message.body_html || message.private_message.body;
+		editMessageText.value = message.body;
 	};
 
 	// Cancel editing
@@ -265,14 +258,14 @@
 		isEditingMessage.value = true;
 		try {
 			const { data: result } = await useGraphQLMutation(`
-				mutation editMessage($input: EditMessageInput!) {
+				mutation EditMessage($input: EditMessageInput!) {
 					editMessage(input: $input) {
 						message {
 							id
-							private_message {
-								body
-								body_html
-							}
+							title
+							body
+							published
+							updated
 						}
 					}
 				}
@@ -291,11 +284,8 @@
 				if (messageIndex !== -1) {
 					localMessages.value[messageIndex] = {
 						...localMessages.value[messageIndex],
-						private_message: {
-							...localMessages.value[messageIndex].private_message,
-							body: result.value.editMessage.message.private_message.body,
-							body_html: result.value.editMessage.message.private_message.body_html
-						}
+						body: result.value.editMessage.message.body,
+						updated: result.value.editMessage.message.updated
 					};
 				}
 
@@ -306,7 +296,7 @@
 				});
 
 				cancelEditMessage();
-			} else {
+			} else{
 				toast.addNotification({
 					header: 'Failed to edit message',
 					message: 'Please try again.',
@@ -331,10 +321,8 @@
 
 		try {
 			const { data: result } = await useGraphQLMutation(`
-				mutation deleteMessage($messageId: Int!) {
-					deleteMessage(messageId: $messageId) {
-						success
-					}
+				mutation DeleteMessage($messageId: Int!) {
+					deleteMessage(messageId: $messageId)
 				}
 			`, {
 				variables: {
@@ -342,7 +330,7 @@
 				}
 			});
 
-			if (result.value?.deleteMessage?.success) {
+			if (result.value?.deleteMessage) {
 				// Remove the message from the local array
 				localMessages.value = localMessages.value.filter(m => m.id !== message.id);
 
