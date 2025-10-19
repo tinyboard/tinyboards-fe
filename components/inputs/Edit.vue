@@ -9,7 +9,7 @@
 		/>
 		<!-- Textarea for Regular Comments/Posts -->
 		<template v-else>
-			<textarea v-show="!isPreviewVisible" required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler"/>
+			<textarea ref="textareaRef" v-show="!isPreviewVisible" required :placeholder="`Edit your ${type}...`" :rows="type === 'post' ? 12 : 4" class="block w-full min-h-[96px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="localBody" @keydown="inputHandler" @input="handleInput"/>
 			<!-- MD Preview -->
 			<div v-show="isPreviewVisible" class="w-full" style="min-height: 118px;">
 				<div class="prose prose-sm" v-html="preview"></div>
@@ -18,6 +18,16 @@
 				<span class="text-xs text-gray-400 uppercase font-medium tracking-wide">Preview</span>
 				<span class="ml-2 text-red-500">&#10006;</span>
 			</button>
+			<!-- Mention Autocomplete -->
+			<MentionDropdown
+				:suggestions="mentionAutocomplete.suggestions.value"
+				:selected-index="mentionAutocomplete.selectedIndex.value"
+				:is-visible="mentionAutocomplete.isVisible.value"
+				:is-loading="mentionAutocomplete.isLoading.value"
+				:position="mentionPosition"
+				@select="insertMention"
+				@update:selected-index="mentionAutocomplete.selectedIndex.value = $event"
+			/>
 		</template>
 		<!-- Action Buttons -->
 		<div class="mt-2 flex w-full">
@@ -38,9 +48,11 @@
 <script setup>
 	import { marked } from 'marked';
 	import { useToastStore } from '@/stores/StoreToast';
+	import { useMentionAutocomplete } from '@/composables/useMentionAutocomplete';
 
 	import { editPost } from "@/composables/post";
 	import { editComment } from "@/composables/comments";
+	import MentionDropdown from './MentionDropdown.vue';
 
 	const props = defineProps({
 		id: {
@@ -72,9 +84,15 @@
 
 	const localBody = ref(props.body);
 	const isLoading = ref(false);
+	const textareaRef = ref(null);
 
 	// Markdown previewing
 	const isPreviewVisible = ref(false);
+
+	// Mention autocomplete (only for non-thread textarea)
+	const mentionAutocomplete = useMentionAutocomplete();
+	const mentionPosition = ref({ top: 0, left: 0 });
+	const mentionStartPos = ref(null);
 
 	const preview = computed(() => {
 		return marked.parse(localBody.value)
@@ -85,8 +103,101 @@
 		isPreviewVisible.value = false;
 	};
 
+	// Check for @ mentions in textarea
+	const checkForMention = () => {
+		if (!textareaRef.value || props.isThread) return;
+
+		const cursorPosition = textareaRef.value.selectionStart;
+		const textBeforeCursor = localBody.value.substring(0, cursorPosition);
+
+		// Look for @ followed by word characters
+		const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+
+		if (mentionMatch) {
+			const query = mentionMatch[1];
+			const atPos = cursorPosition - query.length - 1;
+
+			mentionStartPos.value = atPos;
+
+			if (query.length > 0) {
+				mentionAutocomplete.debouncedSearch(query);
+			} else {
+				mentionAutocomplete.reset();
+			}
+
+			// Calculate dropdown position
+			const textarea = textareaRef.value;
+			const textAreaRect = textarea.getBoundingClientRect();
+			mentionPosition.value = {
+				top: textAreaRect.bottom + 5,
+				left: textAreaRect.left + 10
+			};
+		} else {
+			if (mentionAutocomplete.isVisible.value) {
+				mentionAutocomplete.reset();
+				mentionStartPos.value = null;
+			}
+		}
+	};
+
+	// Insert selected mention
+	const insertMention = (username) => {
+		if (!textareaRef.value || mentionStartPos.value === null) return;
+
+		const cursorPosition = textareaRef.value.selectionStart;
+		const text = localBody.value;
+
+		const before = text.substring(0, mentionStartPos.value);
+		const after = text.substring(cursorPosition);
+		localBody.value = before + '@' + username + ' ' + after;
+
+		mentionAutocomplete.reset();
+		mentionStartPos.value = null;
+
+		nextTick(() => {
+			if (textareaRef.value) {
+				const newPosition = mentionStartPos.value + username.length + 2;
+				textareaRef.value.focus();
+				textareaRef.value.setSelectionRange(newPosition, newPosition);
+			}
+		});
+	};
+
+	// Handle input changes
+	const handleInput = () => {
+		checkForMention();
+	};
+
 	// Handle key press
 	const inputHandler = (e) => {
+		// Handle mention autocomplete navigation
+		if (mentionAutocomplete.isVisible.value && !props.isThread) {
+			if (e.key === 'ArrowDown') {
+				e.preventDefault();
+				mentionAutocomplete.selectNext();
+				return;
+			}
+			if (e.key === 'ArrowUp') {
+				e.preventDefault();
+				mentionAutocomplete.selectPrevious();
+				return;
+			}
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				const selectedUsername = mentionAutocomplete.getSelectedUsername();
+				if (selectedUsername) {
+					insertMention(selectedUsername);
+				}
+				return;
+			}
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				mentionAutocomplete.reset();
+				mentionStartPos.value = null;
+				return;
+			}
+		}
+
 		if (e.keyCode === 13 && e.shiftKey) {
 			e.preventDefault();
 			submitEdit();

@@ -28,6 +28,16 @@
 			:selected-index="emojiSuggestions.selectedIndex.value"
 			@select="selectEmojiSuggestion"
 		/>
+		<!-- Mention Autocomplete -->
+		<MentionDropdown
+			:suggestions="mentionAutocomplete.suggestions.value"
+			:selected-index="mentionAutocomplete.selectedIndex.value"
+			:is-visible="mentionAutocomplete.isVisible.value"
+			:is-loading="mentionAutocomplete.isLoading.value"
+			:position="mentionPosition"
+			@select="insertMention"
+			@update:selected-index="mentionAutocomplete.selectedIndex.value = $event"
+		/>
 		<!-- MD Preview -->
 		<div v-show="isPreviewVisible" class="w-full" style="min-height: 118px;">
 			<div class="min-h-[24px] sm:min-h-[36px] pt-2.5 space-x-2 text-sm text-gray-500 dark:text-gray-400">
@@ -70,8 +80,10 @@ import { useSiteStore } from "@/stores/StoreSite";
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
 import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
+import { useMentionAutocomplete } from "@/composables/useMentionAutocomplete";
 import EmojiPicker from './EmojiPicker.vue';
 import EmojiSuggestions from './EmojiSuggestions.vue';
+import MentionDropdown from './MentionDropdown.vue';
 
 const props = defineProps<{
 	parentId?: number;
@@ -94,6 +106,11 @@ const isPreviewVisible = ref(false);
 // Emoji suggestions
 const emojiSuggestions = useEmojiSuggestions();
 
+// Mention autocomplete
+const mentionAutocomplete = useMentionAutocomplete();
+const mentionPosition = ref({ top: 0, left: 0 });
+const mentionStartPos = ref<number | null>(null);
+
 const preview = computed(() => {
 	return marked.parse(body.value ?? '')
 });
@@ -103,8 +120,105 @@ const close = () => {
 	isPreviewVisible.value = false;
 };
 
+// Check for @ mentions in textarea
+const checkForMention = () => {
+	if (!textareaRef.value) return;
+
+	const cursorPosition = textareaRef.value.selectionStart;
+	const textBeforeCursor = body.value.substring(0, cursorPosition);
+
+	// Look for @ followed by word characters
+	const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+
+	if (mentionMatch) {
+		const query = mentionMatch[1];
+		const atPos = cursorPosition - query.length - 1; // Position of @
+
+		// Store the position for later replacement
+		mentionStartPos.value = atPos;
+
+		// Trigger search if query has content (at least 1 character)
+		if (query.length > 0) {
+			mentionAutocomplete.debouncedSearch(query);
+		} else {
+			// Just typed @, reset suggestions
+			mentionAutocomplete.reset();
+		}
+
+		// Calculate dropdown position
+		const textarea = textareaRef.value;
+		const textAreaRect = textarea.getBoundingClientRect();
+
+		// Simple position calculation - below the cursor
+		mentionPosition.value = {
+			top: textAreaRect.bottom + 5,
+			left: textAreaRect.left + 10
+		};
+	} else {
+		// No @ detected, hide dropdown
+		if (mentionAutocomplete.isVisible.value) {
+			mentionAutocomplete.reset();
+			mentionStartPos.value = null;
+		}
+	}
+};
+
+// Insert selected mention
+const insertMention = (username: string) => {
+	if (!textareaRef.value || mentionStartPos.value === null) return;
+
+	const cursorPosition = textareaRef.value.selectionStart;
+	const text = body.value;
+
+	// Replace @query with @username
+	const before = text.substring(0, mentionStartPos.value);
+	const after = text.substring(cursorPosition);
+	body.value = before + '@' + username + ' ' + after;
+
+	// Reset mention state
+	mentionAutocomplete.reset();
+	mentionStartPos.value = null;
+
+	// Restore focus and position cursor after the mention
+	nextTick(() => {
+		if (textareaRef.value) {
+			const newPosition = mentionStartPos.value! + username.length + 2; // @ + username + space
+			textareaRef.value.focus();
+			textareaRef.value.setSelectionRange(newPosition, newPosition);
+		}
+	});
+};
+
 // Handle key press
 const handleKeydown = (e: KeyboardEvent) => {
+	// Handle mention autocomplete navigation
+	if (mentionAutocomplete.isVisible.value) {
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			mentionAutocomplete.selectNext();
+			return;
+		}
+		if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			mentionAutocomplete.selectPrevious();
+			return;
+		}
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			const selectedUsername = mentionAutocomplete.getSelectedUsername();
+			if (selectedUsername) {
+				insertMention(selectedUsername);
+			}
+			return;
+		}
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			mentionAutocomplete.reset();
+			mentionStartPos.value = null;
+			return;
+		}
+	}
+
 	// Handle emoji suggestions navigation
 	if (emojiSuggestions.isVisible.value) {
 		if (e.key === 'ArrowDown') {
@@ -144,6 +258,7 @@ const handleInput = () => {
 	if (textareaRef.value) {
 		const cursorPosition = textareaRef.value.selectionStart;
 		emojiSuggestions.showSuggestions(body.value, cursorPosition, textareaRef.value);
+		checkForMention();
 	}
 };
 
@@ -152,6 +267,7 @@ const handleTextareaClick = () => {
 	if (textareaRef.value) {
 		const cursorPosition = textareaRef.value.selectionStart;
 		emojiSuggestions.showSuggestions(body.value, cursorPosition, textareaRef.value);
+		checkForMention();
 	}
 };
 
