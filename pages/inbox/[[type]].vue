@@ -72,7 +72,7 @@ const unreadCount = ref(0);
 
 const type = ref(route.params?.type || 'replies');
 
-const { data: notifications, pending, error, refresh } = await useGraphQLQuery(`
+const { data, pending, error, refresh } = await useGraphQLQuery(`
 	query getNotifications($unreadOnly: Boolean!, $limit: Int!, $page: Int!) {
 		getNotifications(unreadOnly: $unreadOnly, limit: $limit, page: $page) {
 			id
@@ -103,6 +103,11 @@ const { data: notifications, pending, error, refresh } = await useGraphQLQuery(`
 	}
 });
 
+// Extract notifications array with null safety
+const notifications = computed(() => {
+	return data.value?.getNotifications || [];
+});
+
 if (error.value && error.value.response) {
 	throw createError({
 		statusCode: 404,
@@ -114,12 +119,9 @@ if (error.value && error.value.response) {
 
 // Calculate unread count from the notifications array
 const calculateUnreadCount = () => {
-	if (notifications.value) {
-		const unreadNotifications = notifications.value.filter(n => !n.isRead);
-		unreadCount.value = unreadNotifications.length;
-	} else {
-		unreadCount.value = 0;
-	}
+	const notifs = notifications.value || [];
+	const unreadNotifications = notifs.filter(n => !n.isRead);
+	unreadCount.value = unreadNotifications.length;
 };
 
 // Calculate initial unread count
@@ -148,8 +150,8 @@ const markRead = async () => {
 
 		if (result.value?.markNotificationsRead?.success) {
 			// Update local notifications to be marked as read
-			if (notifications.value) {
-				notifications.value = notifications.value.map(notification => ({
+			if (data.value?.getNotifications) {
+				data.value.getNotifications = data.value.getNotifications.map(notification => ({
 					...notification,
 					isRead: true
 				}));
@@ -186,11 +188,11 @@ const markRead = async () => {
 
 // Handle individual notification marked as read
 const onNotificationMarkedRead = (notificationId) => {
-	if (notifications.value) {
-		const notificationIndex = notifications.value.findIndex(n => n.id === notificationId);
+	if (data.value?.getNotifications) {
+		const notificationIndex = data.value.getNotifications.findIndex(n => n.id === notificationId);
 		if (notificationIndex !== -1) {
 			// Update the notification to mark it as read
-			notifications.value[notificationIndex].isRead = true;
+			data.value.getNotifications[notificationIndex].isRead = true;
 			// Recalculate unread count
 			calculateUnreadCount();
 		}

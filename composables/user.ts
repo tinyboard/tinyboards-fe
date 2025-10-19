@@ -44,67 +44,34 @@ export async function useFetchUser(username: string, query = {}) {
         posts(sort: hot, limit: $limit, page: $page) {
           id
           title
-          body
           url
           isLocked
-          featuredBoard
           isNSFW
-          featuredLocal
           isRemoved
           creationDate
-          updated
           score
           myVote
-          creatorVote
           board @include(if: $includeBoard) {
             id
             name
-            title
-            description
             icon
-            banner
-            isNSFW
-          }
-          creator {
-            id
-            name
-            displayName
-            avatar
           }
           commentCount
           image
-          body
-          bodyHTML
         }
         comments(sort: new, limit: $limit, page: $page) {
           id
           body
-          bodyHTML
-          isRemoved
           creationDate
-          updated
           score
           myVote
-          creatorVote
-          creator {
-            id
-            name
-            displayName
-            avatar
-          }
-          level
-          parentId
-          replyCount
           post {
             id
             title
             titleChunk
-            postType
             board @include(if: $includeBoard) {
               id
               name
-              title
-              icon
             }
           }
         }
