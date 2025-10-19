@@ -36,6 +36,7 @@ export async function useFetchUser(username: string, query = {}) {
         isAdmin
         isBanned
         creationDate
+        lastSeen
         postCount
         commentCount
         rep

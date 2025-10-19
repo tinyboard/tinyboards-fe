@@ -110,25 +110,32 @@
                 </div>
             </div>
             <!-- Else: Counts -->
-            <div v-else
-                class="w-full rounded bg-white bg-opacity-70 px-4 py-2 flex flex-row justify-around divide-x divide-gray-300">
-                <div class="flex flex-col flex-grow text-center">
-                    <p class="text-xl text-gray-700 font-semibold">
-                        {{ user.rep }}
-                    </p>
-                    <p class="text-md text-gray-600 font-semibold">Rep</p>
+            <div v-else class="w-full rounded bg-white bg-opacity-70 px-4 py-2 space-y-2">
+                <!-- Stats Row -->
+                <div class="flex flex-row justify-around divide-x divide-gray-300">
+                    <div class="flex flex-col flex-grow text-center">
+                        <p class="text-xl text-gray-700 font-semibold">
+                            {{ user.rep }}
+                        </p>
+                        <p class="text-md text-gray-600 font-semibold">Rep</p>
+                    </div>
+                    <div class="flex flex-col flex-grow text-center">
+                        <p class="text-xl text-gray-700 font-semibold">
+                            {{ user.postCount }}
+                        </p>
+                        <p class="text-md text-gray-600 font-semibold">Posts</p>
+                    </div>
+                    <div class="flex flex-col flex-grow text-center">
+                        <p class="text-xl text-gray-700 font-semibold">
+                            {{ user.commentCount }}
+                        </p>
+                        <p class="text-md text-gray-600 font-semibold">Comments</p>
+                    </div>
                 </div>
-                <div class="flex flex-col flex-grow text-center">
-                    <p class="text-xl text-gray-700 font-semibold">
-                        {{ user.postCount }}
-                    </p>
-                    <p class="text-md text-gray-600 font-semibold">Posts</p>
-                </div>
-                <div class="flex flex-col flex-grow text-center">
-                    <p class="text-xl text-gray-700 font-semibold">
-                        {{ user.commentCount }}
-                    </p>
-                    <p class="text-md text-gray-600 font-semibold">Comments</p>
+                <!-- Last Seen -->
+                <div v-if="user.lastSeen" class="text-center text-sm text-gray-600 pt-1 border-t border-gray-300">
+                    <span class="font-medium">Last seen:</span>
+                    {{ formatLastSeen(user.lastSeen) }}
                 </div>
             </div>
             <!-- Actions -->
@@ -193,6 +200,7 @@ import { onFileChange } from "@/composables/images";
 import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useGraphQLQuery, useGraphQLMutation } from "@/composables/useGraphQL";
 import type { User } from "@/types/types";
+import { formatDistanceToNow } from "date-fns";
 
 const userStore = useLoggedInUser();
 const imageStore = useImageStore();
@@ -214,6 +222,23 @@ const boardCreationApprovalLoading = ref(false);
 const props = defineProps<{
     user: User;
 }>();
+
+// Format last seen timestamp
+const formatLastSeen = (lastSeen: string) => {
+    try {
+        const lastSeenDate = parseISO(lastSeen);
+        const now = new Date();
+        const diffInMinutes = (now.getTime() - lastSeenDate.getTime()) / (1000 * 60);
+
+        if (diffInMinutes < 10) {
+            return 'Online now';
+        } else {
+            return formatDistanceToNow(lastSeenDate, { addSuffix: true });
+        }
+    } catch (e) {
+        return 'Unknown';
+    }
+};
 
 const SAVE_SETTINGS_QUERY = `
     mutation saveSettings(
