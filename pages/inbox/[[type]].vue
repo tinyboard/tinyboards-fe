@@ -88,7 +88,6 @@ const { data: notifications, pending, error, refresh } = await useGraphQLQuery(`
 			post {
 				id
 				title
-				slug
 			}
 			comment {
 				id
