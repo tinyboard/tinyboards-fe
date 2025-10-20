@@ -229,7 +229,19 @@
 	// Format message timestamp
 	const formatMessageTime = (dateString) => {
 		try {
-			const date = parseISO(dateString);
+			// Try parsing as ISO first
+			let date = parseISO(dateString);
+
+			// If invalid, try parsing as a regular Date
+			if (isNaN(date.getTime())) {
+				date = new Date(dateString);
+			}
+
+			// If still invalid, return empty
+			if (isNaN(date.getTime())) {
+				return '';
+			}
+
 			return formatDistanceToNow(date, { addSuffix: true });
 		} catch (error) {
 			return '';

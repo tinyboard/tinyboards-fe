@@ -56,7 +56,7 @@ const selectMention = (username: string) => {
 
 <style scoped>
 .mention-dropdown {
-  position: absolute;
+  position: fixed;
   z-index: 1000;
   background: white;
   border: 1px solid #e5e7eb;
