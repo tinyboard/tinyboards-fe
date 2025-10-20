@@ -47,7 +47,7 @@
 								<div class="flex items-center h-5">
 									<input id="app-radio" aria-describedby="app-radio-text" type="radio" name="invite-mode"
 										class="w-4 h-4 text-secondary bg-gray-100 border-gray-300 focus:ring-secondary dark:focus:ring-secondary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-										value="ApplicationMode" v-model="settings.registrationMode">
+										value="RequireApplication" v-model="settings.registrationMode">
 								</div>
 								<div class="ml-2 text-sm">
 									<label for="app-radio"
@@ -250,7 +250,7 @@ if (data.value.value) {
 	settings.value = {
 		...siteData,
 		// Add a computed disable_registrations field based on openRegistration
-		disable_registrations: !siteData.openRegistration && siteData.registrationMode !== 'ApplicationMode' && siteData.registrationMode !== 'InviteMode'
+		disable_registrations: !siteData.openRegistration && siteData.registrationMode !== 'RequireApplication' && siteData.registrationMode !== 'InviteMode'
 	};
 };
 
@@ -271,7 +271,7 @@ const submitSettings = async () => {
 			// Handle disable registrations by setting appropriate registration mode
 			openRegistration: !settings.value.disable_registrations && settings.value.registrationMode === 'OpenMode',
 			inviteOnly: settings.value.registrationMode === 'InviteMode',
-			requireApplication: settings.value.registrationMode === 'ApplicationMode',
+			requireApplication: settings.value.registrationMode === 'RequireApplication',
 			applicationQuestion: settings.value.applicationQuestion
 		};
 
