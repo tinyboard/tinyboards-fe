@@ -86,11 +86,36 @@
 					<textarea
 						ref="textarea"
 						required
-						placeholder="Write a message"
+						placeholder="Write a message (Shift+Enter to send, :emoji: for suggestions)"
 						rows="3"
 						class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary pr-10"
 						v-model="text"
 						@keydown="inputHandler"
+						@input="inputHandler"
+					/>
+					<!-- Emoji Suggestions -->
+					<LazyInputsEmojiSuggestions
+						:suggestions="emojiSuggestions.suggestions.value"
+						:is-visible="emojiSuggestions.isVisible.value"
+						:position="emojiSuggestions.position.value"
+						:selected-index="emojiSuggestions.selectedIndex.value"
+						@select="(index) => {
+							const selected = emojiSuggestions.selectSuggestion(index);
+							if (selected && textarea) {
+								const replacement = emojiSuggestions.replaceEmojiInText(
+									text,
+									textarea.selectionStart,
+									selected
+								);
+								text = replacement.newText;
+								nextTick(() => {
+									textarea.setSelectionRange(
+										replacement.newCursorPosition,
+										replacement.newCursorPosition
+									);
+								});
+							}
+						}"
 					/>
 					<!-- Emoji Picker Button -->
 					<div class="absolute right-2 bottom-2">
@@ -114,6 +139,7 @@
 	import { useToastStore } from "@/stores/StoreToast";
 	import { useLoggedInUser } from "@/stores/StoreAuth";
 	import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
+	import { useEmojiSuggestions } from '@/composables/useEmojiSuggestions';
 
 	const route = useRoute();
 	const toast = useToastStore();
@@ -185,6 +211,9 @@
 	const text = ref('');
 	const textarea = ref(null);
 	const isSubmitting = ref(false);
+
+	// Emoji suggestions
+	const emojiSuggestions = useEmojiSuggestions();
 
 	// Get recipient information from route
 	const recipientId = computed(() => {
@@ -258,12 +287,63 @@
 		}
 	};
 
-	// Handle key press
+	// Handle key press and emoji suggestions
 	const inputHandler = (e) => {
+		// Shift+Enter to send
 		if (e.keyCode === 13 && e.shiftKey) {
 			e.preventDefault();
 			submitMessage();
+			return;
 		}
+
+		// Handle emoji suggestions navigation
+		if (emojiSuggestions.isVisible.value) {
+			if (e.keyCode === 38) { // Arrow Up
+				e.preventDefault();
+				emojiSuggestions.navigateUp();
+				return;
+			}
+			if (e.keyCode === 40) { // Arrow Down
+				e.preventDefault();
+				emojiSuggestions.navigateDown();
+				return;
+			}
+			if (e.keyCode === 13) { // Enter
+				e.preventDefault();
+				const selected = emojiSuggestions.selectSuggestion();
+				if (selected && textarea.value) {
+					const replacement = emojiSuggestions.replaceEmojiInText(
+						text.value,
+						textarea.value.selectionStart,
+						selected
+					);
+					text.value = replacement.newText;
+					nextTick(() => {
+						textarea.value.setSelectionRange(
+							replacement.newCursorPosition,
+							replacement.newCursorPosition
+						);
+					});
+				}
+				return;
+			}
+			if (e.keyCode === 27) { // Escape
+				e.preventDefault();
+				emojiSuggestions.hideSuggestions();
+				return;
+			}
+		}
+
+		// Trigger emoji suggestions on input
+		nextTick(() => {
+			if (textarea.value) {
+				emojiSuggestions.showSuggestions(
+					text.value,
+					textarea.value.selectionStart,
+					textarea.value
+				);
+			}
+		});
 	};
 
 	// Insert emoji at cursor position
