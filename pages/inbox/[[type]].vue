@@ -83,9 +83,9 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 		getNotifications(unreadOnly: $unreadOnly, kindFilter: $kindFilter, limit: $limit, page: $page) {
 			id
 			isRead
-			kind
-			created
-			updated
+			type
+			createdAt
+			updatedAt
 			comment {
 				id
 				body

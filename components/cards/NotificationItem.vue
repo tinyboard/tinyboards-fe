@@ -15,7 +15,7 @@
 		<!-- Content -->
 		<div class="w-full ml-2">
 			<!-- Reply Notification -->
-			<div v-if="notification.kind === 'REPLY' && notification.comment">
+			<div v-if="(notification.type === 'comment_reply' || notification.type === 'post_reply') && notification.comment">
 				<p class="text-sm text-gray-600">
 					<NuxtLink v-if="creator" :to="`/@${creator.name}`" class="font-bold">
 						{{ creator.displayName || creator.name }}
@@ -30,7 +30,7 @@
 			</div>
 
 			<!-- Mention Notification -->
-			<div v-else-if="notification.kind === 'MENTION' && notification.comment">
+			<div v-else-if="notification.type === 'mention' && notification.comment">
 				<p class="text-sm text-gray-600">
 					<NuxtLink v-if="creator" :to="`/@${creator.name}`" class="font-bold">
 						{{ creator.displayName || creator.name }}
@@ -69,7 +69,7 @@
 
 			<!-- Timestamp and actions -->
 			<div class="mt-1 flex items-center text-sm text-gray-500 space-x-1">
-				<span>{{ formatDate(notification.created) }}</span>
+				<span>{{ formatDate(notification.createdAt) }}</span>
 				<span class="font-black text-gray-400">·</span>
 				<NuxtLink v-if="postLink" :to="postLink" class="text-primary hover:underline">
 					View
@@ -123,9 +123,10 @@ interface NotificationPost {
 
 interface Notification {
 	id: number;
-	kind: string;
+	type: string;
 	isRead: boolean;
-	created: string;
+	createdAt: string;
+	updatedAt?: string;
 	comment?: NotificationComment;
 	post?: NotificationPost;
 }
