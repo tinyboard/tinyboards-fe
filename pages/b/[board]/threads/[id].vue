@@ -184,12 +184,9 @@
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M3 3l18 18"></path>
-                                                    <path d="M5 5v16"></path>
-                                                    <path d="M19 5v.5"></path>
-                                                    <path d="M5 5h8m4 0h2"></path>
-                                                    <path d="M14.815 9.96a3.5 3.5 0 0 1 -1.785 3.017c-.936 .498 -1.093 .927 -1.03 2.023v.5"></path>
-                                                    <path d="M12 18h.01"></path>
+                                                    <path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+                                                    <path d="M12 8v4"></path>
+                                                    <path d="M12 16h.01"></path>
                                                 </svg>
                                                 Report
                                             </button>
@@ -346,8 +343,8 @@
                                             Posted {{ formatDate(comment.creationDate) }}
                                         </span>
 
-                                        <!-- Comment Actions -->
-                                        <div class="flex items-center gap-1">
+                                        <!-- Comment Actions & Reactions -->
+                                        <div class="flex flex-wrap items-center gap-1">
                                             <button
                                                 v-if="v"
                                                 @click="quoteComment(comment)"
@@ -403,12 +400,9 @@
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
                                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                    <path d="M3 3l18 18"></path>
-                                                    <path d="M5 5v16"></path>
-                                                    <path d="M19 5v.5"></path>
-                                                    <path d="M5 5h8m4 0h2"></path>
-                                                    <path d="M14.815 9.96a3.5 3.5 0 0 1 -1.785 3.017c-.936 .498 -1.093 .927 -1.03 2.023v.5"></path>
-                                                    <path d="M12 18h.01"></path>
+                                                    <path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+                                                    <path d="M12 8v4"></path>
+                                                    <path d="M12 16h.01"></path>
                                                 </svg>
                                                 Report
                                             </button>
@@ -424,26 +418,26 @@
                                                 </svg>
                                                 Permalink
                                             </a>
+
+                                            <!-- Reactions inline with action buttons -->
+                                            <div class="ml-2">
+                                                <CardsReactionBar
+                                                    :reaction-counts="comment.reactionCounts || []"
+                                                    :my-reaction="comment.myReaction?.emoji"
+                                                    @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
+                                                >
+                                                    <template #add-reaction>
+                                                        <InputsReactionPicker
+                                                            :my-reaction="comment.myReaction?.emoji"
+                                                            @select="(emoji) => toggleCommentReaction(comment, emoji)"
+                                                        />
+                                                    </template>
+                                                </CardsReactionBar>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            </div>
-
-                            <!-- Comment Reactions -->
-                            <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                                <CardsReactionBar
-                                    :reaction-counts="comment.reactionCounts || []"
-                                    :my-reaction="comment.myReaction?.emoji"
-                                    @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
-                                >
-                                    <template #add-reaction>
-                                        <InputsReactionPicker
-                                            :my-reaction="comment.myReaction?.emoji"
-                                            @select="(emoji) => toggleCommentReaction(comment, emoji)"
-                                        />
-                                    </template>
-                                </CardsReactionBar>
                             </div>
                         </div>
 
