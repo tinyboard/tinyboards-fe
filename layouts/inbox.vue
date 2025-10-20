@@ -128,7 +128,9 @@ const links = [
 	{ name: 'Messages', href: '/inbox/messages' },
 ];
 
-// Get notification counts using the correct queries
+// Get notification counts using the correct queries - only if authenticated
+const authCookie = useCookie("token").value;
+
 const getMeQuery = `
   query {
     me {
@@ -144,7 +146,10 @@ const getMeQuery = `
   }
 `;
 
-const { data: userData, error: userError } = await useGraphQLQuery(getMeQuery);
+// Only execute queries if user is authenticated
+const { data: userData, error: userError } = authCookie
+  ? await useGraphQLQuery(getMeQuery)
+  : { data: ref(null), error: ref(null) };
 const userPending = ref(false);
 
 const getUnreadMessageCountQuery = `
@@ -153,7 +158,9 @@ const getUnreadMessageCountQuery = `
   }
 `;
 
-const { data: messageCount, error: messageError } = await useGraphQLQuery(getUnreadMessageCountQuery);
+const { data: messageCount, error: messageError } = authCookie
+  ? await useGraphQLQuery(getUnreadMessageCountQuery)
+  : { data: ref(null), error: ref(null) };
 const messagePending = ref(false);
 
 // Handle GraphQL errors more gracefully

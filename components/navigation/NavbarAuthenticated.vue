@@ -483,7 +483,7 @@ const canCreateBoard = computed(() => {
 const authCookie = useCookie("token").value;
 const { registerRefreshCallback } = useNotificationRefresh();
 
-// Use getMe query
+// Use getMe query - only execute if authenticated
 const getMeQuery = `
   query {
     me {
@@ -497,10 +497,16 @@ const getMeQuery = `
   }
 `;
 
-const { data: userData, error: userError, refresh: refreshUserData } = await useGraphQLQuery(getMeQuery);
+// Only fetch data if user has auth cookie
+const shouldFetchData = !!authCookie && userStore.isAuthed;
+
+const { data: userData, error: userError, refresh: refreshUserData } = shouldFetchData
+  ? await useGraphQLQuery(getMeQuery)
+  : { data: ref(null), error: ref(null), refresh: () => Promise.resolve() };
+
 const userPending = ref(false);
 
-// Get notification counts
+// Get notification counts - only execute if authenticated
 const getNotificationCountsQuery = `
   query {
     getUnreadNotificationCount {
@@ -513,7 +519,10 @@ const getNotificationCountsQuery = `
   }
 `;
 
-const { data: notificationCounts, error: notificationError, refresh: refreshNotificationCounts } = await useGraphQLQuery(getNotificationCountsQuery);
+const { data: notificationCounts, error: notificationError, refresh: refreshNotificationCounts } = shouldFetchData
+  ? await useGraphQLQuery(getNotificationCountsQuery)
+  : { data: ref(null), error: ref(null), refresh: () => Promise.resolve() };
+
 const notificationsPending = ref(false);
 
 // Register refresh callback for cross-component communication
