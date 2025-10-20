@@ -70,7 +70,13 @@ const limit = computed(() => Number.parseInt(route.query.limit) || 10);
 // Fetch notifications
 const unreadCount = ref(0);
 
-const type = ref(route.params?.type || 'replies');
+// Get type from route params (non-reactive to avoid infinite loops)
+const typeParam = route.params?.type || 'replies';
+const type = ref(typeParam);
+
+// Determine filter values based on type
+const unreadOnlyValue = typeParam === 'unread' ? true : null;
+const kindFilterValue = typeParam !== 'unread' && typeParam !== 'replies' ? typeParam : null;
 
 const { data, pending, error, refresh } = await useGraphQLQuery(`
 	query getNotifications($unreadOnly: Boolean, $kindFilter: String, $limit: Int!, $page: Int!) {
@@ -97,8 +103,8 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 	}
 `, {
 	variables: {
-		unreadOnly: type.value === 'unread' ? true : null,
-		kindFilter: type.value !== 'unread' && type.value !== 'replies' ? type.value : null,
+		unreadOnly: unreadOnlyValue,
+		kindFilter: kindFilterValue,
 		limit: limit.value,
 		page: page.value
 	}
@@ -127,9 +133,6 @@ const calculateUnreadCount = () => {
 
 // Calculate initial unread count
 calculateUnreadCount();
-
-// Recalculate when notifications change
-watch(notifications, calculateUnreadCount, { deep: true });
 
 const isLoading = ref(false);
 

@@ -483,7 +483,7 @@ const canCreateBoard = computed(() => {
 const authCookie = useCookie("token").value;
 const { registerRefreshCallback } = useNotificationRefresh();
 
-// Use getMe query which includes notification counts
+// Use getMe query
 const getMeQuery = `
   query {
     me {
@@ -494,8 +494,6 @@ const getMeQuery = `
       adminLevel
       rep
     }
-    unreadRepliesCount
-    unreadMentionsCount
   }
 `;
 
@@ -503,23 +501,29 @@ const { data: userData, error: userError } = await useGraphQLQuery(getMeQuery);
 const userPending = ref(false);
 const refreshUserData = () => Promise.resolve();
 
-// Get unread message count separately
-const getUnreadMessageCountQuery = `
+// Get notification counts
+const getNotificationCountsQuery = `
   query {
-    getUnreadMessageCount
+    getUnreadNotificationCount {
+      total
+      commentReplies
+      postReplies
+      mentions
+      privateMessages
+    }
   }
 `;
 
-const { data: messageCount, error: messagesError } = await useGraphQLQuery(getUnreadMessageCountQuery);
-const messagesPending = ref(false);
-const refreshMessageCount = () => Promise.resolve();
+const { data: notificationCounts, error: notificationError } = await useGraphQLQuery(getNotificationCountsQuery);
+const notificationsPending = ref(false);
+const refreshNotificationCounts = () => Promise.resolve();
 
 // Register refresh callback for cross-component communication
 onMounted(() => {
 	const unregister = registerRefreshCallback(() => {
 		if (authCookie) {
 			refreshUserData();
-			refreshMessageCount();
+			refreshNotificationCounts();
 		}
 	});
 
@@ -530,11 +534,14 @@ onMounted(() => {
 
 // Calculate total unread count from all notification types
 const unreadTotal = computed(() => {
-	if (!userData.value || userError.value) return 0;
-	const messageCountValue = messageCount.value?.getUnreadMessageCount || 0;
-	return (userData.value.unreadRepliesCount || 0) +
-		   (userData.value.unreadMentionsCount || 0) +
-		   messageCountValue;
+	if (notificationError.value) return 0;
+	const counts = notificationCounts.value?.getUnreadNotificationCount;
+	if (!counts) return 0;
+
+	return (counts.commentReplies || 0) +
+		   (counts.postReplies || 0) +
+		   (counts.mentions || 0) +
+		   (counts.privateMessages || 0);
 });
 
 // Update unread count when data changes
@@ -543,9 +550,9 @@ watch(unreadTotal, (newTotal) => {
 }, { immediate: true });
 
 // Handle notification count fetch errors silently (don't break the navbar)
-watch([userError, messagesError], ([userErr, msgErr]) => {
-	if (userErr || msgErr) {
-		console.warn('Failed to load notification counts:', userErr || msgErr);
+watch([userError, notificationError], ([userErr, notifErr]) => {
+	if (userErr || notifErr) {
+		console.warn('Failed to load notification counts:', userErr || notifErr);
 		unread.value = 0; // Reset to 0 on error
 	}
 });
@@ -560,7 +567,7 @@ watch(route, (to, from) => {
 		// Refresh if navigating to/from notification-related pages or after creating content
 		if (isNotificationRoute(to.path) || isNotificationRoute(from?.path || '')) {
 			refreshUserData();
-			refreshMessageCount();
+			refreshNotificationCounts();
 		}
 	}
 });
