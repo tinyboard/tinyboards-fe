@@ -30,7 +30,7 @@
 				</div>
 			</div>
 			<div class="grid grid-cols-12 h-full sm:overflow-hidden">
-				<ul class="col-span-12 md:col-span-12 h-full divide-y md:border-r sm:overflow-y-auto">
+				<ul class="col-span-12 md:col-span-4 h-full divide-y md:border-r sm:overflow-y-auto">
 					<li v-if="conversations.length === 0" class="p-4 text-center text-gray-500">
 						No conversations found.
 					</li>
@@ -67,7 +67,9 @@
 					</li>
 				</ul>
 				<!-- Nested Page -->
-				<NuxtPage v-if="route.path !== '/inbox/messages'" class="col-span-8 overflow-hidden" />
+				<div v-if="route.path !== '/inbox/messages'" class="col-span-12 md:col-span-8 h-full overflow-hidden flex flex-col">
+					<NuxtPage />
+				</div>
 				<!-- Empty State -->
 				<!--<div v-else
 					class="col-span-8 flex flex-col flex-grow items-center justify-center p-4 text-center text-gray-500 overflow-hidden">

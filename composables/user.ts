@@ -51,6 +51,13 @@ export async function useFetchUser(username: string, query = {}) {
           creationDate
           score
           myVote
+          creator {
+            id
+            name
+            displayName
+            avatar
+            isAdmin
+          }
           board @include(if: $includeBoard) {
             id
             name

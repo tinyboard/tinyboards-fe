@@ -1,7 +1,16 @@
 <template>
 	<!-- Messages -->
-	<div class="flex flex-col">
-		<ul ref="list" class="h-full flex flex-col flex-col-reverse overflow-y-scroll p-2.5 sm:p-4">
+	<div class="flex flex-col h-full">
+		<!-- Conversation Header -->
+		<div v-if="recipientUser" class="flex items-center p-3 border-b bg-gray-50">
+			<img :src="recipientUser.avatar" :alt="recipientUser.name" class="w-10 h-10 rounded object-cover" />
+			<div class="ml-3">
+				<h3 class="font-semibold text-gray-900">{{ recipientUser.name }}</h3>
+				<p class="text-xs text-gray-500">Private conversation</p>
+			</div>
+		</div>
+
+		<ul ref="list" class="flex-1 flex flex-col flex-col-reverse overflow-y-auto p-2.5 sm:p-4">
 			<li v-for="(message,i) in localMessages" :key="message.id" class="flex mt-4 last:mt-0 group">
 				<div class="flex w-full">
 					<img loading="lazy" :src="message.creator.avatar" alt="avatar" class="object-cover w-12 h-12 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
@@ -69,17 +78,34 @@
 				</div>
 			</li>
 		</ul>
-		<form @submit.prevent="onSubmit" @submit="submitMessage()" class="flex space-x-2 p-2.5 sm:p-4 border-t border-gray-100">
-			<!-- <textarea ref="textarea" required rows="1" class="form-input gray scrollbar-hidden" :placeholder="`Message ${route.params?.id}`" v-model="text" autofocus @input="inputHandler" @keydown="inputHandler" style="resize: none;"></textarea> -->
-			<textarea ref="textarea" required placeholder="Write a message" rows="4" class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary" v-model="text" @keydown="inputHandler"/>
-			<button type="submit" class="flex items-center button primary" :disabled="isSubmitting || !text.trim()">
-				<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-				   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-				   <line x1="10" y1="14" x2="21" y2="3"></line>
-				   <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5"></path>
-				</svg>
-				<span>Send</span>
-			</button>
+
+		<!-- Message Input -->
+		<form @submit.prevent="submitMessage" class="flex flex-col p-2.5 sm:p-4 border-t border-gray-100 bg-white">
+			<div class="flex items-end space-x-2">
+				<div class="flex-1 relative">
+					<textarea
+						ref="textarea"
+						required
+						placeholder="Write a message"
+						rows="3"
+						class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary pr-10"
+						v-model="text"
+						@keydown="inputHandler"
+					/>
+					<!-- Emoji Picker Button -->
+					<div class="absolute right-2 bottom-2">
+						<LazyInputsEmojiPicker @emoji-selected="insertEmoji" />
+					</div>
+				</div>
+				<button type="submit" class="flex items-center button primary self-end" :disabled="isSubmitting || !text.trim()">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+					   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+					   <line x1="10" y1="14" x2="21" y2="3"></line>
+					   <path d="M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5"></path>
+					</svg>
+					<span>Send</span>
+				</button>
+			</div>
 		</form>
 	</div>
 </template>
@@ -95,10 +121,11 @@
 
 	// Fetch messages
 	const localMessages = ref([]);
+	const recipientUser = ref(null);
 	const isLoading = ref(false);
 	const conversationId = computed(() => Number(route.params?.id));
 
-	// Fetch conversation messages
+	// Fetch conversation messages and user info
 	const fetchMessages = async () => {
 		if (!conversationId.value) return;
 
@@ -119,6 +146,7 @@
 						recipient {
 							id
 							name
+							avatar
 						}
 					}
 				}
@@ -132,6 +160,15 @@
 
 			if (result.value?.getConversation) {
 				localMessages.value = result.value.getConversation;
+
+				// Set recipient user from first message
+				if (localMessages.value.length > 0) {
+					const firstMessage = localMessages.value[0];
+					// Recipient is the other user (not the current user)
+					recipientUser.value = firstMessage.creator.id === userStore.user.id
+						? firstMessage.recipient
+						: firstMessage.creator;
+				}
 			}
 		} catch (error) {
 			console.error('Error fetching conversation:', error);
@@ -227,6 +264,26 @@
 			e.preventDefault();
 			submitMessage();
 		}
+	};
+
+	// Insert emoji at cursor position
+	const insertEmoji = (emoji) => {
+		const textareaEl = textarea.value;
+		if (!textareaEl) return;
+
+		const start = textareaEl.selectionStart;
+		const end = textareaEl.selectionEnd;
+		const textBefore = text.value.substring(0, start);
+		const textAfter = text.value.substring(end);
+
+		text.value = textBefore + emoji + textAfter;
+
+		// Set cursor position after emoji
+		nextTick(() => {
+			const newCursorPos = start + emoji.length;
+			textareaEl.setSelectionRange(newCursorPos, newCursorPos);
+			textareaEl.focus();
+		});
 	};
 
 	// Message editing functionality
