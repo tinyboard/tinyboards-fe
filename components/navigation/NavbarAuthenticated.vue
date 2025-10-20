@@ -497,9 +497,8 @@ const getMeQuery = `
   }
 `;
 
-const { data: userData, error: userError } = await useGraphQLQuery(getMeQuery);
+const { data: userData, error: userError, refresh: refreshUserData } = await useGraphQLQuery(getMeQuery);
 const userPending = ref(false);
-const refreshUserData = () => Promise.resolve();
 
 // Get notification counts
 const getNotificationCountsQuery = `
@@ -514,9 +513,8 @@ const getNotificationCountsQuery = `
   }
 `;
 
-const { data: notificationCounts, error: notificationError } = await useGraphQLQuery(getNotificationCountsQuery);
+const { data: notificationCounts, error: notificationError, refresh: refreshNotificationCounts } = await useGraphQLQuery(getNotificationCountsQuery);
 const notificationsPending = ref(false);
-const refreshNotificationCounts = () => Promise.resolve();
 
 // Register refresh callback for cross-component communication
 onMounted(() => {
