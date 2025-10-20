@@ -16,9 +16,17 @@
 					<img loading="lazy" :src="message.creator.avatar" alt="avatar" class="object-cover w-12 h-12 sm:p-0.5 sm:border bg-white hover:bg-gray-200 hover:border-transparent"/>
 					<div class="ml-2 flex-1">
 						<div class="flex items-center justify-between">
-							<strong class="text-sm">
-								{{ message.creator.name }}
-							</strong>
+							<div class="flex items-center gap-2">
+								<strong class="text-sm">
+									{{ message.creator.name }}
+								</strong>
+								<span class="text-xs text-gray-500">
+									{{ formatMessageTime(message.published) }}
+								</span>
+								<span v-if="message.updated" class="text-xs text-gray-400 italic" title="Edited">
+									(edited)
+								</span>
+							</div>
 							<div v-if="canEditMessage(message)" class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
 								<button
 									@click="startEditMessage(message)"
@@ -140,10 +148,13 @@
 	import { useLoggedInUser } from "@/stores/StoreAuth";
 	import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 	import { useEmojiSuggestions } from '@/composables/useEmojiSuggestions';
+	import { useNotificationRefresh } from '@/composables/notificationRefresh';
+	import { formatDistanceToNow, parseISO } from 'date-fns';
 
 	const route = useRoute();
 	const toast = useToastStore();
 	const userStore = useLoggedInUser();
+	const { refreshNotificationCounts } = useNotificationRefresh();
 
 	// Fetch messages
 	const localMessages = ref([]);
@@ -215,6 +226,16 @@
 	// Emoji suggestions
 	const emojiSuggestions = useEmojiSuggestions();
 
+	// Format message timestamp
+	const formatMessageTime = (dateString) => {
+		try {
+			const date = parseISO(dateString);
+			return formatDistanceToNow(date, { addSuffix: true });
+		} catch (error) {
+			return '';
+		}
+	};
+
 	// Get recipient information from route
 	const recipientId = computed(() => {
 		return Number(route.params?.id) || null;
@@ -261,6 +282,9 @@
 				// Add the new message to the local list
 				localMessages.value.unshift(result.value.sendMessage.message);
 				text.value = '';
+
+				// Refresh notification counts in navbar
+				refreshNotificationCounts();
 
 				// Scroll to bottom
 				nextTick(() => {
