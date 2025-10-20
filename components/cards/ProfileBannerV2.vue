@@ -165,9 +165,9 @@
                     >
                         {{ followButtonText }}
                     </button>
-                    <button v-if="!isSelf" class="button white flex-grow" disabled>
+                    <NuxtLink v-if="!isSelf" :to="`/inbox/messages/${user.id}`" class="button white flex-grow">
                         Send message
-                    </button>
+                    </NuxtLink>
                     <div v-if="!isSelf">
                         <LazyMenusActionsProfile :user="user" :isAdmin="isAdmin" :isSelf="isSelf" :isLeft="true" />
                     </div>
