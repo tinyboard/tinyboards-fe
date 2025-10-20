@@ -54,6 +54,22 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Application Not Approved Warning -->
+                        <div v-if="authStore.isApplicationAccepted === false" class="p-4 bg-red-50 border-y border-red-200">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-bold text-red-800">Account Pending Approval</h3>
+                                    <p class="mt-1 text-sm text-red-700">
+                                        Your account application has not been approved yet. You cannot create posts until an administrator reviews and approves your application. Please check back later.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         <div class="p-4 bg-white">
                             <div class="grid grid-cols-6 gap-6">
                                 <!-- Board -->
@@ -214,9 +230,12 @@
                         </div>
                         <div class="bg-gray-50 shadow-inner-white border-t p-4">
                             <button type="submit" class="button primary" :class="{ loading: isLoading }"
-                                :disabled="isLoading">
+                                :disabled="isLoading || authStore.isApplicationAccepted === false">
                                 Create post
                             </button>
+                            <p v-if="authStore.isApplicationAccepted === false" class="mt-2 text-sm text-red-600">
+                                You cannot submit posts until your account is approved.
+                            </p>
                         </div>
                     </div>
                 </form>
@@ -227,7 +246,10 @@
 
 <script lang="ts" setup>
 import { useSiteStore } from "@/stores/StoreSite";
+import { useLoggedInUser } from "@/stores/StoreAuth";
+
 const site = useSiteStore();
+const authStore = useLoggedInUser();
 
 definePageMeta({
     alias: ["", "/:board?/submit"],
@@ -490,6 +512,16 @@ const authCookie = useCookie("token").value;
 const isLoading = ref(false);
 
 async function submit() {
+    // Check if user's application is approved
+    if (authStore.isApplicationAccepted === false) {
+        toast.addNotification({
+            header: 'Account Not Approved',
+            message: 'Your account application has not been approved yet. Please wait for an administrator to review your application.',
+            type: 'error'
+        });
+        return;
+    }
+
     isLoading.value = true;
 
     try {

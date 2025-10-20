@@ -22,7 +22,8 @@ interface UserStore {
   adminLevel: number | null,
   joinedBoards: BoardFragment[] | null,
   moddedBoards: BoardFragment[] | null,
-  isAuthed: boolean
+  isAuthed: boolean,
+  isApplicationAccepted: boolean | null
 }
 
 export const useLoggedInUser = defineStore("auth", {
@@ -50,6 +51,7 @@ export const useLoggedInUser = defineStore("auth", {
       moddedBoards: [],
       // Initialize as authed if token exists (will be validated by plugin)
       isAuthed: hasToken,
+      isApplicationAccepted: null
     };
   },
   actions: {
@@ -90,6 +92,7 @@ export const useLoggedInUser = defineStore("auth", {
                     }
                   }
                   isAdmin
+                  isApplicationAccepted
                 }
               }
             `)
@@ -108,6 +111,7 @@ export const useLoggedInUser = defineStore("auth", {
                 this.moddedBoards = moderates;
                 this.adminLevel = this.user?.adminLevel ?? null;
                 this.isAuthed = true;
+                this.isApplicationAccepted = user?.isApplicationAccepted ?? null;
                 this.unread = (data?.unreadMentionsCount ?? 0) + (data?.unreadRepliesCount ?? 0);
 
                 resolve(this.user);
@@ -176,6 +180,7 @@ export const useLoggedInUser = defineStore("auth", {
                     }
                   }
                   isAdmin
+                  isApplicationAccepted
                 }
               }
             `)
@@ -193,6 +198,7 @@ export const useLoggedInUser = defineStore("auth", {
                   this.moddedBoards = moderates;
                   this.adminLevel = this.user?.adminLevel ?? null;
                   this.isAuthed = true;
+                  this.isApplicationAccepted = user?.isApplicationAccepted ?? null;
                   this.unread = (data?.unreadMentionsCount ?? 0) + (data?.unreadRepliesCount ?? 0);
 
                   resolve({
@@ -239,6 +245,7 @@ export const useLoggedInUser = defineStore("auth", {
       this.token = null;
       this.isAuthed = false;
       this.adminLevel = null;
+      this.isApplicationAccepted = null;
       this.joinedBoards = [];
       this.moddedBoards = [];
       // Ensure cookie is properly removed (only on client)

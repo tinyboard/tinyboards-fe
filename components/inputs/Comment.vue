@@ -1,5 +1,21 @@
 <template>
 	<form @submit.prevent="submitComment" class="comment-form relative flex flex-col w-full">
+		<!-- Application Not Approved Warning -->
+		<div v-if="authStore.isApplicationAccepted === false" class="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
+			<div class="flex items-start">
+				<div class="flex-shrink-0">
+					<svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+					</svg>
+				</div>
+				<div class="ml-2">
+					<h3 class="text-xs font-bold text-red-800">Account Pending Approval</h3>
+					<p class="mt-1 text-xs text-red-700">
+						You cannot comment until your account is approved by an administrator.
+					</p>
+				</div>
+			</div>
+		</div>
 		<!-- Textarea Container -->
 		<div class="relative">
 			<textarea
@@ -10,6 +26,7 @@
 				rows="4"
 				class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary pr-10"
 				v-model="body"
+				:disabled="authStore.isApplicationAccepted === false"
 				@keydown="handleKeydown"
 				@input="handleInput"
 				@click="handleTextareaClick"
@@ -59,11 +76,11 @@
 			</div>
 			<div class="flex">
 				<!-- Show/hide MD Preview -->
-				<button type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible">
+				<button type="button" class="button gray w-24" @click="isPreviewVisible = !isPreviewVisible" :disabled="authStore.isApplicationAccepted === false">
 					{{ isPreviewVisible ? 'Edit' : 'Preview' }}
 				</button>
 				<button v-if="parentId" type="button" class="ml-2 button white w-24" @click="close">Cancel</button>
-				<button class="button primary min-w-[96px] ml-2" :class="{ 'loading': isLoading }" :disabled="isLoading">
+				<button class="button primary min-w-[96px] ml-2" :class="{ 'loading': isLoading }" :disabled="isLoading || authStore.isApplicationAccepted === false">
 					{{ parentId ? 'Reply' : 'Comment' }}
 				</button>
 			</div>
@@ -78,6 +95,7 @@ import { useAPI } from "@/composables/api";
 import { useToastStore } from '@/stores/StoreToast';
 import { useSiteStore } from "@/stores/StoreSite";
 import { useCommentsStore } from "@/stores/StoreComments";
+import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
 import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
 import { useMentionAutocomplete } from "@/composables/useMentionAutocomplete";
@@ -95,6 +113,7 @@ const emit = defineEmits(['closed', 'commentPublished']);
 const toast = useToastStore();
 const site = useSiteStore();
 const commentsStore = useCommentsStore();
+const authStore = useLoggedInUser();
 
 const body = ref("");
 const isLoading = ref(false);
@@ -315,6 +334,16 @@ const selectEmojiSuggestion = (index: number) => {
 
 // Submit comment
 function submitComment() {
+	// Check if user's application is approved
+	if (authStore.isApplicationAccepted === false) {
+		toast.addNotification({
+			header: 'Account Not Approved',
+			message: 'Your account application has not been approved yet. Please wait for an administrator to review your application.',
+			type: 'error'
+		});
+		return;
+	}
+
 	// Validate required fields
 	if (!body.value.trim()) {
 		toast.addNotification({
