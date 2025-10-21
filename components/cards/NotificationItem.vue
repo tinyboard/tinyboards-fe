@@ -44,26 +44,50 @@
 				<div class="prose prose-sm max-w-none mt-1" v-html="notification.comment.body"></div>
 			</div>
 
-			<!-- Post Notification (if applicable) -->
-			<div v-else-if="notification.post">
+			<!-- Board Invite Notification -->
+			<div v-else-if="notification.type === 'board_invite' && notification.post">
 				<p class="text-sm text-gray-600">
 					<NuxtLink v-if="creator" :to="`/@${creator.name}`" class="font-bold">
 						{{ creator.displayName || creator.name }}
 					</NuxtLink>
 					<span v-else class="font-bold">[System]</span>
-					created a post in
-					<span class="font-medium">b/{{ notification.post.board?.name }}</span>
+					invited you to moderate
+					<NuxtLink :to="`/b/${notification.post.board?.name}`" class="font-medium text-blue-600 hover:underline">
+						b/{{ notification.post.board?.name }}
+					</NuxtLink>
 				</p>
-				<NuxtLink :to="`/p/${notification.post.id}`" class="font-medium text-blue-600 hover:underline">
-					{{ notification.post.title }}
-				</NuxtLink>
-				<div v-if="notification.post.body" class="prose prose-sm max-w-none mt-1" v-html="notification.post.body"></div>
+			</div>
+
+			<!-- Moderator Action Notification -->
+			<div v-else-if="notification.type === 'moderator_action' && notification.post">
+				<p class="text-sm text-gray-600">
+					<span class="font-bold">Moderator action</span>
+					taken on your
+					<NuxtLink :to="postLink" class="font-medium text-blue-600 hover:underline">
+						{{ notification.comment ? 'comment' : 'post' }}
+					</NuxtLink>
+					{{ notification.comment ? `in ${notification.comment.post.title}` : notification.post.title }}
+				</p>
+				<div v-if="notification.comment" class="prose prose-sm max-w-none mt-1" v-html="notification.comment.body"></div>
+			</div>
+
+			<!-- System Notification -->
+			<div v-else-if="notification.type === 'system_notification'">
+				<p class="text-sm text-gray-600">
+					<span class="font-bold">System Notification</span>
+				</p>
+				<div v-if="notification.post" class="mt-1">
+					<NuxtLink :to="`/p/${notification.post.id}`" class="font-medium text-blue-600 hover:underline">
+						{{ notification.post.title }}
+					</NuxtLink>
+					<div v-if="notification.post.body" class="prose prose-sm max-w-none mt-1" v-html="notification.post.body"></div>
+				</div>
 			</div>
 
 			<!-- Fallback for unknown notification types -->
 			<div v-else>
 				<p class="text-sm text-gray-600">
-					You have a new notification
+					You have a new notification (type: {{ notification.type }})
 				</p>
 			</div>
 

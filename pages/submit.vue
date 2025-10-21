@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <!-- Application Not Approved Warning -->
-                        <div v-if="authStore.isApplicationAccepted === false" class="p-4 bg-red-50 border-y border-red-200">
+                        <div v-if="isBlockedFromPosting" class="p-4 bg-red-50 border-y border-red-200">
                             <div class="flex items-start">
                                 <div class="flex-shrink-0">
                                     <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -230,10 +230,10 @@
                         </div>
                         <div class="bg-gray-50 shadow-inner-white border-t p-4">
                             <button type="submit" class="button primary" :class="{ loading: isLoading }"
-                                :disabled="isLoading || authStore.isApplicationAccepted === false">
+                                :disabled="isLoading || isBlockedFromPosting">
                                 Create post
                             </button>
-                            <p v-if="authStore.isApplicationAccepted === false" class="mt-2 text-sm text-red-600">
+                            <p v-if="isBlockedFromPosting" class="mt-2 text-sm text-red-600">
                                 You cannot submit posts until your account is approved.
                             </p>
                         </div>
@@ -405,6 +405,14 @@ const textareaRef = ref<HTMLTextAreaElement>();
 const boardId = computed(() => boardStore.hasBoard ? boardStore.board.id : (defaultBoard.value?.id || null));
 const emojiSuggestions = useEmojiSuggestions();
 
+// Check if user has a pending application that hasn't been approved
+// The backend logic: blocks if (is_application_accepted = false AND has_pending_application = true)
+// Old users (before application mode): is_application_accepted = false, has_pending_application = false = can post
+// New users with pending apps: is_application_accepted = false, has_pending_application = true = blocked
+const isBlockedFromPosting = computed(() => {
+    return authStore.isApplicationAccepted === false && authStore.hasPendingApplication === true;
+});
+
 // Set image and then destroy in storage.
 const setImage = () => {
     if (process.client && typeof sessionStorage !== 'undefined') {
@@ -512,8 +520,8 @@ const authCookie = useCookie("token").value;
 const isLoading = ref(false);
 
 async function submit() {
-    // Check if user's application is approved
-    if (authStore.isApplicationAccepted === false) {
+    // Check if user's application is approved (admins bypass this check)
+    if (isBlockedFromPosting.value) {
         toast.addNotification({
             header: 'Account Not Approved',
             message: 'Your account application has not been approved yet. Please wait for an administrator to review your application.',

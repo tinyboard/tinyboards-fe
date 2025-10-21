@@ -76,7 +76,24 @@ const type = ref(typeParam);
 
 // Determine filter values based on type
 const unreadOnlyValue = typeParam === 'unread' ? true : null;
-const kindFilterValue = typeParam !== 'unread' && typeParam !== 'replies' ? typeParam : null;
+
+// Map frontend route params to backend consolidated filter values
+// replies -> "replies" (backend expands to comment_reply,post_reply)
+// mentions -> "mention"
+// activity -> "activity" (backend expands to board_invite,moderator_action,system_notification)
+// unread -> null (shows all types, just filters by unread status)
+const kindFilterValue = (() => {
+	if (typeParam === 'unread' || typeParam === 'replies') {
+		return typeParam === 'replies' ? 'replies' : null;
+	}
+	if (typeParam === 'mentions') {
+		return 'mention';
+	}
+	if (typeParam === 'activity') {
+		return 'activity';
+	}
+	return null;
+})();
 
 const { data, pending, error, refresh } = await useGraphQLQuery(`
 	query getNotifications($unreadOnly: Boolean, $kindFilter: String, $limit: Int!, $page: Int!) {

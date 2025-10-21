@@ -23,7 +23,8 @@ interface UserStore {
   joinedBoards: BoardFragment[] | null,
   moddedBoards: BoardFragment[] | null,
   isAuthed: boolean,
-  isApplicationAccepted: boolean | null
+  isApplicationAccepted: boolean | null,
+  hasPendingApplication: boolean | null
 }
 
 export const useLoggedInUser = defineStore("auth", {
@@ -51,7 +52,8 @@ export const useLoggedInUser = defineStore("auth", {
       moddedBoards: [],
       // Initialize as authed if token exists (will be validated by plugin)
       isAuthed: hasToken,
-      isApplicationAccepted: null
+      isApplicationAccepted: null,
+      hasPendingApplication: null
     };
   },
   actions: {
@@ -93,6 +95,7 @@ export const useLoggedInUser = defineStore("auth", {
                   }
                   isAdmin
                   isApplicationAccepted
+                  hasPendingApplication
                 }
               }
             `)
@@ -112,6 +115,7 @@ export const useLoggedInUser = defineStore("auth", {
                 this.adminLevel = this.user?.adminLevel ?? null;
                 this.isAuthed = true;
                 this.isApplicationAccepted = user?.isApplicationAccepted ?? null;
+                this.hasPendingApplication = user?.hasPendingApplication ?? null;
                 this.unread = (data?.unreadMentionsCount ?? 0) + (data?.unreadRepliesCount ?? 0);
 
                 resolve(this.user);
@@ -181,6 +185,7 @@ export const useLoggedInUser = defineStore("auth", {
                   }
                   isAdmin
                   isApplicationAccepted
+                  hasPendingApplication
                 }
               }
             `)
@@ -246,6 +251,7 @@ export const useLoggedInUser = defineStore("auth", {
       this.isAuthed = false;
       this.adminLevel = null;
       this.isApplicationAccepted = null;
+      this.hasPendingApplication = null;
       this.joinedBoards = [];
       this.moddedBoards = [];
       // Ensure cookie is properly removed (only on client)

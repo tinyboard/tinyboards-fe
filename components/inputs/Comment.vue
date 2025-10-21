@@ -1,7 +1,7 @@
 <template>
 	<form @submit.prevent="submitComment" class="comment-form relative flex flex-col w-full">
 		<!-- Application Not Approved Warning -->
-		<div v-if="authStore.isApplicationAccepted === false" class="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
+		<div v-if="isBlockedFromCommenting" class="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
 			<div class="flex items-start">
 				<div class="flex-shrink-0">
 					<svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -26,7 +26,7 @@
 				rows="4"
 				class="block w-full min-h-[72px] rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary pr-10"
 				v-model="body"
-				:disabled="authStore.isApplicationAccepted === false"
+				:disabled="isBlockedFromCommenting"
 				@keydown="handleKeydown"
 				@input="handleInput"
 				@click="handleTextareaClick"
@@ -132,6 +132,14 @@ const mentionStartPos = ref<number | null>(null);
 
 const preview = computed(() => {
 	return marked.parse(body.value ?? '')
+});
+
+// Check if user has a pending application that hasn't been approved
+// The backend logic: blocks if (is_application_accepted = false AND has_pending_application = true)
+// Old users (before application mode): is_application_accepted = false, has_pending_application = false = can post
+// New users with pending apps: is_application_accepted = false, has_pending_application = true = blocked
+const isBlockedFromCommenting = computed(() => {
+	return authStore.isApplicationAccepted === false && authStore.hasPendingApplication === true;
 });
 
 const close = () => {

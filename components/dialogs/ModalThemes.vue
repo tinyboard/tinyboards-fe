@@ -62,8 +62,12 @@
   const picked = ref(themeCookie);
 
   const themes = ref([
-    { text: 'Daylight', value: '', description: '#FFFFFF' },
-    { text: 'Midnight', value: 'dark', description: '#000000' }
+    { text: 'Daylight', value: '', description: 'Clean white theme' },
+    { text: 'Dark', value: 'dark', description: 'Soft dark theme' },
+    { text: 'Ocean', value: 'ocean', description: 'Deep blue theme' },
+    { text: 'Forest', value: 'forest', description: 'Natural green theme' },
+    { text: 'Sunset', value: 'sunset', description: 'Warm orange theme' },
+    { text: 'Purple Haze', value: 'purple', description: 'Rich purple theme' }
   ]);
 
   watch(picked, (x) => {

@@ -33,10 +33,39 @@ img.emoji {
 		--color-danger: 248, 112, 96;
 	}
 
+	/* Improved Dark Theme - softer colors, better contrast */
 	.dark {
-		--color-primary: 75, 127, 170;
-		--color-primary-hover: 85, 137, 180;
-		--color-secondary: 136, 164, 107;
+		--color-primary: 96, 165, 250; /* Lighter blue for better readability */
+		--color-primary-hover: 147, 197, 253;
+		--color-secondary: 134, 239, 172; /* Softer green */
+	}
+
+	/* Ocean Theme - calming blues and teals */
+	.ocean {
+		--color-primary: 56, 189, 248; /* Bright sky blue */
+		--color-primary-hover: 125, 211, 252;
+		--color-secondary: 45, 212, 191; /* Bright teal */
+	}
+
+	/* Forest Theme - natural greens */
+	.forest {
+		--color-primary: 52, 211, 153; /* Emerald green */
+		--color-primary-hover: 110, 231, 183;
+		--color-secondary: 163, 230, 53; /* Bright lime */
+	}
+
+	/* Sunset Theme - warm oranges and corals */
+	.sunset {
+		--color-primary: 251, 146, 60; /* Bright orange */
+		--color-primary-hover: 253, 186, 116;
+		--color-secondary: 252, 165, 165; /* Coral pink */
+	}
+
+	/* Purple Haze Theme - vibrant purples */
+	.purple {
+		--color-primary: 192, 132, 252; /* Bright purple */
+		--color-primary-hover: 216, 180, 254;
+		--color-secondary: 240, 171, 252; /* Bright fuchsia */
 	}
 	html {
 		height: 100%;
@@ -51,10 +80,234 @@ img.emoji {
 		-moz-osx-font-smoothing: grayscale;
 		@apply bg-gray-100;
 	}
-	/* https://github.com/shadcn/ui/issues/313 */
+	/* Dark Theme - true dark mode */
 	body.dark {
-		@apply bg-gray-950;
+		background-color: #1e293b; /* Slate-800 - soft dark blue-gray */
+		color: rgb(229, 231, 235); /* gray-200 */
 	}
+
+	.dark .bg-white {
+		background-color: rgb(31, 41, 55) !important; /* gray-800 */
+		color: rgb(229, 231, 235); /* gray-200 */
+	}
+
+	.dark .bg-gray-50 {
+		background-color: rgb(55, 65, 81) !important; /* gray-700 */
+	}
+
+	.dark .bg-gray-100 {
+		background-color: rgb(75, 85, 99) !important; /* gray-600 */
+	}
+
+	.dark .text-gray-900 {
+		color: rgb(229, 231, 235) !important; /* gray-200 */
+	}
+
+	.dark .text-gray-800 {
+		color: rgb(229, 231, 235) !important; /* gray-200 */
+	}
+
+	.dark .text-gray-700 {
+		color: rgb(209, 213, 219) !important; /* gray-300 */
+	}
+
+	.dark .text-gray-600, .dark .text-gray-500 {
+		color: rgb(156, 163, 175) !important; /* gray-400 */
+	}
+
+	.dark .text-gray-400 {
+		color: rgb(156, 163, 175) !important; /* gray-400 */
+	}
+
+	/* Ensure all black/dark text is readable in dark mode */
+	.dark .text-black {
+		color: rgb(229, 231, 235) !important; /* gray-200 */
+	}
+
+	.dark input,
+	.dark textarea,
+	.dark select {
+		color: rgb(229, 231, 235) !important; /* gray-200 */
+	}
+
+	.dark .border-gray-200 {
+		border-color: rgb(75, 85, 99) !important; /* gray-600 */
+	}
+
+	.dark .border-gray-100 {
+		border-color: rgb(75, 85, 99) !important; /* gray-600 */
+	}
+
+	.dark .divide-gray-100 > * + * {
+		border-color: rgb(75, 85, 99) !important; /* gray-600 */
+	}
+
+	.dark .divide-gray-200 > * + * {
+		border-color: rgb(75, 85, 99) !important; /* gray-600 */
+	}
+
+	/* Ocean Theme - light theme with blue tones */
+	body.ocean {
+		background-color: #e0f2fe; /* Sky-100 - light blue */
+	}
+
+	.ocean .bg-white {
+		background-color: #f0f9ff !important; /* Sky-50 - very light blue */
+	}
+
+	.ocean .bg-gray-50 {
+		background-color: #f0f9ff !important; /* Sky-50 */
+	}
+
+	.ocean .bg-gray-100 {
+		background-color: #e0f2fe !important; /* Sky-100 */
+	}
+
+	/* Forest Theme - light theme with green tones */
+	body.forest {
+		background-color: #dcfce7; /* Green-100 - light green */
+	}
+
+	.forest .bg-white {
+		background-color: #f0fdf4 !important; /* Green-50 - very light green */
+	}
+
+	.forest .bg-gray-50 {
+		background-color: #f0fdf4 !important; /* Green-50 */
+	}
+
+	.forest .bg-gray-100 {
+		background-color: #dcfce7 !important; /* Green-100 */
+	}
+
+	/* Sunset Theme - light theme with warm orange tones */
+	body.sunset {
+		background-color: #fed7aa; /* Orange-200 - warm peach */
+	}
+
+	.sunset .bg-white {
+		background-color: #ffedd5 !important; /* Orange-100 - very light orange */
+	}
+
+	.sunset .bg-gray-50 {
+		background-color: #ffedd5 !important; /* Orange-100 */
+	}
+
+	.sunset .bg-gray-100 {
+		background-color: #fed7aa !important; /* Orange-200 */
+	}
+
+	/* Purple Theme - light theme with purple tones */
+	body.purple {
+		background-color: #f3e8ff; /* Purple-100 - light purple */
+	}
+
+	.purple .bg-white {
+		background-color: #faf5ff !important; /* Purple-50 - very light purple */
+	}
+
+	.purple .bg-gray-50 {
+		background-color: #faf5ff !important; /* Purple-50 */
+	}
+
+	.purple .bg-gray-100 {
+		background-color: #f3e8ff !important; /* Purple-100 */
+	}
+
+	/* Sidebar improvements for all themes */
+
+	/* Ocean theme sidebar */
+	.ocean .bg-gray-100 {
+		background-color: #bae6fd !important; /* Sky-200 - darker for headers */
+	}
+
+	.ocean .text-gray-600,
+	.ocean .text-gray-500 {
+		color: rgb(71, 85, 105) !important; /* Slate-600 - better contrast on light blue */
+	}
+
+	.ocean .text-gray-400 {
+		color: rgb(100, 116, 139) !important; /* Slate-500 - visible on light blue */
+	}
+
+	.ocean .border-gray-200,
+	.ocean .border-gray-100 {
+		border-color: rgb(186, 230, 253) !important; /* Sky-200 */
+	}
+
+	.ocean .divide-gray-100 > * + * {
+		border-color: rgb(186, 230, 253) !important; /* Sky-200 */
+	}
+
+	/* Forest theme sidebar */
+	.forest .bg-gray-100 {
+		background-color: #bbf7d0 !important; /* Green-200 - darker for headers */
+	}
+
+	.forest .text-gray-600,
+	.forest .text-gray-500 {
+		color: rgb(22, 101, 52) !important; /* Green-800 - better contrast */
+	}
+
+	.forest .text-gray-400 {
+		color: rgb(34, 197, 94) !important; /* Green-500 - visible on light green */
+	}
+
+	.forest .border-gray-200,
+	.forest .border-gray-100 {
+		border-color: rgb(187, 247, 208) !important; /* Green-200 */
+	}
+
+	.forest .divide-gray-100 > * + * {
+		border-color: rgb(187, 247, 208) !important; /* Green-200 */
+	}
+
+	/* Sunset theme sidebar */
+	.sunset .bg-gray-100 {
+		background-color: #fbbf24 !important; /* Amber-400 - darker for headers */
+	}
+
+	.sunset .text-gray-600,
+	.sunset .text-gray-500 {
+		color: rgb(120, 53, 15) !important; /* Orange-900 - better contrast */
+	}
+
+	.sunset .text-gray-400 {
+		color: rgb(194, 65, 12) !important; /* Orange-700 - visible on warm background */
+	}
+
+	.sunset .border-gray-200,
+	.sunset .border-gray-100 {
+		border-color: rgb(251, 191, 36) !important; /* Amber-400 */
+	}
+
+	.sunset .divide-gray-100 > * + * {
+		border-color: rgb(251, 191, 36) !important; /* Amber-400 */
+	}
+
+	/* Purple theme sidebar */
+	.purple .bg-gray-100 {
+		background-color: #e9d5ff !important; /* Purple-200 - darker for headers */
+	}
+
+	.purple .text-gray-600,
+	.purple .text-gray-500 {
+		color: rgb(88, 28, 135) !important; /* Purple-800 - better contrast */
+	}
+
+	.purple .text-gray-400 {
+		color: rgb(126, 34, 206) !important; /* Purple-700 - visible on light purple */
+	}
+
+	.purple .border-gray-200,
+	.purple .border-gray-100 {
+		border-color: rgb(233, 213, 255) !important; /* Purple-200 */
+	}
+
+	.purple .divide-gray-100 > * + * {
+		border-color: rgb(233, 213, 255) !important; /* Purple-200 */
+	}
+
 	#__nuxt {
 		display: flex;
 		flex: 1 1 0%;

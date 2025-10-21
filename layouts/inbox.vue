@@ -82,6 +82,25 @@
 							</a>
 						</NuxtLink>
 					</li>
+					<li class="relative">
+						<NuxtLink to="/inbox/activity" custom v-slot="{ href, navigate, isActive }">
+							<a :href="href" @click="navigate"
+								class="flex items-center px-4 py-2.5 border border-r-0 rounded-l-md font-bold"
+								:class="isActive ? 'text-gray-600 bg-gray-50 shadow-inner-white' : 'text-gray-400 hover:text-gray-600 border-transparent'">
+								<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24"
+									stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+									stroke-linejoin="round">
+									<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+									<path d="M3 12h4l3 8l4 -16l3 8h4"></path>
+								</svg>
+								<p>Activity</p>
+								<span v-if="unreadActivity"
+									class="inline-block ml-4 py-0.5 px-2 bg-red-600 text-white text-xs font-bold rounded">
+									{{ unreadActivity }}
+								</span>
+							</a>
+						</NuxtLink>
+					</li>
 					<!--<li class="relative">
 						<button
 							class="w-full flex items-center px-4 py-2.5 border border-r-0 rounded-l-md font-bold text-gray-400 hover:text-gray-600 border-transparent">
@@ -126,67 +145,53 @@ const links = [
 	{ name: 'Replies', href: '/inbox' },
 	{ name: 'Mentions', href: '/inbox/mentions' },
 	{ name: 'Messages', href: '/inbox/messages' },
+	{ name: 'Activity', href: '/inbox/activity' },
 ];
 
 // Get notification counts using the correct queries - only if authenticated
 const authCookie = useCookie("token").value;
 
-const getMeQuery = `
+const getNotificationCountsQuery = `
   query {
-    me {
-      id
-      name
-      displayName
-      avatar
-      adminLevel
-      rep
+    getUnreadNotificationCount {
+      total
+      replies
+      mentions
+      privateMessages
+      activity
     }
-    unreadRepliesCount
-    unreadMentionsCount
   }
 `;
 
 // Only execute queries if user is authenticated
-const { data: userData, error: userError } = authCookie
-  ? await useGraphQLQuery(getMeQuery)
+const { data: countsData, error: countsError } = authCookie
+  ? await useGraphQLQuery(getNotificationCountsQuery)
   : { data: ref(null), error: ref(null) };
-const userPending = ref(false);
-
-const getUnreadMessageCountQuery = `
-  query GetUnreadMessageCount {
-    getUnreadMessageCount
-  }
-`;
-
-const { data: messageCount, error: messageError } = authCookie
-  ? await useGraphQLQuery(getUnreadMessageCountQuery)
-  : { data: ref(null), error: ref(null) };
-const messagePending = ref(false);
 
 // Handle GraphQL errors more gracefully
-if (userError.value && userError.value?.response) {
-	console.error('Failed to load user notification counts:', userError.value);
-	// Don't throw a fatal error, just log it and show 0 counts
-}
-
-if (messageError.value && messageError.value?.response) {
-	console.error('Failed to load message counts:', messageError.value);
+if (countsError.value && countsError.value?.response) {
+	console.error('Failed to load notification counts:', countsError.value);
 	// Don't throw a fatal error, just log it and show 0 counts
 }
 
 const unreadReplies = computed(() => {
-	if (userError.value || !userData.value) return 0;
-	return userData.value?.unreadRepliesCount || 0;
+	if (countsError.value || !countsData.value) return 0;
+	return countsData.value?.getUnreadNotificationCount?.replies || 0;
 });
 
 const unreadMentions = computed(() => {
-	if (userError.value || !userData.value) return 0;
-	return userData.value?.unreadMentionsCount || 0;
+	if (countsError.value || !countsData.value) return 0;
+	return countsData.value?.getUnreadNotificationCount?.mentions || 0;
 });
 
 const unreadMessages = computed(() => {
-	if (messageError.value || !messageCount.value) return 0;
-	return messageCount.value?.getUnreadMessageCount || 0;
+	if (countsError.value || !countsData.value) return 0;
+	return countsData.value?.getUnreadNotificationCount?.privateMessages || 0;
+});
+
+const unreadActivity = computed(() => {
+	if (countsError.value || !countsData.value) return 0;
+	return countsData.value?.getUnreadNotificationCount?.activity || 0;
 });
 </script>
 

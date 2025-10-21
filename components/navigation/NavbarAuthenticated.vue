@@ -511,10 +511,10 @@ const getNotificationCountsQuery = `
   query {
     getUnreadNotificationCount {
       total
-      commentReplies
-      postReplies
+      replies
       mentions
       privateMessages
+      activity
     }
   }
 `;
@@ -545,10 +545,10 @@ const unreadTotal = computed(() => {
 	const counts = notificationCounts.value?.getUnreadNotificationCount;
 	if (!counts) return 0;
 
-	return (counts.commentReplies || 0) +
-		   (counts.postReplies || 0) +
+	return (counts.replies || 0) +
 		   (counts.mentions || 0) +
-		   (counts.privateMessages || 0);
+		   (counts.privateMessages || 0) +
+		   (counts.activity || 0);
 });
 
 // Update unread count when data changes
