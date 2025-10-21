@@ -18,18 +18,6 @@
         Create board
       </NuxtLink>
     </div>
-    <div
-      class="p-2.5 bg-white dark:bg-gray-900 border dark:border-gray-800 shadow-polaroid"
-    >
-      <img
-        loading="lazy"
-        class="w-full h-64 aspect-auto object-cover img-expand"
-        :src="selectedImage"
-      />
-      <small class="mt-4 block leading-none text-gray-400">
-        Art submission by community members
-      </small>
-    </div>
     <div class="prose prose-sm dark:prose-invert">
       <h2
         class="font-bold leading-5 text-base mb-3 pb-1 border-b dark:border-gray-800"

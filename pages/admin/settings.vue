@@ -80,6 +80,29 @@
 							</div>
 						</div>
 					</div>
+					<!-- Homepage Banner -->
+					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
+						<!-- Label -->
+						<div class="md:col-span-1">
+							<label class="text-base font-bold leading-6 text-gray-900">Homepage Banner</label>
+						</div>
+						<!-- Input -->
+						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
+							<img v-if="homepageBanner || settings.homepageBanner" :src="homepageBanner || settings.homepageBanner"
+								class="w-40 h-20 object-cover p-0.5 border bg-white" />
+							<div v-else class="w-40 h-20 rounded-md border border-gray-300 border-dashed"></div>
+							<div class="ml-5">
+								<label for="banner-upload" class="inline-block button gray cursor-pointer">
+									{{ homepageBanner || settings.homepageBanner ? 'Change banner' : 'Upload banner' }}
+								</label>
+								<input id="banner-upload" type="file" class="hidden" accept="image/*"
+									@change="onHomepageBannerChange" />
+								<small class="block mt-2 text-gray-400">
+									Image file up to 5MB. Displayed on the home feed page.
+								</small>
+							</div>
+						</div>
+					</div>
 					<!-- Colors -->
 					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
 						<!-- Label -->
@@ -266,6 +289,7 @@ const secondaryColor = ref(settings.value?.secondaryColor ? toHexCode(settings.v
 const hoverColor = ref(settings.value?.hoverColor ? toHexCode(settings.value.hoverColor) : '#4b7faf');
 
 const icon = ref('');
+const homepageBanner = ref('');
 
 const onIconChange = e => {
 	const file = e.target.files[0];
@@ -285,6 +309,24 @@ const onIconChange = e => {
 	}
 };
 
+const onHomepageBannerChange = e => {
+	const file = e.target.files[0];
+
+	if (file) {
+		if (file.size > 5 * 1024 * 1024) {
+			toast.addNotification({ header: 'Your files are too large!', message: `Max size for banner images is 5MB.`, type: 'error' });
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+
+		reader.addEventListener('load', () => {
+			homepageBanner.value = reader.result;
+		});
+	}
+};
+
 // Removed old REST API upload function - now using GraphQL multipart upload
 
 // Submit settings.
@@ -298,22 +340,28 @@ const submitSettings = async () => {
 	if (icon.value) {
 		files["iconFile"] = dataURLtoFile(icon.value);
 	}
+	if (homepageBanner.value) {
+		files["homepageBannerFile"] = dataURLtoFile(homepageBanner.value);
+	}
 
 	try {
 		const result = await useGqlMultipart({
 			query: `
 				mutation UpdateSiteConfig(
 					$input: UpdateSiteConfigInput!,
-					$iconFile: Upload
+					$iconFile: Upload,
+					$homepageBannerFile: Upload
 				) {
 					updateSiteConfig(
 						input: $input,
-						iconFile: $iconFile
+						iconFile: $iconFile,
+						homepageBannerFile: $homepageBannerFile
 					) {
 						name
 						description
 						welcomeMessage
 						icon
+						homepageBanner
 						enableDownvotes
 						primaryColor
 						secondaryColor
@@ -364,8 +412,9 @@ const submitSettings = async () => {
 				hoverColor.value = toHexCode(updatedData.hoverColor);
 			}
 
-			// Clear the icon preview
+			// Clear the icon and banner previews
 			icon.value = '';
+			homepageBanner.value = '';
 
 			// Refresh the data from server
 			await refresh();

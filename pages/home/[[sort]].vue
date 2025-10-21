@@ -9,7 +9,7 @@
                 <!-- Banner -->
                 <LazyCardsBanner :title="isHomeFeed ? 'Home' : 'Feed'"
                     :sub-title="`Welcome to ${isHomeFeed ? 'your own, personalized home feed' : 'the awesome and exciting front page'}.`"
-                    image-url="/img/artwork/front-page.jpeg" class="col-span-full" />
+                    :image-url="site.homepageBanner || '/img/artwork/front-page.jpeg'" class="col-span-full" />
             </div>
         </section>
         <!-- Main Content -->

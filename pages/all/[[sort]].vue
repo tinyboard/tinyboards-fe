@@ -8,7 +8,7 @@
                 class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6">
                 <LazyCardsBanner title="Feed"
                     sub-title="This is the feed where everything ends up. All content from all boards."
-                    image-url="/img/artwork/front-page.jpeg" class="col-span-full" />
+                    :image-url="site.homepageBanner || '/img/artwork/front-page.jpeg'" class="col-span-full" />
             </div>
         </section>
         <!-- Main Content -->
