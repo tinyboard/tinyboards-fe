@@ -144,6 +144,7 @@
                                         :my-reaction="thread.myReaction?.emoji"
                                         :enable-details-modal="true"
                                         :show-add-button="false"
+                                        :board-id="thread.boardId"
                                         @toggle="toggleThreadReaction"
                                         @show-details="showReactionDetails"
                                     />
@@ -219,6 +220,7 @@
                                             <InputsReactionPicker
                                                 :emoji-weights="board?.reactionSettings?.emojiWeights"
                                                 :my-reaction="thread.myReaction?.emoji"
+                                                :board-id="thread.boardId"
                                                 @select="toggleThreadReaction"
                                                 placement="top"
                                             />
@@ -347,6 +349,7 @@
                                         :my-reaction="comment.myReaction?.emoji"
                                         :enable-details-modal="true"
                                         :show-add-button="false"
+                                        :board-id="comment.boardId"
                                         @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
                                         @show-details="showReactionDetails"
                                     />
@@ -439,6 +442,7 @@
                                             <InputsReactionPicker
                                                 :emoji-weights="board?.reactionSettings?.emojiWeights"
                                                 :my-reaction="comment.myReaction?.emoji"
+                                                :board-id="comment.boardId"
                                                 @select="(emoji) => toggleCommentReaction(comment, emoji)"
                                                 placement="top"
                                             />
@@ -1216,7 +1220,8 @@ const showReactionDetails = (reactionCounts) => {
         id: 0,
         isOpen: true,
         options: {
-            reactionCounts: reactionCounts
+            reactionCounts: reactionCounts,
+            boardId: thread.value?.boardId
         }
     });
 };

@@ -54,12 +54,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, watch } from 'vue'
+import { ref, computed, nextTick, watch, onMounted } from 'vue'
+import { useCustomEmojis } from '@/composables/useCustomEmojis'
 
 interface Props {
   emojiWeights?: Record<string, number>
   myReaction?: string | null
   placement?: 'top' | 'bottom' | 'auto'
+  boardId?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -74,6 +76,8 @@ const props = withDefaults(defineProps<Props>(), {
   myReaction: null,
   placement: 'auto',
 })
+
+const { loadCustomEmojis, isCustomEmoji, getCustomEmojiUrl } = useCustomEmojis()
 
 const emit = defineEmits<{
   select: [emoji: string]
@@ -134,23 +138,10 @@ const selectReaction = (emoji: string) => {
   closePicker()
 }
 
-// Check if emoji is custom (starts with :)
-const isCustomEmoji = (emoji: string): boolean => {
-  return emoji.startsWith(':') && emoji.endsWith(':')
-}
-
-// Get custom emoji URL from shortcode
-const getCustomEmojiUrl = (emojiCode: string): string => {
-  if (!isCustomEmoji(emojiCode)) return ''
-
-  // Extract shortcode (remove surrounding colons)
-  const shortcode = emojiCode.slice(1, -1)
-
-  // Construct URL
-  const domain = window.location.hostname
-  const protocol = window.location.protocol
-  return `${protocol}//${domain}/pictrs/image/${shortcode}`
-}
+// Load custom emojis on mount
+onMounted(async () => {
+  await loadCustomEmojis(props.boardId)
+})
 
 // Click outside directive
 const vClickOutside = {

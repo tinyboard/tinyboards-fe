@@ -52,7 +52,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useCustomEmojis } from '@/composables/useCustomEmojis'
 
 interface User {
   id: number
@@ -73,6 +74,7 @@ interface Props {
   myReaction?: string | null
   showAddButton?: boolean
   enableDetailsModal?: boolean
+  boardId?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -87,6 +89,13 @@ const emit = defineEmits<{
   'add-click': []
   'show-details': [reactionCounts: ReactionCount[]]
 }>()
+
+const { loadCustomEmojis, isCustomEmoji, getCustomEmojiUrl } = useCustomEmojis()
+
+// Load custom emojis on mount
+onMounted(async () => {
+  await loadCustomEmojis(props.boardId)
+})
 
 const isMyReaction = (emoji: string): boolean => {
   return props.myReaction === emoji
@@ -129,25 +138,6 @@ const usernameText = computed(() => {
 const allUsernames = computed(() => {
   return usernames.value.join(', ')
 })
-
-// Check if emoji is custom (starts with :)
-const isCustomEmoji = (emoji: string): boolean => {
-  return emoji.startsWith(':') && emoji.endsWith(':')
-}
-
-// Get custom emoji URL from shortcode
-const getCustomEmojiUrl = (emojiCode: string): string => {
-  if (!isCustomEmoji(emojiCode)) return ''
-
-  // Extract shortcode (remove surrounding colons)
-  const shortcode = emojiCode.slice(1, -1)
-
-  // Construct URL - this assumes custom emojis follow TinyBoards URL pattern
-  // You may need to adjust this based on your backend's actual URL structure
-  const domain = window.location.hostname
-  const protocol = window.location.protocol
-  return `${protocol}//${domain}/pictrs/image/${shortcode}`
-}
 </script>
 
 <style scoped>

@@ -143,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import {
   TransitionRoot,
   TransitionChild,
@@ -153,8 +153,10 @@ import {
 } from '@headlessui/vue';
 import { useModalStore } from '@/stores/StoreModal';
 import { useSiteStore } from '@/stores/StoreSite';
+import { useCustomEmojis } from '@/composables/useCustomEmojis';
 
 const site = useSiteStore();
+const { loadCustomEmojis, isCustomEmoji, getCustomEmojiUrl } = useCustomEmojis();
 
 interface User {
   id: number;
@@ -174,6 +176,7 @@ interface Props {
   isOpen: boolean;
   options?: {
     reactionCounts: ReactionCount[];
+    boardId?: number;
   };
 }
 
@@ -183,6 +186,11 @@ const reactionCounts = computed(() => props.options?.reactionCounts || []);
 
 const modalStore = useModalStore();
 const selectedEmoji = ref<string>('all');
+
+// Load custom emojis on mount
+onMounted(async () => {
+  await loadCustomEmojis(props.options?.boardId);
+});
 
 const totalCount = computed(() => {
   return reactionCounts.value.reduce((sum, r) => sum + r.count, 0);
@@ -201,22 +209,4 @@ const filteredUsers = computed(() => {
 
   return users;
 });
-
-// Check if emoji is custom (starts with :)
-const isCustomEmoji = (emoji: string): boolean => {
-  return emoji.startsWith(':') && emoji.endsWith(':');
-};
-
-// Get custom emoji URL from shortcode
-const getCustomEmojiUrl = (emojiCode: string): string => {
-  if (!isCustomEmoji(emojiCode)) return '';
-
-  // Extract shortcode (remove surrounding colons)
-  const shortcode = emojiCode.slice(1, -1);
-
-  // Construct URL
-  const domain = window.location.hostname;
-  const protocol = window.location.protocol;
-  return `${protocol}//${domain}/pictrs/image/${shortcode}`;
-};
 </script>
