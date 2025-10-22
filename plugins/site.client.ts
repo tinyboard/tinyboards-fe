@@ -13,6 +13,7 @@ export default defineNuxtPlugin(async () => {
             name
             description
             icon
+            homepageBanner
             defaultAvatar
             primaryColor
             secondaryColor
@@ -38,6 +39,7 @@ export default defineNuxtPlugin(async () => {
           name: site.name || 'tinyboards',
           description: site.description || '',
           icon: site.icon || '',
+          homepageBanner: site.homepageBanner || null,
           defaultAvatar: site.defaultAvatar || null,
           primaryColor: site.primaryColor || '60, 105, 145',
           secondaryColor: site.secondaryColor || '96, 128, 63',

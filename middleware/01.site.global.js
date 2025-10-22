@@ -46,6 +46,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
           name
           description
           icon
+          homepageBanner
           primaryColor
           secondaryColor
           hoverColor
@@ -153,6 +154,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       siteStore.name = data.value.site?.name ?? '';
       siteStore.description = data.value.site?.description ?? '';
       siteStore.icon = data.value.site?.icon ?? '';
+      siteStore.homepageBanner = data.value.site?.homepageBanner ?? null;
       siteStore.primaryColor = data.value.site?.primaryColor ?? '';
       siteStore.secondaryColor = data.value.site?.secondaryColor ?? '';
       siteStore.hoverColor = data.value.site?.hoverColor ?? '';
