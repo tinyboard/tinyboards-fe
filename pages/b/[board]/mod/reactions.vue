@@ -76,22 +76,13 @@
 
 						<!-- Add New Emoji -->
 						<div class="mt-4 flex items-center gap-2">
-							<div class="flex-1 flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md bg-white">
-								<InputsEmojiPicker
-									:board-id="board?.id"
-									@emoji-selected="handleEmojiSelected"
-								/>
-								<div class="flex-1 flex items-center gap-2">
-									<div v-if="newEmoji" class="w-8 h-8 flex items-center justify-center text-2xl">
-										<span v-if="!isCustomEmoji(newEmoji)">{{ newEmoji }}</span>
-										<img v-else :src="getCustomEmojiUrl(newEmoji)" :alt="newEmoji" class="w-6 h-6 object-contain" />
-									</div>
-									<span v-else class="text-gray-400 text-sm">Select an emoji...</span>
-								</div>
-							</div>
+							<InputsEmojiPicker
+								:board-id="board?.id"
+								@emoji-selected="handleEmojiSelected"
+							/>
 							<select
 								v-model.number="newEmojiWeight"
-								class="px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+								class="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 min-w-[140px]"
 							>
 								<option :value="1">Positive (+1)</option>
 								<option :value="0">Neutral (0)</option>

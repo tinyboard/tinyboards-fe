@@ -308,31 +308,51 @@ const loadCustomEmojis = async () => {
       }
     `;
 
-    const variables = {
-      input: {
-        boardId: props.boardId,
-        scope: props.boardId ? "BOARD" : "SITE",
-        activeOnly: true,
-        limit: 100,
-        offset: 0
-      }
-    };
-
     const { useGraphQLQuery } = await import('@/composables/useGraphQL');
-    const { data, error } = await useGraphQLQuery(query, { variables });
 
-    if (error.value) {
-      console.error('Failed to load custom emojis:', error.value);
-      return;
+    // Load both site and board emojis
+    const allEmojis: any[] = [];
+
+    // Load site emojis
+    const { data: siteData, error: siteError } = await useGraphQLQuery(query, {
+      variables: {
+        input: {
+          scope: "SITE",
+          activeOnly: true,
+          limit: 100,
+          offset: 0
+        }
+      }
+    });
+
+    if (!siteError.value && siteData.value?.listEmojis) {
+      allEmojis.push(...siteData.value.listEmojis);
     }
 
-    if (data.value?.listEmojis) {
-      customEmojis.value = data.value.listEmojis;
+    // Load board emojis if boardId is provided
+    if (props.boardId) {
+      const { data: boardData, error: boardError } = await useGraphQLQuery(query, {
+        variables: {
+          input: {
+            boardId: props.boardId,
+            scope: "BOARD",
+            activeOnly: true,
+            limit: 100,
+            offset: 0
+          }
+        }
+      });
 
-      // Update categories if we have custom emojis
-      if (customEmojis.value.length > 0 && !categories.find(c => c.id === 'custom')) {
-        categories.push({ id: 'custom', name: '⭐' });
+      if (!boardError.value && boardData.value?.listEmojis) {
+        allEmojis.push(...boardData.value.listEmojis);
       }
+    }
+
+    customEmojis.value = allEmojis;
+
+    // Update categories if we have custom emojis
+    if (customEmojis.value.length > 0 && !categories.find(c => c.id === 'custom')) {
+      categories.push({ id: 'custom', name: '⭐' });
     }
   } catch (error) {
     console.error('Failed to load custom emojis:', error);
