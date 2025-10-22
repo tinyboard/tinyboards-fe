@@ -10,7 +10,8 @@
                 <CardsBanner
                     title="Help"
                     sub-title="Rules, guides, and the like"
-                    image-url="/img/artwork/front-page.jpeg"
+                    :image-url="site.homepageBanner"
+                    :icon-type="site.homepageBanner ? undefined : 'posts'"
                     class="col-span-full"
                 />
             </div>

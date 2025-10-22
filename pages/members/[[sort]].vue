@@ -10,7 +10,8 @@
                 <CardsBanner
                     title="Members"
                     :sub-title="`Showing ${members?.members?.length || 0} members`"
-                    image-url="https://forum.porpl.net/image/51bc2d71-6c70-4add-a7b0-03fed9024fb6.webp"
+                    :image-url="site.homepageBanner"
+                    :icon-type="site.homepageBanner ? undefined : 'users'"
                     class="col-span-full"
                 />
             </div>

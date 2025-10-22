@@ -95,6 +95,9 @@ const modalApplicationView = defineAsyncComponent(
 const modalApplicationDeny = defineAsyncComponent(
     () => import("@/components/dialogs/ModalApplicationDeny"),
 );
+const modalReactionDetails = defineAsyncComponent(
+    () => import("@/components/dialogs/ModalReactionDetails"),
+);
 
 // Object lookup to select modal.
 const components = {
@@ -117,5 +120,6 @@ const components = {
     ModalOptions: modalOptions,
     ModalApplicationView: modalApplicationView,
     ModalApplicationDeny: modalApplicationDeny,
+    ModalReactionDetails: modalReactionDetails,
 };
 </script>

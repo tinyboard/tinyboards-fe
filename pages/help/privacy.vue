@@ -10,7 +10,8 @@
                 <CardsBanner
                     title="Privacy Policy"
                     sub-title="How we handle your personal information"
-                    image-url="/img/artwork/front-page.jpeg"
+                    :image-url="site.homepageBanner"
+                    :icon-type="site.homepageBanner ? undefined : 'posts'"
                     class="col-span-full"
                 />
             </div>
@@ -63,6 +64,9 @@
 </template>
 
 <script setup>
+import { useSiteStore } from "@/stores/StoreSite";
+const site = useSiteStore();
+
 definePageMeta({
     isLeftNavbarDisabled: true,
 });
