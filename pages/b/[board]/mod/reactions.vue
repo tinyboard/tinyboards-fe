@@ -80,6 +80,11 @@
 								:board-id="board?.id"
 								@emoji-selected="handleEmojiSelected"
 							/>
+							<!-- Selected emoji preview -->
+							<div v-if="newEmoji" class="flex items-center justify-center w-10 h-10 border-2 border-gray-300 rounded-md bg-white">
+								<span v-if="!isCustomEmoji(newEmoji)" class="text-2xl">{{ newEmoji }}</span>
+								<img v-else :src="getCustomEmojiUrl(newEmoji)" :alt="newEmoji" class="w-6 h-6 object-contain" />
+							</div>
 							<select
 								v-model.number="newEmojiWeight"
 								class="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 min-w-[140px]"
@@ -91,7 +96,8 @@
 							<button
 								type="button"
 								@click="addEmoji"
-								class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+								class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+								:disabled="!newEmoji"
 							>
 								Add
 							</button>
@@ -285,21 +291,44 @@ const loadCustomEmojis = async () => {
 			}
 		`;
 
-		const variables = {
-			input: {
-				boardId: board.value?.id,
-				scope: board.value?.id ? "BOARD" : "SITE",
-				activeOnly: true,
-				limit: 100,
-				offset: 0
+		const allEmojis = [];
+
+		// Load site emojis
+		const { data: siteData, error: siteError } = await useGraphQLQuery(query, {
+			variables: {
+				input: {
+					scope: "SITE",
+					activeOnly: true,
+					limit: 100,
+					offset: 0
+				}
 			}
-		};
+		});
 
-		const { data, error } = await useGraphQLQuery(query, { variables });
-
-		if (!error.value && data.value?.listEmojis) {
-			customEmojis.value = data.value.listEmojis;
+		if (!siteError.value && siteData.value?.listEmojis) {
+			allEmojis.push(...siteData.value.listEmojis);
 		}
+
+		// Load board emojis if boardId is available
+		if (board.value?.id) {
+			const { data: boardData, error: boardError } = await useGraphQLQuery(query, {
+				variables: {
+					input: {
+						boardId: board.value.id,
+						scope: "BOARD",
+						activeOnly: true,
+						limit: 100,
+						offset: 0
+					}
+				}
+			});
+
+			if (!boardError.value && boardData.value?.listEmojis) {
+				allEmojis.push(...boardData.value.listEmojis);
+			}
+		}
+
+		customEmojis.value = allEmojis;
 	} catch (error) {
 		console.error('Failed to load custom emojis:', error);
 	}
