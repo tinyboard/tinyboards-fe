@@ -236,12 +236,12 @@ import { useBoardStore } from '@/stores/StoreBoard';
 import { useGraphQLMutation } from '@/composables/useGraphQL';
 
 const boardStore = useBoardStore();
-const board = boardStore.board;
+const board = computed(() => boardStore.board);
 
 // Initialize sections from board section_config
 const sections = ref({
-	feed: (board.hasFeed !== undefined) ? board.hasFeed : true,
-	threads: (board.hasThreads !== undefined) ? board.hasThreads : false,
+	feed: board.value?.hasFeed ?? true,
+	threads: board.value?.hasThreads ?? false,
 });
 
 // Initialize section order from board
@@ -250,8 +250,8 @@ const parseSectionOrder = (orderString) => {
 	return orderString.split(',').filter(s => s.trim());
 };
 
-const orderedSections = ref(parseSectionOrder(board.sectionOrder || 'feed,threads'));
-const defaultSection = ref(board.defaultSection || 'feed');
+const orderedSections = ref(parseSectionOrder(board.value?.sectionOrder || 'feed,threads'));
+const defaultSection = ref(board.value?.defaultSection || 'feed');
 const draggedIndex = ref(null);
 
 definePageMeta({
@@ -260,7 +260,7 @@ definePageMeta({
 });
 
 useHead({
-	'title': `${board.name} - Section Settings`
+	'title': computed(() => `${board.value?.name || 'Board'} - Section Settings`)
 });
 
 const toast = useToastStore();
@@ -378,7 +378,7 @@ const submitSettings = async () => {
 		const { data: result } = await useGraphQLMutation(mutation, {
 			variables: {
 				input: {
-					boardId: board.id,
+					boardId: board.value.id,
 					sectionConfig: sectionConfig,
 					sectionOrder: sectionOrder.value,
 					defaultSection: defaultSection.value
@@ -395,7 +395,7 @@ const submitSettings = async () => {
 
 			// Update the board store
 			boardStore.setBoard({
-				...board,
+				...board.value,
 				...result.value.updateBoardSettings.board
 			});
 

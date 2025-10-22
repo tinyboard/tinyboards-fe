@@ -298,6 +298,15 @@ if (route.params?.board) {
 
         // Set board data in store
         boardStore.setBoard(boardData.value.board);
+
+        // Redirect to default section if configured
+        const defaultSection = boardData.value.board.defaultSection;
+        if (defaultSection && defaultSection !== 'feed') {
+            // Only redirect if we're on the board root (feed page)
+            if (defaultSection === 'threads' && boardData.value.board.hasThreads) {
+                await navigateTo(`/b/${boardName}/threads`, { replace: true });
+            }
+        }
     } catch (error) {
         console.error('Error fetching board:', error);
         throw createError({
