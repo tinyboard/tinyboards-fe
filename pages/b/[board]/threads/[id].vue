@@ -23,7 +23,7 @@
             class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6"
         >
             <div class="col-span-full flex gap-6">
-                <div class="w-full max-w-4xl">
+                <div class="w-full">
                     <!-- Thread Content -->
                     <article
                         v-if="thread"
@@ -137,6 +137,18 @@
                                     {{ thread.body }}
                                 </div>
 
+                                <!-- Reactions Display (Below post content, above border) -->
+                                <div v-if="thread.reactionCounts && thread.reactionCounts.length > 0" class="mt-4">
+                                    <CardsReactionBar
+                                        :reaction-counts="thread.reactionCounts || []"
+                                        :my-reaction="thread.myReaction?.emoji"
+                                        :enable-details-modal="true"
+                                        :show-add-button="false"
+                                        @toggle="toggleThreadReaction"
+                                        @show-details="showReactionDetails"
+                                    />
+                                </div>
+
                                 <!-- Post Date and Actions -->
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <div class="flex items-center justify-between">
@@ -145,7 +157,7 @@
                                         </span>
 
                                         <!-- Thread Actions -->
-                                        <div class="flex items-center gap-1">
+                                        <div class="flex flex-wrap items-center gap-1">
                                             <button
                                                 v-if="v && thread.creator?.id === v.id"
                                                 @click="editingThreadId = thread.id"
@@ -202,26 +214,18 @@
                                                 </svg>
                                                 Permalink
                                             </a>
+
+                                            <!-- React Button -->
+                                            <InputsReactionPicker
+                                                :emoji-weights="board?.reactionSettings?.emojiWeights"
+                                                :my-reaction="thread.myReaction?.emoji"
+                                                @select="toggleThreadReaction"
+                                                placement="top"
+                                            />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Thread Reactions -->
-                        <div class="px-6 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                            <CardsReactionBar
-                                :reaction-counts="thread.reactionCounts || []"
-                                :my-reaction="thread.myReaction?.emoji"
-                                @toggle="toggleThreadReaction"
-                            >
-                                <template #add-reaction>
-                                    <InputsReactionPicker
-                                        :my-reaction="thread.myReaction?.emoji"
-                                        @select="toggleThreadReaction"
-                                    />
-                                </template>
-                            </CardsReactionBar>
                         </div>
                     </article>
 
@@ -336,6 +340,18 @@
                                     {{ comment.body }}
                                 </div>
 
+                                <!-- Reactions Display (Below comment content, above border) -->
+                                <div v-if="comment.reactionCounts && comment.reactionCounts.length > 0" class="mt-4">
+                                    <CardsReactionBar
+                                        :reaction-counts="comment.reactionCounts || []"
+                                        :my-reaction="comment.myReaction?.emoji"
+                                        :enable-details-modal="true"
+                                        :show-add-button="false"
+                                        @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
+                                        @show-details="showReactionDetails"
+                                    />
+                                </div>
+
                                 <!-- Comment Meta -->
                                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <div class="flex items-center justify-between">
@@ -343,7 +359,7 @@
                                             Posted {{ formatDate(comment.creationDate) }}
                                         </span>
 
-                                        <!-- Comment Actions & Reactions -->
+                                        <!-- Comment Actions -->
                                         <div class="flex flex-wrap items-center gap-1">
                                             <button
                                                 v-if="v"
@@ -419,21 +435,13 @@
                                                 Permalink
                                             </a>
 
-                                            <!-- Reactions inline with action buttons -->
-                                            <div class="ml-2">
-                                                <CardsReactionBar
-                                                    :reaction-counts="comment.reactionCounts || []"
-                                                    :my-reaction="comment.myReaction?.emoji"
-                                                    @toggle="(emoji) => toggleCommentReaction(comment, emoji)"
-                                                >
-                                                    <template #add-reaction>
-                                                        <InputsReactionPicker
-                                                            :my-reaction="comment.myReaction?.emoji"
-                                                            @select="(emoji) => toggleCommentReaction(comment, emoji)"
-                                                        />
-                                                    </template>
-                                                </CardsReactionBar>
-                                            </div>
+                                            <!-- React Button -->
+                                            <InputsReactionPicker
+                                                :emoji-weights="board?.reactionSettings?.emojiWeights"
+                                                :my-reaction="comment.myReaction?.emoji"
+                                                @select="(emoji) => toggleCommentReaction(comment, emoji)"
+                                                placement="top"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -648,6 +656,12 @@ const threadQuery = `
                 id
                 emoji
                 count
+                users {
+                    id
+                    name
+                    displayName
+                    avatar
+                }
             }
             myReaction {
                 id
@@ -713,6 +727,12 @@ const fetchComments = async (pageNum = 1) => {
                         id
                         emoji
                         count
+                        users {
+                            id
+                            name
+                            displayName
+                            avatar
+                        }
                     }
                     myReaction {
                         id
@@ -867,6 +887,12 @@ const submitComment = async () => {
                         id
                         emoji
                         count
+                        users {
+                            id
+                            name
+                            displayName
+                            avatar
+                        }
                     }
                     myReaction {
                         id
@@ -941,12 +967,48 @@ const toggleThreadReaction = async (emoji) => {
             const reactionCount = thread.value.reactionCounts.find(r => r.emoji === emoji);
             if (reactionCount) {
                 reactionCount.count--;
+                // Remove current user from users array
+                if (reactionCount.users) {
+                    reactionCount.users = reactionCount.users.filter(u => u.id !== v.id);
+                }
                 if (reactionCount.count <= 0) {
                     thread.value.reactionCounts = thread.value.reactionCounts.filter(r => r.emoji !== emoji);
                 }
             }
         } else {
-            // Add reaction
+            // Remove old reaction first if exists (backend enforces single reaction)
+            if (thread.value.myReaction) {
+                const oldEmoji = thread.value.myReaction.emoji;
+                const removeMutation = `
+                    mutation RemoveReaction($postId: Int, $emoji: String!) {
+                        removeReaction(input: { postId: $postId, emoji: $emoji }) {
+                            success
+                        }
+                    }
+                `;
+
+                await useGraphQLMutation(removeMutation, {
+                    variables: {
+                        postId: threadId,
+                        emoji: oldEmoji
+                    }
+                });
+
+                // Update local state for old reaction
+                const oldReactionCount = thread.value.reactionCounts.find(r => r.emoji === oldEmoji);
+                if (oldReactionCount) {
+                    oldReactionCount.count--;
+                    // Remove current user from old reaction's users array
+                    if (oldReactionCount.users) {
+                        oldReactionCount.users = oldReactionCount.users.filter(u => u.id !== v.id);
+                    }
+                    if (oldReactionCount.count <= 0) {
+                        thread.value.reactionCounts = thread.value.reactionCounts.filter(r => r.emoji !== oldEmoji);
+                    }
+                }
+            }
+
+            // Add new reaction
             const mutation = `
                 mutation AddReaction($postId: Int, $emoji: String!) {
                     addReaction(input: { postId: $postId, emoji: $emoji }) {
@@ -972,25 +1034,35 @@ const toggleThreadReaction = async (emoji) => {
                 return;
             }
 
-            // Remove old reaction if exists
-            if (thread.value.myReaction) {
-                const oldEmoji = thread.value.myReaction.emoji;
-                const oldReactionCount = thread.value.reactionCounts.find(r => r.emoji === oldEmoji);
-                if (oldReactionCount) {
-                    oldReactionCount.count--;
-                    if (oldReactionCount.count <= 0) {
-                        thread.value.reactionCounts = thread.value.reactionCounts.filter(r => r.emoji !== oldEmoji);
-                    }
-                }
-            }
-
             // Update local state
             thread.value.myReaction = data.value.addReaction.reaction;
             const existingCount = thread.value.reactionCounts.find(r => r.emoji === emoji);
             if (existingCount) {
                 existingCount.count++;
+                // Add current user to users array
+                if (!existingCount.users) {
+                    existingCount.users = [];
+                }
+                // Only add if not already present
+                if (!existingCount.users.find(u => u.id === v.id)) {
+                    existingCount.users.push({
+                        id: v.id,
+                        name: v.name,
+                        displayName: v.display_name,
+                        avatar: v.avatar
+                    });
+                }
             } else {
-                thread.value.reactionCounts.push({ emoji, count: 1 });
+                thread.value.reactionCounts.push({
+                    emoji,
+                    count: 1,
+                    users: [{
+                        id: v.id,
+                        name: v.name,
+                        displayName: v.display_name,
+                        avatar: v.avatar
+                    }]
+                });
             }
         }
     } catch (err) {
@@ -1034,12 +1106,48 @@ const toggleCommentReaction = async (comment, emoji) => {
             const reactionCount = comment.reactionCounts.find(r => r.emoji === emoji);
             if (reactionCount) {
                 reactionCount.count--;
+                // Remove current user from users array
+                if (reactionCount.users) {
+                    reactionCount.users = reactionCount.users.filter(u => u.id !== v.id);
+                }
                 if (reactionCount.count <= 0) {
                     comment.reactionCounts = comment.reactionCounts.filter(r => r.emoji !== emoji);
                 }
             }
         } else {
-            // Add reaction
+            // Remove old reaction first if exists (backend enforces single reaction)
+            if (comment.myReaction) {
+                const oldEmoji = comment.myReaction.emoji;
+                const removeMutation = `
+                    mutation RemoveReaction($commentId: Int, $emoji: String!) {
+                        removeReaction(input: { commentId: $commentId, emoji: $emoji }) {
+                            success
+                        }
+                    }
+                `;
+
+                await useGraphQLMutation(removeMutation, {
+                    variables: {
+                        commentId: comment.id,
+                        emoji: oldEmoji
+                    }
+                });
+
+                // Update local state for old reaction
+                const oldReactionCount = comment.reactionCounts.find(r => r.emoji === oldEmoji);
+                if (oldReactionCount) {
+                    oldReactionCount.count--;
+                    // Remove current user from old reaction's users array
+                    if (oldReactionCount.users) {
+                        oldReactionCount.users = oldReactionCount.users.filter(u => u.id !== v.id);
+                    }
+                    if (oldReactionCount.count <= 0) {
+                        comment.reactionCounts = comment.reactionCounts.filter(r => r.emoji !== oldEmoji);
+                    }
+                }
+            }
+
+            // Add new reaction
             const mutation = `
                 mutation AddReaction($commentId: Int, $emoji: String!) {
                     addReaction(input: { commentId: $commentId, emoji: $emoji }) {
@@ -1065,30 +1173,52 @@ const toggleCommentReaction = async (comment, emoji) => {
                 return;
             }
 
-            // Remove old reaction if exists
-            if (comment.myReaction) {
-                const oldEmoji = comment.myReaction.emoji;
-                const oldReactionCount = comment.reactionCounts.find(r => r.emoji === oldEmoji);
-                if (oldReactionCount) {
-                    oldReactionCount.count--;
-                    if (oldReactionCount.count <= 0) {
-                        comment.reactionCounts = comment.reactionCounts.filter(r => r.emoji !== oldEmoji);
-                    }
-                }
-            }
-
             // Update local state
             comment.myReaction = data.value.addReaction.reaction;
             const existingCount = comment.reactionCounts.find(r => r.emoji === emoji);
             if (existingCount) {
                 existingCount.count++;
+                // Add current user to users array
+                if (!existingCount.users) {
+                    existingCount.users = [];
+                }
+                // Only add if not already present
+                if (!existingCount.users.find(u => u.id === v.id)) {
+                    existingCount.users.push({
+                        id: v.id,
+                        name: v.name,
+                        displayName: v.display_name,
+                        avatar: v.avatar
+                    });
+                }
             } else {
-                comment.reactionCounts.push({ emoji, count: 1 });
+                comment.reactionCounts.push({
+                    emoji,
+                    count: 1,
+                    users: [{
+                        id: v.id,
+                        name: v.name,
+                        displayName: v.display_name,
+                        avatar: v.avatar
+                    }]
+                });
             }
         }
     } catch (err) {
         console.error('Reaction error:', err);
     }
+};
+
+// Show reaction details modal
+const showReactionDetails = (reactionCounts) => {
+    modalStore.setModal({
+        modal: 'ModalReactionDetails',
+        id: 0,
+        isOpen: true,
+        options: {
+            reactionCounts: reactionCounts
+        }
+    });
 };
 
 // Thread editing

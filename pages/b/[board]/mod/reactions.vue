@@ -46,7 +46,11 @@
 								:key="index"
 								class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg"
 							>
-								<span class="text-2xl">{{ emoji }}</span>
+								<!-- Display emoji (standard or custom) -->
+								<div class="w-8 h-8 flex items-center justify-center text-2xl">
+									<span v-if="!isCustomEmoji(emoji)">{{ emoji }}</span>
+									<img v-else :src="getCustomEmojiUrl(emoji)" :alt="emoji" class="w-6 h-6 object-contain" />
+								</div>
 								<select
 									v-model.number="emojiWeights[emoji]"
 									class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -72,13 +76,19 @@
 
 						<!-- Add New Emoji -->
 						<div class="mt-4 flex items-center gap-2">
-							<input
-								v-model="newEmoji"
-								type="text"
-								placeholder="Enter emoji (e.g., 🔥)"
-								class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-								maxlength="10"
-							/>
+							<div class="flex-1 flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md bg-white">
+								<InputsEmojiPicker
+									:board-id="board?.id"
+									@emoji-selected="handleEmojiSelected"
+								/>
+								<div class="flex-1 flex items-center gap-2">
+									<div v-if="newEmoji" class="w-8 h-8 flex items-center justify-center text-2xl">
+										<span v-if="!isCustomEmoji(newEmoji)">{{ newEmoji }}</span>
+										<img v-else :src="getCustomEmojiUrl(newEmoji)" :alt="newEmoji" class="w-6 h-6 object-contain" />
+									</div>
+									<span v-else class="text-gray-400 text-sm">Select an emoji...</span>
+								</div>
+							</div>
 							<select
 								v-model.number="newEmojiWeight"
 								class="px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -174,6 +184,7 @@ const newEmoji = ref('');
 const newEmojiWeight = ref(1);
 const successMessage = ref('');
 const errorMessage = ref('');
+const customEmojis = ref([]);
 
 // Fetch board reaction settings
 const fetchSettings = async () => {
@@ -226,6 +237,11 @@ const getDefaultEmojiWeights = () => ({
 	'👎': -1
 });
 
+// Handle emoji selected from picker
+const handleEmojiSelected = (emoji) => {
+	newEmoji.value = emoji;
+};
+
 // Add emoji
 const addEmoji = () => {
 	const emoji = newEmoji.value.trim();
@@ -245,6 +261,57 @@ const addEmoji = () => {
 // Remove emoji
 const removeEmoji = (emoji) => {
 	delete emojiWeights.value[emoji];
+};
+
+// Check if emoji is custom (starts with :)
+const isCustomEmoji = (emoji) => {
+	return emoji.startsWith(':') && emoji.endsWith(':');
+};
+
+// Get custom emoji URL
+const getCustomEmojiUrl = (emojiCode) => {
+	if (!isCustomEmoji(emojiCode)) return '';
+
+	const shortcode = emojiCode.slice(1, -1);
+	const emoji = customEmojis.value.find(e => e.shortcode === shortcode);
+	return emoji?.imageUrl || '';
+};
+
+// Load custom emojis
+const loadCustomEmojis = async () => {
+	try {
+		const query = `
+			query ListEmojis($input: ListEmojisInput) {
+				listEmojis(input: $input) {
+					id
+					shortcode
+					imageUrl
+					altText
+					category
+					emojiScope
+					isActive
+				}
+			}
+		`;
+
+		const variables = {
+			input: {
+				boardId: board.value?.id,
+				scope: board.value?.id ? "BOARD" : "SITE",
+				activeOnly: true,
+				limit: 100,
+				offset: 0
+			}
+		};
+
+		const { data, error } = await useGraphQLQuery(query, { variables });
+
+		if (!error.value && data.value?.listEmojis) {
+			customEmojis.value = data.value.listEmojis;
+		}
+	} catch (error) {
+		console.error('Failed to load custom emojis:', error);
+	}
 };
 
 // Apply preset
@@ -319,8 +386,9 @@ const submitSettings = async () => {
 };
 
 // Load settings on mount
-onMounted(() => {
-	fetchSettings();
+onMounted(async () => {
+	await loadCustomEmojis();
+	await fetchSettings();
 });
 
 definePageMeta({
