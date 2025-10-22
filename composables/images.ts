@@ -79,7 +79,7 @@ export const canEmbedImage = (link: string): boolean => {
 };
 
 /// Call this when the file of a file input changes. Sets the crop modal.
-export const onFileChange = async (e: InputEvent, type: 'avatar' | 'default_avatar' | 'banner' | 'background' | 'emoji') => {
+export const onFileChange = async (e: InputEvent, type: 'avatar' | 'default_avatar' | 'banner' | 'background' | 'emoji' | 'homepage_banner') => {
 	const file = e.target!.files[0];
 
 	// For emojis, use 5MB default (backend configurable limit)
@@ -133,6 +133,9 @@ export const onFileChange = async (e: InputEvent, type: 'avatar' | 'default_avat
 						break;
 					case 'emoji':
 						imageStore.setEmoji(reader.result);
+						break;
+					case 'homepage_banner':
+						imageStore.setHomepageBanner(reader.result);
 						break;
 					default:
 						if (process.dev) console.error(`unexpected file type ${type}`);

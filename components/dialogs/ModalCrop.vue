@@ -22,7 +22,7 @@
               </div>
               <div class="flex flex-col justify-center mt-4">
                 <Cropper class="w-full h-[500px] bg-gray-400" :src="options.image" :stencil-props="{
-                  aspectRatio: props.type == 'banner' ? 5 / 1 : 1 / 1
+                  aspectRatio: (props.type == 'banner' || props.type == 'homepage_banner') ? 5 / 1 : 1 / 1
                 }" :check-orientation="false" @change="onChange" />
               </div>
               <!-- Footer -->
@@ -92,6 +92,8 @@ const close = () => {
     imageStore.purgeDefaultAvatar();
   } else if (props.type == "emoji") {
     imageStore.purgeEmoji();
+  } else if (props.type == "homepage_banner") {
+    imageStore.purgeHomepageBanner();
   } else {
     imageStore.purgeBanner()
   }
@@ -146,6 +148,8 @@ const useOriginal = () => {
       imageStore.setDefaultAvatar(dataUrl);
     } else if (props.type == "emoji") {
       imageStore.setEmoji(dataUrl);
+    } else if (props.type == "homepage_banner") {
+      imageStore.setHomepageBanner(dataUrl);
     } else {
       imageStore.setBanner(dataUrl);
     }
@@ -163,6 +167,8 @@ const onChange = ({ canvas }) => {
     imageStore.setAvatar(canvas.toDataURL('image/jpeg'));
   } else if (props.type == "default_avatar") {
     imageStore.setDefaultAvatar(canvas.toDataURL('image/jpeg'));
+  } else if (props.type == "homepage_banner") {
+    imageStore.setHomepageBanner(canvas.toDataURL('image/jpeg'));
   } else if (props.type == "emoji") {
     // For emojis, ensure dimensions are within backend limits (8x8 to 512x512)
     const width = canvas.width;

@@ -6,6 +6,7 @@ interface ImageStore {
 	background: string | null;
 	default_avatar: string | null;
 	emoji: string | null;
+	homepageBanner: string | null;
 }
 
 export const useImageStore = defineStore('image', {
@@ -16,7 +17,8 @@ export const useImageStore = defineStore('image', {
 			banner: null,
 			background: null,
 			default_avatar: null,
-			emoji: null
+			emoji: null,
+			homepageBanner: null
 		};
 	},
 	actions: {
@@ -35,6 +37,9 @@ export const useImageStore = defineStore('image', {
 		setEmoji(emoji: string) {
 			this.emoji = emoji;
 		},
+		setHomepageBanner(homepageBanner: string) {
+			this.homepageBanner = homepageBanner;
+		},
 		purgeAvatar() {
 			this.avatar = null;
 		},
@@ -50,12 +55,16 @@ export const useImageStore = defineStore('image', {
 		purgeEmoji() {
 			this.emoji = null;
 		},
+		purgeHomepageBanner() {
+			this.homepageBanner = null;
+		},
 		purge() {
 			this.purgeAvatar();
 			this.purgeBanner();
 			this.purgeBackground();
 			this.purgeDefaultAvatar();
 			this.purgeEmoji();
+			this.purgeHomepageBanner();
 		},
 		purgeImages() {
 			// Alias for purge() to maintain backwards compatibility

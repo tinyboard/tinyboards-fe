@@ -88,12 +88,12 @@
 						</div>
 						<!-- Input -->
 						<div class="mt-4 md:col-span-2 md:mt-0 flex items-center">
-							<img v-if="homepageBanner || settings.homepageBanner" :src="homepageBanner || settings.homepageBanner"
+							<img v-if="imageStore.homepageBanner || homepageBanner || settings.homepageBanner" :src="imageStore.homepageBanner || homepageBanner || settings.homepageBanner"
 								class="w-40 h-20 object-cover p-0.5 border bg-white" />
 							<div v-else class="w-40 h-20 rounded-md border border-gray-300 border-dashed"></div>
 							<div class="ml-5">
 								<label for="banner-upload" class="inline-block button gray cursor-pointer">
-									{{ homepageBanner || settings.homepageBanner ? 'Change banner' : 'Upload banner' }}
+									{{ imageStore.homepageBanner || homepageBanner || settings.homepageBanner ? 'Change banner' : 'Upload banner' }}
 								</label>
 								<input id="banner-upload" type="file" class="hidden" accept="image/*"
 									@change="onHomepageBannerChange" />
@@ -173,38 +173,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- Registration Mode -->
-					<div class="md:grid md:grid-cols-3 md:gap-6 pt-4 md:pt-6">
-						<!-- Label -->
-						<div class="md:col-span-1">
-							<label class="text-base font-bold leading-6 text-gray-900">Registration Policy</label>
-						</div>
-						<!-- Input -->
-						<div class="mt-4 md:col-span-2 md:mt-0">
-							<select v-model="settings.registrationMode"
-								class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
-								<option value="Open">Open Registration</option>
-								<option value="OpenWithEmailVerification">Open with Email Verification</option>
-								<option value="InviteOnlyAdmin">Invite Only (Admin)</option>
-								<option value="InviteOnlyUser">Invite Only (User)</option>
-								<option value="RequireApplication">Application Required</option>
-								<option value="Closed">Registration Closed</option>
-							</select>
-							<p class="mt-2 text-sm text-gray-500">
-								Controls how new users can register on your site.
-							</p>
-							<!-- Application Question (only show when RequireApplication is selected) -->
-							<div v-if="settings.registrationMode === 'RequireApplication'" class="mt-4">
-								<label class="block text-sm font-medium text-gray-700 mb-2">Application Question</label>
-								<textarea
-									v-model="settings.applicationQuestion"
-									rows="3"
-									class="block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base"
-									placeholder="Why do you want to join this community?"
-								></textarea>
-							</div>
-						</div>
-					</div>
 				</div>
 				<!-- Footer -->
 				<div class="bg-gray-50 shadow-inner-white border-t p-4">
@@ -222,9 +190,11 @@
 import { ref } from 'vue';
 // import { baseURL } from "@/server/constants";
 import { useToastStore } from '@/stores/StoreToast';
+import { useImageStore } from '@/stores/StoreImages';
 import { dataURLtoFile } from '@/utils/files';
 import { useGraphQLQuery, useGraphQLMutation } from '~/composables/useGraphQL';
 import { useGqlMultipart } from "@/composables/graphql_multipart";
+import { onFileChange } from '@/composables/images';
 
 definePageMeta({
 	'hasAuthRequired': true,
@@ -236,6 +206,7 @@ definePageMeta({
 });
 
 const toast = useToastStore();
+const imageStore = useImageStore();
 const authCookie = useCookie("token").value;
 
 // Fetch site settings using GraphQL with explicit query string
@@ -246,6 +217,7 @@ const { data: siteData, pending, error, refresh } = await useGraphQLQuery(`
       description
       welcomeMessage
       icon
+      homepageBanner
       enableDownvotes
       primaryColor
       secondaryColor
@@ -309,22 +281,8 @@ const onIconChange = e => {
 	}
 };
 
-const onHomepageBannerChange = e => {
-	const file = e.target.files[0];
-
-	if (file) {
-		if (file.size > 5 * 1024 * 1024) {
-			toast.addNotification({ header: 'Your files are too large!', message: `Max size for banner images is 5MB.`, type: 'error' });
-			return;
-		}
-
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-
-		reader.addEventListener('load', () => {
-			homepageBanner.value = reader.result;
-		});
-	}
+const onHomepageBannerChange = async (e) => {
+	await onFileChange(e, 'homepage_banner');
 };
 
 // Removed old REST API upload function - now using GraphQL multipart upload
@@ -340,7 +298,9 @@ const submitSettings = async () => {
 	if (icon.value) {
 		files["iconFile"] = dataURLtoFile(icon.value);
 	}
-	if (homepageBanner.value) {
+	if (imageStore.homepageBanner) {
+		files["homepageBannerFile"] = dataURLtoFile(imageStore.homepageBanner);
+	} else if (homepageBanner.value) {
 		files["homepageBannerFile"] = dataURLtoFile(homepageBanner.value);
 	}
 
@@ -391,7 +351,8 @@ const submitSettings = async () => {
 					requireEmailVerification: settings.value.requireEmailVerification,
 					defaultAvatar: settings.value.defaultAvatar
 				},
-				iconFile: null
+				iconFile: null,
+				homepageBannerFile: null
 			},
 			files
 		});
@@ -415,6 +376,7 @@ const submitSettings = async () => {
 			// Clear the icon and banner previews
 			icon.value = '';
 			homepageBanner.value = '';
+			imageStore.purgeHomepageBanner();
 
 			// Refresh the data from server
 			await refresh();
