@@ -230,13 +230,55 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { useBoardStore } from '@/stores/StoreBoard';
-import { useGraphQLMutation } from '@/composables/useGraphQL';
+import { useGraphQLMutation, useGraphQLQuery } from '@/composables/useGraphQL';
 
+const route = useRoute();
 const boardStore = useBoardStore();
 const board = computed(() => boardStore.board);
+
+// Fetch board data to ensure we have latest section settings
+const fetchBoardData = async () => {
+	const boardName = route.params.board;
+	const query = `
+		query GetBoard($name: String!) {
+			board(name: $name) {
+				id
+				name
+				hasFeed
+				hasThreads
+				sectionOrder
+				defaultSection
+			}
+		}
+	`;
+
+	const { data } = await useGraphQLQuery(query, {
+		variables: { name: boardName }
+	});
+
+	if (data.value?.board) {
+		boardStore.setBoard({
+			...boardStore.board,
+			...data.value.board
+		});
+	}
+};
+
+// Fetch on mount
+onMounted(async () => {
+	await fetchBoardData();
+
+	// Update refs after fetching
+	sections.value = {
+		feed: board.value?.hasFeed ?? true,
+		threads: board.value?.hasThreads ?? false,
+	};
+	orderedSections.value = parseSectionOrder(board.value?.sectionOrder || 'feed,threads');
+	defaultSection.value = board.value?.defaultSection || 'feed';
+});
 
 // Initialize sections from board section_config
 const sections = ref({

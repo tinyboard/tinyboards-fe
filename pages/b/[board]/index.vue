@@ -300,10 +300,19 @@ if (route.params?.board) {
         boardStore.setBoard(boardData.value.board);
 
         // Redirect to default section if configured
+        // Only redirect if feed is NOT enabled, or if user hasn't explicitly navigated to feed
         const defaultSection = boardData.value.board.defaultSection;
-        if (defaultSection && defaultSection !== 'feed') {
-            // Only redirect if we're on the board root (feed page)
+        const hasFeed = boardData.value.board.hasFeed;
+
+        if (defaultSection && defaultSection !== 'feed' && !hasFeed) {
+            // If feed is disabled and default is threads, redirect to threads
             if (defaultSection === 'threads' && boardData.value.board.hasThreads) {
+                await navigateTo(`/b/${boardName}/threads`, { replace: true });
+            }
+        } else if (defaultSection && defaultSection !== 'feed' && hasFeed) {
+            // Feed is enabled but not default - only redirect if no previous navigation
+            // Check if this is a direct navigation (not from clicking a link)
+            if (!process.client && defaultSection === 'threads' && boardData.value.board.hasThreads) {
                 await navigateTo(`/b/${boardName}/threads`, { replace: true });
             }
         }
