@@ -107,6 +107,12 @@ export const usePostsStore = defineStore("posts", {
             image
             body
             bodyHTML
+            participants {
+              id
+              name
+              displayName
+              avatar
+            }
           }
         }
       `;
@@ -175,6 +181,12 @@ export const usePostsStore = defineStore("posts", {
             image
             body
             bodyHTML
+            participants {
+              id
+              name
+              displayName
+              avatar
+            }
             comments(sort: $sort, context: $context, topCommentId: $topCommentId) {
               id
               body
@@ -276,6 +288,12 @@ export const usePostsStore = defineStore("posts", {
             image
             body
             bodyHTML
+            participants {
+              id
+              name
+              displayName
+              avatar
+            }
           }
         }
       `;
