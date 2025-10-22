@@ -109,6 +109,8 @@
                                                 <span>{{ formatDate(thread.creationDate) }}</span>
                                                 <span>·</span>
                                                 <span>{{ thread.commentCount }} {{ thread.commentCount === 1 ? 'reply' : 'replies' }}</span>
+                                                <span v-if="thread.participants && thread.participants.length > 0">·</span>
+                                                <CardsParticipantAvatars v-if="thread.participants && thread.participants.length > 0" :participants="thread.participants" />
                                             </div>
                                             <!-- Preview -->
                                             <p v-if="thread.bodyHTML" class="mt-2 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
@@ -291,6 +293,12 @@ const threadsQuery = `
             commentCount
             featuredBoard
             creator {
+                id
+                name
+                displayName
+                avatar
+            }
+            participants {
                 id
                 name
                 displayName

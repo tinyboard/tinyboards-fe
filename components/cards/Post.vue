@@ -77,7 +77,7 @@
               </span>
             </p>
           </div>
-          <div class="flex flex-wrap space-x-1 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
+          <div class="flex flex-wrap gap-2 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
             <NuxtLink v-if="site.enableBoards && !boardPage && post.board" :to="`/b/${post.board.name}`" class="font-bold"
               :style="{ 'color': post.board.primaryColor ? 'rgb(' + post.board.primaryColor + ')' : '' }">
@@ -119,6 +119,11 @@
                 <circle cx="12" cy="16" r="1"></circle>
                 <path d="M8 11v-4a4 4 0 0 1 8 0v4"></path>
               </svg>
+            </span>
+            <!-- Participants (compact view) -->
+            <span v-if="isCompact && post.participants && post.participants.length > 0" class="hidden sm:inline-flex items-center gap-1.5">
+              <span class="text-gray-400 dark:text-gray-600">·</span>
+              <CardsParticipantAvatars :participants="post.participants" :show-label="false" />
             </span>
             <!-- Video Icon -->
             <span v-if="hasVideo || hasUploadedVideo" title="Post contains a video">
@@ -306,6 +311,9 @@
                 post.commentCount
                 }}</span>
             </NuxtLink>
+          </li>
+          <li v-if="!isCompact && post.participants && post.participants.length > 0" class="ml-3 sm:ml-6 flex items-center">
+            <CardsParticipantAvatars :participants="post.participants" />
           </li>
           <!--<li class="ml-3 sm:ml-6">
             <button class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
