@@ -376,7 +376,7 @@ const getSectionLinks = () => {
         if (section === 'threads' && board.value?.hasThreads) {
             baseLinks.push({ name: "Threads", href: `/b/${board.value?.name}/threads` });
         } else if (section === 'feed' && board.value?.hasFeed) {
-            baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}` });
+            baseLinks.push({ name: "Feed", href: `/b/${board.value?.name}/feed` });
         }
     }
 
