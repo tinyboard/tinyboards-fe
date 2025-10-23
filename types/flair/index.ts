@@ -59,8 +59,8 @@ export interface FlairCategory {
   color?: string;
   boardId?: number;
   siteWide: boolean;
-  createdAt: string;
-  updatedAt: string;
+  creationDate: string;
+  updated: string;
 }
 
 export interface FlairTemplate {
@@ -74,8 +74,8 @@ export interface FlairTemplate {
   modOnly: boolean;
   boardId?: number;
   style: FlairStyle;
-  createdAt?: string;
-  updatedAt?: string;
+  creationDate?: string;
+  updated?: string;
   usageCount?: number;
 }
 

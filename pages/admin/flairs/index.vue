@@ -121,8 +121,8 @@ const { data: flairsData, pending, error, refresh } = await useGraphQLQuery(`
       isActive
       allowUserEdit
       usageCount
-      createdAt
-      updatedAt
+      creationDate
+      updated
     }
   }
 `);

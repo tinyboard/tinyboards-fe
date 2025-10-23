@@ -63,7 +63,7 @@
                 {{ post.title }}
               </NuxtLink>
               <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                by {{ post.author.name }} • {{ formatTimeAgo(post.createdAt) }}
+                by {{ post.author.name }} • {{ formatTimeAgo(post.creationDate) }}
               </div>
             </div>
           </li>

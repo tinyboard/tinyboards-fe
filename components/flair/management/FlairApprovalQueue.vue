@@ -58,7 +58,7 @@
                 {{ request.user.name }}
               </NuxtLink>
               <span class="text-sm text-gray-500 dark:text-gray-400">
-                {{ formatTimeAgo(request.createdAt) }}
+                {{ formatTimeAgo(request.creationDate) }}
               </span>
               <span
                 class="px-2 py-0.5 text-xs font-medium rounded-full"

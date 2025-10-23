@@ -48,8 +48,8 @@ export interface FlairCategory {
   name: string
   boardId?: number
   description?: string
-  createdAt: string
-  updatedAt: string
+  creationDate: string
+  updated: string
 }
 
 export interface Flair {
@@ -62,8 +62,8 @@ export interface Flair {
   boardId?: number
   isUserSelectable: boolean
   isModOnly: boolean
-  createdAt: string
-  updatedAt: string
+  creationDate: string
+  updated: string
 }
 
 export interface FlairAssignment {
@@ -100,8 +100,8 @@ export interface FlairTemplate {
   requiresApproval?: boolean
   isActive?: boolean
   usageCount?: number
-  createdAt?: string
-  updatedAt?: string
+  creationDate?: string
+  updated?: string
   createdBy?: number
   modOnly?: boolean
   emoji?: string

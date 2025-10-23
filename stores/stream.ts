@@ -83,8 +83,8 @@ export const useStreamStore = defineStore('stream', {
                 flairSubscriptionCount
                 boardSubscriptionCount
               }
-              createdAt
-              updatedAt
+              creationDate
+              updated
             }
           }
         `)
@@ -170,8 +170,8 @@ export const useStreamStore = defineStore('stream', {
                   flairSubscriptionCount
                   boardSubscriptionCount
                 }
-                createdAt
-                updatedAt
+                creationDate
+                updated
               }
             }
           `
@@ -238,8 +238,8 @@ export const useStreamStore = defineStore('stream', {
                   flairSubscriptionCount
                   boardSubscriptionCount
                 }
-                createdAt
-                updatedAt
+                creationDate
+                updated
               }
             }
           `
@@ -295,8 +295,8 @@ export const useStreamStore = defineStore('stream', {
                 flairSubscriptionCount
                 boardSubscriptionCount
               }
-              createdAt
-              updatedAt
+              creationDate
+              updated
             }
           }
         `, { input })
@@ -346,7 +346,7 @@ export const useStreamStore = defineStore('stream', {
                 flairSubscriptionCount
                 boardSubscriptionCount
               }
-              updatedAt
+              updated
             }
           }
         `, { id, input })
@@ -662,7 +662,7 @@ export const useStreamStore = defineStore('stream', {
                 score
                 commentCount
                 isNsfw
-                createdAt
+                creationDate
                 creator {
                   id
                   username
@@ -736,7 +736,7 @@ export const useStreamStore = defineStore('stream', {
                 flairSubscriptionCount
                 boardSubscriptionCount
               }
-              createdAt
+              creationDate
             }
           }
         `)

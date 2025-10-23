@@ -61,8 +61,8 @@ export interface EditMessageMutation {
 export interface Message {
   id: number;
   content: string;
-  createdAt: string;
-  updatedAt?: string;
+  creationDate: string;
+  updated?: string;
   sender: User;
   recipient: User;
   conversationId: number;
@@ -72,8 +72,8 @@ export interface Conversation {
   id: number;
   participants: User[];
   messages: Message[];
-  createdAt: string;
-  updatedAt: string;
+  creationDate: string;
+  updated: string;
 }
 
 export type PostFragment = {
@@ -96,8 +96,8 @@ export interface Post {
   isNSFW: boolean;
   isFeatured: boolean;
   isRemoved: boolean;
-  createdAt: string;
-  updatedAt: string;
+  creationDate: string;
+  updated: string;
   voteScore: number;
   userVote?: number;
   author: User;
@@ -113,8 +113,8 @@ export interface Comment {
   id: number;
   content: string;
   isRemoved: boolean;
-  createdAt: string;
-  updatedAt: string;
+  creationDate: string;
+  updated: string;
   voteScore: number;
   userVote?: number;
   author: User;

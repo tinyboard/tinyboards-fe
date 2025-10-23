@@ -101,8 +101,8 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 			id
 			isRead
 			type
-			createdAt
-			updatedAt
+			creationDate
+			updated
 			comment {
 				id
 				body

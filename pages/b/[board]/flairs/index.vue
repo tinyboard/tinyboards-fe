@@ -120,8 +120,8 @@ const { data: flairsData, pending, error, refresh } = await useGraphQLQuery(`
           id
           name
         }
-        createdAt
-        updatedAt
+        creationDate
+        updated
       }
     }
   }

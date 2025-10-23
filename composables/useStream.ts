@@ -57,14 +57,14 @@ export const useStreamMutations = () => {
         generateShareToken: {
           token: string
           expiresAt?: string
-          createdAt: string
+          creationDate: string
         }
       }>(`
         mutation GenerateShareToken($streamId: Int!, $expiresInDays: Int) {
           generateShareToken(streamId: $streamId, expiresInDays: $expiresInDays) {
             token
             expiresAt
-            createdAt
+            creationDate
           }
         }
       `, { streamId, expiresInDays })

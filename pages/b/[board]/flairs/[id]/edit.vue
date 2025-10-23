@@ -176,8 +176,8 @@ const { data: flairData, error, refresh } = await useGraphQLQuery(`
         name
         myModPermissions
       }
-      createdAt
-      updatedAt
+      creationDate
+      updated
     }
     getFlairUsageStats(flairId: $flairId) {
       totalUsage
@@ -248,7 +248,7 @@ const { data: usageData } = await useGraphQLQuery(`
       author {
         name
       }
-      createdAt
+      creationDate
     }
     getFlairTopUsers(flairId: $flairId, limit: 5) {
       id

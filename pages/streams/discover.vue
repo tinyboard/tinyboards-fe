@@ -126,7 +126,7 @@ const fetchPublicStreams = async () => {
             flairSubscriptionCount
             boardSubscriptionCount
           }
-          createdAt
+          creationDate
         }
       }
     `, { sortBy: sortBy.value })

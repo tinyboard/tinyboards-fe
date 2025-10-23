@@ -20,8 +20,8 @@ export interface Stream {
   isFollowedByMe: boolean
   addedToNavbar: boolean
 
-  createdAt: string
-  updatedAt: string
+  creationDate: string
+  updated: string
 }
 
 export interface FlairSubscription {
@@ -83,7 +83,7 @@ export interface StreamPost {
   flair?: Flair
   score: number
   commentCount: number
-  createdAt: string
+  creationDate: string
   isNsfw: boolean
 }
 
@@ -135,7 +135,7 @@ export enum TimeRange {
 export interface StreamShareToken {
   token: string
   expiresAt?: string
-  createdAt: string
+  creationDate: string
 }
 
 export interface SubscriptionSelection {

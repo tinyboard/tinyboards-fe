@@ -199,8 +199,8 @@ const loadCategories = async () => {
           color
           boardId
           siteWide
-          createdAt
-          updatedAt
+          creationDate
+          updated
         }
       }
     `;
@@ -243,8 +243,8 @@ const createCategory = async () => {
           color
           boardId
           siteWide
-          createdAt
-          updatedAt
+          creationDate
+          updated
         }
       }
     `;

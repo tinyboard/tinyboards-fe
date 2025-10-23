@@ -170,8 +170,8 @@ const { data: flairData, error, refresh } = await useGraphQLQuery(`
       maxUses
       expiresAt
       usageCount
-      createdAt
-      updatedAt
+      creationDate
+      updated
     }
     getSiteFlairUsageStats(flairId: $flairId) {
       totalUsage
@@ -227,7 +227,7 @@ const { data: usageData } = await useGraphQLQuery(`
       author {
         name
       }
-      createdAt
+      creationDate
     }
     getSiteFlairTopUsers(flairId: $flairId, limit: 5) {
       id

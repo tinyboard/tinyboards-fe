@@ -66,7 +66,7 @@
 							id
 							reason
 							resolved
-							createdAt
+							creationDate
 							reporter {
 								id
 								name
