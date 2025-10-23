@@ -159,7 +159,7 @@
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle"
-            :to="`/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`">
+            :to="post.urlPath || `${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.slug || post.titleChunk || 'post'}`">
             {{ post.title }}
           </NuxtLink>
           <!-- Post Flair Display -->

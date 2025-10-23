@@ -643,9 +643,12 @@ const threadQuery = `
         post(id: $id) {
             id
             title
+            slug
+            urlPath
             body
             bodyHTML
             postType
+            boardId
             creationDate
             updated
             commentCount
@@ -721,8 +724,11 @@ const fetchComments = async (pageNum = 1) => {
             query GetComments($postId: Int!, $limit: Int, $page: Int, $sort: CommentSortType) {
                 comments(postId: $postId, limit: $limit, page: $page, sort: $sort) {
                     id
+                    slug
                     body
                     bodyHTML
+                    boardId
+                    postId
                     creationDate
                     updated
                     quotedCommentId
@@ -886,8 +892,11 @@ const submitComment = async () => {
             mutation CreateComment($postId: Int!, $body: String!, $quotedCommentId: Int) {
                 createComment(replyToPostId: $postId, body: $body, quotedCommentId: $quotedCommentId) {
                     id
+                    slug
                     body
                     bodyHTML
+                    boardId
+                    postId
                     creationDate
                     quotedCommentId
                     creator {

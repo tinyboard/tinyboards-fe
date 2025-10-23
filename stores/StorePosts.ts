@@ -69,6 +69,8 @@ export const usePostsStore = defineStore("posts", {
             id
             title
             titleChunk
+            slug
+            urlPath
             url
             isLocked
             featuredBoard
@@ -177,6 +179,8 @@ export const usePostsStore = defineStore("posts", {
             id
             title
             titleChunk
+            slug
+            urlPath
             url
             isLocked
             featuredBoard
@@ -358,6 +362,8 @@ export const usePostsStore = defineStore("posts", {
             id
             title
             titleChunk
+            slug
+            urlPath
             url
             isLocked
             featuredBoard

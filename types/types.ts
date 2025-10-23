@@ -80,6 +80,8 @@ export type PostFragment = {
     id: number;
     title: string;
     titleChunk: string;
+    slug?: string;
+    urlPath?: string;
     isDeleted: boolean;
     isLocked: boolean;
     creatorId: number;
@@ -89,6 +91,9 @@ export type PostFragment = {
 export interface Post {
   id: number;
   title: string;
+  titleChunk?: string;
+  slug?: string;
+  urlPath?: string;
   content?: string;
   url?: string;
   isLocked: boolean;
@@ -102,6 +107,7 @@ export interface Post {
   userVote?: number;
   author: User;
   board?: Board;
+  boardId?: number;
   commentCount: number;
   image?: string;
   body?: string;
@@ -111,7 +117,12 @@ export interface Post {
 
 export interface Comment {
   id: number;
+  slug?: string;
   content: string;
+  body?: string;
+  bodyHTML?: string;
+  boardId?: number;
+  postId?: number;
   isRemoved: boolean;
   creationDate: string;
   updated: string;
