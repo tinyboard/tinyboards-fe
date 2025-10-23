@@ -26,7 +26,7 @@
     <ul v-else-if="submissions && submissions.length > 0" class="divide-y divide-gray-100 dark:divide-gray-800">
       <li v-for="post in submissions" :key="post.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
         <NuxtLink
-          :to="`/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`"
+          :to="post.urlPath || `/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.slug || post.titleChunk || 'post'}`"
           class="flex items-start gap-2 p-2.5"
         >
           <!-- Post icon/avatar -->
@@ -104,6 +104,8 @@ const query_str = `
       id
       title
       titleChunk
+      slug
+      urlPath
       creationDate
       postType
       creator {

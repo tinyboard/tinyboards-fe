@@ -151,7 +151,7 @@
       <div class="px-2.5 sm:px-0 mt-2.5 sm:mt-4">
         <!-- Title -->
         <NuxtLink :external="!!post.url"
-          :to="!!post.url ? post.url : `${site.enableBoards ? '/b/' + (post.board?.name || '') + '/p' : '/p'}/${post.id}/${post.titleChunk}`"
+          :to="!!post.url ? post.url : (post.urlPath || `${site.enableBoards ? '/b/' + (post.board?.name || '') + '/p' : '/p'}/${post.id}/${post.slug || post.titleChunk || 'post'}`)"
           :target="post.url ? '_blank' : null" class="text-lg md:text-xl font-medium dark:text-gray-100">
           {{ post.title }}
         </NuxtLink>

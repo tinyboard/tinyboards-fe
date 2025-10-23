@@ -30,7 +30,7 @@
     <ul v-else-if="threads && threads.length > 0" class="divide-y divide-gray-100 dark:divide-gray-800">
       <li v-for="thread in threads" :key="thread.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
         <NuxtLink
-          :to="`/b/${thread.board?.name || 'unknown'}/p/${thread.id}/${thread.titleChunk || 'post'}`"
+          :to="thread.urlPath || `/b/${thread.board?.name || 'unknown'}/p/${thread.id}/${thread.slug || thread.titleChunk || 'post'}`"
           class="flex items-start gap-2 p-2.5"
         >
           <!-- Thread icon/avatar -->
@@ -93,6 +93,8 @@ const postsQuery = `
       id
       title
       titleChunk
+      slug
+      urlPath
       commentCount
       creationDate
       updated
