@@ -162,6 +162,16 @@
             :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk || 'post'}`">
             {{ post.title }}
           </NuxtLink>
+          <!-- Post Flair Display -->
+          <div v-if="post.flairs && post.flairs.length > 0" class="mt-2 flex items-center gap-2">
+            <FlairDisplayPostFlair
+              :post="post"
+              :size="isCompact ? 'sm' : 'md'"
+              :clickable="true"
+              :editable="false"
+              @flair-click="handleFlairClick"
+            />
+          </div>
           <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
             'max-h-56 overlay': !isExpanded && (post.bodyHTML && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img')))
           }">
@@ -831,6 +841,13 @@ const percentUpvoted = computed(() => {
   if (total === 0) return 0;
   return toPercent(upvotes / total);
 });
+
+// Flair click handler
+const handleFlairClick = (flairId: number) => {
+  if (props.post.board) {
+    navigateTo(`/b/${props.post.board.name}?flair=${flairId}`);
+  }
+};
 </script>
 <style scoped>
 .border-inherit {

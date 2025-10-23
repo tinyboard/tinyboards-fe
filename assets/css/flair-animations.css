@@ -1,0 +1,236 @@
+/* Flair Animation Styles for TinyBoards */
+
+/* Pulse Glow Animation - Breathing effect with expanding glow */
+@keyframes flair-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-flair-pulse {
+  animation: flair-pulse 2s ease-in-out infinite;
+}
+
+/* Shimmer Animation - Moving gradient shine effect */
+@keyframes flair-shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-flair-shimmer {
+  background-size: 200% 100% !important;
+  animation: flair-shimmer 2s linear infinite;
+}
+
+/* Bounce Animation - Subtle vertical bounce */
+@keyframes flair-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-flair-bounce {
+  animation: flair-bounce 2s ease-in-out infinite;
+}
+
+/* Additional utility classes for flairs */
+
+/* Flair container base styles */
+.flair-badge {
+  @apply inline-flex items-center gap-1 font-medium;
+}
+
+/* Size variants */
+.flair-badge-sm {
+  @apply text-xs px-2 py-0.5;
+}
+
+.flair-badge-md {
+  @apply text-sm px-2.5 py-1;
+}
+
+.flair-badge-lg {
+  @apply text-base px-3 py-1.5;
+}
+
+/* Hover effects for interactive flairs */
+.flair-badge-interactive {
+  @apply cursor-pointer transition-transform duration-200;
+}
+
+.flair-badge-interactive:hover {
+  @apply scale-105;
+}
+
+.flair-badge-interactive:active {
+  @apply scale-95;
+}
+
+/* Accessibility - focus styles */
+.flair-badge:focus-visible {
+  @apply outline-none ring-2 ring-offset-2 ring-primary;
+}
+
+/* Responsive text sizing */
+@media (max-width: 640px) {
+  .flair-badge-responsive {
+    @apply text-xs px-2 py-0.5;
+  }
+}
+
+@media (min-width: 641px) {
+  .flair-badge-responsive {
+    @apply text-sm px-2.5 py-1;
+  }
+}
+
+/* Custom scrollbar for flair lists */
+.flair-list-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.flair-list-scroll::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+.flair-list-scroll::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+}
+
+.flair-list-scroll::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500 dark:bg-gray-500;
+}
+
+/* Loading skeleton for flair */
+@keyframes flair-skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.flair-skeleton {
+  @apply bg-gray-200 dark:bg-gray-700 rounded;
+  animation: flair-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Gradient background helpers */
+.flair-gradient-linear {
+  background: linear-gradient(var(--flair-gradient-angle, 90deg), var(--flair-gradient-stops));
+}
+
+.flair-gradient-radial {
+  background: radial-gradient(circle, var(--flair-gradient-stops));
+}
+
+/* Text shadow helpers */
+.flair-text-shadow-soft {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.flair-text-shadow-medium {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.flair-text-shadow-strong {
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.flair-text-glow {
+  text-shadow:
+    0 0 10px currentColor,
+    0 0 20px currentColor,
+    0 0 30px currentColor;
+}
+
+/* Border variants */
+.flair-bordered {
+  @apply border-2;
+}
+
+.flair-bordered-light {
+  @apply border border-gray-300 dark:border-gray-600;
+}
+
+.flair-bordered-primary {
+  @apply border-2 border-primary;
+}
+
+/* Pill shape */
+.flair-pill {
+  @apply rounded-full;
+}
+
+/* Stacking flairs */
+.flair-stack {
+  @apply flex flex-wrap gap-1.5 items-center;
+}
+
+.flair-stack-compact {
+  @apply flex flex-wrap gap-1 items-center;
+}
+
+/* Flair with max width for long text */
+.flair-truncate {
+  @apply max-w-[200px] truncate;
+}
+
+/* Emoji sizing within flairs */
+.flair-badge .emoji-sm {
+  @apply text-xs;
+}
+
+.flair-badge .emoji-md {
+  @apply text-sm;
+}
+
+.flair-badge .emoji-lg {
+  @apply text-base;
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  .flair-badge {
+    /* Ensure text is readable on dark backgrounds */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Print styles - simplify flairs for printing */
+@media print {
+  .flair-badge {
+    @apply border border-gray-400 bg-white text-black;
+    animation: none !important;
+    text-shadow: none !important;
+  }
+
+  .animate-flair-pulse,
+  .animate-flair-shimmer,
+  .animate-flair-bounce {
+    animation: none !important;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-flair-pulse,
+  .animate-flair-shimmer,
+  .animate-flair-bounce {
+    animation: none !important;
+  }
+}

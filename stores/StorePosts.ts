@@ -113,6 +113,31 @@ export const usePostsStore = defineStore("posts", {
               displayName
               avatar
             }
+            flairs {
+              id
+              flairId
+              flair {
+                id
+                name
+                style
+                emoji
+                textColor
+                backgroundColor
+                borderColor
+                borderWidth
+                borderStyle
+                borderRadius
+                shadowColor
+                shadowOffsetX
+                shadowOffsetY
+                shadowBlur
+                animationType
+                animationDuration
+                gradientStart
+                gradientEnd
+                gradientDirection
+              }
+            }
           }
         }
       `;
@@ -187,6 +212,31 @@ export const usePostsStore = defineStore("posts", {
               displayName
               avatar
             }
+            flairs {
+              id
+              flairId
+              flair {
+                id
+                name
+                style
+                emoji
+                textColor
+                backgroundColor
+                borderColor
+                borderWidth
+                borderStyle
+                borderRadius
+                shadowColor
+                shadowOffsetX
+                shadowOffsetY
+                shadowBlur
+                animationType
+                animationDuration
+                gradientStart
+                gradientEnd
+                gradientDirection
+              }
+            }
             comments(sort: $sort, context: $context, topCommentId: $topCommentId) {
               id
               body
@@ -205,6 +255,26 @@ export const usePostsStore = defineStore("posts", {
                 postCount
                 commentCount
                 rep
+                flairs {
+                  id
+                  flairId
+                  flair {
+                    id
+                    name
+                    style
+                    emoji
+                    textColor
+                    backgroundColor
+                    borderColor
+                    borderWidth
+                    borderStyle
+                    borderRadius
+                  }
+                }
+              }
+              board {
+                id
+                name
               }
               level
               parentId
@@ -293,6 +363,31 @@ export const usePostsStore = defineStore("posts", {
               name
               displayName
               avatar
+            }
+            flairs {
+              id
+              flairId
+              flair {
+                id
+                name
+                style
+                emoji
+                textColor
+                backgroundColor
+                borderColor
+                borderWidth
+                borderStyle
+                borderRadius
+                shadowColor
+                shadowOffsetX
+                shadowOffsetY
+                shadowBlur
+                animationType
+                animationDuration
+                gradientStart
+                gradientEnd
+                gradientDirection
+              }
             }
           }
         }

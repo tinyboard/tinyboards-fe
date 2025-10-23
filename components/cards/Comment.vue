@@ -39,6 +39,14 @@
                 class="flex comments-center text-sm">
                 <strong>{{ comment.creator?.displayName ?? comment.creator?.name }}</strong>
                 <span v-if="comment.creator?.instance">@{{ comment.creator.instance }}</span>
+                <!-- User Flair -->
+                <FlairDisplayUserFlair
+                  v-if="comment.creator"
+                  :user="comment.creator"
+                  :board-id="comment.board?.id"
+                  :size="'xs'"
+                  class="ml-1"
+                />
                 <!-- Role -->
                 <span v-if="comment.creator?.isAdmin" class="ml-1 badge badge-red">Admin</span>
                 <span v-if="isOP" class="ml-1 badge badge-blue">OP</span>

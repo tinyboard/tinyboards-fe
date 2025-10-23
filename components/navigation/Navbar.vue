@@ -27,6 +27,10 @@
                         v-if="site.enableBoards"
                         class="ml-8 hidden md:block"
                     />
+                    <StreamsCustomFeedsDropdown
+                        v-if="isAuthed"
+                        class="ml-4 hidden md:block"
+                    />
                 </div>
                 <div class="hidden md:flex space-x-4">
                     <NuxtLink to="/register" class="button primary">
@@ -226,10 +230,15 @@
 <script setup>
 import { useSiteStore } from "@/stores/StoreSite.js";
 import { useBoardStore } from "@/stores/StoreBoard.js";
+import { useLoggedInUser } from "@/stores/StoreAuth.js";
 
 const site = useSiteStore();
 const boardStore = useBoardStore();
+const userStore = useLoggedInUser();
 const dark = false;
+
+// Check authentication status
+const isAuthed = computed(() => userStore.isAuthed);
 
 // Yellow Text
 const yellowText = [

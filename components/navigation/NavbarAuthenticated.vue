@@ -412,6 +412,48 @@
 					</div>
 				</NuxtLink>
 			</div>
+			<!-- My Streams (Mobile) -->
+			<div v-if="navbarStreams && navbarStreams.length > 0" class="py-2">
+				<div class="px-4 py-1 flex items-center justify-between">
+					<span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+						My Streams
+					</span>
+					<NuxtLink
+						to="/streams"
+						class="text-xs font-medium text-primary hover:text-primary-hover dark:text-blue-400"
+						@click="isOpen = false">
+						Manage
+					</NuxtLink>
+				</div>
+				<NuxtLink
+					v-for="stream in navbarStreams"
+					:key="stream.id"
+					:to="`/streams/@${v.name}/${stream.slug}`"
+					class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+					@click="isOpen = false">
+					<span v-if="stream.icon" class="mr-2 text-lg">{{ stream.icon }}</span>
+					<svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
+						stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+						<path d="M12 7v5l3 3" />
+					</svg>
+					<span :style="stream.color ? { color: stream.color } : {}">{{ stream.name }}</span>
+				</NuxtLink>
+				<NuxtLink
+					to="/streams/create"
+					class="flex items-center px-4 py-2 text-primary dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+					@click="isOpen = false">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
+						stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+						<circle cx="12" cy="12" r="9" />
+						<line x1="9" y1="12" x2="15" y2="12" />
+						<line x1="12" y1="9" x2="12" y2="15" />
+					</svg>
+					<span>Create Stream</span>
+				</NuxtLink>
+			</div>
 			<!-- Divider -->
 			<hr class="my-2 dark:border-gray-700 dark:border-opacity-70">
 			<!-- Sign Out Button -->
@@ -524,6 +566,26 @@ const { data: notificationCounts, error: notificationError, refresh: refreshNoti
   : { data: ref(null), error: ref(null), refresh: () => Promise.resolve() };
 
 const notificationsPending = ref(false);
+
+// Get navbar streams - only execute if authenticated
+const getNavbarStreamsQuery = `
+  query GetNavbarStreams {
+    getNavbarStreams {
+      id
+      name
+      slug
+      icon
+      color
+      isPinned
+    }
+  }
+`;
+
+const { data: streamsData, error: streamsError, refresh: refreshStreams } = shouldFetchData
+  ? await useGraphQLQuery(getNavbarStreamsQuery)
+  : { data: ref(null), error: ref(null), refresh: () => Promise.resolve() };
+
+const navbarStreams = computed(() => streamsData.value?.getNavbarStreams || []);
 
 // Register refresh callback for cross-component communication
 onMounted(() => {
