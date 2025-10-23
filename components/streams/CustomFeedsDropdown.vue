@@ -48,7 +48,7 @@
             <NuxtLink
               v-for="stream in navbarStreams"
               :key="stream.id"
-              :to="`/streams/@${stream.creator.username}/${stream.slug}`"
+              :to="`/streams/@${stream.creator.name}/${stream.slug}`"
               @click="isOpen = false"
               class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >

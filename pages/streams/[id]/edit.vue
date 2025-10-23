@@ -2,7 +2,7 @@
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
       <NuxtLink
-        :to="`/streams/@${stream?.creator?.username}/${stream?.slug}`"
+        :to="`/streams/@${stream?.creator?.name}/${stream?.slug}`"
         class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-4"
       >
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -147,7 +147,7 @@
 
         <div class="flex gap-3">
           <NuxtLink
-            :to="`/streams/@${stream.creator.username}/${stream.slug}`"
+            :to="`/streams/@${stream.creator.name}/${stream.slug}`"
             class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Cancel
@@ -235,7 +235,7 @@ const handleSave = async () => {
     }
 
     await updateStream(stream.value.id, input)
-    router.push(`/streams/@${stream.value.creator.username}/${stream.value.slug}`)
+    router.push(`/streams/@${stream.value.creator.name}/${stream.value.slug}`)
   } catch (err: any) {
     editError.value = err.message || 'Failed to update stream'
   } finally {

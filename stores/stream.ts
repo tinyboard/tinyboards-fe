@@ -72,9 +72,11 @@ export const useStreamStore = defineStore('stream', {
               isFollowedByMe
               creator {
                 id
-                username
+                name
+                displayName
                 avatar
                 isAdmin
+                adminLevel
               }
               aggregates {
                 id
@@ -284,9 +286,11 @@ export const useStreamStore = defineStore('stream', {
               isFollowedByMe
               creator {
                 id
-                username
+                name
+                displayName
                 avatar
                 isAdmin
+                adminLevel
               }
               aggregates {
                 id
@@ -764,7 +768,8 @@ export const useStreamStore = defineStore('stream', {
               addedToNavbar
               creator {
                 id
-                username
+                name
+                displayName
               }
             }
           }

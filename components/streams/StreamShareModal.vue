@@ -41,7 +41,7 @@
               {{ stream.name }}
             </div>
             <div class="text-sm text-gray-600 dark:text-gray-400">
-              by @{{ stream.creator.username }}
+              by @{{ stream.creator.name }}
             </div>
           </div>
         </div>
@@ -210,7 +210,7 @@ const copiedPublic = ref(false)
 const copiedToken = ref(false)
 
 const publicUrl = computed(() => {
-  return `${window.location.origin}/streams/@${props.stream.creator.username}/${props.stream.slug}`
+  return `${window.location.origin}/streams/@${props.stream.creator.name}/${props.stream.slug}`
 })
 
 const shareTokenUrl = computed(() => {

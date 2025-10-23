@@ -119,7 +119,8 @@ export const useStreamMutations = () => {
             showNsfw
             creator {
               id
-              username
+              name
+              displayName
               avatar
             }
             flairSubscriptions {

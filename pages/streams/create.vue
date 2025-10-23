@@ -49,7 +49,7 @@ const router = useRouter()
 
 const handleSuccess = (stream: any) => {
   // Redirect to the new stream
-  router.push(`/streams/@${stream.creator.username}/${stream.slug}`)
+  router.push(`/streams/@${stream.creator.name}/${stream.slug}`)
 }
 
 const handleCancel = () => {

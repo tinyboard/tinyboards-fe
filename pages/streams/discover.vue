@@ -117,7 +117,8 @@ const fetchPublicStreams = async () => {
           isFollowedByMe
           creator {
             id
-            username
+            name
+            displayName
             avatar
           }
           aggregates {
@@ -150,7 +151,7 @@ const filteredStreams = computed(() => {
   return publicStreams.value.filter(stream =>
     stream.name.toLowerCase().includes(query) ||
     stream.description?.toLowerCase().includes(query) ||
-    stream.creator.username.toLowerCase().includes(query)
+    stream.creator.name.toLowerCase().includes(query)
   )
 })
 

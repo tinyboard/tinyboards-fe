@@ -49,9 +49,11 @@ export interface StreamAggregates {
 
 export interface User {
   id: number
-  username: string
+  name: string
+  displayName?: string
   avatar?: string
   isAdmin: boolean
+  adminLevel?: number
 }
 
 export interface Board {

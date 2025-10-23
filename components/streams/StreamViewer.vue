@@ -28,7 +28,7 @@
                 {{ stream.name }}
               </h1>
               <p class="text-gray-600 dark:text-gray-400">
-                by @{{ stream.creator.username }}
+                by @{{ stream.creator.name }}
               </p>
             </div>
 

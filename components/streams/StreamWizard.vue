@@ -575,7 +575,7 @@ const createStream = async () => {
 
 const viewStream = () => {
   if (createdStream.value) {
-    router.push(`/streams/@${createdStream.value.creator.username}/${createdStream.value.slug}`)
+    router.push(`/streams/@${createdStream.value.creator.name}/${createdStream.value.slug}`)
   }
 }
 
