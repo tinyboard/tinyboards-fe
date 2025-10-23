@@ -77,7 +77,7 @@
 					<span class="font-bold">System Notification</span>
 				</p>
 				<div v-if="notification.post" class="mt-1">
-					<NuxtLink :to="`/p/${notification.post.id}`" class="font-medium text-blue-600 hover:underline">
+					<NuxtLink :to="`/b/${notification.post.board?.name || 'unknown'}/p/${notification.post.id}/${notification.post.titleChunk || 'post'}`" class="font-medium text-blue-600 hover:underline">
 						{{ notification.post.title }}
 					</NuxtLink>
 					<div v-if="notification.post.body" class="prose prose-sm max-w-none mt-1" v-html="notification.post.body"></div>
@@ -174,10 +174,12 @@ const creator = computed((): NotificationCreator | null => {
 
 // Generate the link to the post/comment
 const postLink = computed((): string => {
+	const boardName = props.notification.post?.board?.name || props.notification.comment?.post?.board?.name || 'unknown';
 	if (props.notification.comment) {
-		return `/p/${props.notification.comment.post.id}/${props.notification.comment.id}`;
+		const post = props.notification.comment.post;
+		return `/b/${boardName}/p/${post.id}/${post.titleChunk || 'post'}/${props.notification.comment.id}`;
 	} else if (props.notification.post) {
-		return `/p/${props.notification.post.id}`;
+		return `/b/${boardName}/p/${props.notification.post.id}/${props.notification.post.titleChunk || 'post'}`;
 	}
 	return '#';
 });

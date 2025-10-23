@@ -45,7 +45,7 @@
 						</div>
 						<h4 class="text-base font-medium text-gray-900 dark:text-gray-100 mb-1">{{ report.originalPostTitle }}</h4>
 						<p class="text-sm text-gray-600 dark:text-gray-400 mb-2"><strong>Reason:</strong> {{ report.reason }}</p>
-						<NuxtLink :to="`/p/${report.postId}`" class="text-sm text-primary hover:underline">View post →</NuxtLink>
+						<NuxtLink :to="`/b/${report.post?.board?.name || 'unknown'}/p/${report.postId}/${report.post?.titleChunk || 'post'}`" class="text-sm text-primary hover:underline">View post →</NuxtLink>
 					</div>
 					<button
 						@click="openResolveModal(report)"

@@ -57,7 +57,7 @@
             <div class="flex-shrink-0 text-lg font-bold text-gray-400 dark:text-gray-600">{{ post.score }}</div>
             <div class="flex-1 min-w-0">
               <NuxtLink
-                :to="`/p/${post.id}`"
+                :to="`/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`"
                 class="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate block"
               >
                 {{ post.title }}

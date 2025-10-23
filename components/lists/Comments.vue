@@ -15,7 +15,7 @@
                 </div>
                 <div class="mb-2 text-gray-700" v-else>
                     <NuxtLink
-                        :to="`/p/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
+                        :to="`/b/${comment.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
                         class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
                     </NuxtLink>
                 </div>

@@ -74,12 +74,15 @@ const replies = ref([] as Comment[]);
 
 // Contextual link
 const context = computed(() => {
+	const boardName = props.notification.post?.board?.name || 'unknown';
+	const postId = props.notification.post.id;
+	const titleChunk = props.notification.post.titleChunk || 'post';
 	if (!!props.notification.parentId) {
-		return `/p/${props.notification.post.id}/${props.notification.parentId}`
+		return `/b/${boardName}/p/${postId}/${titleChunk}/${props.notification.parentId}`
 	} else if (!!props.notification.id) {
-		return `/p/${props.notification.post.id}/${props.notification.id}`
+		return `/b/${boardName}/p/${postId}/${titleChunk}/${props.notification.id}`
 	} else {
-		return `/p/${props.notification.post.id}`
+		return `/b/${boardName}/p/${postId}/${titleChunk}`
 	}
 });
 

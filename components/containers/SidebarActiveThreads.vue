@@ -30,7 +30,7 @@
     <ul v-else-if="threads && threads.length > 0" class="divide-y divide-gray-100 dark:divide-gray-800">
       <li v-for="thread in threads" :key="thread.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
         <NuxtLink
-          :to="`/p/${thread.id}`"
+          :to="`/b/${thread.board?.name || 'unknown'}/p/${thread.id}/${thread.titleChunk || 'post'}`"
           class="flex items-start gap-2 p-2.5"
         >
           <!-- Thread icon/avatar -->
@@ -92,6 +92,7 @@ const postsQuery = `
     listPosts(limit: $limit, sort: $sort, listingType: $listingType) {
       id
       title
+      titleChunk
       commentCount
       creationDate
       updated

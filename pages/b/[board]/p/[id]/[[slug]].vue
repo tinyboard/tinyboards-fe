@@ -21,6 +21,17 @@
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
                                           <div role="status" class="max-w-sm">
                                                 <h1>Loading post...</h1>
+                                                <div v-if="postResult.error?.value" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                                                      <p class="font-bold">Error loading post:</p>
+                                                      <p>{{ postResult.error.value }}</p>
+                                                </div>
+                                                <div class="mt-4 text-xs text-gray-500">
+                                                      <p>Debug info:</p>
+                                                      <p>Post ID: {{ postID }}</p>
+                                                      <p>Has data: {{ !!postResult.data?.value }}</p>
+                                                      <p>Has post: {{ !!postResult.post?.value }}</p>
+                                                      <p>Has error: {{ !!postResult.error?.value }}</p>
+                                                </div>
                                           </div>
                                     </div>
                               </div>
@@ -88,6 +99,12 @@ let postResult;
 try {
   postResult = await usePost(postID);
 
+  // Debug logging
+  console.log('postResult:', postResult);
+  console.log('postResult.data:', postResult.data?.value);
+  console.log('postResult.post:', postResult.post?.value);
+  console.log('postResult.error:', postResult.error?.value);
+
   // Handle authentication errors
   if (postResult.error.value?.isAuthError) {
     // Clear invalid token and redirect to login
@@ -133,9 +150,6 @@ if (site.enableBoards && postResult.post?.value?.board?.name) {
             (hasBoard && boardInParams.toLowerCase() !== boardName.toLowerCase())) {
             await navigateTo(`/b/${boardName}/p/${postResult.post.value.id}/${postResult.post.value.titleChunk || 'post'}${params.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
       }
-} else if (route.params?.hasOwnProperty("board")) {
-      // if it's there but shouldn't, also redirect
-      await navigateTo(`/p/${postResult.post?.value?.id || 'unknown'}/${postResult.post?.value?.titleChunk || 'post'}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
 }
 
 

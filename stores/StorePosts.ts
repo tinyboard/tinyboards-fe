@@ -115,27 +115,40 @@ export const usePostsStore = defineStore("posts", {
             }
             flairs {
               id
-              flairId
-              flair {
+              templateId
+              textDisplay
+              backgroundColor
+              textColor
+              template {
                 id
-                name
-                style
-                emoji
-                textColor
+                textDisplay
+                textEditable
                 backgroundColor
-                borderColor
-                borderWidth
-                borderStyle
-                borderRadius
-                shadowColor
-                shadowOffsetX
-                shadowOffsetY
-                shadowBlur
-                animationType
-                animationDuration
-                gradientStart
-                gradientEnd
-                gradientDirection
+                textColor
+                styleConfig
+                emojiIds
+                style {
+                  backgroundColor
+                  textColor
+                  borderColor
+                  borderWidth
+                  borderRadius
+                  borderStyle
+                  fontWeight
+                  fontSize
+                  padding
+                  margin
+                  customCss
+                  shadowColor
+                  shadowOffsetX
+                  shadowOffsetY
+                  shadowBlur
+                  animationType
+                  animationDuration
+                  gradientStart
+                  gradientEnd
+                  gradientDirection
+                }
               }
             }
           }
@@ -214,27 +227,40 @@ export const usePostsStore = defineStore("posts", {
             }
             flairs {
               id
-              flairId
-              flair {
+              templateId
+              textDisplay
+              backgroundColor
+              textColor
+              template {
                 id
-                name
-                style
-                emoji
-                textColor
+                textDisplay
+                textEditable
                 backgroundColor
-                borderColor
-                borderWidth
-                borderStyle
-                borderRadius
-                shadowColor
-                shadowOffsetX
-                shadowOffsetY
-                shadowBlur
-                animationType
-                animationDuration
-                gradientStart
-                gradientEnd
-                gradientDirection
+                textColor
+                styleConfig
+                emojiIds
+                style {
+                  backgroundColor
+                  textColor
+                  borderColor
+                  borderWidth
+                  borderRadius
+                  borderStyle
+                  fontWeight
+                  fontSize
+                  padding
+                  margin
+                  customCss
+                  shadowColor
+                  shadowOffsetX
+                  shadowOffsetY
+                  shadowBlur
+                  animationType
+                  animationDuration
+                  gradientStart
+                  gradientEnd
+                  gradientDirection
+                }
               }
             }
             comments(sort: $sort, context: $context, topCommentId: $topCommentId) {
@@ -257,18 +283,30 @@ export const usePostsStore = defineStore("posts", {
                 rep
                 flairs {
                   id
-                  flairId
-                  flair {
+                  templateId
+                  textDisplay
+                  backgroundColor
+                  textColor
+                  template {
                     id
-                    name
-                    style
-                    emoji
-                    textColor
+                    textDisplay
+                    textEditable
                     backgroundColor
-                    borderColor
-                    borderWidth
-                    borderStyle
-                    borderRadius
+                    textColor
+                    styleConfig
+                    emojiIds
+                    style {
+                      backgroundColor
+                      textColor
+                      borderColor
+                      borderWidth
+                      borderRadius
+                      fontWeight
+                      fontSize
+                      padding
+                      margin
+                      customCss
+                    }
                   }
                 }
               }
@@ -366,27 +404,40 @@ export const usePostsStore = defineStore("posts", {
             }
             flairs {
               id
-              flairId
-              flair {
+              templateId
+              textDisplay
+              backgroundColor
+              textColor
+              template {
                 id
-                name
-                style
-                emoji
-                textColor
+                textDisplay
+                textEditable
                 backgroundColor
-                borderColor
-                borderWidth
-                borderStyle
-                borderRadius
-                shadowColor
-                shadowOffsetX
-                shadowOffsetY
-                shadowBlur
-                animationType
-                animationDuration
-                gradientStart
-                gradientEnd
-                gradientDirection
+                textColor
+                styleConfig
+                emojiIds
+                style {
+                  backgroundColor
+                  textColor
+                  borderColor
+                  borderWidth
+                  borderRadius
+                  borderStyle
+                  fontWeight
+                  fontSize
+                  padding
+                  margin
+                  customCss
+                  shadowColor
+                  shadowOffsetX
+                  shadowOffsetY
+                  shadowBlur
+                  animationType
+                  animationDuration
+                  gradientStart
+                  gradientEnd
+                  gradientDirection
+                }
               }
             }
           }

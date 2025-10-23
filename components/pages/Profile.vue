@@ -391,7 +391,7 @@ const getPostLink = (post) => {
     }
 
     // Otherwise, use regular post view
-    return `/p/${post.id}/${post.titleChunk || 'post'}`;
+    return `/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`;
 };
 
 // Sub navbar links

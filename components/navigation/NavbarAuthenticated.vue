@@ -75,6 +75,25 @@
 					</div>
 					<!-- User Links -->
 					<div class="header-menu-profile ml-4 flex items-center space-x-2 md:ml-6">
+						<!-- Streams Link -->
+						<NuxtLink to="/streams"
+							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
+							title="My Streams">
+							<span class="sr-only">View my streams</span>
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
+								stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
+								<path d="M16 3v4"></path>
+								<path d="M8 3v4"></path>
+								<path d="M4 11h16"></path>
+								<path d="M7 14h.01"></path>
+								<path d="M11 14h.01"></path>
+								<path d="M15 14h.01"></path>
+								<path d="M7 17h.01"></path>
+								<path d="M11 17h.01"></path>
+							</svg>
+						</NuxtLink>
 						<!-- Admin Tools Link -->
 						<NuxtLink v-if="v && v.adminLevel > 0" to="/admin"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"

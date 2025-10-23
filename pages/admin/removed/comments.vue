@@ -73,7 +73,7 @@
 									</div>
 								</td>
 								<td class="px-6 py-4 text-sm">
-									<NuxtLink v-if="comment.post" :to="`/p/${comment.post.id}`" class="text-primary hover:text-primary/80">
+									<NuxtLink v-if="comment.post" :to="`/b/${comment.post.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.titleChunk || 'post'}`" class="text-primary hover:text-primary/80">
 										{{ comment.post.title || 'Unknown Post' }}
 									</NuxtLink>
 									<span v-else class="text-gray-500">Deleted Post</span>

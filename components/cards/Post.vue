@@ -159,7 +159,7 @@
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
           <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle"
-            :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk || 'post'}`">
+            :to="`/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`">
             {{ post.title }}
           </NuxtLink>
           <!-- Post Flair Display -->
@@ -310,7 +310,7 @@
             </button>
           </li>
           <li class="ml-3 sm:ml-6 list-item">
-            <NuxtLink :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk}`"
+            <NuxtLink :to="`/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`"
               class="group flex items-center text-gray-500 leading-none dark:text-gray-400 hover:text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4 mr-1">
@@ -532,7 +532,7 @@
         </svg>
       </button>-->
       <!-- Stretched link (card mode only) -->
-      <NuxtLink :to="`${site.enableBoards && post.board ? '/b/' + post.board.name + '/p' : '/p'}/${post.id}/${post.titleChunk}`"
+      <NuxtLink :to="`/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`"
         class="absolute inset-0" :class="{ 'sm:hidden': isCompact }"></NuxtLink>
     </div>
     <!-- Avatar - Desktop Only -->

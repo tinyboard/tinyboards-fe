@@ -51,8 +51,8 @@ interface Post {
   id: number
   flairs?: Array<{
     id: number
-    flairId: number
-    flair: any
+    templateId: number
+    template: any
   }>
   creator?: {
     id: number
@@ -89,7 +89,7 @@ const postFlairs = computed(() => {
   if (!props.post.flairs || props.post.flairs.length === 0) {
     return []
   }
-  return props.post.flairs.map(assignment => assignment.flair)
+  return props.post.flairs.map(assignment => assignment.template)
 })
 
 const canEdit = computed(() => {
