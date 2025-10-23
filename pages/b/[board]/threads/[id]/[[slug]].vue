@@ -18,6 +18,15 @@
             </div>
         </section>
 
+        <!-- Breadcrumbs -->
+        <section class="container mx-auto max-w-8xl sm:px-4 md:px-6 mt-4">
+            <NavigationBreadcrumbs
+                :board-slug="boardName"
+                :board-name="board?.title || board?.name"
+                :current-page="thread?.title"
+            />
+        </section>
+
         <!-- Main Content -->
         <section
             class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6"

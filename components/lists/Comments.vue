@@ -6,7 +6,7 @@
             <div v-if="cards" class="bg-white border border-gray-200 p-4 mb-4 rounded">
                 <div class="mb-2 text-gray-700" v-if="site.enableBoards">
                     <NuxtLink
-                        :to="`/b/${comment.board.name}/p/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
+                        :to="buildCommentUrl(comment)"
                         class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
                     </NuxtLink>
                     in
@@ -15,7 +15,7 @@
                 </div>
                 <div class="mb-2 text-gray-700" v-else>
                     <NuxtLink
-                        :to="`/b/${comment.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.titleChunk}/${comment.id}?context=1#comment-text-${comment.id}`"
+                        :to="buildCommentUrl(comment)"
                         class="font-bold text-blue-600 hover:text-blue-700 hover:underline">{{ comment.post.title }}
                     </NuxtLink>
                 </div>
@@ -96,6 +96,16 @@ function canViewComment(comment) {
     }
 
     return !(comment.isDeleted || comment.isRemoved);
+}
+
+function buildCommentUrl(comment) {
+    // Build URL for comment with context
+    // Prefer urlPath from post if available
+    const postPath = comment.post?.urlPath || (site.enableBoards && comment.board
+        ? `/b/${comment.board.name}/p/${comment.post.id}/${comment.post.slug || comment.post.titleChunk || 'post'}`
+        : `/p/${comment.post.id}/${comment.post.slug || comment.post.titleChunk || 'post'}`);
+
+    return `${postPath}/${comment.id}?context=1#comment-text-${comment.id}`;
 }
 
 /*

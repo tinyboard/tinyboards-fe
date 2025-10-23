@@ -91,7 +91,7 @@
                 Share
             </h2>
             <input
-                :value="`${config.useHTTPS ? 'https' : 'http'}://${config.domain}${site.enableBoards ? `/b/${post.board.name}/p/${post.id}/${post.titleChunk}` : `/p/${post.id}/${post.titleChunk}`}`"
+                :value="shareUrl"
                 class="w-full p-1 text-sm mb-4"
                 @focus="$event.target.select()"
             />
@@ -125,5 +125,14 @@ const props = defineProps({
         type: Object,
         required: true
     }
+});
+
+// Build canonical share URL
+const shareUrl = computed(() => {
+    const protocol = config.useHTTPS ? 'https' : 'http';
+    const canonicalPath = props.post.urlPath || (site.enableBoards && props.post.board
+        ? `/b/${props.post.board.name}/p/${props.post.id}/${props.post.slug || props.post.titleChunk || 'post'}`
+        : `/p/${props.post.id}/${props.post.slug || props.post.titleChunk || 'post'}`);
+    return `${protocol}://${config.domain}${canonicalPath}`;
 });
 </script>

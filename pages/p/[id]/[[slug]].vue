@@ -17,35 +17,31 @@
                   <div class="col-span-full flex gap-6 sm:py-6">
                         <!-- Thread -->
                         <div class="relative w-full">
-
-                              <!-- Post Content -->
-                              <template v-if="(postResult.post?.value || postResult.post)?.title">
-                                    <component :post="postResult.post?.value || postResult.post"
-                                          :is="canViewPost ? thread : threadRemoved" />
-                                    <LazyContainersCommentSection :post="postResult.post?.value || postResult.post" />
-                              </template>
                               <!-- Loading State -->
-                              <div v-else class="relative w-full">
+                              <div v-if="postResult.pending" class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
                                           <div role="status" class="max-w-sm">
                                                 <h1>Loading post...</h1>
-                                                <div v-if="postResult.error?.value" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                                                      <p class="font-bold">Error loading post:</p>
-                                                      <p>{{ postResult.error.value }}</p>
-                                                </div>
-                                                <div class="mt-4 text-xs text-gray-500">
-                                                      <p>Debug info:</p>
-                                                      <p>Post ID: {{ postID }}</p>
-                                                      <p>Has data: {{ !!postResult.data?.value }}</p>
-                                                      <p>Has post: {{ !!postResult.post?.value }}</p>
-                                                      <p>Has error: {{ !!postResult.error?.value }}</p>
-                                                </div>
+                                          </div>
+                                    </div>
+                              </div>
+                              <!-- Post Content -->
+                              <template v-else-if="postResult.post">
+                                    <component :post="postResult.post"
+                                          :is="canViewPost ? thread : threadRemoved" />
+                                    <LazyContainersCommentSection :post="postResult.post" />
+                              </template>
+                              <!-- Error State -->
+                              <div v-else class="relative w-full">
+                                    <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
+                                          <div role="status" class="max-w-sm">
+                                                <h1>There was an error loading this post.</h1>
                                           </div>
                                     </div>
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread v-if="postResult.post?.value || postResult.post" :post="postResult.post?.value || postResult.post" />
+                        <ContainersSidebarThread v-if="postResult.post" :post="postResult.post" />
                   </div>
             </section>
       </main>
@@ -107,12 +103,6 @@ let postResult;
 try {
   postResult = await usePost(postID);
 
-  // Debug logging
-  console.log('postResult:', postResult);
-  console.log('postResult.data:', postResult.data?.value);
-  console.log('postResult.post:', postResult.post?.value);
-  console.log('postResult.error:', postResult.error?.value);
-
   // Handle authentication errors
   if (postResult.error.value?.isAuthError) {
     // Clear invalid token and redirect to login
@@ -136,7 +126,6 @@ if (postResult.error.value && postResult.error.value.response && !postResult.dat
       })
 };
 
-
 // Set board data in store if boards are enabled and post has board
 if (site.enableBoards && postResult.post?.value?.board) {
     boardStore.setBoard(postResult.post.value.board);
@@ -144,7 +133,7 @@ if (site.enableBoards && postResult.post?.value?.board) {
 
 
 // If boards are enabled, post.board is not null -> safe to assume not null
-title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| +' + postResult.post.value.board.name : ''}`;
+title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| ' + postResult.post.value.board.name : ''}`;
 
 // Redirect to canonical URL using urlPath if available
 if (postResult.post?.value?.urlPath) {
@@ -249,7 +238,7 @@ if (postResult.post?.value) {
   // Build full URL for sharing using canonical urlPath
   const config = useRuntimeConfig();
   const protocol = config.public.useHttps === 'true' ? 'https' : 'http';
-  const canonicalPath = post.urlPath || (post.board?.name
+  const canonicalPath = post.urlPath || (site.enableBoards && post.board
     ? `/b/${post.board.name}/p/${post.id}/${post.slug || post.titleChunk || 'post'}`
     : `/p/${post.id}/${post.slug || post.titleChunk || 'post'}`);
   const fullUrl = `${protocol}://${site.domain}${canonicalPath}`;

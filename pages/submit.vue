@@ -594,6 +594,8 @@ async function submit() {
                     id
                     title
                     titleChunk
+                    slug
+                    urlPath
                     postType
                 }
             }
@@ -630,19 +632,26 @@ async function submit() {
         }
 
         // Successfully created - redirect immediately
-        const titleSlug = post.titleChunk || 'post';
+        // Use urlPath from backend if available (canonical URL)
         let redirectPath;
 
-        if (post.postType === 'thread') {
-            // Redirect to thread detail page
-            redirectPath = site.enableBoards
-                ? `/b/${finalBoardName}/threads/${post.id}`
-                : `/threads/${post.id}`;
+        if (post.urlPath) {
+            redirectPath = post.urlPath;
         } else {
-            // Redirect to regular post page
-            redirectPath = site.enableBoards
-                ? `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
-                : `/p/${post.id}/${titleSlug}`;
+            // Fallback to manual URL construction
+            const titleSlug = post.slug || post.titleChunk || 'post';
+
+            if (post.postType === 'thread') {
+                // Redirect to thread detail page
+                redirectPath = site.enableBoards
+                    ? `/b/${finalBoardName}/threads/${post.id}/${titleSlug}`
+                    : `/threads/${post.id}/${titleSlug}`;
+            } else {
+                // Redirect to regular post page
+                redirectPath = site.enableBoards
+                    ? `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
+                    : `/p/${post.id}/${titleSlug}`;
+            }
         }
 
         await navigateTo(redirectPath);
