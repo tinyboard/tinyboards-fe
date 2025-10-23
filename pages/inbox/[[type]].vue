@@ -117,11 +117,20 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 				post {
 					id
 					title
+					titleChunk
+					slug
+					urlPath
+					board {
+						name
+					}
 				}
 			}
 			post {
 				id
 				title
+				titleChunk
+				slug
+				urlPath
 				body
 				bodyHTML
 				creationDate

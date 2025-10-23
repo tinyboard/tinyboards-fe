@@ -77,7 +77,7 @@
 					<span class="font-bold">System Notification</span>
 				</p>
 				<div v-if="notification.post" class="mt-1">
-					<NuxtLink :to="`/b/${notification.post.board?.name || 'unknown'}/p/${notification.post.id}/${notification.post.titleChunk || 'post'}`" class="font-medium text-blue-600 hover:underline">
+					<NuxtLink :to="postLink" class="font-medium text-blue-600 hover:underline">
 						{{ notification.post.title }}
 					</NuxtLink>
 					<div v-if="notification.post.body" class="prose prose-sm max-w-none mt-1" v-html="notification.post.body"></div>
@@ -130,12 +130,21 @@ interface NotificationComment {
 	post: {
 		id: number;
 		title: string;
+		titleChunk?: string;
+		slug?: string;
+		urlPath?: string;
+		board?: {
+			name: string;
+		};
 	};
 }
 
 interface NotificationPost {
 	id: number;
 	title: string;
+	titleChunk?: string;
+	slug?: string;
+	urlPath?: string;
 	body?: string;
 	creationDate: string;
 	creator: NotificationCreator;
@@ -174,12 +183,25 @@ const creator = computed((): NotificationCreator | null => {
 
 // Generate the link to the post/comment
 const postLink = computed((): string => {
-	const boardName = props.notification.post?.board?.name || props.notification.comment?.post?.board?.name || 'unknown';
 	if (props.notification.comment) {
 		const post = props.notification.comment.post;
-		return `/b/${boardName}/p/${post.id}/${post.titleChunk || 'post'}/${props.notification.comment.id}`;
+		// Prefer urlPath from backend
+		if (post.urlPath) {
+			return `${post.urlPath}/${props.notification.comment.id}`;
+		}
+		// Fallback: construct URL
+		const boardName = post.board?.name || 'unknown';
+		const slug = post.slug || post.titleChunk || 'post';
+		return `/b/${boardName}/p/${post.id}/${slug}/${props.notification.comment.id}`;
 	} else if (props.notification.post) {
-		return `/b/${boardName}/p/${props.notification.post.id}/${props.notification.post.titleChunk || 'post'}`;
+		// Prefer urlPath from backend
+		if (props.notification.post.urlPath) {
+			return props.notification.post.urlPath;
+		}
+		// Fallback: construct URL
+		const boardName = props.notification.post.board?.name || 'unknown';
+		const slug = props.notification.post.slug || props.notification.post.titleChunk || 'post';
+		return `/b/${boardName}/p/${props.notification.post.id}/${slug}`;
 	}
 	return '#';
 });

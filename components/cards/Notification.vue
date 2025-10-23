@@ -74,16 +74,32 @@ const replies = ref([] as Comment[]);
 
 // Contextual link
 const context = computed(() => {
-	const boardName = props.notification.post?.board?.name || 'unknown';
-	const postId = props.notification.post.id;
-	const titleChunk = props.notification.post.titleChunk || 'post';
-	if (!!props.notification.parentId) {
-		return `/b/${boardName}/p/${postId}/${titleChunk}/${props.notification.parentId}`
-	} else if (!!props.notification.id) {
-		return `/b/${boardName}/p/${postId}/${titleChunk}/${props.notification.id}`
-	} else {
-		return `/b/${boardName}/p/${postId}/${titleChunk}`
+	// Prefer urlPath from backend if available
+	const postPath = props.notification.post?.urlPath;
+
+	// Fallback: construct URL
+	if (!postPath) {
+		const boardName = props.notification.post?.board?.name || 'unknown';
+		const postId = props.notification.post.id;
+		const slug = props.notification.post.slug || props.notification.post.titleChunk || 'post';
+		const basePath = `/b/${boardName}/p/${postId}/${slug}`;
+
+		if (!!props.notification.parentId) {
+			return `${basePath}/${props.notification.parentId}`;
+		} else if (!!props.notification.id) {
+			return `${basePath}/${props.notification.id}`;
+		} else {
+			return basePath;
+		}
 	}
+
+	// Use urlPath with comment ID appended if needed
+	if (!!props.notification.parentId) {
+		return `${postPath}/${props.notification.parentId}`;
+	} else if (!!props.notification.id) {
+		return `${postPath}/${props.notification.id}`;
+	}
+	return postPath;
 });
 
 // Reply

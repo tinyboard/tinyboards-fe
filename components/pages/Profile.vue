@@ -385,13 +385,25 @@ const { stripHtml } = await import('@/composables/text');
 const getPostLink = (post) => {
     if (!post) return '#';
 
-    // If it's a thread, redirect to thread view
-    if (post.postType === 'thread' && post.board) {
-        return `/b/${post.board.name}/threads/${post.id}`;
+    // Prefer urlPath from backend if available
+    if (post.urlPath) {
+        return post.urlPath;
     }
 
-    // Otherwise, use regular post view
-    return `/b/${post.board?.name || 'unknown'}/p/${post.id}/${post.titleChunk || 'post'}`;
+    // Fallback: construct URL based on post type
+    const slug = post.slug || post.titleChunk || 'post';
+
+    if (post.postType === 'thread' && post.board) {
+        return `/b/${post.board.name}/threads/${post.id}/${slug}`;
+    }
+
+    // Regular post view
+    if (post.board) {
+        return `/b/${post.board.name}/p/${post.id}/${slug}`;
+    }
+
+    // Single-board mode fallback
+    return `/p/${post.id}/${slug}`;
 };
 
 // Sub navbar links

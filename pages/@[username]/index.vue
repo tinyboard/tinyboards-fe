@@ -73,7 +73,7 @@
                             </NuxtLink>
                         </div>
                         <NuxtLink
-                            :to="`/b/${comment.post.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.titleChunk || 'post'}`"
+                            :to="comment.post.urlPath || `/b/${comment.post.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.slug || comment.post.titleChunk || 'post'}`"
                             class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
                         >
                             <strong>{{ comment.post.title }}</strong>

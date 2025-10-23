@@ -109,7 +109,7 @@
               <!-- Title -->
               <NuxtLink
                 class="text-base font-medium text-gray-900 visited:text-gray-400 hover:text-secondary sm:overflow-hidden sm:text-ellipsis"
-                :to="`/b/${item.post.board?.name || 'unknown'}/p/${item.post.id}/${item.post.titleChunk || 'post'}`"
+                :to="item.post.urlPath || `/b/${item.post.board?.name || 'unknown'}/p/${item.post.id}/${item.post.slug || item.post.titleChunk || 'post'}`"
               >
                 {{ item.post.title }}
               </NuxtLink>
