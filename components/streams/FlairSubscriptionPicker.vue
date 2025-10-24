@@ -158,6 +158,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDirectGraphQLRequest } from '@/composables/useGraphQL'
 import type { Board, Flair } from '~/types/stream'
 
 interface BoardWithFlairs extends Board {
@@ -336,11 +337,29 @@ const fetchBoards = async () => {
   error.value = null
 
   try {
-    // This would be replaced with actual GraphQL query
-    const { data } = await useAsyncGql('GetBoardsWithFlairs')
+    const { data, error: gqlError } = await useDirectGraphQLRequest<{ listBoards: BoardWithFlairs[] }>(`
+      query GetBoardsWithFlairs {
+        listBoards(limit: 100) {
+          id
+          name
+          title
+          description
+          icon
+          flairs {
+            id
+            flairType
+            textDisplay
+            backgroundColor
+            textColor
+          }
+        }
+      }
+    `)
 
-    if (data.value?.boards) {
-      boards.value = data.value.boards
+    if (gqlError.value) throw gqlError.value
+
+    if (data.value?.listBoards) {
+      boards.value = data.value.listBoards
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to fetch boards'

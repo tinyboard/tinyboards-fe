@@ -183,6 +183,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDirectGraphQLRequest } from '@/composables/useGraphQL'
 import type { Board } from '~/types/stream'
 
 interface Props {
@@ -260,11 +261,27 @@ const fetchBoards = async () => {
   error.value = null
 
   try {
-    // This would be replaced with actual GraphQL query
-    const { data } = await useAsyncGql('GetBoards')
+    const { data, error: gqlError } = await useDirectGraphQLRequest<{ listBoards: Board[] }>(`
+      query GetBoards {
+        listBoards(limit: 100) {
+          id
+          name
+          title
+          description
+          icon
+          subscribers
+        }
+      }
+    `)
 
-    if (data.value?.boards) {
-      boards.value = data.value.boards
+    if (gqlError.value) throw gqlError.value
+
+    if (data.value?.listBoards) {
+      // Map backend field to expected field name
+      boards.value = data.value.listBoards.map(b => ({
+        ...b,
+        subscriberCount: b.subscribers || 0
+      }))
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to fetch boards'

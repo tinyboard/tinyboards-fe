@@ -64,36 +64,34 @@ export const useStreamStore = defineStore('stream', {
               icon
               color
               isPublic
-              isDiscoverable
-              sortType
-              timeRange
-              showNsfw
-              addedToNavbar
-              isFollowedByMe
-              creator {
-                id
-                name
-                displayName
-                avatar
-                isAdmin
-                adminLevel
-              }
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
+              creatorId
               creationDate
               updated
+              followerCount
+              totalSubscriptions
+              flairSubscriptionCount
+              boardSubscriptionCount
+              isFollowing
+              addedToNavbar
             }
           }
         `)
 
         if (error.value) throw error.value
         if (data.value?.myStreams) {
-          this.streams = data.value.myStreams
+          // Transform the data to match our Store interface
+          this.streams = data.value.myStreams.map((stream: any) => ({
+            ...stream,
+            creator: { id: stream.creatorId },
+            isFollowedByMe: stream.isFollowing,
+            aggregates: {
+              id: stream.id,
+              streamId: stream.id,
+              followers: stream.followerCount || 0,
+              flairSubscriptionCount: stream.flairSubscriptionCount || 0,
+              boardSubscriptionCount: stream.boardSubscriptionCount || 0
+            }
+          }))
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to fetch streams'
@@ -282,23 +280,14 @@ export const useStreamStore = defineStore('stream', {
               sortType
               timeRange
               showNsfw
+              maxPostsPerBoard
+              creatorId
+              isFollowing
               addedToNavbar
-              isFollowedByMe
-              creator {
-                id
-                name
-                displayName
-                avatar
-                isAdmin
-                adminLevel
-              }
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
+              followerCount
+              totalSubscriptions
+              flairSubscriptionCount
+              boardSubscriptionCount
               creationDate
               updated
             }
@@ -327,9 +316,15 @@ export const useStreamStore = defineStore('stream', {
       this.error = null
 
       try {
+        // Add stream_id to the input
+        const fullInput = {
+          streamId: id,
+          ...input
+        }
+
         const { data, error } = await useDirectGraphQLRequest<{ updateStream: Stream }>(`
-          mutation UpdateStream($id: Int!, $input: UpdateStreamInput!) {
-            updateStream(id: $id, input: $input) {
+          mutation UpdateStream($input: UpdateStreamInput!) {
+            updateStream(input: $input) {
               id
               name
               slug
@@ -341,19 +336,17 @@ export const useStreamStore = defineStore('stream', {
               sortType
               timeRange
               showNsfw
+              maxPostsPerBoard
               addedToNavbar
-              isFollowedByMe
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
+              isFollowing
+              followerCount
+              totalSubscriptions
+              flairSubscriptionCount
+              boardSubscriptionCount
               updated
             }
           }
-        `, { id, input })
+        `, { input: fullInput })
 
         if (error.value) throw error.value
         if (data.value?.updateStream) {
@@ -727,27 +720,34 @@ export const useStreamStore = defineStore('stream', {
               description
               icon
               color
-              isFollowedByMe
-              creator {
-                id
-                username
-                avatar
-              }
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
+              isPublic
+              creatorId
               creationDate
+              followerCount
+              totalSubscriptions
+              flairSubscriptionCount
+              boardSubscriptionCount
+              isFollowing
+              addedToNavbar
             }
           }
         `)
 
         if (error.value) throw error.value
         if (data.value?.followedStreams) {
-          this.followedStreams = data.value.followedStreams
+          // Transform the data to match our Store interface
+          this.followedStreams = data.value.followedStreams.map((stream: any) => ({
+            ...stream,
+            creator: { id: stream.creatorId },
+            isFollowedByMe: stream.isFollowing,
+            aggregates: {
+              id: stream.id,
+              streamId: stream.id,
+              followers: stream.followerCount || 0,
+              flairSubscriptionCount: stream.flairSubscriptionCount || 0,
+              boardSubscriptionCount: stream.boardSubscriptionCount || 0
+            }
+          }))
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to fetch followed streams'

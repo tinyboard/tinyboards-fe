@@ -3,25 +3,33 @@ export interface Stream {
   name: string
   slug: string
   description?: string
-  creator: User
+  creator?: User
+  creatorId?: number
   icon?: string
   color?: string
   isPublic: boolean
-  isDiscoverable: boolean
-  sortType: SortType
+  isDiscoverable?: boolean
+  sortType?: SortType
   timeRange?: TimeRange
-  showNsfw: boolean
+  showNsfw?: boolean
 
   // Dual subscription support
-  flairSubscriptions: FlairSubscription[]
-  boardSubscriptions: BoardSubscription[]
+  flairSubscriptions?: FlairSubscription[]
+  boardSubscriptions?: BoardSubscription[]
 
-  aggregates: StreamAggregates
-  isFollowedByMe: boolean
-  addedToNavbar: boolean
+  aggregates?: StreamAggregates
+  isFollowedByMe?: boolean
+  isFollowing?: boolean
+  addedToNavbar?: boolean
+
+  // Backend fields
+  followerCount?: number
+  totalSubscriptions?: number
+  flairSubscriptionCount?: number
+  boardSubscriptionCount?: number
 
   creationDate: string
-  updated: string
+  updated?: string
 }
 
 export interface FlairSubscription {
