@@ -73,7 +73,7 @@
                                 class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md hover:shadow-md transition-shadow"
                             >
                                 <NuxtLink
-                                    :to="`/b/${board?.name}/threads/${thread.id}`"
+                                    :to="thread.urlPath || `/b/${board?.name}/threads/${thread.id}/${thread.slug || 'thread'}`"
                                     class="block p-4"
                                 >
                                     <div class="flex items-start gap-3">
@@ -286,6 +286,8 @@ const threadsQuery = `
         listThreads(boardId: $boardId, limit: $limit, page: $page) {
             id
             title
+            slug
+            urlPath
             body
             bodyHTML
             creationDate

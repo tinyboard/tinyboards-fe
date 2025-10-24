@@ -111,8 +111,8 @@
               <div
                 class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
                 :style="{
-                  backgroundColor: flair.backgroundColor || '#e5e7eb',
-                  color: flair.textColor || '#374151'
+                  backgroundColor: flair.backgroundColor || flair.background_color || '#e5e7eb',
+                  color: flair.textColor || flair.text_color || '#374151'
                 }"
               >
                 <svg
@@ -125,12 +125,12 @@
                   fill="none"
                   v-html="flair.icon"
                 />
-                {{ flair.displayText }}
+                {{ flair.displayText || flair.textDisplay || flair.text_display }}
               </div>
             </td>
             <td v-if="columns.find(c => c.key === 'name' && !c.hidden)" class="px-4 py-3">
               <div class="flex flex-col">
-                <span class="font-medium text-gray-900 dark:text-gray-100">{{ flair.name }}</span>
+                <span class="font-medium text-gray-900 dark:text-gray-100">{{ flair.textDisplay || flair.name || 'Unnamed' }}</span>
                 <span v-if="flair.description" class="text-xs text-gray-500 dark:text-gray-400">{{ flair.description }}</span>
               </div>
             </td>
@@ -306,9 +306,9 @@ const filteredFlairs = computed(() => {
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
     result = result.filter(flair =>
-      flair.name.toLowerCase().includes(query) ||
-      flair.displayText?.toLowerCase().includes(query) ||
-      flair.description?.toLowerCase().includes(query)
+      (flair.name || flair.textDisplay || '').toLowerCase().includes(query) ||
+      (flair.displayText || flair.textDisplay || '').toLowerCase().includes(query) ||
+      (flair.description || '').toLowerCase().includes(query)
     );
   }
 
@@ -420,7 +420,8 @@ const toggleAllSelection = () => {
 };
 
 const confirmDelete = (flair) => {
-  if (confirm(`Are you sure you want to delete the flair "${flair.name}"? This action cannot be undone.`)) {
+  const flairName = flair.textDisplay || flair.name || 'this flair';
+  if (confirm(`Are you sure you want to delete the flair "${flairName}"? This action cannot be undone.`)) {
     emit('delete', flair);
   }
 };

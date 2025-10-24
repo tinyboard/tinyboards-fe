@@ -105,36 +105,42 @@ const fetchPublicStreams = async () => {
   error.value = null
 
   try {
-    const { data, error: gqlError } = await useDirectGraphQLRequest<{ publicStreams: Stream[] }>(`
-      query GetPublicStreams($sortBy: String!) {
-        publicStreams(sortBy: $sortBy) {
+    const { data, error: gqlError } = await useDirectGraphQLRequest<{ discoverStreams: Stream[] }>(`
+      query DiscoverStreams {
+        discoverStreams {
           id
           name
           slug
           description
           icon
           color
-          isFollowedByMe
-          creator {
-            id
-            name
-            displayName
-            avatar
-          }
-          aggregates {
-            id
-            followers
-            flairSubscriptionCount
-            boardSubscriptionCount
-          }
+          isPublic
+          creatorId
           creationDate
+          followerCount
+          totalSubscriptions
+          flairSubscriptionCount
+          boardSubscriptionCount
+          isFollowing
         }
       }
-    `, { sortBy: sortBy.value })
+    `)
 
     if (gqlError.value) throw gqlError.value
-    if (data.value?.publicStreams) {
-      publicStreams.value = data.value.publicStreams
+    if (data.value?.discoverStreams) {
+      // Transform data to match our interface
+      publicStreams.value = data.value.discoverStreams.map((stream: any) => ({
+        ...stream,
+        creator: { id: stream.creatorId },
+        isFollowedByMe: stream.isFollowing,
+        aggregates: {
+          id: stream.id,
+          streamId: stream.id,
+          followers: stream.followerCount || 0,
+          flairSubscriptionCount: stream.flairSubscriptionCount || 0,
+          boardSubscriptionCount: stream.boardSubscriptionCount || 0
+        }
+      }))
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to fetch public streams'
@@ -150,8 +156,7 @@ const filteredStreams = computed(() => {
   const query = searchQuery.value.toLowerCase()
   return publicStreams.value.filter(stream =>
     stream.name.toLowerCase().includes(query) ||
-    stream.description?.toLowerCase().includes(query) ||
-    stream.creator.name.toLowerCase().includes(query)
+    stream.description?.toLowerCase().includes(query)
   )
 })
 

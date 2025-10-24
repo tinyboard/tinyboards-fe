@@ -49,9 +49,11 @@
 </template>
 
 <script setup>
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToastStore } from '@/stores/StoreToast';
 import { useGraphQLQuery } from '@/composables/useGraphQL';
+import { requireModPermission } from '@/composables/mod';
 import FlairEditor from '@/components/flair/editor/FlairEditor.vue';
 
 const route = useRoute();
@@ -98,16 +100,21 @@ const boardId = computed(() => board.value?.id);
 // Check permissions
 const hasConfigPermission = computed(() => {
   const perms = board.value?.myModPermissions;
-  return perms && (perms.includes('CONFIG') || perms.includes('ALL'));
+  if (!perms) return false;
+
+  return requireModPermission(perms, 'config');
 });
 
-if (!hasConfigPermission.value) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: 'You do not have permission to create flairs',
-    fatal: true
-  });
-}
+// Check permissions after data loads
+watch(hasConfigPermission, (hasPerms) => {
+  if (hasPerms === false && board.value) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'You do not have permission to create flairs',
+      fatal: true
+    });
+  }
+});
 
 const handleSave = () => {
   toast.addNotification({

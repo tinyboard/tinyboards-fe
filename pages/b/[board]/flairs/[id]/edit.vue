@@ -133,10 +133,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToastStore } from '@/stores/StoreToast';
 import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
+import { requireModPermission } from '@/composables/mod';
 import FlairEditor from '@/components/flair/editor/FlairEditor.vue';
 import FlairUsageStats from '@/components/flair/management/FlairUsageStats.vue';
 
@@ -217,16 +218,21 @@ useHead({
 // Check permissions
 const hasConfigPermission = computed(() => {
   const perms = flair.value?.board?.myModPermissions;
-  return perms && (perms.includes('CONFIG') || perms.includes('ALL'));
+  if (!perms) return false;
+
+  return requireModPermission(perms, 'config');
 });
 
-if (!hasConfigPermission.value) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: 'You do not have permission to edit flairs',
-    fatal: true
-  });
-}
+// Check permissions after data loads
+watch(hasConfigPermission, (hasPerms) => {
+  if (hasPerms === false && flair.value) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'You do not have permission to edit flairs',
+      fatal: true
+    });
+  }
+});
 
 // Fetch posts/users using this flair
 const { data: usageData } = await useGraphQLQuery(`

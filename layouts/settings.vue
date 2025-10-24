@@ -85,6 +85,7 @@ const boardLinks = computed(() => {
         links.push({ name: "Sections", href: `/b/${boardName}/mod/sections` });
         links.push({ name: "Reactions", href: `/b/${boardName}/mod/reactions` });
         links.push({ name: "Sidebar", href: `/b/${boardName}/mod/sidebar` });
+        links.push({ name: "Flairs", href: `/b/${boardName}/flairs` });
     }
 
     if (hasAppearancePerms.value) {

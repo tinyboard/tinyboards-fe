@@ -179,7 +179,7 @@
 import type { UpdateStreamInput } from '~/types/stream'
 
 definePageMeta({
-  middleware: 'auth',
+  hasAuthRequired: true,
   layout: 'default'
 })
 

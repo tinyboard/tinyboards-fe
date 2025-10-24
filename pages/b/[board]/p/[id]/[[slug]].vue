@@ -7,9 +7,9 @@
             <!-- Breadcrumbs -->
             <section class="container mx-auto max-w-8xl sm:px-4 md:px-6 mt-4">
                   <NavigationBreadcrumbs
-                        :board-slug="postResult.post?.value?.board?.name"
-                        :board-name="postResult.post?.value?.board?.title || postResult.post?.value?.board?.name"
-                        :current-page="postResult.post?.value?.title"
+                        :board-slug="postResult.post?.board?.name"
+                        :board-name="postResult.post?.board?.title || postResult.post?.board?.name"
+                        :current-page="postResult.post?.title"
                   />
             </section>
             <!-- Main Content -->
@@ -19,33 +19,33 @@
                         <div class="relative w-full">
 
                               <!-- Post Content -->
-                              <template v-if="(postResult.post?.value || postResult.post)?.title">
-                                    <component :post="postResult.post?.value || postResult.post"
+                              <template v-if="postResult.post?.title">
+                                    <component :post="postResult.post"
                                           :is="canViewPost ? thread : threadRemoved" />
-                                    <LazyContainersCommentSection :post="postResult.post?.value || postResult.post" />
+                                    <LazyContainersCommentSection :post="postResult.post" />
                               </template>
                               <!-- Loading State -->
                               <div v-else class="relative w-full">
                                     <div class="w-full sm:p-4 bg-white sm:border sm:shadow-inner-xs sm:rounded">
                                           <div role="status" class="max-w-sm">
                                                 <h1>Loading post...</h1>
-                                                <div v-if="postResult.error?.value" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                                                <div v-if="postResult.error" class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                                                       <p class="font-bold">Error loading post:</p>
-                                                      <p>{{ postResult.error.value }}</p>
+                                                      <p>{{ postResult.error }}</p>
                                                 </div>
                                                 <div class="mt-4 text-xs text-gray-500">
                                                       <p>Debug info:</p>
                                                       <p>Post ID: {{ postID }}</p>
-                                                      <p>Has data: {{ !!postResult.data?.value }}</p>
-                                                      <p>Has post: {{ !!postResult.post?.value }}</p>
-                                                      <p>Has error: {{ !!postResult.error?.value }}</p>
+                                                      <p>Has data: {{ !!postResult.data }}</p>
+                                                      <p>Has post: {{ !!postResult.post }}</p>
+                                                      <p>Has error: {{ !!postResult.error }}</p>
                                                 </div>
                                           </div>
                                     </div>
                               </div>
                         </div>
                         <!-- Sidebar -->
-                        <ContainersSidebarThread v-if="postResult.post?.value || postResult.post" :post="postResult.post?.value || postResult.post" />
+                        <ContainersSidebarThread v-if="postResult.post" :post="postResult.post" />
                   </div>
             </section>
       </main>
@@ -138,16 +138,16 @@ if (postResult.error.value && postResult.error.value.response && !postResult.dat
 
 
 // Set board data in store if boards are enabled and post has board
-if (site.enableBoards && postResult.post?.value?.board) {
+if (site.enableBoards && postResult.post.value?.board) {
     boardStore.setBoard(postResult.post.value.board);
 }
 
 
 // If boards are enabled, post.board is not null -> safe to assume not null
-title.value = `${postResult.post?.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post?.value?.board ? '| +' + postResult.post.value.board.name : ''}`;
+title.value = `${postResult.post.value?.title || 'Unknown Post'} ${site.enableBoards && postResult.post.value?.board ? '| +' + postResult.post.value.board.name : ''}`;
 
 // Redirect to canonical URL using urlPath if available
-if (postResult.post?.value?.urlPath) {
+if (postResult.post.value?.urlPath) {
       const canonicalPath = postResult.post.value.urlPath;
       const params = route.params ?? {};
       const currentPath = route.path;
@@ -162,7 +162,7 @@ if (postResult.post?.value?.urlPath) {
       }
 }
 // Fallback: if boards are enabled but no urlPath...
-else if (site.enableBoards && postResult.post?.value?.board?.name) {
+else if (site.enableBoards && postResult.post.value?.board?.name) {
       const boardName = postResult.post.value.board.name;
       const params = route.params ?? {};
       const hasBoard = params.hasOwnProperty("board");
@@ -176,8 +176,8 @@ else if (site.enableBoards && postResult.post?.value?.board?.name) {
       }
 } else if (route.params?.hasOwnProperty("board")) {
       // if it's there but shouldn't, also redirect
-      const slug = postResult.post?.value?.slug || postResult.post?.value?.titleChunk || 'post';
-      await navigateTo(`/p/${postResult.post?.value?.id || 'unknown'}/${slug}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
+      const slug = postResult.post.value?.slug || postResult.post.value?.titleChunk || 'post';
+      await navigateTo(`/p/${postResult.post.value?.id || 'unknown'}/${slug}${route.params?.hasOwnProperty("comment") ? "/" + route.params?.comment : ''}`, { redirectCode: 301 });
 }
 
 
@@ -211,11 +211,11 @@ const canViewPost = computed(() => {
       }
 
       // Own post
-      if (v && postResult.post?.value?.isRemoved && v.id === postResult.post?.value?.creatorId) {
+      if (v && postResult.post.value?.isRemoved && v.id === postResult.post.value?.creatorId) {
             return true;
       }
 
-      return !(postResult.post?.value?.isDeleted || postResult.post?.value?.isRemoved);
+      return !(postResult.post.value?.isDeleted || postResult.post.value?.isRemoved);
 });
 
 /*const { comments, commentsPending, commentsError, commentsRefresh } = await useComments(id.value, type.value, route.query, route.params?.id);
@@ -234,7 +234,7 @@ watch(() => route.query, () => commentsRefresh());*/
 const links = [{ name: 'Comments', href: '#comments' }];
 
 // Document head - SEO and social sharing meta tags
-if (postResult.post?.value) {
+if (postResult.post.value) {
   const post = postResult.post.value;
 
   // Strip HTML tags and get plain text description

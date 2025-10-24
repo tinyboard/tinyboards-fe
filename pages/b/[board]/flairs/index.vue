@@ -10,7 +10,7 @@
           </p>
         </div>
         <div class="flex gap-2">
-          <NuxtLink :to="`/b/${boardName}/flairs/categories`" class="button gray">
+          <NuxtLink :to="`/b/${boardName}/flairs/categories`" class="button gray inline-flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
               <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -18,7 +18,7 @@
             </svg>
             Categories
           </NuxtLink>
-          <NuxtLink :to="`/b/${boardName}/flairs/create`" class="button primary">
+          <NuxtLink :to="`/b/${boardName}/flairs/create`" class="button primary inline-flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
               <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
               <path d="M12 5l0 14" />
@@ -74,10 +74,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToastStore } from '@/stores/StoreToast';
 import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
+import { requireModPermission } from '@/composables/mod';
 import FlairTable from '@/components/flair/management/FlairTable.vue';
 
 const route = useRoute();
@@ -106,22 +107,22 @@ const { data: flairsData, pending, error, refresh } = await useGraphQLQuery(`
       myModPermissions
       flairs {
         id
-        name
-        displayText
-        description
         flairType
+        textDisplay
+        textEditable
         backgroundColor
         textColor
-        icon
+        styleConfig
+        emojiIds
+        maxTextLength
+        category
+        displayOrder
+        requiresApproval
         isActive
-        allowUserEdit
         usageCount
-        category {
-          id
-          name
-        }
         creationDate
         updated
+        createdBy
       }
     }
   }
@@ -145,16 +146,22 @@ const allFlairs = computed(() => board.value?.flairs || []);
 // Check permissions
 const hasConfigPermission = computed(() => {
   const perms = board.value?.myModPermissions;
-  return perms && (perms.includes('CONFIG') || perms.includes('ALL'));
+  if (!perms) return false;
+
+  // myModPermissions is a bit flag number, need to check using requireModPermission
+  return requireModPermission(perms, 'config');
 });
 
-if (!hasConfigPermission.value) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: 'You do not have permission to manage flairs',
-    fatal: true
-  });
-}
+// Check permissions after data loads
+watch(hasConfigPermission, (hasPerms) => {
+  if (hasPerms === false && board.value) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'You do not have permission to manage flairs',
+      fatal: true
+    });
+  }
+});
 
 const postFlairs = computed(() => {
   return allFlairs.value.filter(f => f.flairType === 'post');

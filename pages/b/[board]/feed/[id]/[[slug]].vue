@@ -31,31 +31,23 @@
         <section class="container mx-auto max-w-8xl grid grid-cols-12 md:mt-4 sm:px-4 md:px-6">
             <div class="col-span-full flex gap-6 sm:py-6">
                 <div class="relative w-full">
-                    <div v-if="loading" class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6">
+                    <div v-if="loading && !post" class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6">
                         <p>Loading post...</p>
                     </div>
 
-                    <div v-else-if="!post" class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6">
+                    <div v-else-if="!loading && !post" class="bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-800 rounded-md p-6">
                         <p>Post not found or has been removed.</p>
                     </div>
 
                     <!-- Post Content -->
-                    <div v-else>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">
-                            This is a board-specific feed post. Implementation should use the same
-                            post/comment components as the generic post pages.
-                        </p>
-                        <p class="text-sm text-gray-500">
-                            Board: {{ boardName }}<br>
-                            Post ID: {{ postId }}<br>
-                            Post Title: {{ post?.title }}<br>
-                            URL Path: {{ post?.urlPath }}
-                        </p>
+                    <div v-else-if="post">
+                        <component :post="post" :is="thread" />
+                        <LazyContainersCommentSection :post="post" />
                     </div>
                 </div>
 
                 <!-- Sidebar -->
-                <component :is="SidebarBoard" />
+                <ContainersSidebarThread v-if="post" :post="post" />
             </div>
         </section>
     </main>
@@ -63,20 +55,21 @@
 
 <script setup>
 import { useBoardStore } from "@/stores/StoreBoard";
-import { useGraphQLQuery } from "@/composables/useGraphQL";
+import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useSiteStore } from "@/stores/StoreSite";
+import { usePost } from "@/composables/post";
 import CardsBoardBanner from "@/components/cards/BoardBanner.vue";
 
-const SidebarBoard = defineAsyncComponent(
-    () => import("@/components/containers/SidebarBoard"),
-);
+const thread = defineAsyncComponent(() => import('@/components/containers/Thread.vue'));
+const userStore = useLoggedInUser();
+const site = useSiteStore();
+const v = userStore.user;
 
 const route = useRoute();
 const boardStore = useBoardStore();
 
 const boardName = route.params.board;
 const postId = parseInt(route.params.id);
-const loading = ref(true);
-const post = ref(null);
 
 // Fetch board data
 const boardQuery = `
@@ -142,73 +135,65 @@ const shouldShowBoardBanner = computed(() => {
     return route.params?.board && boardStore.hasBoard && board.value && board.value.id;
 });
 
-// Fetch post
-const postQuery = `
-    query GetPost($id: Int!) {
-        post(id: $id) {
-            id
-            title
-            slug
-            urlPath
-            body
-            bodyHTML
-            postType
-            boardId
-            url
-            image
-            creationDate
-            updated
-            commentCount
-            creator {
-                id
-                name
-                displayName
-                avatar
-            }
-            board {
-                id
-                name
-            }
-        }
-    }
-`;
-
-try {
-    const { data: postData, error: postError } = await useGraphQLQuery(postQuery, {
-        variables: { id: postId }
+// Handle invalid post ID
+if (Number.isNaN(postId)) {
+    throw createError({
+        status: 400,
+        statusText: "Bad post ID given.",
+        fatal: true
     });
+}
 
-    if (postError.value || !postData.value?.post) {
-        throw createError({
-            statusCode: 404,
-            statusMessage: 'Post not found',
-            fatal: true
-        });
-    }
+// Fetch post with comments using composable
+let postResult;
+try {
+    postResult = await usePost(postId);
 
-    if (postData.value.post.postType !== 'feed') {
-        throw createError({
-            statusCode: 400,
-            statusMessage: 'This post is not a feed post',
-            fatal: true
-        });
-    }
-
-    post.value = postData.value.post;
-
-    // Redirect to canonical URL if needed
-    if (post.value.urlPath && route.path !== post.value.urlPath) {
-        await navigateTo(post.value.urlPath, { redirectCode: 301 });
+    // Handle authentication errors
+    if (postResult.error.value?.isAuthError) {
+        const tokenCookie = useCookie('token');
+        tokenCookie.value = null;
+        await navigateTo('/login?redirect=' + encodeURIComponent(route.fullPath));
     }
 } catch (error) {
     console.error('Error fetching post:', error);
     throw createError({
-        statusCode: 404,
-        statusMessage: 'Post not found',
+        status: 500,
+        statusText: 'Failed to load post data',
         fatal: true
     });
-} finally {
-    loading.value = false;
+}
+
+// Error checking
+if (postResult.error.value && postResult.error.value.response && !postResult.data.value) {
+    throw createError({
+        status: 404,
+        statusText: 'Post not found',
+        fatal: true
+    });
+}
+
+const post = postResult.post;
+const loading = postResult.pending;
+
+// Validate this is a feed post (commented out for now as postType might not be set correctly)
+// if (post.value && post.value.postType && post.value.postType !== 'feed') {
+//     throw createError({
+//         statusCode: 400,
+//         statusMessage: 'This post is not a feed post',
+//         fatal: true
+//     });
+// }
+
+// Redirect to canonical URL using urlPath if available
+if (post.value?.urlPath) {
+    const canonicalPath = post.value.urlPath;
+    const currentPath = route.path;
+
+    // Redirect if current path doesn't match canonical path
+    if (currentPath !== canonicalPath) {
+        await navigateTo(canonicalPath, { redirectCode: 301 });
+    }
 }
 
 const title = computed(() => `${post.value?.title || 'Post'} | ${board.value?.name}`);

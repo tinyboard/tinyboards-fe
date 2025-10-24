@@ -29,7 +29,7 @@
               <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
                 {{ stream.name }}
               </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
+              <p v-if="stream.creator?.name" class="text-sm text-gray-600 dark:text-gray-400">
                 by @{{ stream.creator.name }}
               </p>
             </div>
@@ -69,11 +69,11 @@
           </div>
 
           <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-            <span v-if="stream.aggregates.flairSubscriptionCount > 0">
-              {{ stream.aggregates.flairSubscriptionCount }} flair{{ stream.aggregates.flairSubscriptionCount !== 1 ? 's' : '' }}
+            <span v-if="(stream.aggregates?.flairSubscriptionCount || stream.flairSubscriptionCount || 0) > 0">
+              {{ stream.aggregates?.flairSubscriptionCount || stream.flairSubscriptionCount || 0 }} flair{{ (stream.aggregates?.flairSubscriptionCount || stream.flairSubscriptionCount || 0) !== 1 ? 's' : '' }}
             </span>
-            <span v-if="stream.aggregates.boardSubscriptionCount > 0">
-              {{ stream.aggregates.boardSubscriptionCount }} board{{ stream.aggregates.boardSubscriptionCount !== 1 ? 's' : '' }}
+            <span v-if="(stream.aggregates?.boardSubscriptionCount || stream.boardSubscriptionCount || 0) > 0">
+              {{ stream.aggregates?.boardSubscriptionCount || stream.boardSubscriptionCount || 0 }} board{{ (stream.aggregates?.boardSubscriptionCount || stream.boardSubscriptionCount || 0) !== 1 ? 's' : '' }}
             </span>
           </div>
         </div>
@@ -85,7 +85,7 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <span>{{ stream.aggregates.followers }} follower{{ stream.aggregates.followers !== 1 ? 's' : '' }}</span>
+          <span>{{ stream.aggregates?.followers || stream.followerCount || 0 }} follower{{ (stream.aggregates?.followers || stream.followerCount || 0) !== 1 ? 's' : '' }}</span>
         </div>
 
         <div class="flex items-center gap-1">
@@ -141,14 +141,14 @@
           :disabled="followLoading"
           :class="[
             'px-4 py-2 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed',
-            stream.isFollowedByMe
+            (stream.isFollowedByMe || stream.isFollowing)
               ? 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
               : 'bg-blue-500 text-white hover:bg-blue-600'
           ]"
-          :title="stream.isFollowedByMe ? 'Unfollow stream' : 'Follow stream'"
+          :title="(stream.isFollowedByMe || stream.isFollowing) ? 'Unfollow stream' : 'Follow stream'"
         >
           <svg v-if="!followLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path v-if="stream.isFollowedByMe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            <path v-if="stream.isFollowedByMe || stream.isFollowing" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
           <svg v-else class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -195,11 +195,13 @@ const { followStream, unfollowStream } = useStream()
 const followLoading = ref(false)
 
 const totalSources = computed(() => {
-  return props.stream.aggregates.flairSubscriptionCount + props.stream.aggregates.boardSubscriptionCount
+  const flairCount = props.stream.aggregates?.flairSubscriptionCount || props.stream.flairSubscriptionCount || 0
+  const boardCount = props.stream.aggregates?.boardSubscriptionCount || props.stream.boardSubscriptionCount || 0
+  return flairCount + boardCount
 })
 
 const isOwner = computed(() => {
-  return props.currentUserId === props.stream.creator.id
+  return props.currentUserId === (props.stream.creator?.id || props.stream.creatorId)
 })
 
 const canEdit = computed(() => isOwner.value)
@@ -225,7 +227,7 @@ const toggleFollow = async () => {
   followLoading.value = true
 
   try {
-    if (props.stream.isFollowedByMe) {
+    if (props.stream.isFollowedByMe || props.stream.isFollowing) {
       await unfollowStream(props.stream.id)
     } else {
       await followStream(props.stream.id)

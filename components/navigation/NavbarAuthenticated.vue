@@ -77,21 +77,15 @@
 					<div class="header-menu-profile ml-4 flex items-center space-x-2 md:ml-6">
 						<!-- Streams Link -->
 						<NuxtLink to="/streams"
-							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
+							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded hover:bg-white/10 transition-colors"
 							title="My Streams">
 							<span class="sr-only">View my streams</span>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 								stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-								<path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
-								<path d="M16 3v4"></path>
-								<path d="M8 3v4"></path>
-								<path d="M4 11h16"></path>
-								<path d="M7 14h.01"></path>
-								<path d="M11 14h.01"></path>
-								<path d="M15 14h.01"></path>
-								<path d="M7 17h.01"></path>
-								<path d="M11 17h.01"></path>
+								<circle cx="5" cy="19" r="1"></circle>
+								<path d="M4 4a16 16 0 0 1 16 16"></path>
+								<path d="M4 11a9 9 0 0 1 9 9"></path>
 							</svg>
 						</NuxtLink>
 						<!-- Admin Tools Link -->
@@ -589,13 +583,13 @@ const notificationsPending = ref(false);
 // Get navbar streams - only execute if authenticated
 const getNavbarStreamsQuery = `
   query GetNavbarStreams {
-    getNavbarStreams {
+    navbarStreams {
       id
       name
       slug
       icon
       color
-      isPinned
+      addedToNavbar
     }
   }
 `;
@@ -604,7 +598,7 @@ const { data: streamsData, error: streamsError, refresh: refreshStreams } = shou
   ? await useGraphQLQuery(getNavbarStreamsQuery)
   : { data: ref(null), error: ref(null), refresh: () => Promise.resolve() };
 
-const navbarStreams = computed(() => streamsData.value?.getNavbarStreams || []);
+const navbarStreams = computed(() => streamsData.value?.navbarStreams || []);
 
 // Register refresh callback for cross-component communication
 onMounted(() => {

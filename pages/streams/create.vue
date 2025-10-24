@@ -31,7 +31,7 @@
 import StreamWizard from '@/components/streams/StreamWizard.vue'
 
 definePageMeta({
-  middleware: 'auth',
+  hasAuthRequired: true,
   layout: 'default'
 })
 

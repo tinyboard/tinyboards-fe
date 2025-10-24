@@ -174,7 +174,7 @@ export const usePostsStore = defineStore("posts", {
       topCommentId?: number | null
     }) {
       const query = `
-        query GetPost($id: Int!, $sort: CommentSortType, $context: Int, $topCommentId: Int, $withBoard: Boolean!) {
+        query GetPost($id: Int!, $sort: CommentSortType, $topCommentId: Int, $withBoard: Boolean!) {
           post(id: $id) {
             id
             title
@@ -267,7 +267,7 @@ export const usePostsStore = defineStore("posts", {
                 }
               }
             }
-            comments(sort: $sort, context: $context, topCommentId: $topCommentId) {
+            comments(sort: $sort, topCommentId: $topCommentId) {
               id
               body
               bodyHTML
@@ -330,12 +330,10 @@ export const usePostsStore = defineStore("posts", {
         variables: {
           id: Number(id),
           sort: mapToCommentSortType(sort),
-          context,
           topCommentId,
           withBoard: useSiteStore().enableBoards
         }
       });
-
 
       return result;
     },

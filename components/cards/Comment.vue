@@ -142,7 +142,15 @@
           <div :id="`comment-text-${comment.id}`" class="comment-body target:bg-primary target:bg-opacity-10" :class="{
             'bg-red-400 bg-opacity-40': canMod && comment.isRemoved,
             'bg-yellow-400 bg-opacity-40': canMod && comment.isDeleted
-          }" v-show="!isCollapsed && !isEditing" v-html="comment.bodyHTML"></div>
+          }" v-show="!isCollapsed && !isEditing">
+            <span v-if="comment.isDeleted && !canMod" class="italic text-gray-500 dark:text-gray-400">
+              [deleted]
+            </span>
+            <span v-else-if="comment.isRemoved && !canMod" class="italic text-gray-500 dark:text-gray-400">
+              [removed by moderator]
+            </span>
+            <span v-else v-html="comment.bodyHTML"></span>
+          </div>
         </div>
         <!-- Comment Reports -->
         <div v-if="false" class="mb-2">
