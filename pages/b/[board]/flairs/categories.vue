@@ -77,7 +77,7 @@
                     :style="{ backgroundColor: flair.backgroundColor || '#9ca3af' }"
                   />
                   <span class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                    {{ flair.displayText }}
+                    {{ flair.textDisplay }}
                   </span>
                 </div>
                 <select
@@ -116,7 +116,7 @@
                     :style="{ backgroundColor: flair.backgroundColor || '#9ca3af' }"
                   />
                   <span class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                    {{ flair.displayText }}
+                    {{ flair.textDisplay }}
                   </span>
                 </div>
                 <button
@@ -140,10 +140,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToastStore } from '@/stores/StoreToast';
 import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
+import { requireModPermission } from '@/composables/mod';
 import FlairCategoryManager from '@/components/flair/management/FlairCategoryManager.vue';
 
 const route = useRoute();
@@ -169,16 +170,18 @@ const { data: boardData, error, refresh } = await useGraphQLQuery(`
       myModPermissions
       flairCategories {
         id
+        boardId
         name
         description
         color
         displayOrder
         flairCount
+        creationDate
+        updated
       }
       flairs {
         id
-        name
-        displayText
+        textDisplay
         backgroundColor
         textColor
         categoryId
@@ -206,16 +209,21 @@ const allFlairs = computed(() => board.value?.flairs || []);
 // Check permissions
 const hasConfigPermission = computed(() => {
   const perms = board.value?.myModPermissions;
-  return perms && (perms.includes('CONFIG') || perms.includes('ALL'));
+  if (!perms) return false;
+
+  return requireModPermission(perms, 'config');
 });
 
-if (!hasConfigPermission.value) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: 'You do not have permission to manage flair categories',
-    fatal: true
-  });
-}
+// Check permissions after data loads
+watch(hasConfigPermission, (hasPerms) => {
+  if (hasPerms === false && board.value) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'You do not have permission to manage flair categories',
+      fatal: true
+    });
+  }
+});
 
 const uncategorizedFlairs = computed(() => {
   return allFlairs.value.filter(f => !f.categoryId);
@@ -340,7 +348,7 @@ const deleteCategory = async (category) => {
 const reorderCategories = async (order) => {
   try {
     const mutation = `
-      mutation ReorderFlairCategories($order: [CategoryOrderInput!]!) {
+      mutation ReorderFlairCategories($order: [ReorderFlairCategoriesInput!]!) {
         reorderFlairCategories(order: $order)
       }
     `;
@@ -373,8 +381,8 @@ const reorderCategories = async (order) => {
 const assignFlairToCategory = async (flairId, categoryId) => {
   try {
     const mutation = `
-      mutation UpdateFlair($input: UpdateFlairInput!) {
-        updateFlair(input: $input) {
+      mutation UpdateFlairTemplate($templateId: Int!, $input: UpdateFlairTemplateInput!) {
+        updateFlairTemplate(templateId: $templateId, input: $input) {
           id
           categoryId
         }
@@ -383,14 +391,14 @@ const assignFlairToCategory = async (flairId, categoryId) => {
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
+        templateId: flairId,
         input: {
-          flairId,
           categoryId: categoryId ? parseInt(categoryId) : null
         }
       }
     });
 
-    if (result.value?.updateFlair) {
+    if (result.value?.updateFlairTemplate) {
       toast.addNotification({
         header: 'Flair updated',
         message: 'Flair has been assigned to category.',
