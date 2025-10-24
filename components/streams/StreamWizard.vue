@@ -544,24 +544,35 @@ const createStream = async () => {
   error.value = null
 
   try {
-    // Prepare input
+    // Prepare stream creation input (without subscriptions)
     const input: CreateStreamInput = {
       name: formData.name.trim(),
-      slug: formData.slug.trim() || undefined,
       description: formData.description.trim() || undefined,
-      icon: formData.icon.trim() || undefined,
-      color: formData.color,
-      sortType: formData.sortType as any,
-      timeRange: formData.sortType === 'TOP' ? formData.timeRange as any : undefined,
+      sortType: formData.sortType.toLowerCase(),
+      timeRange: formData.sortType === 'TOP' ? formData.timeRange.toLowerCase() : undefined,
       showNsfw: formData.showNsfw,
       isPublic: formData.isPublic,
       isDiscoverable: formData.isPublic && formData.isDiscoverable,
-      addedToNavbar: formData.addedToNavbar,
-      flairSubscriptionIds: formData.flairSelections.flatMap(s => s.flairIds),
-      boardSubscriptionIds: formData.boardSelections.map(b => b.id),
     }
 
+    // Create the stream first
     const stream = await createStreamAction(input)
+
+    // Add subscriptions after stream creation
+    const { addFlairSubscriptions, addBoardSubscriptions } = useStream()
+
+    // Add flair subscriptions if any
+    const flairIds = formData.flairSelections.flatMap(s => s.flairIds)
+    if (flairIds.length > 0) {
+      await addFlairSubscriptions(stream.id, flairIds)
+    }
+
+    // Add board subscriptions if any
+    const boardIds = formData.boardSelections.map(b => b.id)
+    if (boardIds.length > 0) {
+      await addBoardSubscriptions(stream.id, boardIds)
+    }
+
     createdStream.value = stream
     showSuccess.value = true
     emit('success', stream)
