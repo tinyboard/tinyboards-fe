@@ -99,6 +99,14 @@ export interface GraphQLClientConfig {
 // Global state for endpoint health monitoring
 const endpointHealthCache = new Map<string, { isHealthy: boolean; lastCheck: number }>();
 
+// Global request deduplication cache
+interface PendingRequest<T> {
+  promise: Promise<UseGraphQLResult<T>>;
+  timestamp: number;
+}
+const pendingRequests = new Map<string, PendingRequest<any>>();
+const DEDUP_TIMEOUT = 1000; // 1 second deduplication window
+
 /**
  * Get the appropriate GraphQL endpoint based on execution context
  * Handles SSR/client-side routing, Docker environments, and endpoint health monitoring
@@ -334,6 +342,15 @@ export async function useGraphQLQuery<T = any>(
   // Generate cache key
   const cacheKey = key || `gql:query:${btoa(query)}:${JSON.stringify(variables)}`;
 
+  // Check for pending duplicate requests
+  const existingRequest = pendingRequests.get(cacheKey);
+  if (existingRequest && (Date.now() - existingRequest.timestamp) < DEDUP_TIMEOUT) {
+    if (process.dev) {
+      console.log(`🔄 Deduplicating GraphQL request: ${cacheKey.substring(0, 50)}...`);
+    }
+    return existingRequest.promise;
+  }
+
   const executeRequest = async (requestVariables = variables): Promise<void> => {
     try {
       pending.value = true;
@@ -466,16 +483,32 @@ export async function useGraphQLQuery<T = any>(
     }
   };
 
-  // Initial execution
-  await executeRequest();
+  // Create the request promise
+  const requestPromise = (async () => {
+    try {
+      await executeRequest();
+      return {
+        data: data as Ref<T | null>,
+        error,
+        pending,
+        refresh: () => executeRequest(),
+        execute: executeRequest
+      };
+    } finally {
+      // Clean up pending request after completion or error
+      setTimeout(() => {
+        pendingRequests.delete(cacheKey);
+      }, DEDUP_TIMEOUT);
+    }
+  })();
 
-  return {
-    data: data as Ref<T | null>,
-    error,
-    pending,
-    refresh: () => executeRequest(),
-    execute: executeRequest
-  };
+  // Store in pending requests cache
+  pendingRequests.set(cacheKey, {
+    promise: requestPromise,
+    timestamp: Date.now()
+  });
+
+  return requestPromise;
 }
 
 /**

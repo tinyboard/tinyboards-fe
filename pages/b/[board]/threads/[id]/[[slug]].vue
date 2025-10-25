@@ -496,7 +496,7 @@
                             Reply to thread
                         </h3>
                         <form @submit.prevent="submitComment" class="space-y-3">
-                            <InputsTiptap
+                            <LazyInputsTiptap
                                 v-model="commentBody"
                                 placeholder="Write your reply..."
                                 :board-id="board?.id"

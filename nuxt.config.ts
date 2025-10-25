@@ -60,24 +60,26 @@ export default defineNuxtConfig({
       headers: { 'Cache-Control': 's-maxage=86400' }
     },
 
-    // SPA for user profiles (avoid SSR caching issues with dynamic user content)
+    // SSR for user profiles with short cache
     "/@**": {
-      ssr: false,
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+    },
+
+    // SSR for home feed (user-specific, no cache)
+    "/home/**": {
+      ssr: true,
       headers: { 'Cache-Control': 'no-store' }
     },
 
-    // SPA for feeds (user-specific content, auth-dependent)
-    "/home/**": {
-      ssr: false,
-      headers: { 'Cache-Control': 'no-store' }
-    },
+    // SSR for public feeds with short cache
     "/feed/**": {
-      ssr: false,
-      headers: { 'Cache-Control': 'no-store' }
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
     },
     "/all/**": {
-      ssr: false,
-      headers: { 'Cache-Control': 'no-store' }
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
     },
 
     // SPA for admin interfaces (no caching, auth-required)

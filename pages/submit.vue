@@ -119,9 +119,9 @@
                                             required
                                         </em>
                                     </label>
-                                    <!-- Rich text editor for threads -->
+                                    <!-- Rich text editor for threads (lazy loaded) -->
                                     <div v-if="isThread" class="mt-1">
-                                        <InputsTiptap
+                                        <LazyInputsTiptap
                                             v-model="body"
                                             placeholder="Start your discussion..."
                                             :board-id="boardId"
