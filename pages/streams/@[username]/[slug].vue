@@ -1,15 +1,7 @@
 <template>
   <main id="page-stream" class="flex flex-col pt-12 sm:pt-10">
-    <!-- Loading State -->
-    <div v-if="loading && !stream" class="flex justify-center py-12">
-      <svg class="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-      </svg>
-    </div>
-
     <!-- Error State -->
-    <div v-else-if="error" class="container mx-auto max-w-8xl p-4">
+    <div v-if="error && initialLoadComplete" class="container mx-auto max-w-8xl p-4">
       <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
         <p class="text-sm text-red-800 dark:text-red-200">{{ error }}</p>
         <NuxtLink
@@ -22,7 +14,7 @@
     </div>
 
     <!-- Stream Feed -->
-    <template v-else-if="stream">
+    <template v-else-if="stream && initialLoadComplete">
       <!-- Banner Section -->
       <section class="flex-col flex">
         <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6">
@@ -38,8 +30,8 @@
 
       <!-- Main Content -->
       <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
-        <div class="col-span-full flex gap-6">
-          <div class="w-full flex flex-col gap-4">
+        <div class="col-span-full flex flex-col md:flex-row gap-6">
+          <div class="w-full md:flex-1 flex flex-col gap-4">
           <!-- Feed/Threads Tabs -->
           <div class="flex items-center gap-2 p-2 bg-white dark:bg-gray-950 border-b sm:border sm:shadow-inner-white sm:rounded-t-md dark:border-gray-800 dark:shadow-none">
             <button
@@ -126,7 +118,7 @@
           </div>
 
           <!-- Sidebar -->
-          <StreamSidebar
+          <ContainersStreamSidebar
             v-if="stream"
             :stream="stream"
             :is-owner="isOwner"
@@ -138,6 +130,14 @@
         </div>
       </section>
     </template>
+
+    <!-- Loading State (default fallback) -->
+    <div v-else class="flex justify-center py-12">
+      <svg class="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      </svg>
+    </div>
   </main>
 </template>
 
@@ -156,6 +156,7 @@ const site = useSiteStore()
 
 const stream = computed(() => useStreamStore().currentStream)
 const currentUser = computed(() => authStore.user)
+const initialLoadComplete = ref(false)
 
 // Active tab state
 const activeTab = ref<'feed' | 'threads'>('feed')
@@ -178,7 +179,23 @@ const preferCardView = ref(true)
 
 // Computed properties for current tab
 const currentPosts = computed(() => {
-  return activeTab.value === 'feed' ? feedPosts.value : threadPosts.value
+  const posts = activeTab.value === 'feed' ? feedPosts.value : threadPosts.value
+
+  // Add stream context to post URLs for breadcrumb navigation
+  if (!stream.value) return posts
+
+  return posts.map(post => {
+    if (!post.urlPath) return post
+
+    // Add query params to urlPath for stream context
+    const separator = post.urlPath.includes('?') ? '&' : '?'
+    const streamParams = `streamSlug=${encodeURIComponent(stream.value.slug)}&streamName=${encodeURIComponent(stream.value.name)}&streamCreator=${encodeURIComponent(stream.value.creator?.name || '')}`
+
+    return {
+      ...post,
+      urlPath: `${post.urlPath}${separator}${streamParams}`
+    }
+  })
 })
 
 const currentPostsLoading = computed(() => {
@@ -228,7 +245,11 @@ onMounted(async () => {
     } catch (err: any) {
       console.error('Failed to load stream:', err)
       error.value = `Stream not found (searched for @${cleanUsername}/${slug}). It may have been deleted or you don't have permission to view it.`
+    } finally {
+      initialLoadComplete.value = true
     }
+  } else {
+    initialLoadComplete.value = true
   }
 })
 

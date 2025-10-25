@@ -58,6 +58,19 @@ const props = defineProps({
   boardName: {
     type: String,
     default: null
+  },
+  // Stream information (for posts viewed from streams)
+  streamSlug: {
+    type: String,
+    default: null
+  },
+  streamName: {
+    type: String,
+    default: null
+  },
+  streamCreatorUsername: {
+    type: String,
+    default: null
   }
 });
 
@@ -77,23 +90,39 @@ const breadcrumbs = computed(() => {
   // Home
   crumbs.push({ name: 'Home', href: '/' });
 
-  // Board (if boards are enabled and we're in a board context)
-  const boardSlug = props.boardSlug || route.params?.board;
-  if (boardsEnabled.value && boardSlug) {
-    const boardName = props.boardName || boardStore.board?.title || boardStore.board?.name || boardSlug;
+  // Stream (if viewing from stream context)
+  if (props.streamSlug && props.streamCreatorUsername) {
+    // Add Streams section
     crumbs.push({
-      name: boardName,
-      href: buildBoardUrl(boardSlug)
+      name: 'Streams',
+      href: '/streams'
+    });
+
+    // Add specific stream
+    crumbs.push({
+      name: props.streamName || props.streamSlug,
+      href: `/streams/@${props.streamCreatorUsername}/${props.streamSlug}`
     });
   }
+  // Board (if boards are enabled and we're in a board context, but not in stream context)
+  else {
+    const boardSlug = props.boardSlug || route.params?.board;
+    if (boardsEnabled.value && boardSlug) {
+      const boardName = props.boardName || boardStore.board?.title || boardStore.board?.name || boardSlug;
+      crumbs.push({
+        name: boardName,
+        href: buildBoardUrl(boardSlug)
+      });
+    }
 
-  // Section (threads, feed, wiki, etc.)
-  const section = extractSection();
-  if (section) {
-    crumbs.push({
-      name: capitalizeFirst(section),
-      href: boardSlug ? buildSectionUrl(section, boardSlug) : `/${section}`
-    });
+    // Section (threads, feed, wiki, etc.)
+    const section = extractSection();
+    if (section) {
+      crumbs.push({
+        name: capitalizeFirst(section),
+        href: boardSlug ? buildSectionUrl(section, boardSlug) : `/${section}`
+      });
+    }
   }
 
   // Current page

@@ -73,7 +73,7 @@
                             </NuxtLink>
                         </div>
                         <NuxtLink
-                            :to="comment.post.urlPath || `/b/${comment.post.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.slug || comment.post.titleChunk || 'post'}`"
+                            :to="getPostUrl(comment.post)"
                             class="text-sm text-blue-600 hover:text-blue-800 hover:underline"
                         >
                             <strong>{{ comment.post.title }}</strong>
@@ -262,6 +262,22 @@ watch(posts, (newPosts) => {
         usePreloadedPosts(newPosts);
     }
 }, { immediate: true });
+
+// Helper function to construct post URLs based on postType
+const getPostUrl = (post) => {
+    // Use urlPath if available
+    if (post.urlPath) return post.urlPath;
+
+    const slug = post.slug || post.titleChunk || 'post';
+    // Map backend postType to route segment (thread -> threads)
+    const typeSegment = post.postType === 'thread' ? 'threads' : 'feed';
+
+    if (site.enableBoards && post.board) {
+        return `/b/${post.board.name}/${typeSegment}/${post.id}/${slug}`;
+    }
+
+    return `/${typeSegment}/${post.id}/${slug}`;
+};
 
 watch(comments, (newComments) => {
     if (newComments.length) {

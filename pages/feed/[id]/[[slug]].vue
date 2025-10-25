@@ -4,6 +4,9 @@
         <section class="container mx-auto max-w-8xl sm:px-4 md:px-6 mt-4">
             <NavigationBreadcrumbs
                 :current-page="post?.title"
+                :stream-slug="String(route.query.streamSlug || '')"
+                :stream-name="String(route.query.streamName || '')"
+                :stream-creator-username="String(route.query.streamCreator || '')"
             />
         </section>
 
@@ -39,6 +42,7 @@
 
 <script setup>
 import { useGraphQLQuery } from "@/composables/useGraphQL";
+import { useSiteStore } from "@/stores/StoreSite";
 
 const route = useRoute();
 const postId = parseInt(route.params.id);
@@ -99,9 +103,13 @@ try {
 
     post.value = postData.value.post;
 
-    // Redirect to canonical URL if needed
-    if (post.value.urlPath && route.path !== post.value.urlPath) {
-        await navigateTo(post.value.urlPath, { redirectCode: 301 });
+    // Board mode redirect: if boards are enabled and post has a board, redirect to board URL
+    if (process.server) {
+        const site = useSiteStore();
+        if (site.enableBoards && post.value.board) {
+            const boardUrl = `/b/${post.value.board.name}/feed/${postId}/${post.value.slug || post.value.titleChunk || 'post'}`;
+            await navigateTo(boardUrl, { redirectCode: 301 });
+        }
     }
 } catch (error) {
     console.error('Error fetching post:', error);

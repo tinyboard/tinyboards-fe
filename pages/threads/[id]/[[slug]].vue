@@ -4,6 +4,9 @@
         <section class="container mx-auto max-w-8xl sm:px-4 md:px-6 mt-4">
             <NavigationBreadcrumbs
                 :current-page="thread?.title"
+                :stream-slug="String(route.query.streamSlug || '')"
+                :stream-name="String(route.query.streamName || '')"
+                :stream-creator-username="String(route.query.streamCreator || '')"
             />
         </section>
 
@@ -43,6 +46,7 @@
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useModalStore } from "@/stores/StoreModal";
+import { useSiteStore } from "@/stores/StoreSite";
 import { useGraphQLQuery } from "@/composables/useGraphQL";
 
 const route = useRoute();
@@ -112,9 +116,13 @@ try {
 
     thread.value = threadData.value.post;
 
-    // Redirect to canonical URL if needed
-    if (thread.value.urlPath && route.path !== thread.value.urlPath) {
-        await navigateTo(thread.value.urlPath, { redirectCode: 301 });
+    // Board mode redirect: if boards are enabled and thread has a board, redirect to board URL
+    if (process.server) {
+        const site = useSiteStore();
+        if (site.enableBoards && thread.value.board) {
+            const boardUrl = `/b/${thread.value.board.name}/threads/${threadId}/${thread.value.slug || thread.value.titleChunk || 'post'}`;
+            await navigateTo(boardUrl, { redirectCode: 301 });
+        }
     }
 } catch (error) {
     console.error('Error fetching thread:', error);

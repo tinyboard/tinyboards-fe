@@ -2,7 +2,7 @@
   <div
     v-if="stream"
     id="sidebar-stream"
-    class="w-[290px] hidden md:flex flex-col flex-shrink-0 space-y-6 text-base"
+    class="w-full md:w-[290px] flex flex-col flex-shrink-0 space-y-6 text-base"
   >
     <!-- Follow/Edit Actions -->
     <div class="flex flex-col gap-2">

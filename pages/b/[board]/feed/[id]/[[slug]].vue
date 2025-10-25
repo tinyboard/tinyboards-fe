@@ -24,6 +24,9 @@
                 :board-slug="boardName"
                 :board-name="board?.title || board?.name"
                 :current-page="post?.title"
+                :stream-slug="String(route.query.streamSlug || '')"
+                :stream-name="String(route.query.streamName || '')"
+                :stream-creator-username="String(route.query.streamCreator || '')"
             />
         </section>
 
@@ -150,7 +153,7 @@ try {
     postResult = await usePost(postId);
 
     // Handle authentication errors
-    if (postResult.error.value?.isAuthError) {
+    if (process.server && postResult.error.value?.isAuthError) {
         const tokenCookie = useCookie('token');
         tokenCookie.value = null;
         await navigateTo('/login?redirect=' + encodeURIComponent(route.fullPath));
@@ -185,16 +188,7 @@ const loading = postResult.pending;
 //     });
 // }
 
-// Redirect to canonical URL using urlPath if available
-if (post.value?.urlPath) {
-    const canonicalPath = post.value.urlPath;
-    const currentPath = route.path;
-
-    // Redirect if current path doesn't match canonical path
-    if (currentPath !== canonicalPath) {
-        await navigateTo(canonicalPath, { redirectCode: 301 });
-    }
-}
+// Canonical URL redirects removed - using consistent routing structure
 
 const title = computed(() => `${post.value?.title || 'Post'} | ${board.value?.name}`);
 
