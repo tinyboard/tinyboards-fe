@@ -73,7 +73,7 @@
 									</div>
 								</td>
 								<td class="px-6 py-4 text-sm">
-									<NuxtLink v-if="comment.post" :to="comment.post.urlPath || `/b/${comment.post.board?.name || 'unknown'}/p/${comment.post.id}/${comment.post.slug || comment.post.titleChunk || 'post'}`" class="text-primary hover:text-primary/80">
+									<NuxtLink v-if="comment.post" :to="getPostUrl(comment.post)" class="text-primary hover:text-primary/80">
 										{{ comment.post.title || 'Unknown Post' }}
 									</NuxtLink>
 									<span v-else class="text-gray-500">Deleted Post</span>
@@ -143,6 +143,7 @@ const { data: commentsData, pending, error, refresh } = await useGraphQLQuery(`
 				title
 				titleChunk
 				slug
+				postType
 				urlPath
 				board {
 					name
@@ -184,6 +185,23 @@ const formatDate = (dateString) => {
 	} catch {
 		return 'Invalid date';
 	}
+};
+
+// Helper function to construct post URLs based on postType
+const getPostUrl = (post) => {
+	// Use urlPath if available
+	if (post?.urlPath) return post.urlPath;
+	if (!post) return '#';
+
+	const slug = post.slug || post.titleChunk || 'post';
+	// Map backend postType to route segment (thread -> threads)
+	const typeSegment = post.postType === 'thread' ? 'threads' : 'feed';
+
+	if (site.enableBoards && post.board) {
+		return `/b/${post.board.name}/${typeSegment}/${post.id}/${slug}`;
+	}
+
+	return `/${typeSegment}/${post.id}/${slug}`;
 };
 
 // Restore comment function

@@ -45,7 +45,7 @@
 						</div>
 						<h4 class="text-base font-medium text-gray-900 dark:text-gray-100 mb-1">{{ report.originalPostTitle }}</h4>
 						<p class="text-sm text-gray-600 dark:text-gray-400 mb-2"><strong>Reason:</strong> {{ report.reason }}</p>
-						<NuxtLink :to="report.post?.urlPath || `/b/${report.post?.board?.name || 'unknown'}/p/${report.postId}/${report.post?.slug || report.post?.titleChunk || 'post'}`" class="text-sm text-primary hover:underline">View post →</NuxtLink>
+						<NuxtLink :to="getPostUrl(report.post)" class="text-sm text-primary hover:underline">View post →</NuxtLink>
 					</div>
 					<button
 						@click="openResolveModal(report)"
@@ -122,6 +122,7 @@ const { data: reportsData, pending, error, refresh } = await useGraphQLQuery(`
 				title
 				titleChunk
 				slug
+				postType
 				urlPath
 				board {
 					name
@@ -182,6 +183,23 @@ const formatDate = (dateString) => {
 	} catch (e) {
 		return dateString;
 	}
+};
+
+// Helper function to construct post URLs based on postType
+const getPostUrl = (post) => {
+	// Use urlPath if available
+	if (post?.urlPath) return post.urlPath;
+	if (!post) return '#';
+
+	const slug = post.slug || post.titleChunk || 'post';
+	// Map backend postType to route segment (thread -> threads)
+	const typeSegment = post.postType === 'thread' ? 'threads' : 'feed';
+
+	if (site.enableBoards && post.board) {
+		return `/b/${post.board.name}/${typeSegment}/${post.id}/${slug}`;
+	}
+
+	return `/${typeSegment}/${post.id}/${slug}`;
 };
 
 </script>

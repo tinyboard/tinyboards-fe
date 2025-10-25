@@ -59,6 +59,10 @@ export async function useFetchUser(username: string, query = {}) {
         posts(sort: hot, limit: $limit, page: $page) {
           id
           title
+          slug
+          titleChunk
+          postType
+          urlPath
           url
           isLocked
           isNSFW
@@ -90,7 +94,10 @@ export async function useFetchUser(username: string, query = {}) {
           post {
             id
             title
+            slug
             titleChunk
+            postType
+            urlPath
             board @include(if: $includeBoard) {
               id
               name

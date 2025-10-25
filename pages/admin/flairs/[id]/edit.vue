@@ -88,7 +88,7 @@
               class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900/50 rounded-md hover:bg-gray-100 dark:hover:bg-gray-900"
             >
               <NuxtLink
-                :to="`/p/${post.id}`"
+                :to="getPostUrl(post)"
                 class="flex-1 text-sm text-blue-600 dark:text-blue-400 hover:underline truncate"
               >
                 {{ post.title }}
@@ -136,6 +136,7 @@
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useToastStore } from '@/stores/StoreToast';
+import { useSiteStore } from '@/stores/StoreSite';
 import { useGraphQLQuery, useGraphQLMutation } from '@/composables/useGraphQL';
 import FlairEditor from '@/components/flair/editor/FlairEditor.vue';
 import FlairUsageStats from '@/components/flair/management/FlairUsageStats.vue';
@@ -213,7 +214,14 @@ const { data: usageData } = await useGraphQLQuery(`
     getSiteFlairPosts(flairId: $flairId, limit: 50) {
       id
       title
+      slug
+      titleChunk
+      postType
+      urlPath
       score
+      board {
+        name
+      }
     }
     getSiteFlairUsers(flairId: $flairId, limit: 50) {
       id
@@ -223,8 +231,15 @@ const { data: usageData } = await useGraphQLQuery(`
     getSiteFlairTopPosts(flairId: $flairId, limit: 5) {
       id
       title
+      slug
+      titleChunk
+      postType
+      urlPath
       score
       author {
+        name
+      }
+      board {
         name
       }
       creationDate
@@ -246,6 +261,24 @@ const currentPosts = computed(() => usageData.value?.getSiteFlairPosts || []);
 const currentUsers = computed(() => usageData.value?.getSiteFlairUsers || []);
 const topPosts = computed(() => usageData.value?.getSiteFlairTopPosts || []);
 const topUsers = computed(() => usageData.value?.getSiteFlairTopUsers || []);
+
+// Helper function to construct post URLs based on postType
+const getPostUrl = (post) => {
+  // Use urlPath if available
+  if (post?.urlPath) return post.urlPath;
+  if (!post) return '#';
+
+  const slug = post.slug || post.titleChunk || 'post';
+  // Map backend postType to route segment (thread -> threads)
+  const typeSegment = post.postType === 'thread' ? 'threads' : 'feed';
+  const site = useSiteStore();
+
+  if (site.enableBoards && post.board) {
+    return `/b/${post.board.name}/${typeSegment}/${post.id}/${slug}`;
+  }
+
+  return `/${typeSegment}/${post.id}/${slug}`;
+};
 
 const handleSave = async () => {
   toast.addNotification({

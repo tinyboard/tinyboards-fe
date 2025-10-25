@@ -660,10 +660,10 @@ async function submit() {
                     ? `/b/${finalBoardName}/threads/${post.id}/${titleSlug}`
                     : `/threads/${post.id}/${titleSlug}`;
             } else {
-                // Redirect to regular post page
+                // Redirect to feed post page
                 redirectPath = site.enableBoards
-                    ? `/b/${finalBoardName}/p/${post.id}/${titleSlug}`
-                    : `/p/${post.id}/${titleSlug}`;
+                    ? `/b/${finalBoardName}/feed/${post.id}/${titleSlug}`
+                    : `/feed/${post.id}/${titleSlug}`;
             }
         }
 
