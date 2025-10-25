@@ -219,8 +219,11 @@ const isOwner = computed(() => {
 // Follow state
 const followLoading = ref(false)
 
-// Fetch stream by slug
+// Fetch stream by slug - use onMounted for client-only to avoid SSR auth issues
 onMounted(async () => {
+  // Skip if already loaded from SSR
+  if (initialLoadComplete.value) return
+
   const slug = route.params.slug as string
   let username = route.params.username as string
 
@@ -252,6 +255,38 @@ onMounted(async () => {
     initialLoadComplete.value = true
   }
 })
+
+// Also run on server side for SSR
+if (process.server) {
+  const slug = route.params.slug as string
+  let username = route.params.username as string
+
+  if (route.path) {
+    const pathMatch = route.path.match(/\/streams\/@([^\/]+)\//)
+    if (pathMatch) {
+      username = pathMatch[1]
+    }
+  }
+
+  if (slug && username) {
+    try {
+      const cleanUsername = username.startsWith('@') ? username.slice(1) : username
+      await fetchStream(slug, cleanUsername)
+
+      if (stream.value) {
+        await fetchPosts('feed')
+        await fetchPosts('threads')
+      }
+      initialLoadComplete.value = true
+    } catch (err: any) {
+      console.error('[SSR] Failed to load stream:', err)
+      error.value = `Stream not found (searched for @${cleanUsername}/${slug}). It may have been deleted or you don't have permission to view it.`
+      initialLoadComplete.value = true
+    }
+  } else {
+    initialLoadComplete.value = true
+  }
+}
 
 // Fetch posts for a specific type
 const fetchPosts = async (postType: 'feed' | 'threads', loadMore = false) => {
