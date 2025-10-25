@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white dark:bg-gray-950 border dark:border-gray-800 rounded-md shadow-sm">
     <!-- Header -->
-    <div class="p-4 border-b dark:border-gray-800 flex items-center justify-between">
+    <div class="p-4 border-b dark:border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div>
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Flair Categories</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -10,14 +10,14 @@
       </div>
       <button
         @click="openCreateModal"
-        class="button primary"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-md transition-colors duration-200 text-sm font-medium whitespace-nowrap"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
           <path d="M12 5l0 14" />
           <path d="M5 12l14 0" />
         </svg>
-        New Category
+        <span>New Category</span>
       </button>
     </div>
 

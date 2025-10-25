@@ -46,10 +46,12 @@ useHead({
 })
 
 const router = useRouter()
+const authStore = useLoggedInUser()
 
 const handleSuccess = (stream: any) => {
-  // Redirect to the new stream
-  router.push(`/streams/@${stream.creator.name}/${stream.slug}`)
+  // Redirect to the new stream using the current user's name
+  const username = stream.creator?.name || authStore.user?.name || 'unknown'
+  router.push(`/streams/@${username}/${stream.slug}`)
 }
 
 const handleCancel = () => {

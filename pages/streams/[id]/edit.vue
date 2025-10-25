@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 sm:pt-24">
     <div class="mb-8">
       <NuxtLink
         :to="`/streams/@${stream?.creator?.name}/${stream?.slug}`"
@@ -20,11 +20,22 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading && !stream" class="flex justify-center py-12">
+    <div v-if="isLoading" class="flex justify-center py-12">
       <svg class="animate-spin h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
       </svg>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="loadError" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+      <p class="text-sm text-red-800 dark:text-red-200">{{ loadError }}</p>
+      <NuxtLink
+        to="/streams"
+        class="mt-4 inline-block text-blue-600 dark:text-blue-400 hover:underline"
+      >
+        Back to Streams
+      </NuxtLink>
     </div>
 
     <!-- Edit Form -->
@@ -84,6 +95,19 @@
             >
           </div>
         </div>
+      </div>
+
+      <!-- Subscriptions -->
+      <div class="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <h3 class="font-semibold text-gray-900 dark:text-gray-100">Subscriptions</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Manage which boards and flairs appear in this stream
+        </p>
+
+        <StreamSubscriptionSelector
+          v-model:flair-selections="formData.flairSelections"
+          v-model:board-selections="formData.boardSelections"
+        />
       </div>
 
       <!-- Settings -->
@@ -177,6 +201,7 @@
 
 <script setup lang="ts">
 import type { UpdateStreamInput } from '~/types/stream'
+import StreamSubscriptionSelector from '@/components/streams/StreamSubscriptionSelector.vue'
 
 definePageMeta({
   hasAuthRequired: true,
@@ -185,11 +210,13 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { fetchStream, updateStream, deleteStream, loading } = useStream()
+const { fetchStream, updateStream, deleteStream, addFlairSubscriptions, addBoardSubscriptions, removeFlairSubscription, removeBoardSubscription } = useStream()
 
 const stream = computed(() => useStreamStore().currentStream)
+const isLoading = ref(true)
 const saving = ref(false)
 const editError = ref<string | null>(null)
+const loadError = ref<string | null>(null)
 
 const formData = reactive({
   name: '',
@@ -200,11 +227,19 @@ const formData = reactive({
   isPublic: true,
   isDiscoverable: true,
   addedToNavbar: false,
+  flairSelections: [] as any[],
+  boardSelections: [] as any[],
 })
+
+// Track initial subscriptions to detect changes
+const initialFlairIds = ref<number[]>([])
+const initialBoardIds = ref<number[]>([])
 
 const hasChanges = computed(() => {
   if (!stream.value) return false
-  return (
+
+  // Check basic field changes
+  const basicChanges = (
     formData.name !== stream.value.name ||
     formData.description !== stream.value.description ||
     formData.icon !== stream.value.icon ||
@@ -214,6 +249,15 @@ const hasChanges = computed(() => {
     formData.isDiscoverable !== stream.value.isDiscoverable ||
     formData.addedToNavbar !== stream.value.addedToNavbar
   )
+
+  // Check subscription changes
+  const currentFlairIds = formData.flairSelections.flatMap(s => s.flairIds).sort()
+  const currentBoardIds = formData.boardSelections.map(b => b.id).sort()
+
+  const flairChanges = JSON.stringify(currentFlairIds) !== JSON.stringify(initialFlairIds.value.sort())
+  const boardChanges = JSON.stringify(currentBoardIds) !== JSON.stringify(initialBoardIds.value.sort())
+
+  return basicChanges || flairChanges || boardChanges
 })
 
 const handleSave = async () => {
@@ -223,6 +267,7 @@ const handleSave = async () => {
   editError.value = null
 
   try {
+    // Update stream settings
     const input: UpdateStreamInput = {
       name: formData.name,
       description: formData.description || undefined,
@@ -231,10 +276,47 @@ const handleSave = async () => {
       showNsfw: formData.showNsfw,
       isPublic: formData.isPublic,
       isDiscoverable: formData.isPublic && formData.isDiscoverable,
-      addedToNavbar: formData.addedToNavbar,
     }
 
     await updateStream(stream.value.id, input)
+
+    // Handle navbar settings separately if changed
+    if (formData.addedToNavbar !== stream.value.addedToNavbar) {
+      const streamStore = useStreamStore()
+      await streamStore.updateStreamNavbarSettings(stream.value.id, {
+        addToNavbar: formData.addedToNavbar,
+        navbarPosition: stream.value.navbarSettings?.navbarPosition,
+      })
+    }
+
+    // Handle subscription changes
+    const currentFlairIds = formData.flairSelections.flatMap(s => s.flairIds)
+    const currentBoardIds = formData.boardSelections.map(b => b.id)
+
+    // Find flairs to add and remove
+    const flairsToAdd = currentFlairIds.filter(id => !initialFlairIds.value.includes(id))
+    const flairsToRemove = initialFlairIds.value.filter(id => !currentFlairIds.includes(id))
+
+    // Find boards to add and remove
+    const boardsToAdd = currentBoardIds.filter(id => !initialBoardIds.value.includes(id))
+    const boardsToRemove = initialBoardIds.value.filter(id => !currentBoardIds.includes(id))
+
+    // Add new subscriptions
+    if (flairsToAdd.length > 0) {
+      await addFlairSubscriptions(stream.value.id, flairsToAdd)
+    }
+    if (boardsToAdd.length > 0) {
+      await addBoardSubscriptions(stream.value.id, boardsToAdd)
+    }
+
+    // Remove subscriptions
+    for (const flairId of flairsToRemove) {
+      await removeFlairSubscription(stream.value.id, flairId)
+    }
+    for (const boardId of boardsToRemove) {
+      await removeBoardSubscription(stream.value.id, boardId)
+    }
+
     router.push(`/streams/@${stream.value.creator.name}/${stream.value.slug}`)
   } catch (err: any) {
     editError.value = err.message || 'Failed to update stream'
@@ -264,21 +346,68 @@ const handleDelete = async () => {
 // Load stream and populate form
 onMounted(async () => {
   const id = parseInt(route.params.id as string)
-  if (id) {
-    await fetchStream(id)
+  console.log('Loading stream for edit, ID:', id)
 
-    if (stream.value) {
-      Object.assign(formData, {
-        name: stream.value.name,
-        description: stream.value.description || '',
-        icon: stream.value.icon || '',
-        color: stream.value.color || '#3B82F6',
-        showNsfw: stream.value.showNsfw,
-        isPublic: stream.value.isPublic,
-        isDiscoverable: stream.value.isDiscoverable,
-        addedToNavbar: stream.value.addedToNavbar,
-      })
+  if (id && !isNaN(id)) {
+    try {
+      await fetchStream(id)
+      console.log('Stream loaded:', stream.value)
+
+      if (stream.value) {
+        // Populate basic fields
+        Object.assign(formData, {
+          name: stream.value.name,
+          description: stream.value.description || '',
+          icon: stream.value.icon || '',
+          color: stream.value.color || '#3B82F6',
+          showNsfw: stream.value.showNsfw,
+          isPublic: stream.value.isPublic,
+          isDiscoverable: stream.value.isDiscoverable,
+          addedToNavbar: stream.value.addedToNavbar,
+        })
+
+        // Load current subscriptions
+        // Group flair subscriptions by board
+        const flairsByBoard = new Map<number, any>()
+        if (stream.value.flairSubscriptions && stream.value.flairSubscriptions.length > 0) {
+          for (const sub of stream.value.flairSubscriptions) {
+            const boardId = sub.board.id
+            if (!flairsByBoard.has(boardId)) {
+              flairsByBoard.set(boardId, {
+                boardId: boardId,
+                boardName: sub.board.name,
+                flairIds: [],
+                flairs: [],
+              })
+            }
+            const boardFlairs = flairsByBoard.get(boardId)!
+            boardFlairs.flairIds.push(sub.flair.id)
+            boardFlairs.flairs.push(sub.flair)
+          }
+        }
+
+        formData.flairSelections = Array.from(flairsByBoard.values())
+        formData.boardSelections = stream.value.boardSubscriptions?.map(sub => sub.board) || []
+
+        // Store initial IDs for change detection
+        initialFlairIds.value = formData.flairSelections.flatMap(s => s.flairIds)
+        initialBoardIds.value = formData.boardSelections.map(b => b.id)
+
+        console.log('Form data populated:', formData)
+        console.log('Initial flair IDs:', initialFlairIds.value)
+        console.log('Initial board IDs:', initialBoardIds.value)
+      } else {
+        loadError.value = 'Stream not found'
+      }
+    } catch (err: any) {
+      console.error('Error loading stream:', err)
+      loadError.value = err.message || 'Failed to load stream'
+    } finally {
+      isLoading.value = false
     }
+  } else {
+    loadError.value = 'Invalid stream ID'
+    isLoading.value = false
   }
 })
 

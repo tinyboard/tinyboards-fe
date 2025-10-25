@@ -315,6 +315,43 @@ const handleEmojiSelected = (emoji: string) => {
   showEmojiPicker.value = false;
 };
 
+// Convert frontend FlairStyle to backend FlairStyleInput
+const convertStyleToBackend = (style: FlairStyle) => {
+  const backendStyle: any = {
+    backgroundColor: style.backgroundColor,
+    textColor: style.textColor,
+    borderColor: style.borderColor,
+    borderWidth: style.borderWidth,
+    borderRadius: style.borderRadius,
+    fontWeight: style.fontWeight,
+  };
+
+  // Handle gradient
+  if (style.useGradient && style.gradient) {
+    backendStyle.gradientStart = style.gradient.stops[0]?.color;
+    backendStyle.gradientEnd = style.gradient.stops[style.gradient.stops.length - 1]?.color;
+    backendStyle.gradientDirection = style.gradient.type === 'linear'
+      ? `${style.gradient.angle || 90}deg`
+      : 'radial';
+  }
+
+  // Handle text shadow
+  if (style.textShadow) {
+    backendStyle.shadowColor = style.textShadow.color;
+    backendStyle.shadowOffsetX = style.textShadow.offsetX;
+    backendStyle.shadowOffsetY = style.textShadow.offsetY;
+    backendStyle.shadowBlur = style.textShadow.blur;
+  }
+
+  // Handle animation
+  if (style.animation && style.animation !== 'none') {
+    backendStyle.animationType = style.animation;
+    backendStyle.animationDuration = style.animationDuration || 2;
+  }
+
+  return backendStyle;
+};
+
 const handleSubmit = async () => {
   if (!isValid.value) {
     errorMessage.value = 'Please fill in all required fields';
@@ -326,19 +363,19 @@ const handleSubmit = async () => {
   successMessage.value = '';
 
   try {
+    const styleConfig = convertStyleToBackend(localFlair.value.style);
+
     if (isEditing.value && localFlair.value.id) {
       // Update existing flair template
       const updateMutation = `
         mutation UpdateFlairTemplate($templateId: Int!, $input: UpdateFlairTemplateInput!) {
           updateFlairTemplate(templateId: $templateId, input: $input) {
             id
-            text
+            textDisplay
             textColor
             backgroundColor
-            cssClass
             styleConfig
-            emojiIds
-            category
+            categoryId
             displayOrder
             requiresApproval
             isActive
@@ -351,25 +388,14 @@ const handleSubmit = async () => {
         variables: {
           templateId: localFlair.value.id,
           input: {
-            text: localFlair.value.text,
+            textDisplay: localFlair.value.text,
             textEditable: !localFlair.value.modOnly,
             backgroundColor: localFlair.value.style.backgroundColor,
             textColor: localFlair.value.style.textColor,
-            cssClass: localFlair.value.cssClass,
-            styleConfig: {
-              backgroundColor: localFlair.value.style.backgroundColor,
-              textColor: localFlair.value.style.textColor,
-              borderColor: localFlair.value.style.borderColor,
-              borderWidth: localFlair.value.style.borderWidth,
-              borderRadius: localFlair.value.style.borderRadius,
-              fontWeight: localFlair.value.style.fontWeight,
-              customCss: localFlair.value.style.customCss
-            },
-            emojiIds: localFlair.value.emojiIds,
-            category: localFlair.value.category?.name,
+            styleConfig,
+            categoryId: localFlair.value.categoryId,
             displayOrder: localFlair.value.displayOrder,
             requiresApproval: localFlair.value.modOnly,
-            isActive: true
           }
         }
       });
@@ -388,13 +414,11 @@ const handleSubmit = async () => {
         mutation CreateFlairTemplate($input: CreateFlairTemplateInput!) {
           createFlairTemplate(input: $input) {
             id
-            text
+            textDisplay
             textColor
             backgroundColor
-            cssClass
             styleConfig
-            emojiIds
-            category
+            categoryId
             displayOrder
             requiresApproval
             isActive
@@ -407,23 +431,13 @@ const handleSubmit = async () => {
         variables: {
           input: {
             boardId: props.boardId,
-            flairType: localFlair.value.flairType === 'POST' ? 'post' : 'user',
-            text: localFlair.value.text,
+            flairType: localFlair.value.flairType,
+            textDisplay: localFlair.value.text,
             textEditable: !localFlair.value.modOnly,
             backgroundColor: localFlair.value.style.backgroundColor,
             textColor: localFlair.value.style.textColor,
-            cssClass: localFlair.value.cssClass,
-            styleConfig: {
-              backgroundColor: localFlair.value.style.backgroundColor,
-              textColor: localFlair.value.style.textColor,
-              borderColor: localFlair.value.style.borderColor,
-              borderWidth: localFlair.value.style.borderWidth,
-              borderRadius: localFlair.value.style.borderRadius,
-              fontWeight: localFlair.value.style.fontWeight,
-              customCss: localFlair.value.style.customCss
-            },
-            emojiIds: localFlair.value.emojiIds,
-            category: localFlair.value.category?.name,
+            styleConfig,
+            categoryId: localFlair.value.categoryId,
             displayOrder: localFlair.value.displayOrder || 0,
             requiresApproval: localFlair.value.modOnly
           }

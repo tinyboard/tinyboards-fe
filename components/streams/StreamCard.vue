@@ -134,16 +134,15 @@
           </svg>
         </button>
 
-        <!-- Follow/Unfollow button -->
+        <!-- Follow/Unfollow button - Show for all users including owners -->
         <button
-          v-if="!isOwner"
           @click="toggleFollow"
           :disabled="followLoading"
           :class="[
             'px-4 py-2 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed',
             (stream.isFollowedByMe || stream.isFollowing)
               ? 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-              : 'bg-blue-500 text-white hover:bg-blue-600'
+              : 'bg-green-500 text-white hover:bg-green-600'
           ]"
           :title="(stream.isFollowedByMe || stream.isFollowing) ? 'Unfollow stream' : 'Follow stream'"
         >

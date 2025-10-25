@@ -20,7 +20,7 @@ export const useStream = () => {
 
     // Actions
     fetchMyStreams: () => store.fetchMyStreams(),
-    fetchStream: (idOrSlug: number | string) => store.fetchStream(idOrSlug),
+    fetchStream: (idOrSlug: number | string, creatorUsername?: string) => store.fetchStream(idOrSlug, creatorUsername),
     createStream: (input: CreateStreamInput) => store.createStream(input),
     updateStream: (id: number, input: UpdateStreamInput) => store.updateStream(id, input),
     deleteStream: (id: number) => store.deleteStream(id),

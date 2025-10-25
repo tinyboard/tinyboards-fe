@@ -46,8 +46,8 @@
           <p class="text-sm font-medium text-gray-900 dark:text-white">
             {{ selectedCategory.name }}
           </p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">
-            {{ selectedCategory.siteWide ? 'Site-wide category' : 'Board category' }}
+          <p v-if="selectedCategory.description" class="text-xs text-gray-500 dark:text-gray-400">
+            {{ selectedCategory.description }}
           </p>
         </div>
       </div>
@@ -171,7 +171,7 @@ const newCategory = ref({
 // Computed
 const selectedCategory = computed(() => {
   if (!selectedCategoryId.value) return null;
-  return categories.value.find(c => c.id === selectedCategoryId.value);
+  return categories.value.find(c => c.id === selectedCategoryId.value) || null;
 });
 
 // Watch for changes
@@ -192,13 +192,14 @@ const loadCategories = async () => {
 
   try {
     const query = `
-      query GetFlairCategories($boardId: Int) {
+      query GetFlairCategories($boardId: Int!) {
         flairCategories(boardId: $boardId) {
           id
           name
+          description
           color
           boardId
-          siteWide
+          displayOrder
           creationDate
           updated
         }
@@ -230,6 +231,10 @@ const loadCategories = async () => {
 
 const createCategory = async () => {
   if (!newCategory.value.name) return;
+  if (!props.boardId) {
+    error.value = 'Board ID is required to create a category';
+    return;
+  }
 
   creating.value = true;
   error.value = '';
@@ -242,7 +247,7 @@ const createCategory = async () => {
           name
           color
           boardId
-          siteWide
+          displayOrder
           creationDate
           updated
         }
@@ -255,7 +260,8 @@ const createCategory = async () => {
           name: newCategory.value.name,
           color: newCategory.value.color || null,
           boardId: props.boardId,
-          siteWide: !props.boardId
+          description: null,
+          displayOrder: null
         }
       }
     });

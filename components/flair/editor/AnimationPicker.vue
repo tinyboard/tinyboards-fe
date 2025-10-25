@@ -165,10 +165,10 @@ watch(() => props.duration, (newValue) => {
 
 @keyframes flair-shimmer {
   0% {
-    background-position: -100% 0;
+    left: -100%;
   }
   100% {
-    background-position: 200% 0;
+    left: 200%;
   }
 }
 
@@ -186,16 +186,24 @@ watch(() => props.duration, (newValue) => {
 }
 
 .animate-flair-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-flair-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(
     90deg,
-    currentColor 0%,
-    rgba(255, 255, 255, 0.8) 50%,
-    currentColor 100%
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
   );
-  background-size: 200% 100%;
   animation: flair-shimmer 2s linear infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
 }
 
 .animate-flair-bounce {

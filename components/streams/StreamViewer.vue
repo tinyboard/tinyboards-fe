@@ -27,7 +27,7 @@
               <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                 {{ stream.name }}
               </h1>
-              <p class="text-gray-600 dark:text-gray-400">
+              <p v-if="stream.creator" class="text-gray-600 dark:text-gray-400">
                 by @{{ stream.creator.name }}
               </p>
             </div>
@@ -40,12 +40,12 @@
                 :disabled="followLoading"
                 :class="[
                   'px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
-                  stream.isFollowedByMe
+                  stream.isFollowing
                     ? 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                     : 'bg-blue-500 text-white hover:bg-blue-600'
                 ]"
               >
-                {{ stream.isFollowedByMe ? 'Following' : 'Follow' }}
+                {{ stream.isFollowing ? 'Following' : 'Follow' }}
               </button>
 
               <button
@@ -54,6 +54,14 @@
                 class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Edit
+              </button>
+
+              <button
+                v-if="isOwner"
+                @click="confirmDelete"
+                class="px-4 py-2 border border-red-300 dark:border-red-600 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              >
+                Delete
               </button>
 
               <button
@@ -78,7 +86,7 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span>{{ stream.aggregates.followers }} follower{{ stream.aggregates.followers !== 1 ? 's' : '' }}</span>
+              <span>{{ stream.followerCount || 0 }} follower{{ (stream.followerCount || 0) !== 1 ? 's' : '' }}</span>
             </div>
 
             <div class="flex items-center gap-1">
@@ -102,83 +110,15 @@
         </div>
       </div>
 
-      <!-- Subscriptions details (expandable) -->
+      <!-- Subscriptions summary -->
       <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-        <button
-          @click="showSubscriptions = !showSubscriptions"
-          class="flex items-center justify-between w-full text-left"
-        >
+        <div class="flex items-center justify-between">
           <span class="font-medium text-gray-900 dark:text-gray-100">
             Active Subscriptions
           </span>
-          <svg
-            :class="[
-              'w-5 h-5 text-gray-500 transition-transform',
-              showSubscriptions ? 'rotate-180' : ''
-            ]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-
-        <div v-show="showSubscriptions" class="mt-4 space-y-4">
-          <!-- Flair subscriptions -->
-          <div v-if="stream.flairSubscriptions.length > 0">
-            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Flair Subscriptions ({{ stream.flairSubscriptions.length }})
-            </h4>
-            <div class="space-y-2">
-              <div
-                v-for="sub in stream.flairSubscriptions"
-                :key="sub.id"
-                class="flex items-center gap-2 text-sm"
-              >
-                <NuxtLink
-                  :to="`/+${sub.board.name}`"
-                  class="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  +{{ sub.board.name }}
-                </NuxtLink>
-                <span class="text-gray-500 dark:text-gray-400">/</span>
-                <span
-                  class="px-2 py-0.5 text-xs font-medium rounded"
-                  :style="{
-                    color: sub.flair.color || '#ffffff',
-                    backgroundColor: sub.flair.bgColor || '#6b7280'
-                  }"
-                >
-                  {{ sub.flair.displayName }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Board subscriptions -->
-          <div v-if="stream.boardSubscriptions.length > 0">
-            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Board Subscriptions ({{ stream.boardSubscriptions.length }})
-            </h4>
-            <div class="flex flex-wrap gap-2">
-              <NuxtLink
-                v-for="sub in stream.boardSubscriptions"
-                :key="sub.id"
-                :to="`/+${sub.board.name}`"
-                class="flex items-center gap-2 px-3 py-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
-              >
-                <div v-if="sub.board.icon" class="w-5 h-5 rounded-full overflow-hidden">
-                  <img :src="sub.board.icon" :alt="sub.board.name" class="w-full h-full object-cover">
-                </div>
-                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  +{{ sub.board.name }}
-                </span>
-                <span class="text-xs text-gray-600 dark:text-gray-400">
-                  (all posts)
-                </span>
-              </NuxtLink>
-            </div>
+          <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <span>{{ stream.flairSubscriptionCount || 0 }} flair{{ (stream.flairSubscriptionCount || 0) !== 1 ? 's' : '' }}</span>
+            <span>{{ stream.boardSubscriptionCount || 0 }} board{{ (stream.boardSubscriptionCount || 0) !== 1 ? 's' : '' }}</span>
           </div>
         </div>
       </div>
@@ -276,6 +216,40 @@
         </button>
       </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showDeleteConfirm"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        @click.self="cancelDelete"
+      >
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            Delete Stream
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Are you sure you want to delete "{{ stream.name }}"? This action cannot be undone.
+          </p>
+          <div class="flex gap-3 justify-end">
+            <button
+              @click="cancelDelete"
+              :disabled="deleting"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              @click="deleteStream"
+              :disabled="deleting"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              {{ deleting ? 'Deleting...' : 'Delete' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -290,6 +264,7 @@ interface Props {
 interface Emits {
   (e: 'edit'): void
   (e: 'share'): void
+  (e: 'delete'): void
 }
 
 const props = defineProps<Props>()
@@ -300,16 +275,18 @@ const { posts, hasMore, loading, error, loadMore, refresh, containerRef } = useS
   computed(() => props.stream.id)
 )
 
-const showSubscriptions = ref(false)
 const sortType = ref(props.stream.sortType)
 const followLoading = ref(false)
+const showDeleteConfirm = ref(false)
+const deleting = ref(false)
 
 const totalSources = computed(() => {
-  return props.stream.aggregates.flairSubscriptionCount + props.stream.aggregates.boardSubscriptionCount
+  return (props.stream.flairSubscriptionCount || 0) + (props.stream.boardSubscriptionCount || 0)
 })
 
 const isOwner = computed(() => {
-  return props.currentUserId === props.stream.creator.id
+  if (!props.currentUserId) return false
+  return props.currentUserId === (props.stream.creator?.id || props.stream.creatorId)
 })
 
 const toggleFollow = async () => {
@@ -318,7 +295,7 @@ const toggleFollow = async () => {
   followLoading.value = true
 
   try {
-    if (props.stream.isFollowedByMe) {
+    if (props.stream.isFollowing) {
       await unfollowStream(props.stream.id)
     } else {
       await followStream(props.stream.id)
@@ -327,6 +304,33 @@ const toggleFollow = async () => {
     console.error('Error toggling follow:', err)
   } finally {
     followLoading.value = false
+  }
+}
+
+const confirmDelete = () => {
+  showDeleteConfirm.value = true
+}
+
+const cancelDelete = () => {
+  showDeleteConfirm.value = false
+}
+
+const deleteStream = async () => {
+  if (deleting.value) return
+
+  deleting.value = true
+
+  try {
+    const { deleteStream: deleteStreamFn } = useStream()
+    await deleteStreamFn(props.stream.id)
+
+    // Emit delete event to parent
+    emit('delete')
+  } catch (err) {
+    console.error('Error deleting stream:', err)
+  } finally {
+    deleting.value = false
+    showDeleteConfirm.value = false
   }
 }
 

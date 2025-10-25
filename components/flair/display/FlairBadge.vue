@@ -136,10 +136,10 @@ const handleRemove = () => {
 
 @keyframes flair-shimmer {
   0% {
-    background-position: -200% center;
+    left: -100%;
   }
   100% {
-    background-position: 200% center;
+    left: 200%;
   }
 }
 
@@ -157,7 +157,23 @@ const handleRemove = () => {
 }
 
 .flair-shimmer {
-  background-size: 200% auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.flair-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
   animation: flair-shimmer 3s linear infinite;
 }
 

@@ -41,6 +41,21 @@ export async function useFetchUser(username: string, query = {}) {
         commentCount
         rep
         boardCreationApproved
+        flairs {
+          id
+          flairId
+          flair {
+            id
+            text
+            styleConfig
+            boardId
+            categoryId
+            isUserSelectable
+            isModOnly
+            creationDate
+            updated
+          }
+        }
         posts(sort: hot, limit: $limit, page: $page) {
           id
           title

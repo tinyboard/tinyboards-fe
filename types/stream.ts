@@ -21,6 +21,10 @@ export interface Stream {
   isFollowedByMe?: boolean
   isFollowing?: boolean
   addedToNavbar?: boolean
+  navbarSettings?: {
+    addToNavbar: boolean
+    navbarPosition?: number | null
+  }
 
   // Backend fields
   followerCount?: number
@@ -115,7 +119,6 @@ export interface CreateStreamInput {
 
 export interface UpdateStreamInput {
   name?: string
-  slug?: string
   description?: string
   icon?: string
   color?: string
@@ -124,7 +127,7 @@ export interface UpdateStreamInput {
   sortType?: SortType
   timeRange?: TimeRange
   showNsfw?: boolean
-  addedToNavbar?: boolean
+  maxPostsPerBoard?: number
 }
 
 export enum SortType {

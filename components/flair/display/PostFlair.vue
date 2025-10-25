@@ -1,6 +1,7 @@
 <template>
-  <div v-if="postFlairs.length > 0" class="post-flair inline-flex items-center gap-2">
+  <div class="post-flair inline-flex items-center gap-2">
     <FlairDisplayFlairStack
+      v-if="postFlairs.length > 0"
       :flairs="postFlairs"
       :size="size"
       :clickable="clickable"
@@ -20,7 +21,7 @@
       ]"
       aria-label="Edit post flair"
       title="Edit post flair"
-      @click="openFlairSelector"
+      @click="openFlairEditor"
     >
       <svg
         class="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -41,6 +42,17 @@
         />
       </svg>
     </button>
+
+    <!-- Flair Editor Modal -->
+    <FlairEditorPostFlairEditor
+      v-if="props.post.board?.id"
+      :show="showFlairEditor"
+      :post-id="props.post.id"
+      :board-id="props.post.board.id"
+      :initial-flair-ids="currentFlairIds"
+      @close="showFlairEditor = false"
+      @updated="handleFlavirsUpdated"
+    />
   </div>
 </template>
 
@@ -81,15 +93,35 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
+const { parseBackendStyle } = useFlairStyle()
+const authStore = useLoggedInUser()
 
 // Get current user from store/auth context
-const currentUser = ref<any>(null) // Replace with actual user from auth store
+const currentUser = computed(() => authStore.user)
+
+// Flair editor state
+const showFlairEditor = ref(false)
+const currentFlairIds = computed(() => {
+  if (!props.post.flairs) return []
+  return props.post.flairs.map(assignment => assignment.templateId).filter(Boolean)
+})
 
 const postFlairs = computed(() => {
   if (!props.post.flairs || props.post.flairs.length === 0) {
     return []
   }
-  return props.post.flairs.map(assignment => assignment.template)
+  return props.post.flairs.map(assignment => {
+    const template = assignment.template
+    // Parse styleConfig JSON into style object - create new object to avoid mutation
+    const parsedStyle = template?.styleConfig
+      ? parseBackendStyle(template.styleConfig)
+      : parseBackendStyle(null)
+
+    return {
+      ...template,
+      style: parsedStyle
+    }
+  })
 })
 
 const canEdit = computed(() => {
@@ -123,10 +155,15 @@ const handleFlairClick = (flair: any) => {
   }
 }
 
-const openFlairSelector = () => {
+const openFlairEditor = () => {
+  showFlairEditor.value = true
   emit('edit-flair')
-  // This would typically open a modal or dialog for flair selection
-  // Implementation would depend on your modal system
+}
+
+const handleFlavirsUpdated = (flairIds: number[]) => {
+  // Emit event for parent to handle refresh if needed
+  // The parent component should refetch the post data
+  emit('edit-flair')
 }
 </script>
 

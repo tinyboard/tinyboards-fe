@@ -2,6 +2,90 @@ import type { FlairStyle, FlairGradient, FlairTextShadow } from '~/types/flair'
 
 export const useFlairStyle = () => {
   /**
+   * Converts backend FlairStyle JSON to frontend FlairStyle object
+   */
+  const parseBackendStyle = (styleConfig: string | null): any => {
+    if (!styleConfig) {
+      return {
+        backgroundColor: '#3b82f6',
+        textColor: '#ffffff',
+        borderWidth: 0,
+        borderColor: '#000000',
+        borderRadius: 4,
+        fontWeight: 'normal',
+        useGradient: false,
+        animation: 'none',
+        textTransform: 'none'
+      };
+    }
+
+    try {
+      const parsed = JSON.parse(styleConfig);
+
+      // Convert backend style to frontend format
+      const style: any = {
+        backgroundColor: parsed.background_color || parsed.backgroundColor || '#3b82f6',
+        textColor: parsed.text_color || parsed.textColor || '#ffffff',
+        borderWidth: parsed.border_width || parsed.borderWidth || 0,
+        borderColor: parsed.border_color || parsed.borderColor || '#000000',
+        borderRadius: parsed.border_radius || parsed.borderRadius || 4,
+        fontWeight: parsed.font_weight || parsed.fontWeight || 'normal',
+        textTransform: parsed.text_transform || parsed.textTransform || 'none',
+        useGradient: false,
+        animation: parsed.animation_type || parsed.animationType || 'none',
+        animationDuration: parsed.animation_duration || parsed.animationDuration || 2
+      };
+
+      // Handle gradient
+      const gradientStart = parsed.gradient_start || parsed.gradientStart;
+      const gradientEnd = parsed.gradient_end || parsed.gradientEnd;
+      const gradientDirection = parsed.gradient_direction || parsed.gradientDirection;
+
+      if (gradientStart && gradientEnd) {
+        style.useGradient = true;
+        style.gradient = {
+          type: gradientDirection?.includes('deg') ? 'linear' : 'radial',
+          angle: gradientDirection?.includes('deg') ? parseInt(gradientDirection) : 90,
+          stops: [
+            { color: gradientStart, position: 0 },
+            { color: gradientEnd, position: 100 }
+          ]
+        };
+      }
+
+      // Handle text shadow
+      const shadowColor = parsed.shadow_color || parsed.shadowColor;
+      const shadowOffsetX = parsed.shadow_offset_x || parsed.shadowOffsetX;
+      const shadowOffsetY = parsed.shadow_offset_y || parsed.shadowOffsetY;
+      const shadowBlur = parsed.shadow_blur || parsed.shadowBlur;
+
+      if (shadowColor) {
+        style.textShadow = {
+          color: shadowColor,
+          offsetX: shadowOffsetX || 0,
+          offsetY: shadowOffsetY || 0,
+          blur: shadowBlur || 0
+        };
+      }
+
+      return style;
+    } catch (e) {
+      console.error('Failed to parse flair style:', e);
+      return {
+        backgroundColor: '#3b82f6',
+        textColor: '#ffffff',
+        borderWidth: 0,
+        borderColor: '#000000',
+        borderRadius: 4,
+        fontWeight: 'normal',
+        useGradient: false,
+        animation: 'none',
+        textTransform: 'none'
+      };
+    }
+  };
+
+  /**
    * Builds a CSS gradient string from gradient configuration
    */
   const buildGradient = (gradient: FlairGradient): string => {
@@ -167,6 +251,7 @@ export const useFlairStyle = () => {
   }
 
   return {
+    parseBackendStyle,
     buildGradient,
     buildTextShadow,
     buildFlairStyle,

@@ -226,6 +226,15 @@
                                         </li>
                                     </ul>
                                 </div>
+                                <!-- Flair Selection -->
+                                <div class="col-span-full" v-if="boardId">
+                                    <FlairSelectorFlairSelector
+                                        :board-id="boardId"
+                                        flair-type="POST"
+                                        :max-flairs="5"
+                                        v-model="selectedFlairIds"
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div class="bg-gray-50 shadow-inner-white border-t p-4">
@@ -396,6 +405,7 @@ const body: Ref<string | null> = ref(null);
 const isNsfw = ref(false);
 const isVideo = ref(false);
 const fileType = ref<string | null>(null);
+const selectedFlairIds = ref<number[]>([]);
 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);
@@ -567,7 +577,8 @@ async function submit() {
             isNSFW: isNsfw.value || false,
             altText: null,
             file: null,
-            postType: isThread.value ? 'thread' : 'feed'
+            postType: isThread.value ? 'thread' : 'feed',
+            flairIds: selectedFlairIds.value.length > 0 ? selectedFlairIds.value : null
         };
 
         const createPostQuery = `
@@ -580,6 +591,7 @@ async function submit() {
                 $altText: String
                 $file: Upload
                 $postType: String
+                $flairIds: [Int!]
             ) {
                 createPost(
                     title: $title
@@ -590,6 +602,7 @@ async function submit() {
                     altText: $altText
                     file: $file
                     postType: $postType
+                    flairIds: $flairIds
                 ) {
                     id
                     title

@@ -121,6 +121,7 @@ const route = useRoute();
 const site = useSiteStore();
 const userStore = useLoggedInUser();
 const commentsStore = useCommentsStore();
+const { parseBackendStyle } = useFlairStyle();
 
 definePageMeta({
     alias: ["/@:username/overview", "/user/:username", "/u/:username"],
@@ -182,7 +183,24 @@ const user = computed(() => {
     return userData;
 });
 const moderates = computed(() => user.value?.moderates || []);
-const userFlairs = computed(() => user.value?.flairs || []);
+const userFlairs = computed(() => {
+  const flairs = user.value?.flairs || [];
+  // Parse styleConfig for each flair - create new objects to avoid mutation
+  return flairs.map(assignment => {
+    const originalFlair = assignment.flair;
+    const parsedStyle = originalFlair?.styleConfig
+      ? parseBackendStyle(originalFlair.styleConfig)
+      : parseBackendStyle(null);
+
+    return {
+      ...assignment,
+      flair: {
+        ...originalFlair,
+        style: parsedStyle
+      }
+    };
+  });
+});
 
 // Update title reactively
 watch(user, (newUser) => {

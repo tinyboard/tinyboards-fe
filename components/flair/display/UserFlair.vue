@@ -35,6 +35,8 @@ const props = withDefaults(defineProps<Props>(), {
   boardId: undefined
 })
 
+const { parseBackendStyle } = useFlairStyle()
+
 /**
  * Filter and display flairs based on context:
  * - If boardId is provided, show board-specific flairs + site-wide flairs
@@ -45,7 +47,18 @@ const displayFlairs = computed(() => {
     return []
   }
 
-  const flairs = props.user.flairs.map(assignment => assignment.flair)
+  const flairs = props.user.flairs.map(assignment => {
+    const originalFlair = assignment.flair
+    // Parse styleConfig JSON into style object - create new object to avoid mutation
+    const parsedStyle = (originalFlair as any)?.styleConfig
+      ? parseBackendStyle((originalFlair as any).styleConfig)
+      : parseBackendStyle(null)
+
+    return {
+      ...originalFlair,
+      style: parsedStyle
+    }
+  })
 
   // Filter flairs based on board context
   const filteredFlairs = flairs.filter(flair => {

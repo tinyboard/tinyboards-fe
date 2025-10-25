@@ -65,6 +65,13 @@ export const useStreamStore = defineStore('stream', {
               color
               isPublic
               creatorId
+              creator {
+                id
+                name
+                displayName
+                avatar
+                isAdmin
+              }
               creationDate
               updated
               followerCount
@@ -82,7 +89,8 @@ export const useStreamStore = defineStore('stream', {
           // Transform the data to match our Store interface
           this.streams = data.value.myStreams.map((stream: any) => ({
             ...stream,
-            creator: { id: stream.creatorId },
+            // Keep the creator object if it exists, otherwise create minimal one
+            creator: stream.creator || { id: stream.creatorId },
             isFollowedByMe: stream.isFollowing,
             aggregates: {
               id: stream.id,
@@ -101,9 +109,11 @@ export const useStreamStore = defineStore('stream', {
       }
     },
 
-    async fetchStream(idOrSlug: number | string) {
+    async fetchStream(idOrSlug: number | string, creatorUsername?: string) {
       this.loading = true
       this.error = null
+
+      console.log('[Store] fetchStream called with:', { idOrSlug, creatorUsername })
 
       try {
         const query = typeof idOrSlug === 'number'
@@ -121,54 +131,48 @@ export const useStreamStore = defineStore('stream', {
                 sortType
                 timeRange
                 showNsfw
+                maxPostsPerBoard
                 addedToNavbar
-                isFollowedByMe
+                isFollowing
+                creatorId
                 creator {
                   id
-                  username
+                  name
+                  displayName
                   avatar
                   isAdmin
                 }
+                followerCount
+                totalSubscriptions
+                flairSubscriptionCount
+                boardSubscriptionCount
                 flairSubscriptions {
                   id
                   streamId
-                  flair {
-                    id
-                    boardId
-                    displayName
-                    name
-                    color
-                    bgColor
-                  }
+                  addedAt
                   board {
                     id
                     name
                     title
-                    description
-                    icon
-                    subscriberCount
                   }
-                  addedAt
+                  flair {
+                    id
+                    textDisplay
+                    backgroundColor
+                    textColor
+                  }
                 }
                 boardSubscriptions {
                   id
                   streamId
+                  addedAt
                   board {
                     id
                     name
                     title
                     description
                     icon
-                    subscriberCount
                   }
-                  addedAt
-                }
-                aggregates {
-                  id
-                  streamId
-                  followers
-                  flairSubscriptionCount
-                  boardSubscriptionCount
                 }
                 creationDate
                 updated
@@ -176,8 +180,8 @@ export const useStreamStore = defineStore('stream', {
             }
           `
           : `
-            query GetStreamBySlug($slug: String!) {
-              stream(slug: $slug) {
+            query GetStreamBySlug($slug: String!, $creatorUsername: String!) {
+              stream(slug: $slug, creatorUsername: $creatorUsername) {
                 id
                 name
                 slug
@@ -189,54 +193,48 @@ export const useStreamStore = defineStore('stream', {
                 sortType
                 timeRange
                 showNsfw
+                maxPostsPerBoard
                 addedToNavbar
-                isFollowedByMe
+                isFollowing
+                creatorId
                 creator {
                   id
-                  username
+                  name
+                  displayName
                   avatar
                   isAdmin
                 }
+                followerCount
+                totalSubscriptions
+                flairSubscriptionCount
+                boardSubscriptionCount
                 flairSubscriptions {
                   id
                   streamId
-                  flair {
-                    id
-                    boardId
-                    displayName
-                    name
-                    color
-                    bgColor
-                  }
+                  addedAt
                   board {
                     id
                     name
                     title
-                    description
-                    icon
-                    subscriberCount
                   }
-                  addedAt
+                  flair {
+                    id
+                    textDisplay
+                    backgroundColor
+                    textColor
+                  }
                 }
                 boardSubscriptions {
                   id
                   streamId
+                  addedAt
                   board {
                     id
                     name
                     title
                     description
                     icon
-                    subscriberCount
                   }
-                  addedAt
-                }
-                aggregates {
-                  id
-                  streamId
-                  followers
-                  flairSubscriptionCount
-                  boardSubscriptionCount
                 }
                 creationDate
                 updated
@@ -244,7 +242,12 @@ export const useStreamStore = defineStore('stream', {
             }
           `
 
-        const variables = typeof idOrSlug === 'number' ? { id: idOrSlug } : { slug: idOrSlug }
+        const variables = typeof idOrSlug === 'number'
+          ? { id: idOrSlug }
+          : { slug: idOrSlug, creatorUsername: creatorUsername || '' }
+
+        console.log('[Store] GraphQL variables:', variables)
+
         const { data, error } = await useDirectGraphQLRequest<{ stream: Stream }>(query, variables)
 
         if (error.value) throw error.value
@@ -282,6 +285,13 @@ export const useStreamStore = defineStore('stream', {
               showNsfw
               maxPostsPerBoard
               creatorId
+              creator {
+                id
+                name
+                displayName
+                avatar
+                isAdmin
+              }
               isFollowing
               addedToNavbar
               followerCount
@@ -380,16 +390,14 @@ export const useStreamStore = defineStore('stream', {
       this.error = null
 
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ deleteStream: { success: boolean } }>(`
-          mutation DeleteStream($id: Int!) {
-            deleteStream(id: $id) {
-              success
-            }
+        const { data, error } = await useDirectGraphQLRequest<{ deleteStream: boolean }>(`
+          mutation DeleteStream($streamId: Int!) {
+            deleteStream(streamId: $streamId)
           }
-        `, { id })
+        `, { streamId: id })
 
         if (error.value) throw error.value
-        if (data.value?.deleteStream?.success) {
+        if (data.value?.deleteStream) {
           // Remove from local state
           this.streams = this.streams.filter(s => s.id !== id)
           this.followedStreams = this.followedStreams.filter(s => s.id !== id)
@@ -408,46 +416,67 @@ export const useStreamStore = defineStore('stream', {
       }
     },
 
+    async updateStreamNavbarSettings(streamId: number, input: { addToNavbar: boolean; navbarPosition?: number | null }) {
+      try {
+        const { data, error } = await useDirectGraphQLRequest<{ updateStreamNavbarSettings: boolean }>(`
+          mutation UpdateStreamNavbarSettings($streamId: Int!, $addToNavbar: Boolean!, $navbarPosition: Int) {
+            updateStreamNavbarSettings(input: {
+              streamId: $streamId
+              addToNavbar: $addToNavbar
+              navbarPosition: $navbarPosition
+            })
+          }
+        `, {
+          streamId,
+          addToNavbar: input.addToNavbar,
+          navbarPosition: input.navbarPosition
+        })
+
+        if (error.value) throw error.value
+
+        // Update local state
+        const stream = this.streams.find(s => s.id === streamId)
+        if (stream) {
+          stream.addedToNavbar = input.addToNavbar
+          if (stream.navbarSettings) {
+            stream.navbarSettings.navbarPosition = input.navbarPosition
+          }
+        }
+
+        if (this.currentStream?.id === streamId) {
+          this.currentStream.addedToNavbar = input.addToNavbar
+          if (this.currentStream.navbarSettings) {
+            this.currentStream.navbarSettings.navbarPosition = input.navbarPosition
+          }
+        }
+
+        return true
+      } catch (err: any) {
+        this.error = err.message || 'Failed to update navbar settings'
+        console.error('Error updating navbar settings:', err)
+        throw err
+      }
+    },
+
     async addFlairSubscriptions(streamId: number, flairIds: number[]) {
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ addFlairSubscriptions: Stream }>(`
-          mutation AddFlairSubscriptions($streamId: Int!, $flairIds: [Int!]!) {
-            addFlairSubscriptions(streamId: $streamId, flairIds: $flairIds) {
+        const { data, error } = await useDirectGraphQLRequest<{ addFlairSubscriptions: any[] }>(`
+          mutation AddFlairSubscriptions($input: AddFlairSubscriptionsInput!) {
+            addFlairSubscriptions(input: $input) {
               id
-              flairSubscriptions {
-                id
-                streamId
-                flair {
-                  id
-                  boardId
-                  displayName
-                  name
-                  color
-                  bgColor
-                }
-                board {
-                  id
-                  name
-                  title
-                }
-                addedAt
-              }
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
+              streamId
+              flairId
+              boardId
+              addedAt
             }
           }
-        `, { streamId, flairIds })
+        `, { input: { streamId, flairIds } })
 
         if (error.value) throw error.value
         if (data.value?.addFlairSubscriptions) {
-          const updated = data.value.addFlairSubscriptions
-          this.updateLocalStream(streamId, updated)
-          return updated
+          // Refresh the stream to get updated subscriptions
+          await this.fetchStream(streamId)
+          return data.value.addFlairSubscriptions
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to add flair subscriptions'
@@ -458,39 +487,22 @@ export const useStreamStore = defineStore('stream', {
 
     async addBoardSubscriptions(streamId: number, boardIds: number[]) {
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ addBoardSubscriptions: Stream }>(`
-          mutation AddBoardSubscriptions($streamId: Int!, $boardIds: [Int!]!) {
-            addBoardSubscriptions(streamId: $streamId, boardIds: $boardIds) {
+        const { data, error } = await useDirectGraphQLRequest<{ addBoardSubscriptions: any[] }>(`
+          mutation AddBoardSubscriptions($input: AddBoardSubscriptionsInput!) {
+            addBoardSubscriptions(input: $input) {
               id
-              boardSubscriptions {
-                id
-                streamId
-                board {
-                  id
-                  name
-                  title
-                  description
-                  icon
-                  subscriberCount
-                }
-                addedAt
-              }
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
+              streamId
+              boardId
+              addedAt
             }
           }
-        `, { streamId, boardIds })
+        `, { input: { streamId, boardIds } })
 
         if (error.value) throw error.value
         if (data.value?.addBoardSubscriptions) {
-          const updated = data.value.addBoardSubscriptions
-          this.updateLocalStream(streamId, updated)
-          return updated
+          // Refresh the stream to get updated subscriptions
+          await this.fetchStream(streamId)
+          return data.value.addBoardSubscriptions
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to add board subscriptions'
@@ -501,33 +513,17 @@ export const useStreamStore = defineStore('stream', {
 
     async removeFlairSubscription(streamId: number, flairId: number) {
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ removeFlairSubscription: Stream }>(`
-          mutation RemoveFlairSubscription($streamId: Int!, $flairId: Int!) {
-            removeFlairSubscription(streamId: $streamId, flairId: $flairId) {
-              id
-              flairSubscriptions {
-                id
-                streamId
-                flair {
-                  id
-                  displayName
-                }
-              }
-              aggregates {
-                id
-                streamId
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
-            }
+        const { data, error } = await useDirectGraphQLRequest<{ removeFlairSubscription: boolean }>(`
+          mutation RemoveFlairSubscription($input: RemoveFlairSubscriptionInput!) {
+            removeFlairSubscription(input: $input)
           }
-        `, { streamId, flairId })
+        `, { input: { streamId, flairId } })
 
         if (error.value) throw error.value
         if (data.value?.removeFlairSubscription) {
-          const updated = data.value.removeFlairSubscription
-          this.updateLocalStream(streamId, updated)
-          return updated
+          // Refresh the stream to get updated subscriptions
+          await this.fetchStream(streamId)
+          return true
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to remove flair subscription'
@@ -538,33 +534,17 @@ export const useStreamStore = defineStore('stream', {
 
     async removeBoardSubscription(streamId: number, boardId: number) {
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ removeBoardSubscription: Stream }>(`
-          mutation RemoveBoardSubscription($streamId: Int!, $boardId: Int!) {
-            removeBoardSubscription(streamId: $streamId, boardId: $boardId) {
-              id
-              boardSubscriptions {
-                id
-                streamId
-                board {
-                  id
-                  name
-                }
-              }
-              aggregates {
-                id
-                streamId
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
-            }
+        const { data, error } = await useDirectGraphQLRequest<{ removeBoardSubscription: boolean }>(`
+          mutation RemoveBoardSubscription($input: RemoveBoardSubscriptionInput!) {
+            removeBoardSubscription(input: $input)
           }
-        `, { streamId, boardId })
+        `, { input: { streamId, boardId } })
 
         if (error.value) throw error.value
         if (data.value?.removeBoardSubscription) {
-          const updated = data.value.removeBoardSubscription
-          this.updateLocalStream(streamId, updated)
-          return updated
+          // Refresh the stream to get updated subscriptions
+          await this.fetchStream(streamId)
+          return true
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to remove board subscription'
@@ -573,28 +553,37 @@ export const useStreamStore = defineStore('stream', {
       }
     },
 
-    async followStream(streamId: number) {
+    async followStream(streamId: number, addToNavbar: boolean = false, navbarPosition?: number) {
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ followStream: Stream }>(`
-          mutation FollowStream($streamId: Int!) {
-            followStream(streamId: $streamId) {
-              id
-              isFollowedByMe
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
-            }
+        const { data, error } = await useDirectGraphQLRequest<{ followStream: boolean }>(`
+          mutation FollowStream($input: FollowStreamInput!) {
+            followStream(input: $input)
           }
-        `, { streamId })
+        `, {
+          input: {
+            streamId,
+            addToNavbar,
+            navbarPosition
+          }
+        })
 
-        if (error.value) throw error.value
+        if (error.value) {
+          // Check if already following
+          if (error.value.message && error.value.message.includes('Already following')) {
+            // Silently update local state to mark as following
+            this.updateLocalStream(streamId, { isFollowing: true })
+            await this.fetchMyStreams()
+            return
+          }
+          throw error.value
+        }
+
         if (data.value?.followStream) {
-          const updated = data.value.followStream
-          this.updateLocalStream(streamId, { isFollowedByMe: true, aggregates: updated.aggregates })
+          // Update local state to mark as following
+          this.updateLocalStream(streamId, { isFollowing: true })
+
+          // Refresh the stream list to get updated follower counts
+          await this.fetchMyStreams()
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to follow stream'
@@ -605,29 +594,23 @@ export const useStreamStore = defineStore('stream', {
 
     async unfollowStream(streamId: number) {
       try {
-        const { data, error } = await useDirectGraphQLRequest<{ unfollowStream: Stream }>(`
+        const { data, error } = await useDirectGraphQLRequest<{ unfollowStream: boolean }>(`
           mutation UnfollowStream($streamId: Int!) {
-            unfollowStream(streamId: $streamId) {
-              id
-              isFollowedByMe
-              aggregates {
-                id
-                streamId
-                followers
-                flairSubscriptionCount
-                boardSubscriptionCount
-              }
-            }
+            unfollowStream(streamId: $streamId)
           }
         `, { streamId })
 
         if (error.value) throw error.value
         if (data.value?.unfollowStream) {
-          const updated = data.value.unfollowStream
-          this.updateLocalStream(streamId, { isFollowedByMe: false, aggregates: updated.aggregates })
+          // Update local state to mark as not following
+          this.updateLocalStream(streamId, { isFollowing: false })
 
           // Remove from followed streams
           this.followedStreams = this.followedStreams.filter(s => s.id !== streamId)
+          this.navbarStreams = this.navbarStreams.filter(s => s.id !== streamId)
+
+          // Refresh the stream list to get updated follower counts
+          await this.fetchMyStreams()
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to unfollow stream'
@@ -641,53 +624,47 @@ export const useStreamStore = defineStore('stream', {
       this.error = null
 
       try {
+        const offset = (page - 1) * limit
+
         const { data, error } = await useDirectGraphQLRequest<{
-          streamPosts: {
-            posts: StreamPost[]
-            hasMore: boolean
-            total: number
-          }
+          streamPosts: StreamPost[]
         }>(`
-          query GetStreamPosts($streamId: Int!, $page: Int!, $limit: Int!) {
-            streamPosts(streamId: $streamId, page: $page, limit: $limit) {
-              posts {
+          query GetStreamPosts($streamId: Int!, $offset: Int!, $limit: Int!) {
+            streamPosts(streamId: $streamId, offset: $offset, limit: $limit) {
+              id
+              title
+              body
+              url
+              score
+              commentCount
+              isNSFW
+              creationDate
+              creator {
                 id
-                title
-                body
-                url
-                thumbnail
-                score
-                commentCount
-                isNsfw
-                creationDate
-                creator {
-                  id
-                  username
-                  avatar
-                  isAdmin
-                }
-                board {
-                  id
-                  name
-                  title
-                  icon
-                }
-                flair {
-                  id
-                  displayName
-                  color
-                  bgColor
-                }
+                name
+                displayName
+                avatar
+                isAdmin
               }
-              hasMore
-              total
+              board {
+                id
+                name
+                title
+                icon
+              }
+              flairs {
+                id
+                textDisplay
+                backgroundColor
+                textColor
+              }
             }
           }
-        `, { streamId, page, limit })
+        `, { streamId, offset, limit })
 
         if (error.value) throw error.value
         if (data.value?.streamPosts) {
-          const { posts, hasMore, total } = data.value.streamPosts
+          const posts = data.value.streamPosts
 
           if (page === 1) {
             this.currentStreamPosts = posts
@@ -695,10 +672,12 @@ export const useStreamStore = defineStore('stream', {
             this.currentStreamPosts = [...this.currentStreamPosts, ...posts]
           }
 
+          // Calculate hasMore based on whether we got a full page
+          const hasMore = posts.length === limit
           this.hasMorePosts = hasMore
-          this.totalPosts = total
+          this.totalPosts = this.currentStreamPosts.length
 
-          return { posts, hasMore, total }
+          return { posts, hasMore, total: this.currentStreamPosts.length }
         }
       } catch (err: any) {
         this.error = err.message || 'Failed to fetch stream posts'
@@ -722,6 +701,13 @@ export const useStreamStore = defineStore('stream', {
               color
               isPublic
               creatorId
+              creator {
+                id
+                name
+                displayName
+                avatar
+                isAdmin
+              }
               creationDate
               followerCount
               totalSubscriptions
@@ -738,7 +724,8 @@ export const useStreamStore = defineStore('stream', {
           // Transform the data to match our Store interface
           this.followedStreams = data.value.followedStreams.map((stream: any) => ({
             ...stream,
-            creator: { id: stream.creatorId },
+            // Keep the creator object if it exists, otherwise create minimal one
+            creator: stream.creator || { id: stream.creatorId },
             isFollowedByMe: stream.isFollowing,
             aggregates: {
               id: stream.id,

@@ -1,5 +1,5 @@
 <template>
-  <StreamDashboard />
+  <StreamDashboard :current-user-id="currentUser?.id" />
 </template>
 
 <script setup lang="ts">
@@ -9,6 +9,9 @@ definePageMeta({
   layout: 'default',
   hasAuthRequired: true
 })
+
+const authStore = useLoggedInUser()
+const currentUser = computed(() => authStore.user)
 
 useHead({
   title: 'My Streams',

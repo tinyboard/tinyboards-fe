@@ -553,6 +553,7 @@ const createStream = async () => {
       showNsfw: formData.showNsfw,
       isPublic: formData.isPublic,
       isDiscoverable: formData.isPublic && formData.isDiscoverable,
+      addedToNavbar: formData.addedToNavbar,
     }
 
     // Create the stream first
@@ -572,6 +573,10 @@ const createStream = async () => {
     if (boardIds.length > 0) {
       await addBoardSubscriptions(stream.id, boardIds)
     }
+
+    // Refresh the user's stream list to include the new stream
+    const streamStore = useStreamStore()
+    await streamStore.fetchMyStreams()
 
     createdStream.value = stream
     showSuccess.value = true
