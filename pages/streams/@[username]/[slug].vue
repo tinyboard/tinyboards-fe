@@ -16,10 +16,10 @@
     <!-- Stream Feed -->
     <template v-else-if="stream && initialLoadComplete">
       <!-- Banner Section -->
-      <section class="flex-col flex">
+      <section v-if="stream" class="flex-col flex">
         <div class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6">
           <LazyCardsBanner
-            :title="stream.name"
+            :title="stream.name || 'Stream'"
             :sub-title="stream.description || `Custom content stream by @${stream.creator?.name || 'Unknown'}`"
             :image-url="site.homepageBanner"
             :icon-type="site.homepageBanner ? undefined : 'posts'"
@@ -29,7 +29,7 @@
       </section>
 
       <!-- Main Content -->
-      <section class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
+      <section v-if="stream" class="container mx-auto max-w-8xl grid grid-cols-12 sm:my-6 sm:px-4 md:px-6">
         <div class="col-span-full flex flex-col md:flex-row gap-6">
           <div class="w-full md:flex-1 flex flex-col gap-4">
           <!-- Feed/Threads Tabs -->

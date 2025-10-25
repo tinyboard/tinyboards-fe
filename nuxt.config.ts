@@ -29,7 +29,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: "preload",
-          href: "/_nuxt/assets/fonts/Mona-Sans.woff2",
+          href: "/fonts/Mona-Sans.woff2",
           as: "font",
           type: "font/woff2",
           crossorigin: "anonymous",
