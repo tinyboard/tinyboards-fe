@@ -691,8 +691,8 @@ export const useStreamStore = defineStore('stream', {
     async fetchFollowedStreams() {
       try {
         const { data, error } = await useDirectGraphQLRequest<{ followedStreams: Stream[] }>(`
-          query GetFollowedStreams {
-            followedStreams {
+          query GetFollowedStreams($limit: Int, $offset: Int) {
+            followedStreams(limit: $limit, offset: $offset) {
               id
               name
               slug
@@ -717,7 +717,12 @@ export const useStreamStore = defineStore('stream', {
               addedToNavbar
             }
           }
-        `)
+        `, {
+          variables: {
+            limit: 50,
+            offset: 0
+          }
+        })
 
         if (error.value) throw error.value
         if (data.value?.followedStreams) {
