@@ -114,10 +114,10 @@ export default defineNuxtConfig({
       headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
     },
 
-    // SPA for streams (avoid SSR auth context issues)
+    // SSR for streams with short cache
     "/streams/**": {
-      ssr: false,
-      headers: { 'Cache-Control': 'no-store' }
+      ssr: true,
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
     },
 
     // Homepage redirect
