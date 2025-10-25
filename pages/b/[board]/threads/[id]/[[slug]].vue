@@ -24,6 +24,9 @@
                 :board-slug="boardName"
                 :board-name="board?.title || board?.name"
                 :current-page="thread?.title"
+                :stream-slug="String(route.query.streamSlug || '')"
+                :stream-name="String(route.query.streamName || '')"
+                :stream-creator-username="String(route.query.streamCreator || '')"
             />
         </section>
 
