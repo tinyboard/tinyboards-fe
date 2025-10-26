@@ -84,9 +84,8 @@
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  <option value="USER">User Flair</option>
-                  <option value="POST">Post Flair</option>
-                  <option value="BOTH">User & Post Flair</option>
+                  <option value="user">User Flair</option>
+                  <option value="post">Post Flair</option>
                 </select>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Where this flair can be used
