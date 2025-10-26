@@ -223,7 +223,7 @@ const loadFlairs = async () => {
   try {
     const query = `
       query GetBoardFlairs($boardId: Int!) {
-        flairTemplates(boardId: $boardId, flairType: "POST", isActive: true) {
+        flairTemplates(boardId: $boardId, flairType: "post", isActive: true) {
           id
           textDisplay
           textEditable

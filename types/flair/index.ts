@@ -1,8 +1,8 @@
 // Flair Type Definitions for TinyBoards
 
-export type FlairType = 'USER' | 'POST' | 'BOTH';
+export type FlairType = 'user' | 'post';
 
-export type FlairScope = 'SITE' | 'BOARD';
+export type FlairScope = 'site' | 'board';
 
 export type GradientType = 'linear' | 'radial';
 

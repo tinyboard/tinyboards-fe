@@ -296,7 +296,7 @@ const successMessage = ref('');
 // Local flair state
 const localFlair = ref<FlairTemplate>({
   text: '',
-  flairType: 'POST' as FlairType,
+  flairType: 'post' as FlairType,
   flairScope: props.scope,
   modOnly: false,
   boardId: props.boardId,
@@ -514,7 +514,7 @@ watch(
     if (newValue) {
       localFlair.value = {
         text: '',
-        flairType: 'POST' as FlairType,
+        flairType: 'post' as FlairType,
         flairScope: props.scope,
         modOnly: false,
         boardId: props.boardId,

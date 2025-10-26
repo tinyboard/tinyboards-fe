@@ -168,13 +168,13 @@ import type { FlairTemplate, FlairCategory } from '~/types/flair';
 
 interface Props {
   boardId?: number;
-  flairType?: 'POST' | 'USER' | 'BOTH';
+  flairType?: 'post' | 'user';
   maxFlairs?: number;
   modelValue?: number[]; // Array of selected flair IDs
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  flairType: 'POST',
+  flairType: 'post',
   maxFlairs: 5,
   modelValue: () => []
 });
