@@ -92,6 +92,39 @@ export async function useFetchUser(username: string, query = {}) {
             name
             icon
           }
+          flairs {
+            id
+            templateId
+            textDisplay
+            backgroundColor
+            textColor
+            template {
+              id
+              textDisplay
+              textEditable
+              backgroundColor
+              textColor
+              styleConfig
+              emojiIds
+              style {
+                backgroundColor
+                textColor
+                borderColor
+                borderWidth
+                borderRadius
+                borderStyle
+                fontWeight
+                fontSize
+                padding
+                margin
+                customCss
+                shadowColor
+                shadowBlur
+                shadowOffsetX
+                shadowOffsetY
+              }
+            }
+          }
           commentCount
           image
         }
