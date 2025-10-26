@@ -306,6 +306,44 @@ const threadsQuery = `
                 displayName
                 avatar
             }
+            flairs {
+                id
+                templateId
+                textDisplay
+                backgroundColor
+                textColor
+                template {
+                    id
+                    textDisplay
+                    textEditable
+                    backgroundColor
+                    textColor
+                    styleConfig
+                    emojiIds
+                    style {
+                        backgroundColor
+                        textColor
+                        borderColor
+                        borderWidth
+                        borderRadius
+                        borderStyle
+                        fontWeight
+                        fontSize
+                        padding
+                        margin
+                        customCss
+                        shadowColor
+                        shadowOffsetX
+                        shadowOffsetY
+                        shadowBlur
+                        animationType
+                        animationDuration
+                        gradientStart
+                        gradientEnd
+                        gradientDirection
+                    }
+                }
+            }
         }
     }
 `;
