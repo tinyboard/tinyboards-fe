@@ -14,16 +14,12 @@ FULL_IMAGE_NAME="$DOCKERHUB_USER/$IMAGE_NAME:$TAG"
 echo "🚀 Building and pushing TinyBoards Frontend to Docker Hub..."
 echo "   Image: $FULL_IMAGE_NAME"
 
-# Clean local build cache to ensure fresh build
-echo "🧹 Cleaning local build cache..."
-rm -rf .nuxt .output node_modules/.vite
-
 # Build the image with real GraphQL generation from local backend
 echo "🔨 Building Docker image..."
 echo "📡 Note: This build requires the TinyBoards backend to be running locally on port 8536"
 echo "🔧 Production domain will be configurable at runtime via environment variables"
 echo "⚙️  Using legacy Docker builder with host networking for localhost access"
-DOCKER_BUILDKIT=0 docker build --no-cache --network=host \
+DOCKER_BUILDKIT=0 docker build --network=host \
     --build-arg NUXT_PUBLIC_DOMAIN=localhost:8536 \
     --build-arg NUXT_PUBLIC_USE_HTTPS=false \
     -t $IMAGE_NAME \
