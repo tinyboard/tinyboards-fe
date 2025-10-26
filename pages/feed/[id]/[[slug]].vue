@@ -104,12 +104,10 @@ try {
     post.value = postData.value.post;
 
     // Board mode redirect: if boards are enabled and post has a board, redirect to board URL
-    if (process.server) {
-        const site = useSiteStore();
-        if (site.enableBoards && post.value.board) {
-            const boardUrl = `/b/${post.value.board.name}/feed/${postId}/${post.value.slug || post.value.titleChunk || 'post'}`;
-            await navigateTo(boardUrl, { redirectCode: 301 });
-        }
+    const site = useSiteStore();
+    if (site.enableBoards && post.value.board) {
+        const boardUrl = `/b/${post.value.board.name}/feed/${postId}/${post.value.slug || post.value.titleChunk || 'post'}`;
+        await navigateTo(boardUrl, { redirectCode: 301 });
     }
 } catch (error) {
     console.error('Error fetching post:', error);

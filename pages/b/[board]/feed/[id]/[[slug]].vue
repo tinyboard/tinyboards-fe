@@ -153,7 +153,7 @@ try {
     postResult = await usePost(postId);
 
     // Handle authentication errors
-    if (process.server && postResult.error.value?.isAuthError) {
+    if (postResult.error.value?.isAuthError) {
         const tokenCookie = useCookie('token');
         tokenCookie.value = null;
         await navigateTo('/login?redirect=' + encodeURIComponent(route.fullPath));

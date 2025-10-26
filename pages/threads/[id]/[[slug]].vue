@@ -117,12 +117,10 @@ try {
     thread.value = threadData.value.post;
 
     // Board mode redirect: if boards are enabled and thread has a board, redirect to board URL
-    if (process.server) {
-        const site = useSiteStore();
-        if (site.enableBoards && thread.value.board) {
-            const boardUrl = `/b/${thread.value.board.name}/threads/${threadId}/${thread.value.slug || thread.value.titleChunk || 'post'}`;
-            await navigateTo(boardUrl, { redirectCode: 301 });
-        }
+    const site = useSiteStore();
+    if (site.enableBoards && thread.value.board) {
+        const boardUrl = `/b/${thread.value.board.name}/threads/${threadId}/${thread.value.slug || thread.value.titleChunk || 'post'}`;
+        await navigateTo(boardUrl, { redirectCode: 301 });
     }
 } catch (error) {
     console.error('Error fetching thread:', error);
