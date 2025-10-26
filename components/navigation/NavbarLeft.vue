@@ -147,23 +147,35 @@
                         </div>
                     </button>
                 </NuxtLink>
-                <NuxtLink to="/streams" custom v-slot="{ isActive, navigate }">
+            </div>
+            <div
+                v-if="followedStreams.length > 0"
+                class="mt-2 border-t border-gray-300 dark:border-gray-800 flex flex-col space-y-2 pt-2"
+            >
+                <NuxtLink
+                    v-for="stream in followedStreams"
+                    :key="stream.id"
+                    :to="`/streams/@${stream.creator?.name}/${stream.slug}`"
+                    custom
+                    v-slot="{ isActive, navigate }"
+                >
                     <button
-                        title="Streams"
+                        :title="stream.name"
                         class="relative flex group border p-[1px] transition-all duration-100"
                         :class="[
                             isActive
                                 ? 'bg-primary border-primary text-primary'
                                 : 'bg-white border-gray-300 dark:bg-gray-900 dark:border-gray-800 text-gray-300 hover:bg-primary/70 hover:text-primary/70',
                         ]"
-                        @click="() => navigate('/streams')"
+                        @click="() => navigate(`/streams/@${stream.creator?.name}/${stream.slug}`)"
                     >
                         <div
                             class="my-auto mx-auto w-12 h-12 bg-white dark:bg-gray-900 text-center flex justify-center items-center"
                         >
                             <svg
+                                v-if="!stream.icon"
                                 xmlns="http://www.w3.org/2000/svg"
-                                class="w-8 h-8 inline-block"
+                                class="w-6 h-6 inline-block"
                                 width="24"
                                 height="24"
                                 viewBox="0 0 24 24"
@@ -181,63 +193,7 @@
                                 <path d="M15 12l6 0" />
                                 <path d="M9 12l-6 0" />
                             </svg>
-                        </div>
-                    </button>
-                </NuxtLink>
-            </div>
-            <div
-                v-if="followedStreams.length > 0"
-                class="mt-2 border-t border-gray-300 dark:border-gray-800 flex flex-col space-y-2 justify-center"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="mx-auto mt-2 w-8 h-8 text-gray-300"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                    <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-                    <path d="M12 9l0 -6" />
-                    <path d="M12 15l0 6" />
-                    <path d="M15 12l6 0" />
-                    <path d="M9 12l-6 0" />
-                </svg>
-                <NuxtLink
-                    v-for="stream in followedStreams"
-                    :key="stream.id"
-                    :to="`/streams/@${stream.creator?.name}/${stream.slug}`"
-                    custom
-                    v-slot="{ isActive, navigate }"
-                >
-                    <button
-                        :title="`${stream.name} · ${stream.followerCount || 0} followers`"
-                        class="relative flex group border p-[1px] transition-all duration-100"
-                        :class="[
-                            isActive
-                                ? 'bg-primary border-primary text-primary'
-                                : 'bg-white border-gray-300 dark:bg-gray-900 dark:border-gray-800 text-gray-300 hover:bg-primary/70 hover:text-primary/70',
-                        ]"
-                        @click="() => navigate(`/streams/@${stream.creator?.name}/${stream.slug}`)"
-                    >
-                        <div
-                            v-if="stream.icon"
-                            class="w-12 h-12 flex items-center justify-center"
-                        >
-                            <img :src="stream.icon" class="w-full h-full object-cover" />
-                        </div>
-                        <div
-                            v-else
-                            class="w-12 h-12 flex items-center justify-center text-white font-bold text-lg"
-                            :style="{ backgroundColor: stream.color || '#3B82F6' }"
-                        >
-                            {{ stream.name.charAt(0).toUpperCase() }}
+                            <img v-else :src="stream.icon" class="w-full h-full object-cover" />
                         </div>
                     </button>
                 </NuxtLink>
