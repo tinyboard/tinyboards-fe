@@ -25,7 +25,7 @@
                     <FlairDisplayFlairBadge
                         v-for="flair in userFlairs"
                         :key="flair.id"
-                        :flair="flair.flair"
+                        :flair="flair.template"
                         size="md"
                         :clickable="false"
                         :removable="false"
@@ -121,7 +121,6 @@ const route = useRoute();
 const site = useSiteStore();
 const userStore = useLoggedInUser();
 const commentsStore = useCommentsStore();
-const { parseBackendStyle } = useFlairStyle();
 
 definePageMeta({
     alias: ["/@:username/overview", "/user/:username", "/u/:username"],
@@ -183,24 +182,7 @@ const user = computed(() => {
     return userData;
 });
 const moderates = computed(() => user.value?.moderates || []);
-const userFlairs = computed(() => {
-  const flairs = user.value?.flairs || [];
-  // Parse styleConfig for each flair - create new objects to avoid mutation
-  return flairs.map(assignment => {
-    const originalFlair = assignment.flair;
-    const parsedStyle = originalFlair?.styleConfig
-      ? parseBackendStyle(originalFlair.styleConfig)
-      : parseBackendStyle(null);
-
-    return {
-      ...assignment,
-      flair: {
-        ...originalFlair,
-        style: parsedStyle
-      }
-    };
-  });
-});
+const userFlairs = computed(() => user.value?.flairs || []);
 
 // Update title reactively
 watch(user, (newUser) => {
