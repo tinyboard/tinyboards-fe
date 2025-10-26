@@ -310,7 +310,7 @@ const convertStyleToBackend = (style: FlairStyle) => {
   // Handle animation
   if (style.animation && style.animation !== 'none') {
     backendStyle.animationType = style.animation;
-    backendStyle.animationDuration = style.animationDuration || 2;
+    backendStyle.animationDuration = Math.round(style.animationDuration || 2);
   }
 
   return backendStyle;

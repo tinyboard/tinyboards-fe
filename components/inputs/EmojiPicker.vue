@@ -96,11 +96,11 @@
               type="button"
               @click="selectEmoji(`:${customEmoji.shortcode}:`)"
               class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 rounded overflow-hidden flex-shrink-0"
-              :title="customEmoji.altText"
+              :title="customEmoji.altTextDisplay"
             >
               <img
                 :src="customEmoji.imageUrl"
-                :alt="customEmoji.altText"
+                :alt="customEmoji.altTextDisplay"
                 class="w-5 h-5 object-contain"
               />
             </button>
@@ -145,7 +145,7 @@ interface CustomEmoji {
   id: number;
   shortcode: string;
   imageUrl: string;
-  altText: string;
+  altTextDisplay: string;
   category: string;
   emojiScope: string;
   isActive: boolean;
@@ -202,7 +202,7 @@ const filteredCustomEmojis = computed(() => {
   return customEmojis.value.filter(emoji =>
     emoji.isActive && (
       emoji.shortcode.includes(query) ||
-      emoji.altText.toLowerCase().includes(query)
+      emoji.altTextDisplay.toLowerCase().includes(query)
     )
   );
 });
@@ -299,7 +299,7 @@ const loadCustomEmojis = async () => {
           id
           shortcode
           imageUrl
-          altText
+          altTextDisplay
           category
           emojiScope
           isActive
