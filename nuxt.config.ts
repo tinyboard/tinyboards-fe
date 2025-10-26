@@ -60,10 +60,9 @@ export default defineNuxtConfig({
       headers: { 'Cache-Control': 's-maxage=86400' }
     },
 
-    // SSR for user profiles with short cache
+    // SPA for user profiles to avoid hydration mismatches with cookies
     "/@**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+      ssr: false
     },
 
     // SSR for home feed (user-specific, no cache)
