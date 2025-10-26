@@ -1,7 +1,7 @@
 <template>
     <div
         id="nav-left"
-        class="fixed top-14 left-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-screen hidden 2xl:flex flex-col items-center w-20 py-4 md:z-50 overflow-none"
+        class="fixed top-14 left-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 h-screen hidden xl:flex flex-col items-center w-20 py-4 md:z-50 overflow-none"
     >
         <div
             id="nav-left-buttons"
