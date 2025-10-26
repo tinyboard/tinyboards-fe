@@ -135,6 +135,37 @@
                     </NuxtLink>
                     </MenuItem>
                 </div>
+                <div v-if="userStore.isAuthed && followedStreams && followedStreams.length > 0" class="py-2 text-sm">
+                    <!-- Followed Streams -->
+                    <div class="text-xs font-semibold text-gray-600 uppercase py-1 px-4">
+                        Followed Streams
+                    </div>
+                    <MenuItem as="div" v-slot="{ isActive, close }">
+                    <NuxtLink v-for="stream in followedStreams" :key="stream.id" :to="`/streams/@${stream.creator?.name}/${stream.slug}`" :class="[
+                        isActive ? 'bg-gray-100' : 'hover:bg-gray-100',
+                        'group flex items-center w-full px-4 py-1.5',
+                    ]" @click="close">
+                        <div v-if="stream.icon" class="w-8 h-8 mr-2 bg-white border p-[0.5px] flex items-center justify-center">
+                            <img :src="stream.icon" class="w-full h-full object-cover" />
+                        </div>
+                        <div v-else class="w-8 h-8 mr-2 bg-white border p-[0.5px] flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <circle cx="5" cy="19" r="1" />
+                                <path d="M4 4a16 16 0 0 1 16 16" />
+                                <path d="M4 11a9 9 0 0 1 9 9" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-gray-800 text-md font-semibold">
+                                {{ stream.name }}
+                            </div>
+                            <span class="text-xs text-gray-600">@{{ stream.creator?.name }}</span>
+                        </div>
+                    </NuxtLink>
+                    </MenuItem>
+                </div>
                 <div v-if="userStore.isAuthed" class="py-2 text-sm">
                     <!-- Joined boards -->
                     <div class="text-xs font-semibold text-gray-600 uppercase py-1 px-4">
@@ -186,12 +217,21 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useBoardStore } from "~/stores/StoreBoard";
-import { ref, computed, watch } from "vue";
+import { useStreamStore } from "@/stores/stream";
+import { ref, computed, watch, onMounted } from "vue";
 
 const recentBoardsUnfiltered = useCookie("recentBoards") ?? [];
 const userStore = useLoggedInUser();
 const boardStore = useBoardStore();
+const streamStore = useStreamStore();
 const route = useRoute();
+
+// Fetch followed streams on mount if authenticated
+onMounted(async () => {
+    if (userStore.isAuthed) {
+        await streamStore.fetchFollowedStreams();
+    }
+});
 
 const v = userStore.user;
 /*const joinedBoards = userStore.joinedBoards;
@@ -238,6 +278,16 @@ const moderatedBoards = computed(() => {
         ? userStore.moddedBoards.slice(0, 5)
         : userStore.moddedBoards.filter((board) =>
             board.name
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase()),
+        );
+});
+
+const followedStreams = computed(() => {
+    return searchQuery.value === ""
+        ? streamStore.followedStreams.slice(0, 10)
+        : streamStore.followedStreams.filter((stream) =>
+            stream.name
                 .toLowerCase()
                 .includes(searchQuery.value.toLowerCase()),
         );
