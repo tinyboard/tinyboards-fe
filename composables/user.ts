@@ -43,7 +43,17 @@ export async function useFetchUser(username: string, query = {}) {
         boardCreationApproved
         flairs {
           id
-          flairId
+          userId
+          boardId
+          flairTemplateId
+          customText
+          customTextColor
+          customBackgroundColor
+          isApproved
+          approvedAt
+          approvedBy
+          creationDate
+          isSelfAssigned
           flair {
             id
             text
