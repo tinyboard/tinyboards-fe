@@ -23,54 +23,32 @@
             </h3>
 
             <div class="space-y-4">
-              <!-- Flair Text -->
+              <!-- Flair Text with Emoji Picker -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Flair Text
                   <span class="text-red-500">*</span>
                 </label>
-                <input
-                  v-model="localFlair.text"
-                  type="text"
-                  required
-                  maxlength="50"
-                  placeholder="e.g., Moderator, VIP, Verified"
-                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {{ localFlair.text.length }}/50 characters
-                </p>
-              </div>
-
-              <!-- Emoji Picker -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Emoji (Optional)
-                </label>
-                <div class="flex items-center gap-2">
-                  <div
-                    v-if="localFlair.emoji"
-                    class="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg"
-                  >
-                    <span class="text-2xl">{{ localFlair.emoji }}</span>
-                    <button
-                      type="button"
-                      @click="localFlair.emoji = undefined"
-                      class="text-red-600 hover:text-red-700"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
+                <div class="relative">
+                  <textarea
+                    ref="textareaRef"
+                    v-model="localFlair.text"
+                    required
+                    maxlength="50"
+                    rows="2"
+                    placeholder="e.g., Moderator 👑, VIP ⭐, Verified ✓"
+                    class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  ></textarea>
+                  <div class="absolute right-2 top-2">
+                    <InputsEmojiPicker
+                      :board-id="boardId"
+                      @emoji-selected="insertEmoji"
+                    />
                   </div>
-                  <button
-                    type="button"
-                    @click="showEmojiPicker = true"
-                    class="px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    {{ localFlair.emoji ? 'Change Emoji' : 'Add Emoji' }}
-                  </button>
                 </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {{ localFlair.text.length }}/50 characters • You can add emojis directly in the text
+                </p>
               </div>
 
               <!-- Flair Type -->
@@ -178,36 +156,6 @@
       </div>
     </form>
 
-    <!-- Emoji Picker Modal -->
-    <Teleport to="body">
-      <div
-        v-if="showEmojiPicker"
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-        @click.self="showEmojiPicker = false"
-      >
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-              Select Emoji
-            </h3>
-            <button
-              @click="showEmojiPicker = false"
-              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <InputsEmojiPicker
-            :board-id="boardId"
-            @emoji-selected="handleEmojiSelected"
-          />
-        </div>
-      </div>
-    </Teleport>
-
     <!-- Error/Success Messages -->
     <Teleport to="body">
       <div
@@ -288,9 +236,9 @@ const emit = defineEmits<{
 // State
 const isEditing = computed(() => !!props.flair?.id);
 const saving = ref(false);
-const showEmojiPicker = ref(false);
 const errorMessage = ref('');
 const successMessage = ref('');
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 // Local flair state
 const localFlair = ref<FlairTemplate>({
@@ -309,9 +257,26 @@ const isValid = computed(() => {
 });
 
 // Methods
-const handleEmojiSelected = (emoji: string) => {
-  localFlair.value.emoji = emoji;
-  showEmojiPicker.value = false;
+const insertEmoji = (emoji: string) => {
+  if (!textareaRef.value) {
+    localFlair.value.text += emoji;
+    return;
+  }
+
+  const textarea = textareaRef.value;
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = localFlair.value.text;
+
+  // Insert emoji at cursor position
+  localFlair.value.text = text.substring(0, start) + emoji + text.substring(end);
+
+  // Move cursor after inserted emoji
+  nextTick(() => {
+    const newPosition = start + emoji.length;
+    textarea.setSelectionRange(newPosition, newPosition);
+    textarea.focus();
+  });
 };
 
 // Convert frontend FlairStyle to backend FlairStyleInput
