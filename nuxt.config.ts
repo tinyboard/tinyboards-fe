@@ -65,20 +65,17 @@ export default defineNuxtConfig({
       ssr: false
     },
 
-    // SSR for home feed (user-specific, no cache)
+    // SPA for home feed to avoid hydration mismatches
     "/home/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 'no-store' }
+      ssr: false
     },
 
-    // SSR for public feeds with short cache
+    // SPA for public feeds to avoid hydration mismatches
     "/feed/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+      ssr: false
     },
     "/all/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+      ssr: false
     },
 
     // SPA for admin interfaces (no caching, auth-required)
@@ -101,22 +98,19 @@ export default defineNuxtConfig({
       ssr: false
     },
 
-    // CRITICAL: Enable SSR for post pages (SEO, social sharing, link previews)
+    // SPA for post pages to avoid hydration mismatches with user-specific data
     "/p/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=600, stale-while-revalidate=3600' }
+      ssr: false
     },
 
-    // CRITICAL: Enable SSR for board pages (SEO, discovery)
+    // SPA for board pages to avoid hydration mismatches with user-specific data
     "/b/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+      ssr: false
     },
 
-    // SSR for streams with short cache
+    // SPA for streams to avoid hydration mismatches with user-specific data
     "/streams/**": {
-      ssr: true,
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=1800' }
+      ssr: false
     },
 
     // Homepage redirect
