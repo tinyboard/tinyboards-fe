@@ -17,13 +17,6 @@
         <path d="M4 4a16 16 0 0 1 16 16"></path>
         <path d="M4 11a9 9 0 0 1 9 9"></path>
       </svg>
-      <!-- Badge for stream count -->
-      <span
-        v-if="streams && streams.length > 0"
-        class="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-secondary rounded-full"
-      >
-        {{ streams.length > 9 ? '9+' : streams.length }}
-      </span>
     </button>
 
     <!-- Dropdown Menu -->
@@ -50,48 +43,8 @@
         aria-orientation="vertical"
       >
         <div class="py-1">
-          <!-- Header -->
-          <div class="px-4 py-2 border-b dark:border-gray-700">
-            <p class="text-sm font-semibold text-gray-900 dark:text-white">My Streams</p>
-          </div>
-
-          <!-- Stream List -->
-          <div v-if="streams && streams.length > 0" class="max-h-80 overflow-y-auto">
-            <NuxtLink
-              v-for="stream in streams"
-              :key="stream.id"
-              :to="`/streams/@${stream.creator?.name || 'unknown'}/${stream.slug}`"
-              @click="isOpen = false"
-              class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              role="menuitem"
-            >
-              <span v-if="stream.icon" class="mr-2 text-lg">{{ stream.icon }}</span>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <circle cx="5" cy="19" r="1"></circle>
-                <path d="M4 4a16 16 0 0 1 16 16"></path>
-                <path d="M4 11a9 9 0 0 1 9 9"></path>
-              </svg>
-              <span :style="stream.color ? { color: stream.color } : {}" class="truncate">{{ stream.name }}</span>
-            </NuxtLink>
-          </div>
-
-          <!-- Empty State -->
-          <div v-else class="px-4 py-6 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mx-auto text-gray-400 mb-2" viewBox="0 0 24 24" stroke-width="2"
-              stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <circle cx="5" cy="19" r="1"></circle>
-              <path d="M4 4a16 16 0 0 1 16 16"></path>
-              <path d="M4 11a9 9 0 0 1 9 9"></path>
-            </svg>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">No streams in navbar</p>
-            <p class="text-xs text-gray-400 dark:text-gray-500">Create a stream and add it to your navbar</p>
-          </div>
-
-          <!-- Footer Actions -->
-          <div class="border-t dark:border-gray-700">
+          <!-- Actions -->
+          <div>
             <NuxtLink
               to="/streams"
               @click="isOpen = false"
