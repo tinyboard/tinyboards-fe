@@ -75,8 +75,21 @@
 					</div>
 					<!-- User Links -->
 					<div class="header-menu-profile ml-4 flex items-center space-x-2 md:ml-6">
-						<!-- Streams Dropdown -->
-						<MenusStreams :streams="navbarStreams" />
+						<!-- Streams Link -->
+						<NuxtLink
+							to="/streams"
+							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded hover:bg-white/10 transition-colors"
+							title="Manage Streams"
+							aria-label="Manage Streams"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
+								stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+								<circle cx="5" cy="19" r="1"></circle>
+								<path d="M4 4a16 16 0 0 1 16 16"></path>
+								<path d="M4 11a9 9 0 0 1 9 9"></path>
+							</svg>
+						</NuxtLink>
 						<!-- Admin Tools Link -->
 						<NuxtLink v-if="v && v.adminLevel > 0" to="/admin"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
