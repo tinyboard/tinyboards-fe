@@ -45,25 +45,47 @@ export async function useFetchUser(username: string, query = {}) {
           id
           userId
           boardId
-          flairTemplateId
-          customText
-          customTextColor
-          customBackgroundColor
+          templateId
+          textDisplay
+          backgroundColor
+          textColor
+          styleConfig
+          emojiIds
           isApproved
+          creationDate
+          assignedBy
           approvedAt
           approvedBy
-          creationDate
-          isSelfAssigned
-          flair {
+          style {
+            backgroundColor
+            textColor
+            borderColor
+            borderWidth
+            borderRadius
+            borderStyle
+            fontWeight
+            fontSize
+            padding
+            margin
+            customCss
+            shadowColor
+            shadowOffsetX
+            shadowOffsetY
+            shadowBlur
+            animationType
+            animationDuration
+            gradientStart
+            gradientEnd
+            gradientDirection
+          }
+          template {
             id
-            text
+            textDisplay
+            textEditable
+            backgroundColor
+            textColor
             styleConfig
-            boardId
-            categoryId
-            isUserSelectable
-            isModOnly
-            creationDate
-            updated
+            emojiIds
           }
         }
         posts(sort: hot, limit: $limit, page: $page) {
