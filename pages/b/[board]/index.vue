@@ -63,14 +63,14 @@ if (route.params?.board) {
         const hasThreads = boardData.value.board.hasThreads;
 
         // Redirect to the default section
-        if (process.server && defaultSection === 'threads' && hasThreads) {
+        if (defaultSection === 'threads' && hasThreads) {
             await navigateTo(`/b/${boardName}/threads`, { replace: true });
-        } else if (process.server && defaultSection === 'feed' && hasFeed) {
+        } else if (defaultSection === 'feed' && hasFeed) {
             await navigateTo(`/b/${boardName}/feed`, { replace: true });
-        } else if (process.server && hasFeed) {
+        } else if (hasFeed) {
             // Fallback to feed if available
             await navigateTo(`/b/${boardName}/feed`, { replace: true });
-        } else if (process.server && hasThreads) {
+        } else if (hasThreads) {
             // Fallback to threads if feed not available
             await navigateTo(`/b/${boardName}/threads`, { replace: true });
         }
