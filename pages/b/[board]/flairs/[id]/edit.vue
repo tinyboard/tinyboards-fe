@@ -159,19 +159,19 @@ const { data: flairData, error, refresh } = await useGraphQLQuery(`
     flair(id: $flairId) {
       id
       name
-      displayText
-      description
+      textDisplay
       flairType
       backgroundColor
       textColor
-      icon
       isActive
       allowUserEdit
       modOnly
-      maxUses
-      expiresAt
       categoryId
       usageCount
+      requiresApproval
+      displayOrder
+      maxEmojiCount
+      emojiIds
       board {
         id
         name
@@ -328,18 +328,18 @@ const confirmDelete = async () => {
 
   try {
     const mutation = `
-      mutation DeleteFlair($flairId: Int!) {
-        deleteFlair(flairId: $flairId)
+      mutation DeleteFlairTemplate($templateId: Int!) {
+        deleteFlairTemplate(templateId: $templateId)
       }
     `;
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
-        flairId
+        templateId: flairId
       }
     });
 
-    if (result.value?.deleteFlair) {
+    if (result.value?.deleteFlairTemplate) {
       toast.addNotification({
         header: 'Flair deleted',
         message: 'The flair has been deleted successfully.',

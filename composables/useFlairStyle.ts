@@ -207,6 +207,11 @@ export const useFlairStyle = () => {
       cssStyle.fontWeight = weightMap[style.fontWeight]
     }
 
+    // Text transform
+    if (style.textTransform && style.textTransform !== 'none') {
+      cssStyle.textTransform = style.textTransform
+    }
+
     // Glow effect
     if (style.glow && style.glowColor) {
       const glowShadow = `0 0 10px ${style.glowColor}, 0 0 20px ${style.glowColor}`

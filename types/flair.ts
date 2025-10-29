@@ -25,6 +25,7 @@ export interface FlairTextShadow {
   offsetY: number
   blur: number
   color: string
+  spread?: number
 }
 
 export type TextShadow = FlairTextShadow
@@ -32,13 +33,16 @@ export type TextShadow = FlairTextShadow
 export interface FlairStyle {
   backgroundColor?: string
   gradient?: FlairGradient
+  useGradient?: boolean
   textColor?: string
   borderColor?: string
   borderWidth?: number
   borderRadius?: number
   textShadow?: FlairTextShadow
   fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold'
+  textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize'
   animation?: 'pulse' | 'shimmer' | 'bounce' | 'none'
+  animationDuration?: number
   glow?: boolean
   glowColor?: string
 }
@@ -77,8 +81,8 @@ export interface FlairAssignment {
 
 export type FlairSize = 'xs' | 'sm' | 'md' | 'lg'
 export type FlairLayout = 'horizontal' | 'vertical'
-export type FlairType = 'POST' | 'USER' | 'BOTH'
-export type FlairScope = 'BOARD' | 'SITE'
+export type FlairType = 'post' | 'user'
+export type FlairScope = 'board' | 'site'
 export type AnimationType = 'pulse' | 'shimmer' | 'bounce' | 'none'
 
 export interface FlairTemplate {
@@ -114,7 +118,10 @@ export const DEFAULT_FLAIR_STYLE: FlairStyle = {
   textColor: '#1f2937',
   borderRadius: 4,
   fontWeight: 'medium',
-  animation: 'none'
+  textTransform: 'none',
+  animation: 'none',
+  animationDuration: 2,
+  useGradient: false
 }
 
 // Gradient helper function
@@ -166,6 +173,10 @@ export function flairStyleToCSS(style: FlairStyle): Record<string, string> {
     css.fontWeight = style.fontWeight
   }
 
+  if (style.textTransform && style.textTransform !== 'none') {
+    css.textTransform = style.textTransform
+  }
+
   if (style.textShadow) {
     const { offsetX, offsetY, blur, color } = style.textShadow
     css.textShadow = `${offsetX}px ${offsetY}px ${blur}px ${color}`
@@ -175,49 +186,76 @@ export function flairStyleToCSS(style: FlairStyle): Record<string, string> {
 }
 
 // Gradient presets
-export const GRADIENT_PRESETS: Gradient[] = [
+export const GRADIENT_PRESETS = [
   {
-    type: 'linear',
-    angle: 90,
-    colors: ['#667eea', '#764ba2'],
-    stops: [
-      { color: '#667eea', position: 0 },
-      { color: '#764ba2', position: 100 }
-    ]
+    name: 'Purple Haze',
+    gradient: {
+      type: 'linear' as const,
+      angle: 90,
+      colors: ['#667eea', '#764ba2'],
+      stops: [
+        { color: '#667eea', position: 0 },
+        { color: '#764ba2', position: 100 }
+      ]
+    }
   },
   {
-    type: 'linear',
-    angle: 45,
-    colors: ['#f093fb', '#f5576c'],
-    stops: [
-      { color: '#f093fb', position: 0 },
-      { color: '#f5576c', position: 100 }
-    ]
+    name: 'Pink Passion',
+    gradient: {
+      type: 'linear' as const,
+      angle: 45,
+      colors: ['#f093fb', '#f5576c'],
+      stops: [
+        { color: '#f093fb', position: 0 },
+        { color: '#f5576c', position: 100 }
+      ]
+    }
   },
   {
-    type: 'linear',
-    angle: 135,
-    colors: ['#4facfe', '#00f2fe'],
-    stops: [
-      { color: '#4facfe', position: 0 },
-      { color: '#00f2fe', position: 100 }
-    ]
+    name: 'Ocean Blue',
+    gradient: {
+      type: 'linear' as const,
+      angle: 135,
+      colors: ['#4facfe', '#00f2fe'],
+      stops: [
+        { color: '#4facfe', position: 0 },
+        { color: '#00f2fe', position: 100 }
+      ]
+    }
   },
   {
-    type: 'radial',
-    colors: ['#fa709a', '#fee140'],
-    stops: [
-      { color: '#fa709a', position: 0 },
-      { color: '#fee140', position: 100 }
-    ]
+    name: 'Sunset',
+    gradient: {
+      type: 'radial' as const,
+      colors: ['#fa709a', '#fee140'],
+      stops: [
+        { color: '#fa709a', position: 0 },
+        { color: '#fee140', position: 100 }
+      ]
+    }
   }
 ]
 
 // Shadow presets
-export const SHADOW_PRESETS: TextShadow[] = [
-  { offsetX: 0, offsetY: 0, blur: 0, color: 'transparent' }, // None
-  { offsetX: 1, offsetY: 1, blur: 2, color: 'rgba(0, 0, 0, 0.5)' }, // Subtle
-  { offsetX: 2, offsetY: 2, blur: 4, color: 'rgba(0, 0, 0, 0.6)' }, // Medium
-  { offsetX: 3, offsetY: 3, blur: 6, color: 'rgba(0, 0, 0, 0.7)' }, // Strong
-  { offsetX: 0, offsetY: 0, blur: 8, color: 'rgba(255, 255, 255, 0.8)' } // Glow
+export const SHADOW_PRESETS = [
+  {
+    name: 'None',
+    shadow: null
+  },
+  {
+    name: 'Subtle',
+    shadow: { offsetX: 1, offsetY: 1, blur: 2, color: 'rgba(0, 0, 0, 0.3)' }
+  },
+  {
+    name: 'Medium',
+    shadow: { offsetX: 2, offsetY: 2, blur: 4, color: 'rgba(0, 0, 0, 0.5)' }
+  },
+  {
+    name: 'Strong',
+    shadow: { offsetX: 3, offsetY: 3, blur: 6, color: 'rgba(0, 0, 0, 0.7)' }
+  },
+  {
+    name: 'Glow',
+    shadow: { offsetX: 0, offsetY: 0, blur: 8, color: 'rgba(255, 255, 255, 0.8)', spread: 3 }
+  }
 ]

@@ -475,6 +475,20 @@
               }}</span>
             </button>
           </li>
+          <li v-if="canMod" class="hidden sm:list-item ml-6">
+            <button
+              class="group flex items-center text-blue-500 leading-none dark:text-blue-400 hover:text-blue-600"
+              @click="openFlairManager">
+              <!-- Tag Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-1"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+              <span class="hidden sm:inline text-sm font-medium">Manage Flairs</span>
+            </button>
+          </li>
           <li v-if="canMod && post.isRemoved" class="hidden sm:list-item ml-6">
             <button @click="confirmApprove"
               class="group flex items-center text-green-500 leading-none dark:text-green-400 hover:text-green-600">
@@ -805,6 +819,20 @@ const confirmApprove = () => {
     contentType: "post",
     options: {
       approve: true
+    }
+  });
+};
+
+// Flair Manager
+const openFlairManager = () => {
+  modalStore.setModal({
+    modal: "ModalManagePostFlairs",
+    id: props.post.id,
+    isOpen: true,
+    contentType: "post",
+    options: {
+      boardId: props.post.boardId,
+      currentFlairIds: props.post.flairIds || []
     }
   });
 };

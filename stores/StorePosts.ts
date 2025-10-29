@@ -124,7 +124,7 @@ export const usePostsStore = defineStore("posts", {
               template {
                 id
                 textDisplay
-                textEditable
+                isEditable
                 backgroundColor
                 textColor
                 styleConfig
@@ -238,7 +238,7 @@ export const usePostsStore = defineStore("posts", {
               template {
                 id
                 textDisplay
-                textEditable
+                isEditable
                 backgroundColor
                 textColor
                 styleConfig
@@ -294,7 +294,7 @@ export const usePostsStore = defineStore("posts", {
                   template {
                     id
                     textDisplay
-                    textEditable
+                    isEditable
                     backgroundColor
                     textColor
                     styleConfig
@@ -415,7 +415,7 @@ export const usePostsStore = defineStore("posts", {
               template {
                 id
                 textDisplay
-                textEditable
+                isEditable
                 backgroundColor
                 textColor
                 styleConfig

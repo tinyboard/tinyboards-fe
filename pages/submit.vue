@@ -227,12 +227,14 @@
                                     </ul>
                                 </div>
                                 <!-- Flair Selection -->
-                                <div class="col-span-full" v-if="boardId">
-                                    <FlairSelectorFlairSelector
+                                <div class="col-span-full" v-if="boardId && hasFlairs">
+                                    <label class="block text-sm font-bold mb-2">Post Flairs (Optional)</label>
+                                    <FlairSelectorInline
                                         :board-id="boardId"
-                                        flair-type="POST"
+                                        flair-type="post"
                                         :max-flairs="5"
                                         v-model="selectedFlairIds"
+                                        @flairs-loaded="hasFlairs = $event"
                                     />
                                 </div>
                             </div>
@@ -278,6 +280,7 @@ import { useGqlMultipart } from "@/composables/graphql_multipart";
 import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
 import CardsSubmitBanner from "@/components/cards/SubmitBanner.vue";
 import InputsBoardSelector from "@/components/inputs/BoardSelector.vue";
+import FlairSelectorInline from "@/components/flair/selector/FlairSelectorInline.vue";
 
 const pageTitle = computed(() => selectedBoard.value?.name
     ? `Submit to ${selectedBoard.value.name}`
@@ -406,6 +409,7 @@ const isNsfw = ref(false);
 const isVideo = ref(false);
 const fileType = ref<string | null>(null);
 const selectedFlairIds = ref<number[]>([]);
+const hasFlairs = ref(true); // Start with true to show section initially, will be updated by component
 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);

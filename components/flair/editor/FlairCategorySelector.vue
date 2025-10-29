@@ -185,8 +185,19 @@ watch(() => props.modelValue, (newValue) => {
   }
 });
 
+watch(() => props.boardId, (newBoardId) => {
+  if (newBoardId) {
+    loadCategories();
+  }
+});
+
 // Methods
 const loadCategories = async () => {
+  if (!props.boardId) {
+    categories.value = [];
+    return;
+  }
+
   loading.value = true;
   error.value = '';
 

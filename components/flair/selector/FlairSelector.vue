@@ -232,11 +232,11 @@ const loadFlairs = async () => {
 
   try {
     const query = `
-      query GetBoardFlairs($boardId: Int!, $flairType: String!) {
-        flairTemplates(boardId: $boardId, flairType: $flairType, isActive: true) {
+      query GetBoardFlairs($boardId: Int!, $flairType: FlairType!) {
+        boardFlairs(boardId: $boardId, flairType: $flairType, activeOnly: true) {
           id
           textDisplay
-          textEditable
+          isEditable
           styleConfig
           categoryId
           requiresApproval
@@ -264,8 +264,8 @@ const loadFlairs = async () => {
       throw new Error(queryError.value.message || 'Failed to load flairs');
     }
 
-    if (data.value?.flairTemplates) {
-      flairs.value = data.value.flairTemplates;
+    if (data.value?.boardFlairs) {
+      flairs.value = data.value.boardFlairs;
     }
 
     if (data.value?.flairCategories) {

@@ -34,8 +34,8 @@
                     ref="textareaRef"
                     v-model="localFlair.text"
                     required
-                    maxlength="50"
-                    rows="2"
+                    maxlength="150"
+                    rows="3"
                     placeholder="e.g., Moderator 👑, VIP ⭐, Verified ✓"
                     class="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                   ></textarea>
@@ -47,7 +47,7 @@
                   </div>
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {{ localFlair.text.length }}/50 characters • You can add emojis directly in the text
+                  {{ localFlair.text.length }}/150 characters • You can add emojis directly in the text
                 </p>
               </div>
 
@@ -224,7 +224,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  scope: 'BOARD'
+  scope: 'board'
 });
 
 const emit = defineEmits<{
@@ -253,7 +253,7 @@ const localFlair = ref<FlairTemplate>({
 
 // Validation
 const isValid = computed(() => {
-  return localFlair.value.text.length > 0 && localFlair.value.text.length <= 50;
+  return localFlair.value.text.length > 0 && localFlair.value.text.length <= 150;
 });
 
 // Methods
@@ -353,13 +353,15 @@ const handleSubmit = async () => {
           templateId: localFlair.value.id,
           input: {
             textDisplay: localFlair.value.text,
-            textEditable: !localFlair.value.modOnly,
+            isEditable: !localFlair.value.modOnly,
             backgroundColor: localFlair.value.style.backgroundColor,
             textColor: localFlair.value.style.textColor,
             styleConfig,
             categoryId: localFlair.value.categoryId,
             displayOrder: localFlair.value.displayOrder,
             requiresApproval: localFlair.value.modOnly,
+            maxEmojiCount: 30,
+            isActive: true
           }
         }
       });
@@ -397,13 +399,14 @@ const handleSubmit = async () => {
             boardId: props.boardId,
             flairType: localFlair.value.flairType,
             textDisplay: localFlair.value.text,
-            textEditable: !localFlair.value.modOnly,
+            isEditable: !localFlair.value.modOnly,
             backgroundColor: localFlair.value.style.backgroundColor,
             textColor: localFlair.value.style.textColor,
             styleConfig,
             categoryId: localFlair.value.categoryId,
             displayOrder: localFlair.value.displayOrder || 0,
-            requiresApproval: localFlair.value.modOnly
+            requiresApproval: localFlair.value.modOnly,
+            maxEmojiCount: 30
           }
         }
       });

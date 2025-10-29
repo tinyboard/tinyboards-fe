@@ -303,18 +303,18 @@ const confirmDelete = async () => {
 
   try {
     const mutation = `
-      mutation DeleteSiteFlair($flairId: Int!) {
-        deleteSiteFlair(flairId: $flairId)
+      mutation DeleteFlairTemplate($templateId: Int!) {
+        deleteFlairTemplate(templateId: $templateId)
       }
     `;
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
-        flairId
+        templateId: flairId
       }
     });
 
-    if (result.value?.deleteSiteFlair) {
+    if (result.value?.deleteFlairTemplate) {
       toast.addNotification({
         header: 'Flair deleted',
         message: 'The site-wide flair has been deleted successfully.',

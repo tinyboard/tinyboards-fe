@@ -315,7 +315,7 @@ const threadsQuery = `
                 template {
                     id
                     textDisplay
-                    textEditable
+                    isEditable
                     backgroundColor
                     textColor
                     styleConfig

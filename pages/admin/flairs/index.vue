@@ -158,18 +158,18 @@ const editFlair = (flair) => {
 const deleteFlair = async (flair) => {
   try {
     const mutation = `
-      mutation DeleteSiteFlair($flairId: Int!) {
-        deleteSiteFlair(flairId: $flairId)
+      mutation DeleteFlairTemplate($templateId: Int!) {
+        deleteFlairTemplate(templateId: $templateId)
       }
     `;
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
-        flairId: flair.id
+        templateId: flair.id
       }
     });
 
-    if (result.value?.deleteSiteFlair) {
+    if (result.value?.deleteFlairTemplate) {
       toast.addNotification({
         header: 'Flair deleted',
         message: `The flair "${flair.name}" has been deleted.`,
@@ -191,24 +191,27 @@ const deleteFlair = async (flair) => {
 const duplicateFlair = async (flair) => {
   try {
     const mutation = `
-      mutation DuplicateSiteFlair($flairId: Int!) {
-        duplicateSiteFlair(flairId: $flairId) {
+      mutation DuplicateFlairTemplate($templateId: Int!) {
+        duplicateFlairTemplate(templateId: $templateId) {
           id
-          name
+          textDisplay
+          flairType
+          backgroundColor
+          textColor
         }
       }
     `;
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
-        flairId: flair.id
+        templateId: flair.id
       }
     });
 
-    if (result.value?.duplicateSiteFlair) {
+    if (result.value?.duplicateFlairTemplate) {
       toast.addNotification({
         header: 'Flair duplicated',
-        message: `Created a copy of "${flair.name}".`,
+        message: `Created a copy of "${flair.textDisplay || flair.name}".`,
         type: 'success'
       });
       await refresh();
@@ -227,8 +230,8 @@ const duplicateFlair = async (flair) => {
 const toggleFlairActive = async (flair) => {
   try {
     const mutation = `
-      mutation UpdateSiteFlair($input: UpdateSiteFlairInput!) {
-        updateSiteFlair(input: $input) {
+      mutation UpdateFlairTemplate($templateId: Int!, $input: UpdateFlairTemplateInput!) {
+        updateFlairTemplate(templateId: $templateId, input: $input) {
           id
           isActive
         }
@@ -237,17 +240,17 @@ const toggleFlairActive = async (flair) => {
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
+        templateId: flair.id,
         input: {
-          flairId: flair.id,
           isActive: !flair.isActive
         }
       }
     });
 
-    if (result.value?.updateSiteFlair) {
+    if (result.value?.updateFlairTemplate) {
       toast.addNotification({
         header: 'Flair updated',
-        message: `Flair "${flair.name}" is now ${!flair.isActive ? 'active' : 'inactive'}.`,
+        message: `Flair "${flair.textDisplay || flair.name}" is now ${!flair.isActive ? 'active' : 'inactive'}.`,
         type: 'success'
       });
       await refresh();
@@ -266,21 +269,28 @@ const toggleFlairActive = async (flair) => {
 const bulkDeleteFlairs = async (flairIds) => {
   try {
     const mutation = `
-      mutation BulkDeleteSiteFlairs($flairIds: [Int!]!) {
-        bulkDeleteSiteFlairs(flairIds: $flairIds)
+      mutation DeleteFlairTemplate($templateId: Int!) {
+        deleteFlairTemplate(templateId: $templateId)
       }
     `;
 
-    const { data: result } = await useGraphQLMutation(mutation, {
-      variables: {
-        flairIds
+    // Delete each flair individually
+    let deletedCount = 0;
+    for (const flairId of flairIds) {
+      const { data: result } = await useGraphQLMutation(mutation, {
+        variables: {
+          templateId: flairId
+        }
+      });
+      if (result.value?.deleteFlairTemplate) {
+        deletedCount++;
       }
-    });
+    }
 
-    if (result.value?.bulkDeleteSiteFlairs) {
+    if (deletedCount > 0) {
       toast.addNotification({
         header: 'Flairs deleted',
-        message: `Successfully deleted ${flairIds.length} flair(s).`,
+        message: `Successfully deleted ${deletedCount} flair(s).`,
         type: 'success'
       });
       await refresh();
@@ -296,24 +306,28 @@ const bulkDeleteFlairs = async (flairIds) => {
 };
 
 // Bulk toggle active
-const bulkToggleActive = async (flairIds) => {
+const bulkToggleActive = async (flairIds, isActive) => {
   try {
     const mutation = `
-      mutation BulkToggleSiteFlairs($flairIds: [Int!]!) {
-        bulkToggleSiteFlairs(flairIds: $flairIds)
+      mutation BulkToggleFlairTemplates($templateIds: [Int!]!, $isActive: Boolean!) {
+        bulkToggleFlairTemplates(templateIds: $templateIds, isActive: $isActive) {
+          id
+          isActive
+        }
       }
     `;
 
     const { data: result } = await useGraphQLMutation(mutation, {
       variables: {
-        flairIds
+        templateIds: flairIds,
+        isActive: isActive
       }
     });
 
-    if (result.value?.bulkToggleSiteFlairs) {
+    if (result.value?.bulkToggleFlairTemplates) {
       toast.addNotification({
         header: 'Flairs updated',
-        message: `Successfully toggled ${flairIds.length} flair(s).`,
+        message: `Successfully ${isActive ? 'activated' : 'deactivated'} ${flairIds.length} flair(s).`,
         type: 'success'
       });
       await refresh();

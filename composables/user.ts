@@ -81,7 +81,7 @@ export async function useFetchUser(username: string, query = {}) {
           template {
             id
             textDisplay
-            textEditable
+            isEditable
             backgroundColor
             textColor
             styleConfig
@@ -123,7 +123,7 @@ export async function useFetchUser(username: string, query = {}) {
             template {
               id
               textDisplay
-              textEditable
+              isEditable
               backgroundColor
               textColor
               styleConfig

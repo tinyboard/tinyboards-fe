@@ -223,10 +223,10 @@ const loadFlairs = async () => {
   try {
     const query = `
       query GetBoardFlairs($boardId: Int!) {
-        flairTemplates(boardId: $boardId, flairType: "post", isActive: true) {
+        boardFlairs(boardId: $boardId, flairType: post, activeOnly: true) {
           id
           textDisplay
-          textEditable
+          isEditable
           styleConfig
           categoryId
           requiresApproval
@@ -251,8 +251,8 @@ const loadFlairs = async () => {
       throw new Error(queryError.value.message || 'Failed to load flairs');
     }
 
-    if (data.value?.flairTemplates) {
-      flairs.value = data.value.flairTemplates;
+    if (data.value?.boardFlairs) {
+      flairs.value = data.value.boardFlairs;
     }
 
     if (data.value?.flairCategories) {
@@ -306,6 +306,9 @@ const saveFlairs = async () => {
       mutation UpdatePostFlairs($postId: Int!, $flairIds: [Int!]!) {
         updatePostFlairs(postId: $postId, flairIds: $flairIds) {
           id
+          postId
+          templateId
+          textDisplay
         }
       }
     `;
