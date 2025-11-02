@@ -18,6 +18,36 @@ export async function usePostComments(id, query = {}) {
           name
           displayName
           avatar
+          isAdmin
+          adminLevel
+          flairs {
+            id
+            templateId
+            textDisplay
+            backgroundColor
+            textColor
+            template {
+              id
+              textDisplay
+              isEditable
+              backgroundColor
+              textColor
+              styleConfig
+              emojiIds
+              style {
+                backgroundColor
+                textColor
+                borderColor
+                borderWidth
+                borderRadius
+                fontWeight
+                fontSize
+                padding
+                margin
+                customCss
+              }
+            }
+          }
         }
         level
         parentId
@@ -74,6 +104,36 @@ export async function useComments(id, type = "post", query = {}, post_id) {
           name
           displayName
           avatar
+          isAdmin
+          adminLevel
+          flairs {
+            id
+            templateId
+            textDisplay
+            backgroundColor
+            textColor
+            template {
+              id
+              textDisplay
+              isEditable
+              backgroundColor
+              textColor
+              styleConfig
+              emojiIds
+              style {
+                backgroundColor
+                textColor
+                borderColor
+                borderWidth
+                borderRadius
+                fontWeight
+                fontSize
+                padding
+                margin
+                customCss
+              }
+            }
+          }
         }
         level
         parentId

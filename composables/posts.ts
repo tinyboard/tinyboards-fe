@@ -265,6 +265,36 @@ export async function getModQueue(query: any, type_: string) {
               name
               displayName
               avatar
+              isAdmin
+              adminLevel
+              flairs {
+                id
+                templateId
+                textDisplay
+                backgroundColor
+                textColor
+                template {
+                  id
+                  textDisplay
+                  isEditable
+                  backgroundColor
+                  textColor
+                  styleConfig
+                  emojiIds
+                  style {
+                    backgroundColor
+                    textColor
+                    borderColor
+                    borderWidth
+                    borderRadius
+                    fontWeight
+                    fontSize
+                    padding
+                    margin
+                    customCss
+                  }
+                }
+              }
             }
             commentCount
             image
@@ -285,6 +315,36 @@ export async function getModQueue(query: any, type_: string) {
               name
               displayName
               avatar
+              isAdmin
+              adminLevel
+              flairs {
+                id
+                templateId
+                textDisplay
+                backgroundColor
+                textColor
+                template {
+                  id
+                  textDisplay
+                  isEditable
+                  backgroundColor
+                  textColor
+                  styleConfig
+                  emojiIds
+                  style {
+                    backgroundColor
+                    textColor
+                    borderColor
+                    borderWidth
+                    borderRadius
+                    fontWeight
+                    fontSize
+                    padding
+                    margin
+                    customCss
+                  }
+                }
+              }
             }
             depth
             parentId

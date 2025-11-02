@@ -95,11 +95,40 @@ const { data: savedPostsData, error: savedError, pending: savedPending } = await
                 displayName
                 avatar
                 isAdmin
+                adminLevel
                 instance
                 creationDate
                 rep
                 postCount
                 commentCount
+                flairs {
+                    id
+                    templateId
+                    textDisplay
+                    backgroundColor
+                    textColor
+                    template {
+                        id
+                        textDisplay
+                        isEditable
+                        backgroundColor
+                        textColor
+                        styleConfig
+                        emojiIds
+                        style {
+                            backgroundColor
+                            textColor
+                            borderColor
+                            borderWidth
+                            borderRadius
+                            fontWeight
+                            fontSize
+                            padding
+                            margin
+                            customCss
+                        }
+                    }
+                }
             }
             board {
                 id

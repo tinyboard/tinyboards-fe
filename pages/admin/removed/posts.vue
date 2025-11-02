@@ -93,6 +93,8 @@ const { data: postsData, pending, error, refresh } = await useGraphQLQuery(`
 				name
 				displayName
 				avatar
+				isAdmin
+				adminLevel
 			}
 			board {
 				id

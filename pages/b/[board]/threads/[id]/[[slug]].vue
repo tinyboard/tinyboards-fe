@@ -99,12 +99,18 @@
 
                                     <div class="flex-1 sm:flex-none sm:w-full">
                                         <!-- Display Name -->
-                                        <NuxtLink
-                                            :to="`/@${thread.creator?.name}`"
-                                            class="sm:mt-3 font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 block"
-                                        >
-                                            {{ thread.creator?.displayName || thread.creator?.name }}
-                                        </NuxtLink>
+                                        <div class="sm:mt-3">
+                                            <NuxtLink
+                                                :to="`/@${thread.creator?.name}`"
+                                                class="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                            >
+                                                {{ thread.creator?.displayName || thread.creator?.name }}
+                                            </NuxtLink>
+                                            <svg v-if="thread.creator?.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+                                            </svg>
+                                        </div>
 
                                         <!-- Stats (horizontal on mobile, vertical on desktop) -->
                                         <div class="mt-1 sm:mt-3 flex sm:flex-col sm:w-full text-xs text-gray-600 dark:text-gray-400 gap-2 sm:gap-1">
@@ -268,12 +274,18 @@
 
                                         <div class="flex-1 sm:flex-none sm:w-full">
                                             <!-- Display Name -->
-                                            <NuxtLink
-                                                :to="`/@${comment.creator?.name}`"
-                                                class="sm:mt-2 font-bold text-sm text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 block"
-                                            >
-                                                {{ comment.creator?.displayName || comment.creator?.name }}
-                                            </NuxtLink>
+                                            <div class="sm:mt-2">
+                                                <NuxtLink
+                                                    :to="`/@${comment.creator?.name}`"
+                                                    class="font-bold text-sm text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                                >
+                                                    {{ comment.creator?.displayName || comment.creator?.name }}
+                                                </NuxtLink>
+                                                <svg v-if="comment.creator?.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+                                                </svg>
+                                            </div>
 
                                             <!-- Stats (horizontal on mobile, vertical on desktop) -->
                                             <div class="mt-0.5 sm:mt-2 flex sm:flex-col sm:w-full text-xs text-gray-600 dark:text-gray-400 gap-2 sm:gap-0.5">
@@ -662,10 +674,40 @@ const threadQuery = `
                 name
                 displayName
                 avatar
+                isAdmin
+                adminLevel
                 signature
                 creationDate
                 postCount
                 commentCount
+                flairs {
+                    id
+                    templateId
+                    textDisplay
+                    backgroundColor
+                    textColor
+                    template {
+                        id
+                        textDisplay
+                        isEditable
+                        backgroundColor
+                        textColor
+                        styleConfig
+                        emojiIds
+                        style {
+                            backgroundColor
+                            textColor
+                            borderColor
+                            borderWidth
+                            borderRadius
+                            fontWeight
+                            fontSize
+                            padding
+                            margin
+                            customCss
+                        }
+                    }
+                }
             }
             board {
                 id
@@ -778,6 +820,8 @@ const fetchComments = async (pageNum = 1) => {
                         name
                         displayName
                         avatar
+                        isAdmin
+                        adminLevel
                         signature
                         creationDate
                         postCount
@@ -945,6 +989,8 @@ const submitComment = async () => {
                         name
                         displayName
                         avatar
+                        isAdmin
+                        adminLevel
                     }
                     reactionCounts {
                         id

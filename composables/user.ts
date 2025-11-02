@@ -108,6 +108,7 @@ export async function useFetchUser(username: string, query = {}) {
             displayName
             avatar
             isAdmin
+            adminLevel
           }
           board @include(if: $includeBoard) {
             id
