@@ -15,13 +15,22 @@
 <script setup lang="ts">
 import type { FlairSize, Flair } from '~/types/flair'
 
+interface UserFlair {
+  id: number
+  userId?: number
+  boardId?: number
+  templateId?: number
+  textDisplay: string
+  backgroundColor?: string
+  textColor?: string
+  styleConfig?: string
+  template?: any
+  style?: any
+}
+
 interface User {
   id: number
-  flairs?: Array<{
-    id: number
-    flairId: number
-    flair: Flair
-  }>
+  flairs?: UserFlair[]
 }
 
 interface Props {
@@ -47,17 +56,23 @@ const displayFlairs = computed(() => {
     return []
   }
 
-  const flairs = props.user.flairs.map(assignment => {
-    const originalFlair = assignment.flair
-    // Parse styleConfig JSON into style object - create new object to avoid mutation
-    const parsedStyle = (originalFlair as any)?.styleConfig
-      ? parseBackendStyle((originalFlair as any).styleConfig)
-      : parseBackendStyle(null)
+  // Transform UserFlair backend structure to Flair frontend structure
+  const flairs = props.user.flairs.map((userFlair: UserFlair) => {
+    // Parse styleConfig JSON into style object
+    const parsedStyle = userFlair.template?.styleConfig
+      ? parseBackendStyle(userFlair.template.styleConfig)
+      : (userFlair.styleConfig ? parseBackendStyle(userFlair.styleConfig) : parseBackendStyle(null))
 
     return {
-      ...originalFlair,
-      style: parsedStyle
-    }
+      id: userFlair.id,
+      text: userFlair.textDisplay || userFlair.template?.textDisplay || '',
+      style: parsedStyle,
+      boardId: userFlair.boardId,
+      isUserSelectable: true,
+      isModOnly: false,
+      creationDate: '',
+      updated: ''
+    } as Flair
   })
 
   // Filter flairs based on board context

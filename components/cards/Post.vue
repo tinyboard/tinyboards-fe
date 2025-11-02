@@ -34,8 +34,19 @@
                 <strong class="ml-2 sm:ml-0">{{ post.creator?.displayName ?? post.creator?.name }}</strong>
                 <span v-if="post.creator?.instance">@{{ post.creator.instance }}</span>
                 <!-- Role -->
-                <span v-if="creatorIsAdmin" class="ml-1 badge badge-red">Admin</span>
+                <svg v-if="creatorIsAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+                </svg>
               </NuxtLink>
+              <!-- User Flairs -->
+              <FlairDisplayUserFlair
+                v-if="post.creator"
+                :user="post.creator"
+                :board-id="post.boardId"
+                :size="'xs'"
+                class="ml-1"
+              />
               <!-- User Title -->
               <!-- <span v-if="post.creator && post.creator.title"
                 class="ml-2 px-1 inline-flex leading-4 rounded-sm text-blue-700 shadow-inner-white bg-blue-100 border border-blue-200">
@@ -837,6 +848,18 @@ const openFlairManager = () => {
       })).filter(f => f.templateId)
     : [];
 
+  // Get current user flairs for the post creator
+  // Note: User flairs are board-specific, so we get the creator's flairs for this board
+  const currentUserFlairSelections = props.post.creator?.flairs
+    ? props.post.creator.flairs
+        .filter(flair => flair.boardId === boardId)
+        .map(flair => ({
+          templateId: flair.templateId,
+          customText: flair.textDisplay
+        }))
+        .filter(f => f.templateId)
+    : [];
+
   console.log('Opening flair manager:', {
     boardId,
     boardName: props.post.board?.name,
@@ -845,7 +868,9 @@ const openFlairManager = () => {
     postBoardId: props.post.boardId,
     postBoardFromObject: props.post.board?.id,
     currentFlairs: props.post.flairs,
-    currentFlairSelections: currentFlairSelections
+    currentFlairSelections: currentFlairSelections,
+    userId: props.post.creator?.id,
+    currentUserFlairSelections: currentUserFlairSelections
   });
 
   if (!boardId) {
@@ -860,7 +885,9 @@ const openFlairManager = () => {
     contentType: "post",
     options: {
       boardId: boardId,
-      currentFlairIds: currentFlairSelections
+      currentFlairIds: currentFlairSelections,
+      userId: props.post.creator?.id,
+      currentUserFlairIds: currentUserFlairSelections
     }
   });
 };
