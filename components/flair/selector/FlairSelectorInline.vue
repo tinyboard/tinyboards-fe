@@ -165,8 +165,9 @@ const selectedFlairs = ref<FlairSelection[]>(props.modelValue);
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
-  selectedFlairs.value = newValue;
-});
+  console.log('FlairSelectorInline: modelValue changed:', newValue);
+  selectedFlairs.value = newValue || [];
+}, { immediate: true, deep: true });
 
 watch(() => props.boardId, () => {
   loadFlairs();

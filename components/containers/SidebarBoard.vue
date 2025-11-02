@@ -4,30 +4,54 @@
         id="sidebar-board"
         class="w-[290px] hidden lg:flex flex-col flex-shrink-0 space-y-6 text-base"
     >
-        <!-- Create Post/Thread -->
-        <NuxtLink
-            v-if="!postPage"
-            :to="isThreadsSection ? `/submit?board=${board.name}&type=thread` : `/submit?board=${board.name}`"
-            class="flex items-center button primary"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4 mr-2"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+        <div class="flex flex-col space-y-2">
+            <!-- Create Post/Thread -->
+            <NuxtLink
+                v-if="!postPage"
+                :to="isThreadsSection ? `/submit?board=${board.name}&type=thread` : `/submit?board=${board.name}`"
+                class="flex items-center button primary"
             >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path
-                    d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"
-                ></path>
-                <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
-            </svg>
-            {{ isThreadsSection ? 'Create thread' : 'Create post' }}
-        </NuxtLink>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 mr-2"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path
+                        d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"
+                    ></path>
+                    <line x1="13.5" y1="6.5" x2="17.5" y2="10.5"></line>
+                </svg>
+                {{ isThreadsSection ? 'Create thread' : 'Create post' }}
+            </NuxtLink>
+
+            <!-- Select User Flair -->
+            <button
+                v-if="userStore.isAuthed && hasUserFlairs"
+                @click="openUserFlairSelector"
+                class="flex items-center button gray"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 mr-2"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                Select User Flair
+            </button>
+        </div>
         <!-- Board Details -->
         <div>
             <h2 class="font-bold leading-5 text-base mb-3 pb-1 border-b">
@@ -366,11 +390,10 @@
                                 <strong class="text-sm">{{
                                     mod.user.displayName ?? mod.user.name
                                 }}</strong>
-                                <span
-                                    v-if="mod.user.isAdmin"
-                                    class="ml-1 badge badge-red"
-                                    >Admin</span
-                                >
+                                <svg v-if="mod.user.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+                                </svg>
                             </div>
                             <small class="text-gray-400 block">
                                 {{ mod.user.name }}
@@ -395,14 +418,17 @@ import { useAPI } from "@/composables/api";
 import { requirePermission } from "@/composables/admin";
 import { useBoardStore } from "@/stores/StoreBoard";
 import { useLoggedInUser } from "@/stores/StoreAuth";
+import { useModalStore } from "@/stores/StoreModal";
 
 //const userStore = useLoggedInUser();
 //const user = userStore.user;
 const boardStore = useBoardStore();
+const modalStore = useModalStore();
 const isAdmin = requirePermission("boards");
 const router = useRouter();
 const modSelfPending = ref(false);
 const userStore = useLoggedInUser();
+const availableUserFlairs = ref([]);
 
 const props = defineProps({
     /*boardView: {
@@ -447,4 +473,79 @@ const modSelf = async () => {
         console.error(error.value);
     }
 };
+
+// Check if there are user flairs available for selection
+const hasUserFlairs = computed(() => {
+    return availableUserFlairs.value.length > 0;
+});
+
+// Fetch user flairs for this board
+const fetchUserFlairs = async () => {
+    if (!board.value?.id) return;
+
+    try {
+        const query = `
+            query GetBoardFlairs($boardId: Int!, $flairType: FlairType!) {
+                boardFlairs(boardId: $boardId, flairType: $flairType, activeOnly: true) {
+                    id
+                    name
+                    textDisplay
+                    isEditable
+                    modOnly
+                    isActive
+                }
+            }
+        `;
+
+        const { data } = await useGraphQLQuery(query, {
+            variables: {
+                boardId: board.value.id,
+                flairType: "user"
+            }
+        });
+
+        if (data.value?.boardFlairs) {
+            // Filter to only user-selectable, active flairs
+            availableUserFlairs.value = data.value.boardFlairs.filter(
+                flair => flair.isActive && !flair.modOnly
+            );
+        }
+    } catch (error) {
+        console.error('Failed to fetch user flairs:', error);
+    }
+};
+
+// Open user flair selector modal
+const openUserFlairSelector = () => {
+    if (!userStore.user?.id || !board.value?.id) return;
+
+    // Get current user flairs for this board
+    const currentUserFlairSelections = userStore.user.flairs
+        ? userStore.user.flairs
+            .filter(flair => flair.boardId === board.value.id)
+            .map(flair => ({
+                templateId: flair.templateId,
+                customText: flair.textDisplay
+            }))
+            .filter(f => f.templateId)
+        : [];
+
+    modalStore.setModal({
+        modal: "ModalSelectUserFlairs",
+        id: userStore.user.id,
+        isOpen: true,
+        options: {
+            boardId: board.value.id,
+            userId: userStore.user.id,
+            currentUserFlairIds: currentUserFlairSelections
+        }
+    });
+};
+
+// Fetch user flairs when board changes
+watch(() => board.value?.id, () => {
+    if (board.value?.id && userStore.isAuthed) {
+        fetchUserFlairs();
+    }
+}, { immediate: true });
 </script>

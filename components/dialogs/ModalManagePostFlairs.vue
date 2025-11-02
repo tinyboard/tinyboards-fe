@@ -136,10 +136,9 @@ watch(() => props.options?.currentFlairIds, (newSelections) => {
 }, { immediate: true });
 
 watch(() => props.options?.currentUserFlairIds, (newSelections) => {
-  if (newSelections) {
-    selectedUserFlairIds.value = newSelections;
-  }
-}, { immediate: true });
+  console.log('ModalManagePostFlairs: currentUserFlairIds changed:', newSelections);
+  selectedUserFlairIds.value = newSelections || [];
+}, { immediate: true, deep: true });
 
 const saveFlairs = async () => {
   if (isLoading.value) return;
