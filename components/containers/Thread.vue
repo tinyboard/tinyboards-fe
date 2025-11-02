@@ -113,7 +113,7 @@
                 class="ml-1"
               />
               <!-- Role -->
-              <svg v-if="post.creator.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+              <svg v-if="post.creator?.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
               </svg>
