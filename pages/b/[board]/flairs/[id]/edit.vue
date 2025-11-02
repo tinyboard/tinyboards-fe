@@ -164,7 +164,7 @@ const { data: flairData, error, refresh } = await useGraphQLQuery(`
       backgroundColor
       textColor
       isActive
-      allowUserEdit
+      isEditable
       modOnly
       categoryId
       usageCount
@@ -172,6 +172,7 @@ const { data: flairData, error, refresh } = await useGraphQLQuery(`
       displayOrder
       maxEmojiCount
       emojiIds
+      styleConfig
       board {
         id
         name
@@ -206,7 +207,17 @@ if (error.value) {
   });
 }
 
-const flair = computed(() => flairData.value?.flair);
+const flair = computed(() => {
+  const rawFlair = flairData.value?.flair;
+  if (!rawFlair) return null;
+
+  // Map backend field names to frontend expected names
+  return {
+    ...rawFlair,
+    text: rawFlair.textDisplay || rawFlair.name || '', // Map textDisplay to text
+  };
+});
+
 const boardId = computed(() => flair.value?.board.id);
 const usageStats = computed(() => flairData.value?.getFlairUsageStats || {});
 const chartData = computed(() => flairData.value?.getFlairUsageChart || []);

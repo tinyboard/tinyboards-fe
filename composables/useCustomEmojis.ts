@@ -4,7 +4,7 @@ interface CustomEmoji {
   id: number
   shortcode: string
   imageUrl: string
-  altText: string
+  altTextDisplay: string
   category: string
   emojiScope: string
   isActive: boolean
@@ -15,17 +15,23 @@ const isLoaded = ref(false)
 
 export const useCustomEmojis = () => {
   const loadCustomEmojis = async (boardId?: number) => {
+    console.log('[useCustomEmojis] loadCustomEmojis called, isLoaded:', isLoaded.value, 'boardId:', boardId)
+
     // Skip if already loaded
-    if (isLoaded.value) return customEmojis.value
+    if (isLoaded.value) {
+      console.log('[useCustomEmojis] Already loaded, returning cache:', customEmojis.value.length, 'emojis')
+      return customEmojis.value
+    }
 
     try {
+      console.log('[useCustomEmojis] Starting to load emojis...')
       const query = `
         query ListEmojis($input: ListEmojisInput) {
           listEmojis(input: $input) {
             id
             shortcode
             imageUrl
-            altText
+            altTextDisplay
             category
             emojiScope
             isActive
@@ -45,6 +51,13 @@ export const useCustomEmojis = () => {
             offset: 0
           }
         }
+      })
+
+      console.log('[useCustomEmojis] Site emojis response:', {
+        data: siteData.value,
+        error: siteError.value,
+        hasListEmojis: !!siteData.value?.listEmojis,
+        count: siteData.value?.listEmojis?.length
       })
 
       if (!siteError.value && siteData.value?.listEmojis) {
@@ -73,9 +86,12 @@ export const useCustomEmojis = () => {
       customEmojis.value = allEmojis
       isLoaded.value = true
 
+      console.log('[useCustomEmojis] Finished loading. Total emojis:', allEmojis.length)
+      console.log('[useCustomEmojis] Emoji shortcodes:', allEmojis.map(e => e.shortcode))
+
       return customEmojis.value
     } catch (error) {
-      console.error('Failed to load custom emojis:', error)
+      console.error('[useCustomEmojis] Failed to load custom emojis:', error)
       return []
     }
   }

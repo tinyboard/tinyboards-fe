@@ -108,25 +108,10 @@
               />
             </td>
             <td v-if="columns.find(c => c.key === 'preview' && !c.hidden)" class="px-4 py-3">
-              <div
-                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                :style="{
-                  backgroundColor: flair.backgroundColor || flair.background_color || '#e5e7eb',
-                  color: flair.textColor || flair.text_color || '#374151'
-                }"
-              >
-                <svg
-                  v-if="flair.icon"
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4 mr-1"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                  stroke="currentColor"
-                  fill="none"
-                  v-html="flair.icon"
-                />
-                {{ flair.displayText || flair.textDisplay || flair.text_display }}
-              </div>
+              <FlairDisplayFlairBadge
+                :flair="getFlairPreview(flair)"
+                size="md"
+              />
             </td>
             <td v-if="columns.find(c => c.key === 'name' && !c.hidden)" class="px-4 py-3">
               <div class="flex flex-col">
@@ -262,6 +247,58 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import FlairDisplayFlairBadge from '@/components/flair/display/FlairBadge.vue';
+
+const { customEmojis, loadCustomEmojis, getCustomEmojiUrl } = useCustomEmojis();
+const { parseBackendStyle } = useFlairStyle();
+
+// Load emojis
+loadCustomEmojis();
+
+// Parse emoji shortcodes in text
+const parseEmojis = (text) => {
+  if (!text) return '';
+  return text.replace(/:([a-zA-Z0-9_-]+):/g, (match, shortcode) => {
+    const emojiUrl = getCustomEmojiUrl(match);
+    if (emojiUrl) {
+      return `<img src="${emojiUrl}" alt=":${shortcode}:" class="inline-block w-4 h-4 align-middle mx-0.5" />`;
+    }
+    return match;
+  });
+};
+
+// Convert flair template to FlairBadge format
+const getFlairPreview = (flair) => {
+  // Parse styleConfig if available, otherwise use fallback colors
+  let style;
+  if (flair.styleConfig) {
+    try {
+      style = parseBackendStyle(flair.styleConfig);
+    } catch (e) {
+      console.error('Error parsing styleConfig:', e);
+      style = parseBackendStyle(null);
+    }
+  } else {
+    style = parseBackendStyle(null);
+    // Use fallback colors if no styleConfig
+    if (flair.backgroundColor || flair.background_color) {
+      style.backgroundColor = flair.backgroundColor || flair.background_color;
+    }
+    if (flair.textColor || flair.text_color) {
+      style.textColor = flair.textColor || flair.text_color;
+    }
+  }
+
+  return {
+    id: flair.id || 0,
+    text: flair.textDisplay || flair.displayText || flair.text_display || flair.name || '',
+    style: style,
+    isUserSelectable: true,
+    isModOnly: flair.modOnly || false,
+    creationDate: flair.creationDate || '',
+    updated: flair.updated || ''
+  };
+};
 
 const props = defineProps({
   flairs: {

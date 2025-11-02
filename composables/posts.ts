@@ -250,6 +250,7 @@ export async function getModQueue(query: any, type_: string) {
             score
             myVote
             creatorVote
+            boardId
             board {
               id
               name

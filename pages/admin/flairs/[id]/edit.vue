@@ -159,18 +159,24 @@ const { data: flairData, error, refresh } = await useGraphQLQuery(`
     siteFlair(id: $flairId) {
       id
       name
-      displayText
+      textDisplay
       description
       flairType
       backgroundColor
       textColor
       icon
       isActive
-      allowUserEdit
+      isEditable
       modOnly
       maxUses
       expiresAt
       usageCount
+      styleConfig
+      categoryId
+      requiresApproval
+      displayOrder
+      maxEmojiCount
+      emojiIds
       creationDate
       updated
     }
@@ -200,7 +206,17 @@ if (error.value) {
   });
 }
 
-const flair = computed(() => flairData.value?.siteFlair);
+const flair = computed(() => {
+  const rawFlair = flairData.value?.siteFlair;
+  if (!rawFlair) return null;
+
+  // Map backend field names to frontend expected names
+  return {
+    ...rawFlair,
+    text: rawFlair.textDisplay || rawFlair.name || '', // Map textDisplay to text
+  };
+});
+
 const usageStats = computed(() => flairData.value?.getSiteFlairUsageStats || {});
 const chartData = computed(() => flairData.value?.getSiteFlairUsageChart || []);
 

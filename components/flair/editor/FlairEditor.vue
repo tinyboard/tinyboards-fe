@@ -91,6 +91,22 @@
                   @enabled="localFlair.modOnly = $event"
                 />
               </div>
+
+              <!-- Allow User Edit Toggle -->
+              <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <div>
+                  <label class="text-sm font-medium text-gray-900 dark:text-white">
+                    Allow Custom Text
+                  </label>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Users can customize the flair text when applying it
+                  </p>
+                </div>
+                <SwitchInput
+                  :is-enabled="localFlair.isEditable"
+                  @enabled="localFlair.isEditable = $event"
+                />
+              </div>
             </div>
           </div>
 
@@ -246,6 +262,7 @@ const localFlair = ref<FlairTemplate>({
   flairType: 'post' as FlairType,
   flairScope: props.scope,
   modOnly: false,
+  isEditable: false,
   boardId: props.boardId,
   style: { ...DEFAULT_FLAIR_STYLE },
   ...props.flair
@@ -353,9 +370,8 @@ const handleSubmit = async () => {
           templateId: localFlair.value.id,
           input: {
             textDisplay: localFlair.value.text,
-            isEditable: !localFlair.value.modOnly,
-            backgroundColor: localFlair.value.style.backgroundColor,
-            textColor: localFlair.value.style.textColor,
+            isEditable: localFlair.value.isEditable ?? false,
+            // Don't send backgroundColor/textColor when using styleConfig - let styleConfig handle it
             styleConfig,
             categoryId: localFlair.value.categoryId,
             displayOrder: localFlair.value.displayOrder,
@@ -399,9 +415,8 @@ const handleSubmit = async () => {
             boardId: props.boardId,
             flairType: localFlair.value.flairType,
             textDisplay: localFlair.value.text,
-            isEditable: !localFlair.value.modOnly,
-            backgroundColor: localFlair.value.style.backgroundColor,
-            textColor: localFlair.value.style.textColor,
+            isEditable: localFlair.value.isEditable ?? false,
+            // Don't send backgroundColor/textColor when using styleConfig - let styleConfig handle it
             styleConfig,
             categoryId: localFlair.value.categoryId,
             displayOrder: localFlair.value.displayOrder || 0,
@@ -484,6 +499,7 @@ watch(
         flairType: 'post' as FlairType,
         flairScope: props.scope,
         modOnly: false,
+        isEditable: false,
         boardId: props.boardId,
         style: { ...DEFAULT_FLAIR_STYLE },
         ...newValue

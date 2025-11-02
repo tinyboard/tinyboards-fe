@@ -227,7 +227,7 @@
                                     </ul>
                                 </div>
                                 <!-- Flair Selection -->
-                                <div class="col-span-full" v-if="boardId && hasFlairs">
+                                <div v-if="hasFlairs" class="col-span-full">
                                     <label class="block text-sm font-bold mb-2">Post Flairs (Optional)</label>
                                     <FlairSelectorInline
                                         :board-id="boardId"
@@ -405,10 +405,15 @@ const title = ref(route.query.title?.toString() || "");
 const url = ref(route.query.url?.toString() || "");
 const image: Ref<string | ArrayBuffer | null> = ref(null);
 const body: Ref<string | null> = ref(null);
+interface FlairSelection {
+  templateId: number;
+  customText?: string;
+}
+
 const isNsfw = ref(false);
 const isVideo = ref(false);
 const fileType = ref<string | null>(null);
-const selectedFlairIds = ref<number[]>([]);
+const selectedFlairIds = ref<FlairSelection[]>([]);
 const hasFlairs = ref(true); // Start with true to show section initially, will be updated by component
 
 let hasFocusedUrl = ref(false);
@@ -416,7 +421,7 @@ let hasFocusedBody = ref(false);
 
 // Emoji functionality
 const textareaRef = ref<HTMLTextAreaElement>();
-const boardId = computed(() => boardStore.hasBoard ? boardStore.board.id : (defaultBoard.value?.id || null));
+const boardId = computed(() => selectedBoard.value?.id || null);
 const emojiSuggestions = useEmojiSuggestions();
 
 // Check if user has a pending application that hasn't been approved
@@ -582,7 +587,7 @@ async function submit() {
             altText: null,
             file: null,
             postType: isThread.value ? 'thread' : 'feed',
-            flairIds: selectedFlairIds.value.length > 0 ? selectedFlairIds.value : null
+            flairSelections: selectedFlairIds.value.length > 0 ? selectedFlairIds.value : null
         };
 
         const createPostQuery = `
@@ -595,7 +600,7 @@ async function submit() {
                 $altText: String
                 $file: Upload
                 $postType: String
-                $flairIds: [Int!]
+                $flairSelections: [PostFlairInput!]
             ) {
                 createPost(
                     title: $title
@@ -606,7 +611,7 @@ async function submit() {
                     altText: $altText
                     file: $file
                     postType: $postType
-                    flairIds: $flairIds
+                    flairSelections: $flairSelections
                 ) {
                     id
                     title

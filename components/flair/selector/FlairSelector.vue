@@ -24,18 +24,15 @@
       </label>
       <button
         type="button"
-        @click="showFlairPicker = true"
+        @click="openFlairPicker"
         class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        :disabled="loading || !boardId"
+        :disabled="loading"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
         </svg>
         <span>{{ selectedFlairs.length > 0 ? 'Add Another Flair' : 'Choose Flair' }}</span>
       </button>
-      <p v-if="!boardId" class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        Select a board first to choose flairs
-      </p>
     </div>
 
     <!-- Flair Picker Modal -->
@@ -200,12 +197,7 @@ watch(() => props.modelValue, (newValue) => {
 });
 
 watch(() => props.boardId, () => {
-  if (props.boardId) {
-    loadFlairs();
-  } else {
-    flairs.value = [];
-    categories.value = [];
-  }
+  loadFlairs();
 });
 
 // Computed
@@ -224,54 +216,99 @@ const selectedFlairsWithStyle = computed(() => {
 });
 
 // Methods
-const loadFlairs = async () => {
-  if (!props.boardId) return;
+const openFlairPicker = () => {
+  showFlairPicker.value = true;
+  loadFlairs();
+};
 
+const loadFlairs = async () => {
   loading.value = true;
   error.value = '';
 
   try {
-    const query = `
-      query GetBoardFlairs($boardId: Int!, $flairType: FlairType!) {
-        boardFlairs(boardId: $boardId, flairType: $flairType, activeOnly: true) {
-          id
-          textDisplay
-          isEditable
-          styleConfig
-          categoryId
-          requiresApproval
-          isActive
-          modOnly
-        }
-        flairCategories(boardId: $boardId) {
-          id
-          name
-          description
-          color
-          displayOrder
-        }
-      }
-    `;
+    let query, variables;
 
-    const { data, error: queryError } = await useGraphQLQuery(query, {
-      variables: {
+    if (props.boardId) {
+      // Load board-specific flairs
+      query = `
+        query GetBoardFlairs($boardId: Int!, $flairType: FlairType!) {
+          boardFlairs(boardId: $boardId, flairType: $flairType, activeOnly: true) {
+            id
+            textDisplay
+            isEditable
+            styleConfig
+            categoryId
+            requiresApproval
+            isActive
+            modOnly
+          }
+          flairCategories(boardId: $boardId) {
+            id
+            name
+            description
+            color
+            displayOrder
+          }
+        }
+      `;
+      variables = {
         boardId: props.boardId,
         flairType: props.flairType
-      }
+      };
+    } else {
+      // Load site-wide flairs (for moderators/admins)
+      query = `
+        query GetSiteFlairs($flairType: FlairType!) {
+          siteFlairs(flairType: $flairType, activeOnly: true) {
+            id
+            textDisplay
+            isEditable
+            styleConfig
+            categoryId
+            requiresApproval
+            isActive
+            modOnly
+          }
+          siteFlairCategories {
+            id
+            name
+            description
+            color
+            displayOrder
+          }
+        }
+      `;
+      variables = {
+        flairType: props.flairType
+      };
+    }
+
+    const { data, error: queryError } = await useGraphQLQuery(query, {
+      variables
     });
 
     if (queryError.value) {
       throw new Error(queryError.value.message || 'Failed to load flairs');
     }
 
-    if (data.value?.boardFlairs) {
-      flairs.value = data.value.boardFlairs;
-    }
-
-    if (data.value?.flairCategories) {
-      categories.value = data.value.flairCategories.sort((a, b) =>
-        (a.displayOrder || 0) - (b.displayOrder || 0)
-      );
+    if (props.boardId) {
+      if (data.value?.boardFlairs) {
+        flairs.value = data.value.boardFlairs;
+      }
+      if (data.value?.flairCategories) {
+        categories.value = data.value.flairCategories.sort((a, b) =>
+          (a.displayOrder || 0) - (b.displayOrder || 0)
+        );
+      }
+    } else {
+      if (data.value?.siteFlairs) {
+        flairs.value = data.value.siteFlairs;
+      }
+      if (data.value?.siteFlairCategories) {
+        categories.value = data.value.siteFlairCategories.sort((a, b) =>
+          (a.displayOrder || 0) - (b.displayOrder || 0)
+        );
+      }
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to load flairs';
@@ -327,12 +364,8 @@ const removeFlair = (flair: any) => {
   emit('update:modelValue', selectedFlairs.value);
 };
 
-// Load flairs on mount if boardId is provided
-onMounted(() => {
-  if (props.boardId) {
-    loadFlairs();
-  }
-});
+// Don't auto-load on mount - only load when picker is opened
+// This avoids unnecessary API calls
 </script>
 
 <style scoped>

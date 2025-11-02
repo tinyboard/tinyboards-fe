@@ -21,11 +21,10 @@
     />
     <span
       v-if="displayText"
-      class="flair-text"
+      class="flair-text inline-flex items-center gap-1"
       :class="{ 'truncate': truncated }"
-    >
-      {{ displayText }}
-    </span>
+      v-html="parsedText"
+    ></span>
     <button
       v-if="removable"
       type="button"
@@ -72,6 +71,14 @@ const emit = defineEmits<{
 }>()
 
 const { buildFlairStyle, getAnimationClass, getSizeClasses } = useFlairStyle()
+const { customEmojis, loadCustomEmojis, getCustomEmojiUrl } = useCustomEmojis()
+
+// Load emojis immediately (not waiting for mount to ensure they're available)
+const emojisLoaded = ref(false)
+loadCustomEmojis().then(() => {
+  emojisLoaded.value = true
+  console.log('[FlairBadge] Loaded emojis:', customEmojis.value?.length || 0)
+})
 
 const sizeClasses = computed(() => getSizeClasses(props.size))
 
@@ -89,6 +96,34 @@ const displayText = computed(() => {
   }
 
   return props.flair.text
+})
+
+const parsedText = computed(() => {
+  const text = displayText.value
+  if (!text) return ''
+
+  // Parse emoji shortcodes like :emoji: and replace with img tags
+  return text.replace(/:([a-zA-Z0-9_-]+):/g, (match, shortcode) => {
+    const emojiUrl = getCustomEmojiUrl(match)
+
+    console.log('[FlairBadge] Parsing emoji:', {
+      match,
+      shortcode,
+      emojiUrl,
+      emojisLoaded: emojisLoaded.value,
+      totalEmojis: customEmojis.value?.length || 0,
+      allShortcodes: customEmojis.value?.map(e => e.shortcode) || []
+    })
+
+    if (emojiUrl) {
+      // Found custom emoji - render as img
+      const sizeClass = props.size === 'xs' || props.size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'
+      return `<img src="${emojiUrl}" alt=":${shortcode}:" class="inline-block ${sizeClass} align-middle mx-0.5" />`
+    } else {
+      // No emoji found - just return the shortcode text
+      return match
+    }
+  })
 })
 
 const ariaLabel = computed(() => {

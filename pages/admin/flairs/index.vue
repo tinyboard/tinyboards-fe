@@ -112,15 +112,22 @@ const { data: flairsData, pending, error, refresh } = await useGraphQLQuery(`
     getSiteFlairs {
       id
       name
-      displayText
+      textDisplay
       description
       flairType
       backgroundColor
       textColor
       icon
       isActive
-      allowUserEdit
+      isEditable
+      modOnly
       usageCount
+      styleConfig
+      categoryId
+      requiresApproval
+      displayOrder
+      maxEmojiCount
+      emojiIds
       creationDate
       updated
     }

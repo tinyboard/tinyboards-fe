@@ -1,8 +1,11 @@
 <template>
     <!-- Loading State -->
-    <div v-if="userResult.pending || (!user && !userResult.error)" class="container mx-auto max-w-4xl p-4">
-        <div class="bg-white rounded-md border p-8 text-center">
-            <h2 class="text-xl font-semibold text-gray-800">Loading user profile...</h2>
+    <div v-if="userResult.pending.value || (!user && !userResult.error.value)" class="container mx-auto max-w-4xl p-4 mt-8">
+        <div class="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 p-8 text-center">
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Loading user profile...</h2>
+            </div>
         </div>
     </div>
     <!-- User Profile -->
@@ -165,7 +168,6 @@ const userResult = await useFetchUser(username.value, {
     page: 1,
 });
 
-
 // More defensive error checking - only throw error if we have a real error, not just empty data
 if (userResult.error.value && userResult.error.value.response && !userResult.data.value) {
     throw createError({
@@ -178,6 +180,7 @@ if (userResult.error.value && userResult.error.value.response && !userResult.dat
 
 // Create reactive computed for user data
 const user = computed(() => {
+    // userResult.data.value is the GraphQL response data object { user: {...} }
     const userData = userResult.data.value?.user;
     return userData;
 });

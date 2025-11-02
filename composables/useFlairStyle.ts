@@ -91,23 +91,40 @@ export const useFlairStyle = () => {
   const buildGradient = (gradient: FlairGradient): string => {
     const { type, colors, angle = 90, stops } = gradient
 
-    if (type === 'linear') {
-      if (stops && stops.length === colors.length) {
-        const colorStops = colors.map((color, i) => `${color} ${stops[i]}%`).join(', ')
+    // Handle new format with stops as objects { color, position }
+    if (stops && stops.length > 0 && typeof stops[0] === 'object' && 'color' in stops[0]) {
+      const colorStops = stops.map(stop => `${stop.color} ${stop.position}%`).join(', ')
+
+      if (type === 'linear') {
         return `linear-gradient(${angle}deg, ${colorStops})`
       }
-      return `linear-gradient(${angle}deg, ${colors.join(', ')})`
-    }
-
-    if (type === 'radial') {
-      if (stops && stops.length === colors.length) {
-        const colorStops = colors.map((color, i) => `${color} ${stops[i]}%`).join(', ')
+      if (type === 'radial') {
         return `radial-gradient(circle, ${colorStops})`
       }
-      return `radial-gradient(circle, ${colors.join(', ')})`
     }
 
-    return colors[0] || '#000000'
+    // Handle legacy format with separate colors and stops arrays
+    if (colors && colors.length > 0) {
+      if (type === 'linear') {
+        if (stops && stops.length === colors.length) {
+          const colorStops = colors.map((color, i) => `${color} ${stops[i]}%`).join(', ')
+          return `linear-gradient(${angle}deg, ${colorStops})`
+        }
+        return `linear-gradient(${angle}deg, ${colors.join(', ')})`
+      }
+
+      if (type === 'radial') {
+        if (stops && stops.length === colors.length) {
+          const colorStops = colors.map((color, i) => `${color} ${stops[i]}%`).join(', ')
+          return `radial-gradient(circle, ${colorStops})`
+        }
+        return `radial-gradient(circle, ${colors.join(', ')})`
+      }
+
+      return colors[0] || '#000000'
+    }
+
+    return '#000000'
   }
 
   /**

@@ -107,7 +107,7 @@
                                 >
                                     <option :value="null">All flairs</option>
                                     <option v-for="flair in boardFlairs" :key="flair.id" :value="flair.id">
-                                        {{ flair.name }}
+                                        {{ flair.textDisplay }}
                                     </option>
                                 </select>
                                 <button
@@ -484,13 +484,10 @@ const boardFlairs = ref([]);
 if (route.params?.board && board.value?.id) {
     const flairsQuery = `
         query GetBoardFlairs($boardId: Int!) {
-            boardFlairs(boardId: $boardId) {
+            boardFlairs(boardId: $boardId, flairType: post) {
                 id
-                name
-                style
-                emoji
-                textColor
-                backgroundColor
+                textDisplay
+                styleConfig
             }
         }
     `;

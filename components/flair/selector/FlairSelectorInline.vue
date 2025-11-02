@@ -12,8 +12,13 @@
     </div>
 
     <!-- Empty State - No flairs available -->
-    <div v-else-if="filteredFlairs.length === 0 && !loading" class="hidden">
-      <!-- Hidden when no flairs available -->
+    <div v-else-if="filteredFlairs.length === 0 && !loading" class="p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-center">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+      </svg>
+      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        No flairs available for this board. Create some in the admin panel first.
+      </p>
     </div>
 
     <!-- Flair Grid -->
@@ -49,17 +54,32 @@
       </div>
 
       <!-- Selected Flairs Display -->
-      <div v-if="selectedFlairs.length > 0" class="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+      <div v-if="selectedFlairs.length > 0 && !loading" class="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
         <p class="text-xs font-medium text-blue-900 dark:text-blue-200 mb-2">Selected Flairs:</p>
-        <div class="flex flex-wrap gap-2">
-          <FlairDisplayFlairBadge
-            v-for="flair in selectedFlairsWithStyle"
-            :key="flair.id"
-            :flair="flair"
-            size="md"
-            :removable="true"
-            @remove="removeFlair"
-          />
+        <div class="space-y-2">
+          <div v-for="flairSelection in selectedFlairsWithDetails" :key="flairSelection.templateId" class="flex items-center gap-2">
+            <template v-if="getFlairTemplate(flairSelection.templateId)">
+              <FlairDisplayFlairBadge
+                :flair="getFlairBadgeData(flairSelection)"
+                size="md"
+                :removable="true"
+                @remove="() => removeFlairByTemplateId(flairSelection.templateId)"
+              />
+              <!-- Custom text input for editable flairs -->
+              <input
+                v-if="isFlairEditable(flairSelection.templateId)"
+                v-model="flairSelection.customText"
+                type="text"
+                maxlength="150"
+                placeholder="Custom text (optional)"
+                class="flex-1 px-3 py-1.5 text-sm border border-blue-300 dark:border-blue-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                @input="emitSelectedFlairs"
+              />
+            </template>
+            <div v-else class="text-sm text-gray-500 dark:text-gray-400">
+              Loading flair...
+            </div>
+          </div>
         </div>
       </div>
 
@@ -110,11 +130,16 @@
 <script setup lang="ts">
 import type { FlairTemplate, FlairCategory } from '~/types/flair';
 
+interface FlairSelection {
+  templateId: number;
+  customText?: string;
+}
+
 interface Props {
   boardId?: number;
   flairType?: 'post' | 'user';
   maxFlairs?: number;
-  modelValue?: number[]; // Array of selected flair IDs
+  modelValue?: FlairSelection[]; // Array of flair selections with optional custom text
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -124,7 +149,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  'update:modelValue': [flairIds: number[]];
+  'update:modelValue': [flairSelections: FlairSelection[]];
   'flairs-loaded': [hasFlairs: boolean];
 }>();
 
@@ -136,7 +161,7 @@ const error = ref('');
 const flairs = ref<FlairTemplate[]>([]);
 const categories = ref<FlairCategory[]>([]);
 const selectedCategory = ref<number | null>(null);
-const selectedFlairs = ref<number[]>(props.modelValue);
+const selectedFlairs = ref<FlairSelection[]>(props.modelValue);
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
@@ -144,13 +169,7 @@ watch(() => props.modelValue, (newValue) => {
 });
 
 watch(() => props.boardId, () => {
-  if (props.boardId) {
-    loadFlairs();
-  } else {
-    flairs.value = [];
-    categories.value = [];
-    emit('flairs-loaded', false);
-  }
+  loadFlairs();
 });
 
 // Computed
@@ -161,66 +180,111 @@ const filteredFlairs = computed(() => {
   return flairs.value.filter(f => f.categoryId === selectedCategory.value);
 });
 
-const selectedFlairsWithStyle = computed(() => {
-  return selectedFlairs.value
-    .map(id => flairs.value.find(f => f.id === id))
-    .filter(Boolean)
-    .map(flair => getFlairWithStyle(flair!));
+const selectedFlairsWithDetails = computed(() => {
+  console.log('selectedFlairsWithDetails:', selectedFlairs.value);
+  return selectedFlairs.value;
 });
 
 // Methods
 const loadFlairs = async () => {
-  if (!props.boardId) return;
-
+  console.log('FlairSelectorInline: loadFlairs called with boardId:', props.boardId, 'flairType:', props.flairType);
   loading.value = true;
   error.value = '';
 
   try {
-    const query = `
-      query GetBoardFlairs($boardId: Int!, $flairType: FlairType!) {
-        boardFlairs(boardId: $boardId, flairType: $flairType, activeOnly: true) {
-          id
-          textDisplay
-          isEditable
-          modOnly
-          styleConfig
-          categoryId
-          requiresApproval
-          isActive
-        }
-        flairCategories(boardId: $boardId) {
-          id
-          name
-          description
-          color
-          displayOrder
-        }
-      }
-    `;
+    let query, variables;
 
-    const { data, error: queryError } = await useGraphQLQuery(query, {
-      variables: {
+    if (props.boardId) {
+      // Load board-specific flairs
+      query = `
+        query GetBoardFlairs($boardId: Int!, $flairType: FlairType!) {
+          boardFlairs(boardId: $boardId, flairType: $flairType, activeOnly: true) {
+            id
+            textDisplay
+            isEditable
+            modOnly
+            styleConfig
+            categoryId
+            requiresApproval
+            isActive
+            flairType
+            boardId
+          }
+          flairCategories(boardId: $boardId) {
+            id
+            name
+            description
+            color
+            displayOrder
+          }
+        }
+      `;
+      variables = {
         boardId: props.boardId,
         flairType: props.flairType
-      }
+      };
+    } else {
+      // Load site-wide flairs (for posts without a specific board)
+      // Site-wide flairs are not currently implemented in the backend
+      query = `
+        query GetSiteFlairs($flairType: FlairType!) {
+          siteFlairs(flairType: $flairType, activeOnly: true) {
+            id
+            textDisplay
+            isEditable
+            modOnly
+            styleConfig
+            categoryId
+            requiresApproval
+            isActive
+          }
+        }
+      `;
+      variables = {
+        flairType: props.flairType
+      };
+    }
+
+    const { data, error: queryError } = await useGraphQLQuery(query, {
+      variables
     });
 
     if (queryError.value) {
       throw new Error(queryError.value.message || 'Failed to load flairs');
     }
 
-    if (data.value?.boardFlairs) {
-      flairs.value = data.value.boardFlairs;
-      emit('flairs-loaded', flairs.value.length > 0);
-    } else {
-      flairs.value = [];
-      emit('flairs-loaded', false);
-    }
+    if (props.boardId) {
+      if (data.value?.boardFlairs) {
+        flairs.value = data.value.boardFlairs;
+        console.log('FlairSelectorInline: Loaded board flairs:', flairs.value);
+        emit('flairs-loaded', flairs.value.length > 0);
+      } else {
+        console.log('FlairSelectorInline: No boardFlairs in response:', data.value);
+        flairs.value = [];
+        emit('flairs-loaded', false);
+      }
 
-    if (data.value?.flairCategories) {
-      categories.value = data.value.flairCategories.sort((a, b) =>
-        (a.displayOrder || 0) - (b.displayOrder || 0)
-      );
+      if (data.value?.flairCategories) {
+        categories.value = data.value.flairCategories.sort((a, b) =>
+          (a.displayOrder || 0) - (b.displayOrder || 0)
+        );
+      }
+    } else {
+      if (data.value?.siteFlairs) {
+        flairs.value = data.value.siteFlairs;
+        console.log('FlairSelectorInline: Loaded site flairs:', flairs.value);
+        emit('flairs-loaded', flairs.value.length > 0);
+      } else {
+        console.log('FlairSelectorInline: No siteFlairs in response:', data.value);
+        flairs.value = [];
+        emit('flairs-loaded', false);
+      }
+
+      if (data.value?.siteFlairCategories) {
+        categories.value = data.value.siteFlairCategories.sort((a, b) =>
+          (a.displayOrder || 0) - (b.displayOrder || 0)
+        );
+      }
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to load flairs';
@@ -229,6 +293,17 @@ const loadFlairs = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const getFlairTemplate = (templateId: number): FlairTemplate | undefined => {
+  const found = flairs.value.find(f => f.id === templateId);
+  console.log('getFlairTemplate:', {
+    templateId,
+    found,
+    allFlairIds: flairs.value.map(f => f.id),
+    totalFlairs: flairs.value.length
+  });
+  return found;
 };
 
 const getFlairWithStyle = (flair: FlairTemplate) => {
@@ -240,7 +315,7 @@ const getFlairWithStyle = (flair: FlairTemplate) => {
   }
 
   // Convert template to flair format expected by FlairBadge
-  return {
+  const result = {
     id: flair.id || 0,
     text: flair.textDisplay || '',
     style: flair.style,
@@ -249,10 +324,34 @@ const getFlairWithStyle = (flair: FlairTemplate) => {
     creationDate: '',
     updated: ''
   };
+
+  console.log('getFlairWithStyle:', { flair, result });
+  return result;
+};
+
+const getFlairBadgeData = (flairSelection: FlairSelection) => {
+  const template = getFlairTemplate(flairSelection.templateId);
+  if (!template) {
+    return { id: 0, text: '', style: parseBackendStyle(null) };
+  }
+
+  const baseData = getFlairWithStyle(template);
+
+  // Use custom text if provided and flair is editable
+  if (flairSelection.customText && template.isEditable) {
+    return { ...baseData, text: flairSelection.customText };
+  }
+
+  return baseData;
 };
 
 const isFlairSelected = (flairId: number) => {
-  return selectedFlairs.value.includes(flairId);
+  return selectedFlairs.value.some(f => f.templateId === flairId);
+};
+
+const isFlairEditable = (templateId: number): boolean => {
+  const template = getFlairTemplate(templateId);
+  return template?.isEditable ?? false;
 };
 
 const toggleFlair = (flair: FlairTemplate) => {
@@ -260,28 +359,33 @@ const toggleFlair = (flair: FlairTemplate) => {
 
   if (isFlairSelected(flair.id)) {
     // Remove flair
-    selectedFlairs.value = selectedFlairs.value.filter(id => id !== flair.id);
+    selectedFlairs.value = selectedFlairs.value.filter(f => f.templateId !== flair.id);
   } else {
     // Add flair if under max limit
     if (selectedFlairs.value.length >= props.maxFlairs) {
       return;
     }
-    selectedFlairs.value = [...selectedFlairs.value, flair.id];
+    selectedFlairs.value = [...selectedFlairs.value, {
+      templateId: flair.id,
+      customText: flair.isEditable ? flair.textDisplay : undefined
+    }];
   }
 
+  emitSelectedFlairs();
+};
+
+const removeFlairByTemplateId = (templateId: number) => {
+  selectedFlairs.value = selectedFlairs.value.filter(f => f.templateId !== templateId);
+  emitSelectedFlairs();
+};
+
+const emitSelectedFlairs = () => {
   emit('update:modelValue', selectedFlairs.value);
 };
 
-const removeFlair = (flair: any) => {
-  selectedFlairs.value = selectedFlairs.value.filter(id => id !== flair.id);
-  emit('update:modelValue', selectedFlairs.value);
-};
-
-// Load flairs on mount
+// Load flairs on mount and when boardId changes
 onMounted(() => {
-  if (props.boardId) {
-    loadFlairs();
-  }
+  loadFlairs();
 });
 </script>
 

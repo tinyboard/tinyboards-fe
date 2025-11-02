@@ -110,17 +110,23 @@ const postFlairs = computed(() => {
   if (!props.post.flairs || props.post.flairs.length === 0) {
     return []
   }
+
   return props.post.flairs.map(assignment => {
     const template = assignment.template
+
     // Parse styleConfig JSON into style object - create new object to avoid mutation
     const parsedStyle = template?.styleConfig
       ? parseBackendStyle(template.styleConfig)
       : parseBackendStyle(null)
 
-    return {
-      ...template,
+    const flair = {
+      id: template?.id || assignment.id,
+      text: assignment.textDisplay || template?.textDisplay || '',
+      emoji: null, // TODO: handle emoji
       style: parsedStyle
     }
+
+    return flair
   })
 })
 

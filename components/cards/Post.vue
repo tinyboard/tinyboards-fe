@@ -158,13 +158,14 @@
         </div>
         <!-- Post Title & Content -->
         <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <NuxtLink class="z-10 relative sm:text-lg sm:overflow-hidden sm:text-ellipsis" :class="titleStyle"
-            :to="postUrl">
-            {{ post.title }}
-          </NuxtLink>
-          <!-- Post Flair Display -->
-          <div v-if="post.flairs && post.flairs.length > 0" class="mt-2 flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <NuxtLink class="z-10 relative sm:text-lg" :class="titleStyle"
+              :to="postUrl">
+              {{ post.title }}
+            </NuxtLink>
+            <!-- Post Flair Display -->
             <FlairDisplayPostFlair
+              v-if="post.flairs && post.flairs.length > 0"
               :post="post"
               :size="isCompact ? 'sm' : 'md'"
               :clickable="true"
@@ -825,14 +826,41 @@ const confirmApprove = () => {
 
 // Flair Manager
 const openFlairManager = () => {
+  // Get boardId from either boardId property or board.id
+  const boardId = props.post.boardId || props.post.board?.id;
+
+  // Extract flair selections (template ID + custom text) from current flairs
+  const currentFlairSelections = props.post.flairs
+    ? props.post.flairs.map(flair => ({
+        templateId: flair.templateId,
+        customText: flair.textDisplay
+      })).filter(f => f.templateId)
+    : [];
+
+  console.log('Opening flair manager:', {
+    boardId,
+    boardName: props.post.board?.name,
+    postId: props.post.id,
+    postTitle: props.post.title,
+    postBoardId: props.post.boardId,
+    postBoardFromObject: props.post.board?.id,
+    currentFlairs: props.post.flairs,
+    currentFlairSelections: currentFlairSelections
+  });
+
+  if (!boardId) {
+    console.error('Cannot open flair manager: post has no board ID');
+    return;
+  }
+
   modalStore.setModal({
     modal: "ModalManagePostFlairs",
     id: props.post.id,
     isOpen: true,
     contentType: "post",
     options: {
-      boardId: props.post.boardId,
-      currentFlairIds: props.post.flairIds || []
+      boardId: boardId,
+      currentFlairIds: currentFlairSelections
     }
   });
 };

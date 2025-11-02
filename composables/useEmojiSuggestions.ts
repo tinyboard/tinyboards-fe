@@ -4,7 +4,7 @@ interface CustomEmoji {
   id: number
   shortcode: string
   imageUrl: string
-  altText: string
+  altTextDisplay: string
   category: string
   emojiScope: string
   isActive: boolean
@@ -37,7 +37,7 @@ export const useEmojiSuggestions = (boardId?: number) => {
             id
             shortcode
             imageUrl
-            altText
+            altTextDisplay
             category
             emojiScope
             isActive
@@ -84,7 +84,7 @@ export const useEmojiSuggestions = (boardId?: number) => {
             id
             shortcode
             imageUrl
-            altText
+            altTextDisplay
             category
             emojiScope
             isActive
