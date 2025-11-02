@@ -226,6 +226,34 @@
 						rep
 						postCount
 						commentCount
+						flairs {
+							id
+							templateId
+							textDisplay
+							backgroundColor
+							textColor
+							template {
+								id
+								textDisplay
+								isEditable
+								backgroundColor
+								textColor
+								styleConfig
+								emojiIds
+								style {
+									backgroundColor
+									textColor
+									borderColor
+									borderWidth
+									borderRadius
+									fontWeight
+									fontSize
+									padding
+									margin
+									customCss
+								}
+							}
+						}
 					}
 					board {
 						id
@@ -258,6 +286,34 @@
 						rep
 						postCount
 						commentCount
+						flairs {
+							id
+							templateId
+							textDisplay
+							backgroundColor
+							textColor
+							template {
+								id
+								textDisplay
+								isEditable
+								backgroundColor
+								textColor
+								styleConfig
+								emojiIds
+								style {
+									backgroundColor
+									textColor
+									borderColor
+									borderWidth
+									borderRadius
+									fontWeight
+									fontSize
+									padding
+									margin
+									customCss
+								}
+							}
+						}
 					}
 					post {
 						id

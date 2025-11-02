@@ -104,6 +104,34 @@ export const usePostsStore = defineStore("posts", {
               commentCount
               rep
               creationDate
+              flairs {
+                id
+                templateId
+                textDisplay
+                backgroundColor
+                textColor
+                template {
+                  id
+                  textDisplay
+                  isEditable
+                  backgroundColor
+                  textColor
+                  styleConfig
+                  emojiIds
+                  style {
+                    backgroundColor
+                    textColor
+                    borderColor
+                    borderWidth
+                    borderRadius
+                    fontWeight
+                    fontSize
+                    padding
+                    margin
+                    customCss
+                  }
+                }
+              }
             }
             commentCount
             image
@@ -218,6 +246,34 @@ export const usePostsStore = defineStore("posts", {
               commentCount
               rep
               creationDate
+              flairs {
+                id
+                templateId
+                textDisplay
+                backgroundColor
+                textColor
+                template {
+                  id
+                  textDisplay
+                  isEditable
+                  backgroundColor
+                  textColor
+                  styleConfig
+                  emojiIds
+                  style {
+                    backgroundColor
+                    textColor
+                    borderColor
+                    borderWidth
+                    borderRadius
+                    fontWeight
+                    fontSize
+                    padding
+                    margin
+                    customCss
+                  }
+                }
+              }
             }
             commentCount
             image
@@ -395,6 +451,34 @@ export const usePostsStore = defineStore("posts", {
               commentCount
               rep
               creationDate
+              flairs {
+                id
+                templateId
+                textDisplay
+                backgroundColor
+                textColor
+                template {
+                  id
+                  textDisplay
+                  isEditable
+                  backgroundColor
+                  textColor
+                  styleConfig
+                  emojiIds
+                  style {
+                    backgroundColor
+                    textColor
+                    borderColor
+                    borderWidth
+                    borderRadius
+                    fontWeight
+                    fontSize
+                    padding
+                    margin
+                    customCss
+                  }
+                }
+              }
             }
             commentCount
             image

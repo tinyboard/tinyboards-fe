@@ -192,7 +192,10 @@
             <strong class="text-sm text-gray-900 dark:text-gray-200">
               {{ stream.creator.displayName || stream.creator.name }}
             </strong>
-            <span v-if="stream.creator.isAdmin" class="ml-1 badge badge-red">Admin</span>
+            <svg v-if="stream.creator.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+            </svg>
           </div>
           <small class="text-gray-400 block">@{{ stream.creator.name }}</small>
         </div>

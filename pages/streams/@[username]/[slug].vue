@@ -342,6 +342,34 @@ const fetchPosts = async (postType: 'feed' | 'threads', loadMore = false) => {
             avatar
             isAdmin
             isBanned
+            flairs {
+              id
+              templateId
+              textDisplay
+              backgroundColor
+              textColor
+              template {
+                id
+                textDisplay
+                isEditable
+                backgroundColor
+                textColor
+                styleConfig
+                emojiIds
+                style {
+                  backgroundColor
+                  textColor
+                  borderColor
+                  borderWidth
+                  borderRadius
+                  fontWeight
+                  fontSize
+                  padding
+                  margin
+                  customCss
+                }
+              }
+            }
           }
           commentCount
           isSaved

@@ -93,16 +93,20 @@
 					<div class="flex items-center text-gray-200">
 						{{ user.name }}
 						<span v-if="user.instance">@{{ user.instance }}</span>
-						<span v-if="user.isAdmin" class="ml-2 badge badge-large badge-red">
-							Admin
-						</span>
+						<svg v-if="user.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-5 h-5 ml-2 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+							<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+							<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+						</svg>
 					</div>
 				</div>
 				<div v-else class="flex items-center">
 					<h1 class="text-gray-100 text-lg sm:text-2xl leading-5 font-bold">
 						{{ user.name }}
 					</h1>
-					<span v-if="user.isAdmin" class="ml-2 badge badge-large badge-red">Admin</span>
+					<svg v-if="user.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-5 h-5 ml-2 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+						<path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
+					</svg>
 				</div>
 				<!-- Bio -->
 				<p class="mt-2.5 lg:w-4/5 xl:w-3/5"
