@@ -256,17 +256,39 @@ const errorMessage = ref('');
 const successMessage = ref('');
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
-// Local flair state
-const localFlair = ref<FlairTemplate>({
-  text: '',
-  flairType: 'post' as FlairType,
-  flairScope: props.scope,
-  modOnly: false,
-  isEditable: false,
-  boardId: props.boardId,
-  style: { ...DEFAULT_FLAIR_STYLE },
-  ...props.flair
-});
+// Import style parsing utility
+const { parseBackendStyle } = useFlairStyle();
+
+// Initialize local flair state
+const initializeFlair = (): FlairTemplate => {
+  // Start with defaults
+  const defaults: FlairTemplate = {
+    text: '',
+    flairType: 'post' as FlairType,
+    flairScope: props.scope,
+    modOnly: false,
+    isEditable: false,
+    boardId: props.boardId,
+    style: { ...DEFAULT_FLAIR_STYLE }
+  };
+
+  // If editing existing flair, merge with props and parse styleConfig
+  if (props.flair) {
+    const parsedStyle = props.flair.styleConfig
+      ? parseBackendStyle(props.flair.styleConfig)
+      : { ...DEFAULT_FLAIR_STYLE };
+
+    return {
+      ...defaults,
+      ...props.flair,
+      style: parsedStyle
+    };
+  }
+
+  return defaults;
+};
+
+const localFlair = ref<FlairTemplate>(initializeFlair());
 
 // Validation
 const isValid = computed(() => {

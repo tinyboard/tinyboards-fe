@@ -97,32 +97,6 @@
                             class="flex flex-wrap items-center gap-2 mb-4 p-2.5 sm:px-4 sm:py-3 bg-white dark:bg-gray-950 border-b sm:border sm:shadow-inner-white sm:rounded-md dark:border-gray-800 dark:shadow-none"
                         >
                             <MenusSort />
-                            <!-- Flair Filter -->
-                            <div v-if="board && boardFlairs.length > 0" class="flex items-center gap-2">
-                                <span class="text-sm text-gray-600 dark:text-gray-400">Filter by:</span>
-                                <select
-                                    v-model="selectedFlairId"
-                                    @change="applyFlairFilter"
-                                    class="form-select text-sm rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
-                                >
-                                    <option :value="null">All flairs</option>
-                                    <option v-for="flair in boardFlairs" :key="flair.id" :value="flair.id">
-                                        {{ flair.textDisplay }}
-                                    </option>
-                                </select>
-                                <button
-                                    v-if="selectedFlairId"
-                                    @click="clearFlairFilter"
-                                    class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                    title="Clear filter"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <circle cx="12" cy="12" r="9"/>
-                                        <path d="M10 10l4 4m0 -4l-4 4"/>
-                                    </svg>
-                                </button>
-                            </div>
                             <div class="ml-auto flex space-x-2">
                                 <button
                                     class="ml-auto"
@@ -475,52 +449,4 @@ const getSectionLinks = () => {
 
 // Links for sub navbar
 const links = computed(() => getSectionLinks());
-
-// Flair filtering
-const selectedFlairId = ref(route.query.flair ? Number(route.query.flair) : null);
-const boardFlairs = ref([]);
-
-// Fetch board flairs if we have a board
-if (route.params?.board && board.value?.id) {
-    const flairsQuery = `
-        query GetBoardFlairs($boardId: Int!) {
-            boardFlairs(boardId: $boardId, flairType: post) {
-                id
-                textDisplay
-                styleConfig
-            }
-        }
-    `;
-
-    try {
-        const { data: flairsData } = await useGraphQLQuery(flairsQuery, {
-            variables: { boardId: board.value.id }
-        });
-
-        if (flairsData.value?.boardFlairs) {
-            boardFlairs.value = flairsData.value.boardFlairs;
-        }
-    } catch (error) {
-        console.error('Error fetching board flairs:', error);
-    }
-}
-
-const applyFlairFilter = () => {
-    const query = { ...route.query };
-
-    if (selectedFlairId.value) {
-        query.flair = selectedFlairId.value;
-    } else {
-        delete query.flair;
-    }
-
-    router.push({ query });
-};
-
-const clearFlairFilter = () => {
-    selectedFlairId.value = null;
-    const query = { ...route.query };
-    delete query.flair;
-    router.push({ query });
-};
 </script>
