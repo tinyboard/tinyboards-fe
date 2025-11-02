@@ -101,6 +101,9 @@ const modalReactionDetails = defineAsyncComponent(
 const modalManagePostFlairs = defineAsyncComponent(
     () => import("@/components/dialogs/ModalManagePostFlairs"),
 );
+const modalSelectUserFlairs = defineAsyncComponent(
+    () => import("@/components/dialogs/ModalSelectUserFlairs"),
+);
 const modalResolveReport = defineAsyncComponent(
     () => import("@/components/dialogs/ModalResolveReport"),
 );
@@ -128,6 +131,7 @@ const components = {
     ModalApplicationDeny: modalApplicationDeny,
     ModalReactionDetails: modalReactionDetails,
     ModalManagePostFlairs: modalManagePostFlairs,
+    ModalSelectUserFlairs: modalSelectUserFlairs,
     ModalResolveReport: modalResolveReport,
 };
 </script>

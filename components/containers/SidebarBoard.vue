@@ -34,7 +34,7 @@
             <button
                 v-if="userStore.isAuthed && hasUserFlairs"
                 @click="openUserFlairSelector"
-                class="flex items-center button gray"
+                class="w-full flex items-center justify-center button primary"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
