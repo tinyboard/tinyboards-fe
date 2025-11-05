@@ -67,29 +67,28 @@
 							</label>
 						</div>
 
-						<!-- Future sections (disabled for now) -->
-						<div class="border border-gray-200 rounded-lg p-4 bg-gray-50 opacity-60">
-							<div class="flex items-start justify-between">
+						<!-- Wiki Section -->
+						<div class="border border-gray-200 rounded-lg p-4 ">
+							<label class="flex items-start justify-between cursor-pointer">
 								<div class="flex-1 pr-4">
 									<div class="flex items-center gap-2 mb-1">
-										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 											<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 											<path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path>
 											<path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"></path>
 											<path d="M3 6l9 9l9 -9"></path>
 										</svg>
-										<h4 class="font-semibold text-gray-500">Wiki</h4>
-										<span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">Coming Soon</span>
+										<h4 class="font-semibold text-gray-900">Wiki</h4>
 									</div>
-									<p class="text-sm text-gray-500">
+									<p class="text-sm text-gray-600">
 										Collaborative wiki pages for documentation and guides
 									</p>
 								</div>
 								<input
-									type="checkbox"
-									disabled
-									class="h-5 w-5 text-gray-400 rounded cursor-not-allowed"
-								/>
+								type="checkbox"
+								v-model="sections.wiki"
+								:disabled="sections.wiki && enabledSectionsCount === 1"
+								class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
 							</div>
 						</div>
 					</div>
@@ -189,6 +188,15 @@
 								/>
 								<span class="font-medium text-gray-900">Threads</span>
 							</label>
+					<label v-if="sections.wiki" class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50">
+						<input
+							type="radio"
+							v-model="defaultSection"
+							value="wiki"
+							class="h-4 w-4 text-blue-600 focus:ring-blue-500"
+						/>
+						<span class="font-medium text-gray-900">Wiki</span>
+					</label>
 						</div>
 					</div>
 
@@ -204,6 +212,9 @@
 								<span v-if="sections.threads" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
 									Threads
 								</span>
+							<span v-if="sections.wiki" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+								Wiki
+							</span>
 								<span v-if="enabledSectionsCount === 0" class="text-sm text-gray-500 italic">
 									None (invalid - must enable at least one)
 								</span>
@@ -249,6 +260,8 @@ const fetchBoardData = async () => {
 				name
 				hasFeed
 				hasThreads
+				hasWiki
+				wikiEnabled
 				sectionOrder
 				defaultSection
 			}
@@ -275,6 +288,7 @@ onMounted(async () => {
 	sections.value = {
 		feed: board.value?.hasFeed ?? true,
 		threads: board.value?.hasThreads ?? false,
+		wiki: board.value?.hasWiki ?? false,
 	};
 	orderedSections.value = parseSectionOrder(board.value?.sectionOrder || 'feed,threads');
 	defaultSection.value = board.value?.defaultSection || 'feed';
@@ -284,6 +298,7 @@ onMounted(async () => {
 const sections = ref({
 	feed: board.value?.hasFeed ?? true,
 	threads: board.value?.hasThreads ?? false,
+	wiki: board.value?.hasWiki ?? false,
 });
 
 // Initialize section order from board
@@ -313,6 +328,7 @@ const enabledSectionsCount = computed(() => {
 	let count = 0;
 	if (sections.value.feed) count++;
 	if (sections.value.threads) count++;
+	if (sections.value.wiki) count++;
 	return count;
 });
 
@@ -330,6 +346,9 @@ watch(sections, (newSections) => {
 	if (newSections.threads && !orderedSections.value.includes('threads')) {
 		orderedSections.value.push('threads');
 	}
+	if (newSections.wiki && !orderedSections.value.includes('wiki')) {
+		orderedSections.value.push('wiki');
+	}
 
 	// Remove disabled sections from the order
 	orderedSections.value = orderedSections.value.filter(s => newSections[s]);
@@ -338,6 +357,7 @@ watch(sections, (newSections) => {
 	if (!newSections[defaultSection.value]) {
 		if (newSections.feed) defaultSection.value = 'feed';
 		else if (newSections.threads) defaultSection.value = 'threads';
+		else if (newSections.wiki) defaultSection.value = 'wiki';
 	}
 }, { deep: true });
 
@@ -361,7 +381,8 @@ const getSectionConfig = () => {
 	let config = 0;
 	if (sections.value.feed) config |= 1;     // bit 0
 	if (sections.value.threads) config |= 2;  // bit 1
-	// Future: wiki = 4, gallery = 8, events = 16
+	if (sections.value.wiki) config |= 4;     // bit 2
+	// Future: gallery = 8, events = 16
 	return config;
 };
 
@@ -408,6 +429,8 @@ const submitSettings = async () => {
 						description
 						hasFeed
 						hasThreads
+						hasWiki
+						wikiEnabled
 						sectionOrder
 						defaultSection
 					}
