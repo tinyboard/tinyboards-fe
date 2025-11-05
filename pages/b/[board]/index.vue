@@ -35,6 +35,8 @@ if (route.params?.board) {
                 sidebarHTML
                 hasFeed
                 hasThreads
+                hasWiki
+                wikiEnabled
                 sectionOrder
                 defaultSection
             }
@@ -61,18 +63,30 @@ if (route.params?.board) {
         const defaultSection = boardData.value.board.defaultSection;
         const hasFeed = boardData.value.board.hasFeed;
         const hasThreads = boardData.value.board.hasThreads;
+        const hasWiki = boardData.value.board.hasWiki && boardData.value.board.wikiEnabled;
 
         // Redirect to the default section
-        if (defaultSection === 'threads' && hasThreads) {
+        if (defaultSection === 'wiki' && hasWiki) {
+            await navigateTo(`/b/${boardName}/wiki`, { replace: true });
+        } else if (defaultSection === 'threads' && hasThreads) {
             await navigateTo(`/b/${boardName}/threads`, { replace: true });
         } else if (defaultSection === 'feed' && hasFeed) {
             await navigateTo(`/b/${boardName}/feed`, { replace: true });
+        } else if (hasWiki) {
+            // Fallback to wiki if available
+            await navigateTo(`/b/${boardName}/wiki`, { replace: true });
         } else if (hasFeed) {
             // Fallback to feed if available
             await navigateTo(`/b/${boardName}/feed`, { replace: true });
         } else if (hasThreads) {
             // Fallback to threads if feed not available
             await navigateTo(`/b/${boardName}/threads`, { replace: true });
+        } else {
+            throw createError({
+                statusCode: 404,
+                statusMessage: 'No content sections enabled for this board',
+                fatal: true
+            });
         }
     } catch (error) {
         console.error('Error fetching board:', error);
