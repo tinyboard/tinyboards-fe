@@ -8,7 +8,9 @@ export const MOD_PERMISSIONS: { [key: string]: number } = {
   content: 8,
   users: 16,
   emoji: 32,
-  full: 64
+  flair: 64,
+  wiki: 128,
+  full: 8191
 };
 
 /**
@@ -20,7 +22,7 @@ export const MOD_PERMISSIONS: { [key: string]: number } = {
 export const requireModPermission = (modPermissions: number, permission: ModPermission): boolean => {
   return (
     (modPermissions &
-      (MOD_PERMISSIONS[permission] + MOD_PERMISSIONS["full"])) >
+      (MOD_PERMISSIONS[permission] | MOD_PERMISSIONS["full"])) >
     0
   );
 };

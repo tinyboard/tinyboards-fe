@@ -218,7 +218,7 @@ export type BoardFragment = {
 export type ContentType = "post" | "comment";
 
 export type ModPermission = 'none' | 'config' | 'appearance' |
-    'content' | 'users' | 'emoji' | 'full';
+    'content' | 'users' | 'emoji' | 'flair' | 'wiki' | 'full';
 
 export type AdminPermission = 'none' | 'appearance' | 'config' | 'content' |
     'users' | 'boards' | 'emoji' | 'full' | 'owner' | 'system';

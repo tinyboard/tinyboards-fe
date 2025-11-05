@@ -85,11 +85,12 @@
 									</p>
 								</div>
 								<input
-								type="checkbox"
-								v-model="sections.wiki"
-								:disabled="sections.wiki && enabledSectionsCount === 1"
-								class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-							</div>
+									type="checkbox"
+									v-model="sections.wiki"
+									:disabled="sections.wiki && enabledSectionsCount === 1"
+									class="h-5 w-5 text-blue-600 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+								/>
+							</label>
 						</div>
 					</div>
 
