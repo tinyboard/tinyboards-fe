@@ -149,7 +149,7 @@ onMounted(async () => {
       }
     `
 
-    const result = await useGraphQLQuery(query, { pageId: props.pageId })
+    const result = await useGraphQLQuery(query, { variables: { pageId: props.pageId } })
     revisions.value = result.data?.wikiPageHistory || []
 
     // Check if user can revert (wiki permission)
@@ -213,15 +213,17 @@ const revertToRevision = async (revision: any) => {
 
   try {
     await useGraphQLMutation(mutationQuery, {
-      input: {
-        pageId: props.pageId,
-        revisionNumber: revision.revisionNumber,
+      variables: {
+        input: {
+          pageId: props.pageId,
+          revisionNumber: revision.revisionNumber,
+        }
       }
     })
 
     toastStore.addNotification({
-      title: 'Page reverted',
-      body: `Reverted to revision #${revision.revisionNumber}`,
+      header: 'Page reverted',
+      message: `Reverted to revision #${revision.revisionNumber}`,
       type: 'success'
     })
 
@@ -231,8 +233,8 @@ const revertToRevision = async (revision: any) => {
     window.location.href = `/b/${props.boardName}/wiki/${props.slug}`
   } catch (error) {
     toastStore.addNotification({
-      title: 'Error',
-      body: 'Failed to revert page',
+      header: 'Error',
+      message: 'Failed to revert page',
       type: 'error'
     })
   }

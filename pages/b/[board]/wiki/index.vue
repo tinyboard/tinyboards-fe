@@ -106,7 +106,7 @@ const { data: boardData, error: boardError } = await useAsyncData(
       }
     `
 
-    const result = await useGraphQLQuery(query, { name: boardName })
+    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
     return result.data?.board
   }
 )
@@ -150,7 +150,7 @@ const { data: pagesData, pending: loading } = await useAsyncData(
       }
     `
 
-    const result = await useGraphQLQuery(query, { boardName })
+    const result = await useGraphQLQuery(query, { variables: { boardName } })
     return result.data?.listWikiPages || []
   }
 )

@@ -65,7 +65,7 @@ const { data: boardData, error: boardError } = await useAsyncData(
       }
     `
 
-    const result = await useGraphQLQuery(query, { name: boardName })
+    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
     return result.data?.board
   }
 )
@@ -135,24 +135,26 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
 
   try {
     const result = await useGraphQLMutation(mutationQuery, {
-      input: {
-        boardId: board.id,
-        title: data.title,
-        body: data.body,
+      variables: {
+        input: {
+          boardId: board.id,
+          title: data.title,
+          body: data.body,
+        }
       }
     })
 
     if (result.data?.createWikiPage) {
       toastStore.addNotification({
-        title: 'Wiki page created',
+        header: 'Wiki page created',
         type: 'success'
       })
       navigateTo(`/b/${board.name}/wiki/${result.data.createWikiPage.slug}`)
     }
   } catch (error) {
     toastStore.addNotification({
-      title: 'Error',
-      body: 'Failed to create wiki page',
+      header: 'Error',
+      message: 'Failed to create wiki page',
       type: 'error'
     })
   }

@@ -70,7 +70,7 @@ const { data: boardData } = await useAsyncData(
       }
     `
 
-    const result = await useGraphQLQuery(query, { name: boardName })
+    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
     return result.data?.board
   }
 )
@@ -93,7 +93,7 @@ const { data: pageData, error: pageError } = await useAsyncData(
       }
     `
 
-    const result = await useGraphQLQuery(query, { boardName, slug })
+    const result = await useGraphQLQuery(query, { variables: { boardName, slug } })
     return result.data?.wikiPage
   }
 )
@@ -167,25 +167,27 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
 
   try {
     const result = await useGraphQLMutation(mutationQuery, {
-      input: {
-        pageId: page.id,
-        title: data.title,
-        body: data.body,
-        editSummary: data.editSummary,
+      variables: {
+        input: {
+          pageId: page.id,
+          title: data.title,
+          body: data.body,
+          editSummary: data.editSummary,
+        }
       }
     })
 
     if (result.data?.editWikiPage) {
       toastStore.addNotification({
-        title: 'Wiki page updated',
+        header: 'Wiki page updated',
         type: 'success'
       })
       navigateTo(`/b/${board.name}/wiki/${slug}`)
     }
   } catch (error) {
     toastStore.addNotification({
-      title: 'Error',
-      body: 'Failed to update wiki page',
+      header: 'Error',
+      message: 'Failed to update wiki page',
       type: 'error'
     })
   }

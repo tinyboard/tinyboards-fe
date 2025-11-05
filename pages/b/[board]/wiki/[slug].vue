@@ -161,7 +161,7 @@ const { data: boardData } = await useAsyncData(
       }
     `
 
-    const result = await useGraphQLQuery(query, { name: boardName })
+    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
     return result.data?.board
   }
 )
@@ -193,7 +193,7 @@ const { data: pageData, error: pageError, refresh: refreshPage } = await useAsyn
       }
     `
 
-    const result = await useGraphQLQuery(query, { boardName, slug })
+    const result = await useGraphQLQuery(query, { variables: { boardName, slug } })
     return result.data?.wikiPage
   }
 )
@@ -249,17 +249,17 @@ const toggleLock = async () => {
   `
 
   try {
-    await useGraphQLMutation(mutationQuery, { pageId: page.value?.id })
+    await useGraphQLMutation(mutationQuery, { variables: { pageId: page.value?.id } })
     toastStore.addNotification({
-      title: page.value?.isLocked ? 'Page unlocked' : 'Page locked',
+      header: page.value?.isLocked ? 'Page unlocked' : 'Page locked',
       type: 'success'
     })
     showModActions.value = false
     await refreshPage()
   } catch (error) {
     toastStore.addNotification({
-      title: 'Error',
-      body: 'Failed to toggle page lock',
+      header: 'Error',
+      message: 'Failed to toggle page lock',
       type: 'error'
     })
   }
@@ -275,16 +275,16 @@ const deletePage = async () => {
   `
 
   try {
-    await useGraphQLMutation(mutationQuery, { pageId: page.value?.id })
+    await useGraphQLMutation(mutationQuery, { variables: { pageId: page.value?.id } })
     toastStore.addNotification({
-      title: 'Page deleted',
+      header: 'Page deleted',
       type: 'success'
     })
     navigateTo(`/b/${board?.name}/wiki`)
   } catch (error) {
     toastStore.addNotification({
-      title: 'Error',
-      body: 'Failed to delete page',
+      header: 'Error',
+      message: 'Failed to delete page',
       type: 'error'
     })
   }
