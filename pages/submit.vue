@@ -119,47 +119,15 @@
                                             required
                                         </em>
                                     </label>
-                                    <!-- Rich text editor for threads (lazy loaded) -->
-                                    <div v-if="isThread" class="mt-1">
+                                    <!-- Rich text editor for all post types -->
+                                    <div class="mt-1">
                                         <LazyInputsTiptap
                                             v-model="body"
-                                            placeholder="Start your discussion..."
+                                            :placeholder="isThread ? 'Start your discussion...' : 'Enter some words worth reading...'"
                                             :board-id="boardId"
                                             class="min-h-[300px]"
                                         />
                                     </div>
-                                    <!-- Markdown textarea for feed posts -->
-                                    <div v-else class="relative">
-                                        <div id="post-body"
-                                            class="relative mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary text-base">
-                                            <textarea
-                                                ref="textareaRef"
-                                                placeholder="Enter some words worth reading..."
-                                                class="mt-1 block w-full rounded-md border-gray-200 bg-gray-100 shadow-inner-xs focus:bg-white focus:border-primary focus:ring-primary pr-10"
-                                                rows="6"
-                                                v-model="body"
-                                                :required="!url && !image"
-                                                @focus="hasFocusedBody = true"
-                                                @keydown="handleKeydown"
-                                                @input="handleInput"
-                                                @click="handleTextareaClick"
-                                            />
-                                        </div>
-                                        <!-- Emoji Picker inside textarea -->
-                                        <div class="absolute bottom-2 right-2">
-                                            <InputsEmojiPicker :board-id="boardId" @emoji-selected="insertEmoji" />
-                                        </div>
-                                    </div>
-
-                                    <!-- Emoji Suggestions (feed posts only) -->
-                                    <InputsEmojiSuggestions
-                                        v-if="!isThread"
-                                        :suggestions="emojiSuggestions.suggestions.value"
-                                        :is-visible="emojiSuggestions.isVisible.value"
-                                        :position="emojiSuggestions.position.value"
-                                        :selected-index="emojiSuggestions.selectedIndex.value"
-                                        @select="selectEmojiSuggestion"
-                                    />
 
                                     <p v-if="!isThread"
                                         class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
@@ -419,10 +387,8 @@ const hasFlairs = ref(true); // Start with true to show section initially, will 
 let hasFocusedUrl = ref(false);
 let hasFocusedBody = ref(false);
 
-// Emoji functionality
-const textareaRef = ref<HTMLTextAreaElement>();
+// Board ID for TipTap editor
 const boardId = computed(() => selectedBoard.value?.id || null);
-const emojiSuggestions = useEmojiSuggestions();
 
 // Check if user has a pending application that hasn't been approved
 // The backend logic: blocks if (is_application_accepted = false AND has_pending_application = true)
@@ -690,89 +656,6 @@ async function submit() {
         isLoading.value = false;
     }
 }
-
-// Emoji handler functions
-const handleKeydown = (e: KeyboardEvent) => {
-    // Handle emoji suggestions navigation
-    if (emojiSuggestions.isVisible.value) {
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            emojiSuggestions.navigateDown();
-            return;
-        }
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            emojiSuggestions.navigateUp();
-            return;
-        }
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const selectedEmoji = emojiSuggestions.selectSuggestion();
-            if (selectedEmoji) {
-                insertEmojiSuggestion(selectedEmoji);
-            }
-            return;
-        }
-        if (e.key === 'Escape') {
-            e.preventDefault();
-            emojiSuggestions.hideSuggestions();
-            return;
-        }
-    }
-};
-
-const handleInput = () => {
-    if (textareaRef.value && body.value !== null) {
-        const cursorPosition = textareaRef.value.selectionStart;
-        emojiSuggestions.showSuggestions(body.value || '', cursorPosition, textareaRef.value);
-    }
-};
-
-const handleTextareaClick = () => {
-    if (textareaRef.value && body.value !== null) {
-        const cursorPosition = textareaRef.value.selectionStart;
-        emojiSuggestions.showSuggestions(body.value || '', cursorPosition, textareaRef.value);
-    }
-};
-
-const insertEmoji = (emoji: string) => {
-    if (textareaRef.value && body.value !== null) {
-        const start = textareaRef.value.selectionStart;
-        const end = textareaRef.value.selectionEnd;
-        const text = body.value || '';
-        body.value = text.substring(0, start) + emoji + text.substring(end);
-
-        // Restore cursor position
-        nextTick(() => {
-            if (textareaRef.value) {
-                textareaRef.value.focus();
-                textareaRef.value.setSelectionRange(start + emoji.length, start + emoji.length);
-            }
-        });
-    }
-};
-
-const insertEmojiSuggestion = (emoji: any) => {
-    if (textareaRef.value && body.value !== null) {
-        const result = emojiSuggestions.replaceEmojiInText(body.value || '', textareaRef.value.selectionStart, emoji);
-        body.value = result.newText;
-
-        // Restore cursor position
-        nextTick(() => {
-            if (textareaRef.value) {
-                textareaRef.value.focus();
-                textareaRef.value.setSelectionRange(result.newCursorPosition, result.newCursorPosition);
-            }
-        });
-    }
-};
-
-const selectEmojiSuggestion = (index: number) => {
-    const selectedEmoji = emojiSuggestions.selectSuggestion(index);
-    if (selectedEmoji) {
-        insertEmojiSuggestion(selectedEmoji);
-    }
-};
 
 const links = [
     //{ name: 'House Rules', href: '/help/rules', target: '_blank' },

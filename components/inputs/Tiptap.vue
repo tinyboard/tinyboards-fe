@@ -255,6 +255,14 @@
         @select="insertMention"
         @update:selected-index="mentionSelectedIndex = $event"
       />
+      <!-- Emoji suggestions dropdown -->
+      <EmojiSuggestions
+        :suggestions="emojiSuggestions"
+        :selected-index="emojiSelectedIndex"
+        :is-visible="emojiVisible"
+        :position="emojiPosition"
+        @select="insertEmojiSuggestion"
+      />
     </div>
 
     <!-- Preview Container -->
@@ -343,7 +351,9 @@
   import { Extension } from '@tiptap/core';
   import EmojiPicker from './EmojiPicker.vue';
   import MentionDropdown from './MentionDropdown.vue';
+  import EmojiSuggestions from './EmojiSuggestions.vue';
   import { useMentionAutocomplete } from '@/composables/useMentionAutocomplete';
+  import { useEmojiSuggestions } from '@/composables/useEmojiSuggestions';
 
   const props = defineProps({
     modelValue: {
@@ -397,6 +407,22 @@
 
   const mentionPosition = ref({ top: 0, left: 0 });
   const mentionStartPos = ref(null);
+
+  // Emoji suggestions state
+  const {
+    suggestions: emojiSuggestions,
+    isVisible: emojiVisible,
+    selectedIndex: emojiSelectedIndex,
+    showSuggestions: showEmojiSuggestions,
+    hideSuggestions: hideEmojiSuggestions,
+    selectSuggestion: selectEmojiSuggestion,
+    navigateUp: navigateEmojiUp,
+    navigateDown: navigateEmojiDown,
+    position: emojiPositionData
+  } = useEmojiSuggestions(props.boardId);
+
+  const emojiPosition = ref({ top: 0, left: 0 });
+  const emojiStartPos = ref(null);
 
   // Insert mention into editor
   const insertMention = (username) => {
@@ -466,7 +492,82 @@
     }
   };
 
-  // Create keyboard shortcut extension for mention navigation
+  // Insert emoji from suggestions
+  const insertEmojiSuggestion = (index) => {
+    const emoji = selectEmojiSuggestion(index);
+    if (!emoji || !editor.value || emojiStartPos.value === null) return;
+
+    const { state } = editor.value;
+    const currentPos = state.selection.from;
+
+    // Calculate the range to replace (:query)
+    const from = emojiStartPos.value;
+    const to = currentPos;
+
+    // Create the emoji HTML with image
+    const emojiHtml = `<img src="${emoji.imageUrl}" alt="${emoji.altTextDisplay}" class="inline-emoji" style="width: 1.25em; height: 1.25em; vertical-align: middle; display: inline-block;" />&nbsp;`;
+
+    // Replace the :query text with the emoji image
+    editor.value
+      .chain()
+      .focus()
+      .deleteRange({ from, to })
+      .insertContent(emojiHtml)
+      .run();
+
+    // Reset emoji state
+    hideEmojiSuggestions();
+    emojiStartPos.value = null;
+  };
+
+  // Detect : symbol and track position for emoji
+  const checkForEmojiSuggestion = (editor) => {
+    const { state } = editor;
+    const { from } = state.selection;
+    const textBefore = state.doc.textBetween(Math.max(0, from - 50), from, '\n', '\ufffc');
+
+    // Look for : followed by characters
+    const emojiMatch = textBefore.match(/:(\w*)$/);
+
+    if (emojiMatch && emojiMatch[1].length >= 1) {
+      const query = emojiMatch[1];
+      const colonPos = from - query.length - 1; // Position of :
+
+      // Track start position
+      emojiStartPos.value = colonPos;
+
+      // Get cursor coordinates for positioning dropdown
+      const coords = editor.view.coordsAtPos(from);
+      if (coords) {
+        emojiPosition.value = {
+          top: coords.bottom + window.scrollY,
+          left: coords.left + window.scrollX
+        };
+
+        // Trigger search with the composable's showSuggestions method
+        // Create a temporary element for positioning (composable expects HTMLElement)
+        const tempElement = document.createElement('div');
+        tempElement.style.position = 'absolute';
+        tempElement.style.top = coords.top + 'px';
+        tempElement.style.left = coords.left + 'px';
+        document.body.appendChild(tempElement);
+
+        // Show suggestions
+        showEmojiSuggestions(textBefore, from, tempElement);
+
+        // Clean up temp element
+        setTimeout(() => document.body.removeChild(tempElement), 0);
+      }
+    } else {
+      // No : detected or query too short, hide dropdown
+      if (emojiVisible.value) {
+        hideEmojiSuggestions();
+        emojiStartPos.value = null;
+      }
+    }
+  };
+
+  // Create keyboard shortcut extension for mention and emoji navigation
   const MentionKeyboardExtension = Extension.create({
     name: 'mentionKeyboard',
 
@@ -477,11 +578,19 @@
             selectNextMention();
             return true; // Prevent default behavior
           }
+          if (emojiVisible.value) {
+            navigateEmojiDown();
+            return true;
+          }
           return false;
         },
         ArrowUp: () => {
           if (mentionVisible.value) {
             selectPreviousMention();
+            return true;
+          }
+          if (emojiVisible.value) {
+            navigateEmojiUp();
             return true;
           }
           return false;
@@ -494,12 +603,21 @@
               return true;
             }
           }
+          if (emojiVisible.value) {
+            insertEmojiSuggestion(emojiSelectedIndex.value);
+            return true;
+          }
           return false;
         },
         Escape: () => {
           if (mentionVisible.value) {
             resetMention();
             mentionStartPos.value = null;
+            return true;
+          }
+          if (emojiVisible.value) {
+            hideEmojiSuggestions();
+            emojiStartPos.value = null;
             return true;
           }
           return false;
@@ -590,8 +708,9 @@
       emit('update:modelValue', editor.getHTML());
       isEditorEmpty.value = editor.isEmpty;
 
-      // Check for @ mentions on every update
+      // Check for @ mentions and : emoji on every update
       checkForMention(editor);
+      checkForEmojiSuggestion(editor);
     }
   });
 
