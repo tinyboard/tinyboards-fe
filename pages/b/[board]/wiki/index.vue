@@ -80,56 +80,66 @@ const boardStore = useBoardStore()
 const boardName = route.params.board as string
 
 // Fetch board data
-const { data: boardData, error: boardError } = await useAsyncData(
-  `board-${boardName}`,
-  async () => {
-    const query = `
-      query GetBoard($name: String!) {
-        board(name: $name) {
-          id
-          name
-          title
-          description
-          icon
-          banner
-          hasFeed
-          hasThreads
-          hasWiki
-          wikiEnabled
-          sectionOrder
-          defaultSection
-          myModPermissions
-          subscribedType
-          subscribers
-          postCount
-        }
-      }
-    `
-
-    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
-    return result.data?.board
+const boardQuery = `
+  query GetBoard($name: String!) {
+    board(name: $name) {
+      id
+      name
+      title
+      description
+      icon
+      banner
+      hasFeed
+      hasThreads
+      hasWiki
+      wikiEnabled
+      sectionOrder
+      defaultSection
+      myModPermissions
+      subscribedType
+      subscribers
+      postCount
+    }
   }
-)
+`
 
-if (boardError.value || !boardData.value) {
+try {
+  const { data: boardData, error: boardError } = await useGraphQLQuery(boardQuery, {
+    variables: { name: boardName }
+  })
+
+  if (boardError.value || !boardData.value?.board) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Board "${boardName}" not found`,
+      fatal: true
+    })
+  }
+
+  const board = boardData.value.board
+
+  // Check if wiki is enabled
+  if (!board.hasWiki || !board.wikiEnabled) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: `Wiki is not enabled for /b/${boardName}`,
+      fatal: true
+    })
+  }
+
+  // Store board in Pinia
+  boardStore.setBoard(board)
+} catch (error) {
+  console.error('Error fetching board:', error)
   throw createError({
     statusCode: 404,
     statusMessage: `Board "${boardName}" not found`,
+    fatal: true
   })
 }
 
-const board = boardData.value
-
-// Check if wiki is enabled
-if (!board.hasWiki || !board.wikiEnabled) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: `Wiki is not enabled for /b/${boardName}`,
-  })
-}
-
-// Store board in Pinia
-boardStore.setBoard(board)
+// Use board from store as computed
+const board = computed(() => boardStore.board)
 
 // Fetch wiki pages
 const { data: pagesData, pending: loading } = await useAsyncData(
@@ -159,25 +169,25 @@ const pages = computed(() => pagesData.value || [])
 
 // Check if user can create pages
 const canCreatePage = computed(() => {
-  const modPerms = board.myModPermissions || 0
+  const modPerms = board.value?.myModPermissions || 0
   // Wiki permission is bit 128 (bit 7)
   return (modPerms & 128) > 0 || (modPerms & 8191) === 8191 // Wiki or Full perms
 })
 
-const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board?.id)
+const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board.value?.id)
 
 // Generate section links
 const getSectionLinks = () => {
   const baseLinks = []
-  const sectionOrder = board?.sectionOrder?.split(',').filter((s: string) => s.trim()) || ['feed', 'threads', 'wiki']
+  const sectionOrder = board.value?.sectionOrder?.split(',').filter((s: string) => s.trim()) || ['feed', 'threads', 'wiki']
 
   for (const section of sectionOrder) {
-    if (section === 'feed' && board?.hasFeed) {
-      baseLinks.push({ name: 'Feed', href: `/b/${board.name}/feed` })
-    } else if (section === 'threads' && board?.hasThreads) {
-      baseLinks.push({ name: 'Threads', href: `/b/${board.name}/threads` })
-    } else if (section === 'wiki' && board?.hasWiki) {
-      baseLinks.push({ name: 'Wiki', href: `/b/${board.name}/wiki` })
+    if (section === 'feed' && board.value?.hasFeed) {
+      baseLinks.push({ name: 'Feed', href: `/b/${board.value.name}/feed` })
+    } else if (section === 'threads' && board.value?.hasThreads) {
+      baseLinks.push({ name: 'Threads', href: `/b/${board.value.name}/threads` })
+    } else if (section === 'wiki' && board.value?.hasWiki && board.value?.wikiEnabled) {
+      baseLinks.push({ name: 'Wiki', href: `/b/${board.value.name}/wiki` })
     }
   }
 
