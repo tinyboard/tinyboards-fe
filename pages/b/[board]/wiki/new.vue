@@ -52,6 +52,14 @@ const boardQuery = `
       id
       name
       title
+      description
+      icon
+      banner
+      primaryColor
+      secondaryColor
+      subscribers
+      postCount
+      commentCount
       hasFeed
       hasThreads
       hasWiki

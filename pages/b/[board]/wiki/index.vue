@@ -89,6 +89,11 @@ const boardQuery = `
       description
       icon
       banner
+      primaryColor
+      secondaryColor
+      subscribers
+      postCount
+      commentCount
       hasFeed
       hasThreads
       hasWiki
@@ -97,8 +102,6 @@ const boardQuery = `
       defaultSection
       myModPermissions
       subscribedType
-      subscribers
-      postCount
     }
   }
 `
