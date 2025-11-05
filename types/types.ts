@@ -196,6 +196,11 @@ export interface Board {
   exclude_from_all?: boolean;
   isBanned?: boolean;
   subscribedType?: string;
+  hasWiki?: boolean;
+  wikiEnabled?: boolean;
+  wikiRequireApproval?: boolean;
+  wikiDefaultViewPermission?: string;
+  wikiDefaultEditPermission?: string;
 }
 
 export type BoardFragment = {
@@ -371,3 +376,40 @@ export type DeleteMessageInput = {
 
 export type SendMessageResponse = SendMessageMutation["sendMessage"];
 export type EditMessageResponse = EditMessageMutation["editMessage"];
+// Wiki types
+export interface WikiPage {
+  id: number;
+  boardId: number;
+  slug: string;
+  title: string;
+  body: string;
+  bodyHTML: string;
+  creatorId: number;
+  creationDate: string;
+  updated?: string;
+  lastEditedBy?: number;
+  isLocked: boolean;
+  isDeleted: boolean;
+  viewPermission: string;
+  editPermission: string;
+  displayOrder?: number;
+  parentId?: number;
+  creator?: User;
+  lastEditor?: User;
+  canEdit?: boolean;
+  children?: WikiPage[];
+  parent?: WikiPage;
+  revisionCount?: number;
+}
+
+export interface WikiPageRevision {
+  id: number;
+  pageId: number;
+  revisionNumber: number;
+  editorId: number;
+  editSummary?: string;
+  body: string;
+  bodyHTML: string;
+  timestamp: string;
+  editor?: User;
+}
