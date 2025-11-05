@@ -214,11 +214,24 @@ const pageQuery = `
   }
 `
 
-const { data: pageDataResult, error: pageError } = await useGraphQLQuery(pageQuery, {
-  variables: { boardName, slug }
-})
+const pageData = ref(null)
 
-if (pageError.value || !pageDataResult.value?.wikiPage) {
+try {
+  const { data, error } = await useGraphQLQuery(pageQuery, {
+    variables: { boardName, slug }
+  })
+
+  if (error.value || !data.value?.wikiPage) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Wiki page "${slug}" not found`,
+      fatal: true
+    })
+  }
+
+  pageData.value = data.value.wikiPage
+} catch (error) {
+  console.error('Error fetching page:', error)
   throw createError({
     statusCode: 404,
     statusMessage: `Wiki page "${slug}" not found`,
@@ -226,7 +239,6 @@ if (pageError.value || !pageDataResult.value?.wikiPage) {
   })
 }
 
-const pageData = ref(pageDataResult.value.wikiPage)
 const refreshPage = async () => {
   const { data, error } = await useGraphQLQuery(pageQuery, {
     variables: { boardName, slug }
