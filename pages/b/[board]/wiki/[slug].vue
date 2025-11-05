@@ -321,7 +321,7 @@ const deletePage = async () => {
       header: 'Page deleted',
       type: 'success'
     })
-    navigateTo(`/b/${board?.name}/wiki`)
+    navigateTo(`/b/${board.value?.name}/wiki`)
   } catch (error) {
     toastStore.addNotification({
       header: 'Error',
