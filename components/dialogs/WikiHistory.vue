@@ -59,7 +59,7 @@
                           Revision #{{ revision.revisionNumber }}
                         </span>
                         <span class="text-sm text-gray-500 dark:text-gray-400">
-                          by {{ revision.editor?.username || 'Unknown' }}
+                          by {{ revision.editor?.displayName || revision.editor?.name || 'Unknown' }}
                         </span>
                       </div>
                       <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -143,7 +143,8 @@ onMounted(async () => {
           bodyHTML
           timestamp
           editor {
-            username
+            name
+            displayName
           }
         }
       }
@@ -186,7 +187,7 @@ const viewRevision = (revision: any) => {
         <body>
           <h1>Revision #${revision.revisionNumber}</h1>
           <div class="meta">
-            By ${revision.editor?.username || 'Unknown'} on ${formatDate(revision.timestamp)}
+            By ${revision.editor?.displayName || revision.editor?.name || 'Unknown'} on ${formatDate(revision.timestamp)}
             ${revision.editSummary ? `<br>Summary: ${revision.editSummary}` : ''}
           </div>
           <div class="content">${revision.bodyHTML}</div>

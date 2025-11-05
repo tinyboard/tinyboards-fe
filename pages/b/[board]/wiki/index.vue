@@ -51,7 +51,7 @@
                   <div class="flex-1">
                     <h3 class="text-base font-medium text-blue-600 dark:text-blue-400 hover:underline">{{ page.title }}</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Created by {{ page.creator?.username || 'Unknown' }}
+                      Created by {{ page.creator?.displayName || page.creator?.name || 'Unknown' }}
                       <span v-if="page.updated"> • Last edited {{ formatDate(page.updated) }}</span>
                     </p>
                   </div>
@@ -157,7 +157,8 @@ const { data: pagesData, pending: loading } = await useAsyncData(
           creationDate
           updated
           creator {
-            username
+            name
+            displayName
           }
         }
       }

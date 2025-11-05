@@ -23,7 +23,7 @@
               <div class="flex-1">
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ page?.title }}</h1>
                 <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                  <span>Created by {{ page?.creator?.username || 'Unknown' }}</span>
+                  <span>Created by {{ page?.creator?.displayName || page?.creator?.name || 'Unknown' }}</span>
                   <span v-if="page?.updated">Last edited {{ formatDate(page.updated) }}</span>
                   <button
                     @click="showHistory = true"
@@ -206,8 +206,8 @@ const pageQuery = `
       isLocked
       canEdit
       revisionCount
-      creator { username }
-      lastEditor { username }
+      creator { name displayName }
+      lastEditor { name displayName }
       children { id title slug }
       parent { id title slug }
     }
