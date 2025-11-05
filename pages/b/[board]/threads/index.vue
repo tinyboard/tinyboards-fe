@@ -217,6 +217,8 @@ const boardQuery = `
             sidebarHTML
             hasFeed
             hasThreads
+            hasWiki
+            wikiEnabled
             sectionOrder
             defaultSection
         }

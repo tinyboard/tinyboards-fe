@@ -277,6 +277,8 @@ if (route.params?.board) {
                 sidebarHTML
                 hasFeed
                 hasThreads
+                hasWiki
+                wikiEnabled
                 sectionOrder
                 defaultSection
             }
