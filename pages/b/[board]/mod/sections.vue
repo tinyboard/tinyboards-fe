@@ -447,7 +447,8 @@ const submitSettings = async () => {
 					boardId: board.value.id,
 					sectionConfig: sectionConfig,
 					sectionOrder: sectionOrder.value,
-					defaultSection: defaultSection.value
+					defaultSection: defaultSection.value,
+					wikiEnabled: sections.value.wiki
 				}
 			}
 		});
