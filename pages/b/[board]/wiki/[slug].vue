@@ -140,94 +140,115 @@ const slug = route.params.slug as string
 const showHistory = ref(false)
 const showModActions = ref(false)
 
-// Fetch board and page data
-const { data: boardData } = await useAsyncData(
-  `board-${boardName}`,
-  async () => {
-    const query = `
-      query GetBoard($name: String!) {
-        board(name: $name) {
-          id
-          name
-          title
-          hasFeed
-          hasThreads
-          hasWiki
-          wikiEnabled
-          sectionOrder
-          defaultSection
-          myModPermissions
-        }
-      }
-    `
-
-    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
-    return result.data?.board
+// Fetch board data
+const boardQuery = `
+  query GetBoard($name: String!) {
+    board(name: $name) {
+      id
+      name
+      title
+      hasFeed
+      hasThreads
+      hasWiki
+      wikiEnabled
+      sectionOrder
+      defaultSection
+      myModPermissions
+    }
   }
-)
+`
 
-const { data: pageData, error: pageError, refresh: refreshPage } = await useAsyncData(
-  `wiki-page-${boardName}-${slug}`,
-  async () => {
-    const query = `
-      query WikiPage($boardName: String!, $slug: String!) {
-        wikiPage(boardName: $boardName, slug: $slug) {
-          id
-          boardId
-          slug
-          title
-          body
-          bodyHTML
-          creatorId
-          creationDate
-          updated
-          lastEditedBy
-          isLocked
-          canEdit
-          revisionCount
-          creator { username }
-          lastEditor { username }
-          children { id title slug }
-          parent { id title slug }
-        }
-      }
-    `
+try {
+  const { data: boardData, error: boardError } = await useGraphQLQuery(boardQuery, {
+    variables: { name: boardName }
+  })
 
-    const result = await useGraphQLQuery(query, { variables: { boardName, slug } })
-    return result.data?.wikiPage
+  if (boardError.value || !boardData.value?.board) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Board "${boardName}" not found`,
+      fatal: true
+    })
   }
-)
 
-if (pageError.value || !pageData.value) {
+  boardStore.setBoard(boardData.value.board)
+} catch (error) {
+  console.error('Error fetching board:', error)
   throw createError({
     statusCode: 404,
-    statusMessage: `Wiki page "${slug}" not found`,
+    statusMessage: `Board "${boardName}" not found`,
+    fatal: true
   })
 }
 
-const board = boardData.value
+// Fetch page data
+const pageQuery = `
+  query WikiPage($boardName: String!, $slug: String!) {
+    wikiPage(boardName: $boardName, slug: $slug) {
+      id
+      boardId
+      slug
+      title
+      body
+      bodyHTML
+      creatorId
+      creationDate
+      updated
+      lastEditedBy
+      isLocked
+      canEdit
+      revisionCount
+      creator { username }
+      lastEditor { username }
+      children { id title slug }
+      parent { id title slug }
+    }
+  }
+`
+
+const { data: pageDataResult, error: pageError } = await useGraphQLQuery(pageQuery, {
+  variables: { boardName, slug }
+})
+
+if (pageError.value || !pageDataResult.value?.wikiPage) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: `Wiki page "${slug}" not found`,
+    fatal: true
+  })
+}
+
+const pageData = ref(pageDataResult.value.wikiPage)
+const refreshPage = async () => {
+  const { data, error } = await useGraphQLQuery(pageQuery, {
+    variables: { boardName, slug }
+  })
+  if (!error.value && data.value?.wikiPage) {
+    pageData.value = data.value.wikiPage
+  }
+}
+
+const board = computed(() => boardStore.board)
 const page = computed(() => pageData.value)
 
-boardStore.setBoard(board)
-
-const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board?.id)
+const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board.value?.id)
 
 const canModerate = computed(() => {
-  const modPerms = board?.myModPermissions || 0
+  const modPerms = board.value?.myModPermissions || 0
   return (modPerms & 128) > 0 || (modPerms & 8191) === 8191
 })
 
 const getSectionLinks = () => {
   const baseLinks = []
-  const sectionOrder = board?.sectionOrder?.split(',').filter((s: string) => s.trim()) || []
+  const sectionOrder = board.value?.sectionOrder?.split(',').filter((s: string) => s.trim()) || []
 
   for (const section of sectionOrder) {
-    if (section === 'feed' && board?.hasFeed) {
-      baseLinks.push({ name: 'Feed', href: `/b/${board.name}/feed` })
-    } else if (section === 'threads' && board?.hasThreads) {
-      baseLinks.push({ name: 'Threads', href: `/b/${board.name}/threads` })
-    } else if (section === 'wiki' && board?.hasWiki) {
-      baseLinks.push({ name: 'Wiki', href: `/b/${board.name}/wiki` })
+    if (section === 'feed' && board.value?.hasFeed) {
+      baseLinks.push({ name: 'Feed', href: `/b/${board.value.name}/feed` })
+    } else if (section === 'threads' && board.value?.hasThreads) {
+      baseLinks.push({ name: 'Threads', href: `/b/${board.value.name}/threads` })
+    } else if (section === 'wiki' && board.value?.hasWiki && board.value?.wikiEnabled) {
+      baseLinks.push({ name: 'Wiki', href: `/b/${board.value.name}/wiki` })
     }
   }
 
@@ -311,6 +332,6 @@ definePageMeta({
 })
 
 useHead({
-  title: computed(() => `${page.value?.title || slug} - ${board?.title} Wiki`),
+  title: computed(() => `${page.value?.title || slug} - ${board.value?.title} Wiki`),
 })
 </script>

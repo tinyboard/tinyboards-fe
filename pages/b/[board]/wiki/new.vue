@@ -45,74 +45,83 @@ const toastStore = useToastStore()
 const boardName = route.params.board as string
 
 // Fetch board data
-const { data: boardData, error: boardError } = await useAsyncData(
-  `board-${boardName}`,
-  async () => {
-    const query = `
-      query GetBoard($name: String!) {
-        board(name: $name) {
-          id
-          name
-          title
-          hasFeed
-          hasThreads
-          hasWiki
-          wikiEnabled
-          sectionOrder
-          defaultSection
-          myModPermissions
-        }
-      }
-    `
-
-    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
-    return result.data?.board
+const boardQuery = `
+  query GetBoard($name: String!) {
+    board(name: $name) {
+      id
+      name
+      title
+      hasFeed
+      hasThreads
+      hasWiki
+      wikiEnabled
+      sectionOrder
+      defaultSection
+      myModPermissions
+    }
   }
-)
+`
 
-if (boardError.value || !boardData.value) {
+try {
+  const { data: boardData, error: boardError } = await useGraphQLQuery(boardQuery, {
+    variables: { name: boardName }
+  })
+
+  if (boardError.value || !boardData.value?.board) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Board "${boardName}" not found`,
+      fatal: true
+    })
+  }
+
+  const boardResult = boardData.value.board
+
+  // Check if wiki is enabled
+  if (!boardResult.hasWiki || !boardResult.wikiEnabled) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: `Wiki is not enabled for /b/${boardName}`,
+      fatal: true
+    })
+  }
+
+  // Check if user can create pages
+  const modPerms = boardResult.myModPermissions || 0
+  const canCreatePage = (modPerms & 128) > 0 || (modPerms & 8191) === 8191
+
+  if (!canCreatePage) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'You do not have permission to create wiki pages',
+      fatal: true
+    })
+  }
+
+  boardStore.setBoard(boardResult)
+} catch (error) {
+  console.error('Error fetching board:', error)
   throw createError({
     statusCode: 404,
     statusMessage: `Board "${boardName}" not found`,
+    fatal: true
   })
 }
 
-const board = boardData.value
-
-// Check if wiki is enabled
-if (!board.hasWiki || !board.wikiEnabled) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: `Wiki is not enabled for /b/${boardName}`,
-  })
-}
-
-// Check if user can create pages
-const modPerms = board.myModPermissions || 0
-const canCreatePage = (modPerms & 128) > 0 || (modPerms & 8191) === 8191
-
-if (!canCreatePage) {
-  throw createError({
-    statusCode: 403,
-    statusMessage: 'You do not have permission to create wiki pages',
-  })
-}
-
-boardStore.setBoard(board)
-
-const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board?.id)
+const board = computed(() => boardStore.board)
+const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board.value?.id)
 
 const getSectionLinks = () => {
   const baseLinks = []
-  const sectionOrder = board?.sectionOrder?.split(',').filter((s: string) => s.trim()) || []
+  const sectionOrder = board.value?.sectionOrder?.split(',').filter((s: string) => s.trim()) || []
 
   for (const section of sectionOrder) {
-    if (section === 'feed' && board?.hasFeed) {
-      baseLinks.push({ name: 'Feed', href: `/b/${board.name}/feed` })
-    } else if (section === 'threads' && board?.hasThreads) {
-      baseLinks.push({ name: 'Threads', href: `/b/${board.name}/threads` })
-    } else if (section === 'wiki' && board?.hasWiki) {
-      baseLinks.push({ name: 'Wiki', href: `/b/${board.name}/wiki` })
+    if (section === 'feed' && board.value?.hasFeed) {
+      baseLinks.push({ name: 'Feed', href: `/b/${board.value.name}/feed` })
+    } else if (section === 'threads' && board.value?.hasThreads) {
+      baseLinks.push({ name: 'Threads', href: `/b/${board.value.name}/threads` })
+    } else if (section === 'wiki' && board.value?.hasWiki && board.value?.wikiEnabled) {
+      baseLinks.push({ name: 'Wiki', href: `/b/${board.value.name}/wiki` })
     }
   }
 
@@ -137,7 +146,7 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
     const result = await useGraphQLMutation(mutationQuery, {
       variables: {
         input: {
-          boardId: board.id,
+          boardId: board.value.id,
           title: data.title,
           body: data.body,
         }
@@ -149,7 +158,7 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
         header: 'Wiki page created',
         type: 'success'
       })
-      navigateTo(`/b/${board.name}/wiki/${result.data.createWikiPage.slug}`)
+      navigateTo(`/b/${board.value.name}/wiki/${result.data.createWikiPage.slug}`)
     }
   } catch (error) {
     toastStore.addNotification({
@@ -161,7 +170,7 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
 }
 
 const handleCancel = () => {
-  navigateTo(`/b/${board.name}/wiki`)
+  navigateTo(`/b/${board.value.name}/wiki`)
 }
 
 const SidebarBoard = defineAsyncComponent(() => import('@/components/containers/SidebarBoard.vue'))
@@ -171,6 +180,6 @@ definePageMeta({
 })
 
 useHead({
-  title: computed(() => `Create Wiki Page - ${board?.title} Wiki`),
+  title: computed(() => `Create Wiki Page - ${board.value?.title} Wiki`),
 })
 </script>

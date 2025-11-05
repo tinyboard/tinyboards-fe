@@ -49,101 +49,114 @@ const toastStore = useToastStore()
 const boardName = route.params.board as string
 const slug = route.params.slug as string
 
-// Fetch board and page data
-const { data: boardData } = await useAsyncData(
-  `board-${boardName}`,
-  async () => {
-    const query = `
-      query GetBoard($name: String!) {
-        board(name: $name) {
-          id
-          name
-          title
-          hasFeed
-          hasThreads
-          hasWiki
-          wikiEnabled
-          sectionOrder
-          defaultSection
-          myModPermissions
-        }
-      }
-    `
-
-    const result = await useGraphQLQuery(query, { variables: { name: boardName } })
-    return result.data?.board
+// Fetch board data
+const boardQuery = `
+  query GetBoard($name: String!) {
+    board(name: $name) {
+      id
+      name
+      title
+      hasFeed
+      hasThreads
+      hasWiki
+      wikiEnabled
+      sectionOrder
+      defaultSection
+      myModPermissions
+    }
   }
-)
+`
 
-const { data: pageData, error: pageError } = await useAsyncData(
-  `wiki-page-${boardName}-${slug}`,
-  async () => {
-    const query = `
-      query WikiPage($boardName: String!, $slug: String!) {
-        wikiPage(boardName: $boardName, slug: $slug) {
-          id
-          boardId
-          slug
-          title
-          body
-          bodyHTML
-          isLocked
-          canEdit
-        }
-      }
-    `
+try {
+  const { data: boardData, error: boardError } = await useGraphQLQuery(boardQuery, {
+    variables: { name: boardName }
+  })
 
-    const result = await useGraphQLQuery(query, { variables: { boardName, slug } })
-    return result.data?.wikiPage
+  if (boardError.value || !boardData.value?.board) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Board "${boardName}" not found`,
+      fatal: true
+    })
   }
-)
 
-if (pageError.value || !pageData.value) {
+  boardStore.setBoard(boardData.value.board)
+} catch (error) {
+  console.error('Error fetching board:', error)
   throw createError({
     statusCode: 404,
-    statusMessage: `Wiki page "${slug}" not found`,
+    statusMessage: `Board "${boardName}" not found`,
+    fatal: true
   })
 }
 
-const board = boardData.value
-const page = pageData.value
+// Fetch page data
+const pageQuery = `
+  query WikiPage($boardName: String!, $slug: String!) {
+    wikiPage(boardName: $boardName, slug: $slug) {
+      id
+      boardId
+      slug
+      title
+      body
+      bodyHTML
+      isLocked
+      canEdit
+    }
+  }
+`
+
+const { data: pageData, error: pageError } = await useGraphQLQuery(pageQuery, {
+  variables: { boardName, slug }
+})
+
+if (pageError.value || !pageData.value?.wikiPage) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: `Wiki page "${slug}" not found`,
+    fatal: true
+  })
+}
+
+const page = pageData.value.wikiPage
+const board = computed(() => boardStore.board)
 
 // Check if user can edit
 if (!page.canEdit) {
   throw createError({
     statusCode: 403,
     statusMessage: 'You do not have permission to edit this wiki page',
+    fatal: true
   })
 }
 
 // Check if page is locked
 if (page.isLocked) {
-  const modPerms = board?.myModPermissions || 0
+  const modPerms = board.value?.myModPermissions || 0
   const canModerate = (modPerms & 128) > 0 || (modPerms & 8191) === 8191
 
   if (!canModerate) {
     throw createError({
       statusCode: 403,
       statusMessage: 'This page is locked. Only moderators can edit it.',
+      fatal: true
     })
   }
 }
 
-boardStore.setBoard(board)
-
-const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board?.id)
+const shouldShowBoardBanner = computed(() => boardStore.hasBoard && board.value?.id)
 
 const getSectionLinks = () => {
   const baseLinks = []
-  const sectionOrder = board?.sectionOrder?.split(',').filter((s: string) => s.trim()) || []
+  const sectionOrder = board.value?.sectionOrder?.split(',').filter((s: string) => s.trim()) || []
 
   for (const section of sectionOrder) {
-    if (section === 'feed' && board?.hasFeed) {
-      baseLinks.push({ name: 'Feed', href: `/b/${board.name}/feed` })
-    } else if (section === 'threads' && board?.hasThreads) {
-      baseLinks.push({ name: 'Threads', href: `/b/${board.name}/threads` })
-    } else if (section === 'wiki' && board?.hasWiki) {
-      baseLinks.push({ name: 'Wiki', href: `/b/${board.name}/wiki` })
+    if (section === 'feed' && board.value?.hasFeed) {
+      baseLinks.push({ name: 'Feed', href: `/b/${board.value.name}/feed` })
+    } else if (section === 'threads' && board.value?.hasThreads) {
+      baseLinks.push({ name: 'Threads', href: `/b/${board.value.name}/threads` })
+    } else if (section === 'wiki' && board.value?.hasWiki && board.value?.wikiEnabled) {
+      baseLinks.push({ name: 'Wiki', href: `/b/${board.value.name}/wiki` })
     }
   }
 
@@ -182,7 +195,7 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
         header: 'Wiki page updated',
         type: 'success'
       })
-      navigateTo(`/b/${board.name}/wiki/${slug}`)
+      navigateTo(`/b/${board.value.name}/wiki/${slug}`)
     }
   } catch (error) {
     toastStore.addNotification({
@@ -194,7 +207,7 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
 }
 
 const handleCancel = () => {
-  navigateTo(`/b/${board.name}/wiki/${slug}`)
+  navigateTo(`/b/${board.value.name}/wiki/${slug}`)
 }
 
 const SidebarBoard = defineAsyncComponent(() => import('@/components/containers/SidebarBoard.vue'))
@@ -204,6 +217,6 @@ definePageMeta({
 })
 
 useHead({
-  title: computed(() => `Edit ${page?.title} - ${board?.title} Wiki`),
+  title: computed(() => `Edit ${page?.title} - ${board.value?.title} Wiki`),
 })
 </script>
