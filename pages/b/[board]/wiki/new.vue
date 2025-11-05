@@ -162,14 +162,32 @@ const handleSave = async (data: { title: string; body: string; editSummary: stri
       }
     })
 
+    if (result.error?.value) {
+      console.error('GraphQL error:', result.error.value)
+      toastStore.addNotification({
+        header: 'Error',
+        message: result.error.value.message || 'Failed to create wiki page',
+        type: 'error'
+      })
+      return
+    }
+
     if (result.data?.createWikiPage) {
       toastStore.addNotification({
         header: 'Wiki page created',
         type: 'success'
       })
-      navigateTo(`/b/${board.value.name}/wiki/${result.data.createWikiPage.slug}`)
+      await navigateTo(`/b/${board.value.name}/wiki/${result.data.createWikiPage.slug}`)
+    } else {
+      console.error('No data returned from mutation')
+      toastStore.addNotification({
+        header: 'Error',
+        message: 'No response from server',
+        type: 'error'
+      })
     }
   } catch (error) {
+    console.error('Mutation error:', error)
     toastStore.addNotification({
       header: 'Error',
       message: 'Failed to create wiki page',

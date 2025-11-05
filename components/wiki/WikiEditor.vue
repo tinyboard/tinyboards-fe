@@ -97,13 +97,20 @@ const renderedHTML = computed(() => {
   }
 })
 
-const save = () => {
+const save = async () => {
   saving.value = true
-  emit('save', {
-    title: localTitle.value,
-    body: localBody.value,
-    editSummary: editSummary.value,
-  })
+  try {
+    await emit('save', {
+      title: localTitle.value,
+      body: localBody.value,
+      editSummary: editSummary.value,
+    })
+  } finally {
+    // Reset saving state after a delay to allow navigation to occur
+    setTimeout(() => {
+      saving.value = false
+    }, 2000)
+  }
 }
 
 // Reset saving state when props change (e.g., after save completes)
