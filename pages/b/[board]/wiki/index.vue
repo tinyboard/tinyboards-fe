@@ -145,31 +145,28 @@ try {
 const board = computed(() => boardStore.board)
 
 // Fetch wiki pages
-const { data: pagesData, pending: loading } = await useAsyncData(
-  `wiki-pages-${boardName}`,
-  async () => {
-    const query = `
-      query ListWikiPages($boardName: String!) {
-        listWikiPages(boardName: $boardName) {
-          id
-          slug
-          title
-          creationDate
-          updated
-          creator {
-            name
-            displayName
-          }
-        }
+const pagesQuery = `
+  query ListWikiPages($boardName: String!) {
+    listWikiPages(boardName: $boardName) {
+      id
+      slug
+      title
+      creationDate
+      updated
+      creator {
+        name
+        displayName
       }
-    `
-
-    const result = await useGraphQLQuery(query, { variables: { boardName } })
-    return result.data?.listWikiPages || []
+    }
   }
-)
+`
 
-const pages = computed(() => pagesData.value || [])
+const { data: pagesResult } = await useGraphQLQuery(pagesQuery, {
+  variables: { boardName }
+})
+
+const pages = computed(() => pagesResult.value?.listWikiPages || [])
+const loading = ref(false)
 
 // Check if user can create pages
 const canCreatePage = computed(() => {
