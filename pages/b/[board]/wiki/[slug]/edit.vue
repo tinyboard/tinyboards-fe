@@ -20,7 +20,7 @@
           <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md p-6">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Edit Wiki Page</h1>
 
-            <WikiWikiEditor
+            <LazyWikiWikiEditor
               v-if="page"
               :title="page.title"
               :body="page.body"
