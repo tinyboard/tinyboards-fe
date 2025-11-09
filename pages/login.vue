@@ -68,7 +68,6 @@
 		reqError = false;
 		error.value = reqError;
 		isLoading.value = true;
-		console.log("hi");
 
 		userStore.login({
 			nameOrEmail: nameOrEmail.value,

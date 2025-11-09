@@ -93,8 +93,8 @@
 						<!-- Admin Tools Link -->
 						<NuxtLink v-if="v && v.adminLevel > 0" to="/admin"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
-							title="Admin control panel">
-							<span class="sr-only">View admin tools</span>
+							title="Admin control panel"
+							aria-label="View admin tools">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 								stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -106,8 +106,8 @@
 						<!-- Create Post Link -->
 						<NuxtLink to="/submit"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
-							title="Submit a post">
-							<span class="sr-only">Create new post</span>
+							title="Submit a post"
+							aria-label="Create new post">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 								stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -118,8 +118,8 @@
 						<!-- Inbox Link -->
 						<NuxtLink to="/inbox"
 							class="relative flex items-center justify-center w-9 h-9 text-xl text-white dark:text-gray-400 rounded"
-							title="Inbox">
-							<span class="sr-only">View inbox</span>
+							title="Inbox"
+							aria-label="View inbox">
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 								stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 								<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -138,8 +138,8 @@
 				<div class="-mr-1 flex space-x-2 md:hidden">
 					<!-- Admin Tools Link -->
 					<NuxtLink v-if="v.adminLevel > 0" to="/admin"
-						class="inline-flex items-center justify-center p-1 text-white">
-						<span class="sr-only">View admin tools</span>
+						class="inline-flex items-center justify-center p-1 text-white"
+						aria-label="View admin tools">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -149,8 +149,7 @@
 						</svg>
 					</NuxtLink>
 					<!-- Create Post Link -->
-					<NuxtLink class="inline-flex items-center justify-center p-1 text-white" to="/submit">
-						<span class="sr-only">Create post</span>
+					<NuxtLink class="inline-flex items-center justify-center p-1 text-white" to="/submit" aria-label="Create post">
 						<!-- Pencil Icon -->
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -160,8 +159,7 @@
 						</svg>
 					</NuxtLink>
 					<!-- Inbox Link -->
-					<NuxtLink to="/inbox" class="inline-flex items-center justify-center p-1 text-white">
-						<span class="sr-only">View inbox</span>
+					<NuxtLink to="/inbox" class="inline-flex items-center justify-center p-1 text-white" aria-label="View inbox">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>

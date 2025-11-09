@@ -24,7 +24,6 @@ export function usePagination() {
       .paginate()
       .then((result) => {
         queryParams.page.value = postsStore.options.page;
-        //console.log(result.data.value);
         postsStore.posts = postsStore.posts.concat(result.data.value.listPosts);
         // posts.value = postsStore.posts;
       })
@@ -135,8 +134,6 @@ export async function usePosts(listingType: ListingType) {
     });
   }
 
-  //console.log("data:");
-  //console.log(JSON.stringify(data, null, 4));
 
   postsStore.setPosts(data.value?.listPosts);
 

@@ -12,6 +12,7 @@ interface CustomEmoji {
 }
 
 interface EmojiSuggestion extends CustomEmoji {
+  altText: string // Mapped from altTextDisplay for component compatibility
   displayText: string
 }
 
@@ -48,8 +49,8 @@ export const useEmojiSuggestions = (boardId?: number) => {
 
       const variables = {
         input: {
-          boardId: boardId,
-          scope: boardId ? "BOARD" : "SITE",
+          boardId: boardId, // Include boardId to get board-specific emojis
+          // Don't specify scope - this should return both SITE and BOARD emojis
           activeOnly: true,
           limit: 200,
           offset: 0
@@ -73,7 +74,7 @@ export const useEmojiSuggestions = (boardId?: number) => {
     }
   }
 
-  // Search emojis with backend query
+  // Search emojis with backend query - query both SITE and BOARD scopes
   const searchEmojis = async (query: string): Promise<EmojiSuggestion[]> => {
     if (!query) return []
 
@@ -93,33 +94,64 @@ export const useEmojiSuggestions = (boardId?: number) => {
         }
       `
 
-      const variables = {
+      const { useGraphQLQuery } = await import('@/composables/useGraphQL')
+
+      // Query site-wide emojis
+      const siteVariables = {
         input: {
-          boardId: boardId,
-          scope: boardId ? "BOARD" : "SITE",
+          scope: "SITE",
           activeOnly: true,
-          limit: 10,
+          limit: 5, // Reduced limit since we're doing two queries
           offset: 0,
           search: query
         }
       }
 
-      const { useGraphQLQuery } = await import('@/composables/useGraphQL')
-      const { data, error } = await useGraphQLQuery(queryGql, { variables })
+      const { data: siteData, error: siteError } = await useGraphQLQuery(queryGql, { variables: siteVariables })
 
-      if (error.value) {
-        console.error('Failed to search emojis:', error.value)
-        return []
+      let allEmojis: CustomEmoji[] = []
+
+      if (siteError.value) {
+        console.error('Failed to search site emojis:', siteError.value)
+      } else if (siteData.value?.listEmojis) {
+        allEmojis = [...siteData.value.listEmojis]
       }
 
-      if (data.value?.listEmojis) {
-        return data.value.listEmojis.map((emoji: CustomEmoji) => ({
-          ...emoji,
-          displayText: `:${emoji.shortcode}:`
-        }))
+      // Query board-specific emojis if boardId is provided
+      if (boardId) {
+        const boardVariables = {
+          input: {
+            boardId: boardId,
+            scope: "BOARD",
+            activeOnly: true,
+            limit: 5,
+            offset: 0,
+            search: query
+          }
+        }
+
+        const { data: boardData, error: boardError } = await useGraphQLQuery(queryGql, { variables: boardVariables })
+
+        if (boardError.value) {
+          console.error('Failed to search board emojis:', boardError.value)
+        } else if (boardData.value?.listEmojis) {
+          allEmojis = [...allEmojis, ...boardData.value.listEmojis]
+        }
       }
 
-      return []
+      // Remove duplicates by id and map to component format
+      const uniqueEmojis = allEmojis.filter((emoji, index, self) =>
+        index === self.findIndex(e => e.id === emoji.id)
+      )
+
+      const mapped = uniqueEmojis.map((emoji: CustomEmoji) => ({
+        ...emoji,
+        altText: emoji.altTextDisplay,
+        displayText: `:${emoji.shortcode}:`
+      }))
+
+      return mapped
+
     } catch (error) {
       console.error('Failed to search emojis:', error)
       return []
@@ -153,6 +185,50 @@ export const useEmojiSuggestions = (boardId?: number) => {
     return null
   }
 
+  // Helper function to calculate cursor position in textarea relative to textarea element
+  const getTextareaCaretPosition = (textarea: HTMLTextAreaElement, caretPos: number) => {
+    // Create a mirror div to calculate text position
+    const div = document.createElement('div')
+    const style = getComputedStyle(textarea)
+
+    // Position the div at the same location as the textarea
+    const textareaRect = textarea.getBoundingClientRect()
+    div.style.position = 'absolute'
+    div.style.top = `${textareaRect.top + window.scrollY}px`
+    div.style.left = `${textareaRect.left + window.scrollX}px`
+    div.style.visibility = 'hidden'
+    div.style.whiteSpace = 'pre-wrap'
+    div.style.wordWrap = 'break-word'
+    div.style.font = style.font
+    div.style.padding = style.padding
+    div.style.border = style.border
+    div.style.width = style.width
+    div.style.lineHeight = style.lineHeight
+    div.style.overflow = 'hidden'
+    div.style.height = 'auto'
+
+    document.body.appendChild(div)
+
+    // Split text at caret position
+    const textBeforeCaret = textarea.value.substring(0, caretPos)
+    div.textContent = textBeforeCaret
+
+    // Create a span for measuring the exact position
+    const span = document.createElement('span')
+    span.textContent = '|'
+    div.appendChild(span)
+
+    const spanRect = span.getBoundingClientRect()
+
+    document.body.removeChild(div)
+
+    // Return position relative to textarea element
+    return {
+      top: spanRect.top - textareaRect.top,
+      left: spanRect.left - textareaRect.left
+    }
+  }
+
   const showSuggestions = async (text: string, cursorPosition: number, element: HTMLElement) => {
     const trigger = detectEmojiTrigger(text, cursorPosition)
 
@@ -166,9 +242,26 @@ export const useEmojiSuggestions = (boardId?: number) => {
 
     // Calculate position for suggestions dropdown
     const rect = element.getBoundingClientRect()
-    position.value = {
-      top: rect.bottom + window.scrollY,
-      left: rect.left + window.scrollX
+    let cursorX = 0
+    let cursorY = 0
+
+    // Check if this is a textarea (markdown mode)
+    if (element instanceof HTMLTextAreaElement) {
+      const caretPos = getTextareaCaretPosition(element, cursorPosition)
+      cursorX = caretPos.left
+      cursorY = caretPos.top + 20 // Add some offset below the line
+
+      // Use viewport coordinates for position: fixed dropdown
+      position.value = {
+        top: rect.top + cursorY,
+        left: rect.left + cursorX
+      }
+    } else {
+      // For TipTap, the element is already positioned at cursor coordinates (viewport coords)
+      position.value = {
+        top: rect.bottom + 5, // Position just below cursor
+        left: rect.left
+      }
     }
 
     // Search for emojis with the current query
@@ -219,6 +312,11 @@ export const useEmojiSuggestions = (boardId?: number) => {
     }
   }
 
+  // Get emoji by shortcode from cache
+  const getEmojiByShortcode = (shortcode: string): CustomEmoji | null => {
+    return emojiCache.value.find(emoji => emoji.shortcode === shortcode) || null
+  }
+
   // Auto-load emojis when composable is first used
   if (process.client && !cacheLoaded.value) {
     loadEmojis()
@@ -236,6 +334,7 @@ export const useEmojiSuggestions = (boardId?: number) => {
     navigateUp,
     navigateDown,
     replaceEmojiInText,
-    loadEmojis
+    loadEmojis,
+    getEmojiByShortcode
   }
 }

@@ -19,36 +19,36 @@
             <div class="col-span-full flex flex-row gap-6">
                 <!-- Form -->
                 <form @submit.prevent="submit" class="block w-full">
-                    <div class="bg-white overflow-visible shadow-inner-xs sm:border sm:rounded-md">
+                    <div class="bg-white dark:bg-gray-950 overflow-visible shadow-lg sm:border dark:border-gray-800 sm:rounded-lg">
                         <div v-if="!isEditingBoard && site.enableBoards"
-                            class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
-                            <div class="flex flex-row space-x-2 items-center">
-                                <img :src="selectedBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-11 h-11 object-cover rounded"
+                            class="w-full p-5 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-800 space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
+                            <div class="flex flex-row space-x-3 items-center">
+                                <img :src="selectedBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-12 h-12 object-cover rounded-lg shadow-sm"
                                     alt="board icon" />
                                 <div class="w-full text-center md:text-left">
-                                    <p class="font-bold text-gray-700">
-                                        You are posting to {{ boardName }}
+                                    <p class="font-bold text-gray-900 dark:text-white text-base">
+                                        Posting to {{ boardName }}
                                     </p>
-                                    <p class="text-sm text-gray-500">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
                                         {{ selectedBoard?.description || 'No description available' }}
                                     </p>
                                 </div>
                             </div>
-                            <button class="button white" @click="isEditingBoard = true">
+                            <button type="button" class="button white whitespace-nowrap" @click="isEditingBoard = true">
                                 Change board
                             </button>
                         </div>
                         <!-- Board info when boards are disabled -->
                         <div v-if="!site.enableBoards"
-                            class="w-full p-4 bg-gray-50 border-b space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
-                            <div class="flex flex-row space-x-2 items-center">
-                                <img :src="defaultBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-11 h-11 object-cover rounded"
+                            class="w-full p-5 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-800 space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
+                            <div class="flex flex-row space-x-3 items-center">
+                                <img :src="defaultBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-12 h-12 object-cover rounded-lg shadow-sm"
                                     alt="board icon" />
                                 <div class="w-full text-center md:text-left">
-                                    <p class="font-bold text-gray-700">
-                                        You are posting to {{ boardName }}
+                                    <p class="font-bold text-gray-900 dark:text-white text-base">
+                                        Posting to {{ boardName }}
                                     </p>
-                                    <p class="text-sm text-gray-500">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
                                         {{ defaultBoard?.title || 'Default community board' }}
                                     </p>
                                 </div>
@@ -70,8 +70,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 bg-white">
-                            <div class="grid grid-cols-6 gap-6">
+                        <div class="p-6 bg-white dark:bg-gray-950">
+                            <div class="grid grid-cols-6 gap-7">
                                 <!-- Board -->
                                 <div v-if="isEditingBoard && site.enableBoards" class="col-span-full">
                                     <label for="board-selector" class="block text-sm font-bold">Board</label>
@@ -86,18 +86,18 @@
                                 </div>
                                 <!-- Title -->
                                 <div class="col-span-full">
-                                    <label for="title" class="block text-sm font-bold">Title</label>
+                                    <label for="title" class="block text-sm font-bold text-gray-900 dark:text-white mb-2">Title</label>
                                     <input type="text" name="title" id="title" placeholder="Pick an interesting title"
-                                        class="mt-1 form-input gray" v-model="title" required />
+                                        class="form-input gray text-base" v-model="title" required />
                                 </div>
                                 <!-- Link (feed posts only) -->
                                 <div v-if="!isThread" class="relative col-span-full">
                                     <label for="link">
-                                        <span class="flex justify-between text-sm font-bold">
+                                        <span class="flex justify-between text-sm font-bold text-gray-900 dark:text-white mb-2">
                                             Link
                                         </span>
                                         <input type="url" name="link" id="link" placeholder="https://youtube.com"
-                                            class="peer mt-1 form-input gray" v-model="url" :required="!body && !image"
+                                            class="peer form-input gray text-base" v-model="url" :required="!body && !image"
                                             @focus="hasFocusedUrl = true" />
                                         <p class="absolute right-0 mt-1 peer-invalid:visible invisible text-red-600 text-sm"
                                             :class="!body && !image && hasFocusedUrl
@@ -110,42 +110,29 @@
                                 </div>
                                 <!-- Body -->
                                 <div class="relative col-span-full">
-                                    <label for="body" class="flex justify-between text-sm font-bold">
+                                    <label for="body" class="flex justify-between text-sm font-bold text-gray-900 dark:text-white mb-2">
                                         Body
-                                        <em v-if="!isThread" class="text-gray-400 font-normal">
+                                        <em v-if="!isThread" class="text-gray-500 dark:text-gray-400 font-normal text-xs">
                                             optional if you have a link or image
                                         </em>
-                                        <em v-else class="text-red-600 font-normal">
+                                        <em v-else class="text-red-600 dark:text-red-400 font-normal text-xs">
                                             required
                                         </em>
                                     </label>
                                     <!-- Rich text editor for all post types -->
-                                    <div class="mt-1">
+                                    <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
                                         <LazyInputsTiptap
                                             v-model="body"
                                             :placeholder="isThread ? 'Start your discussion...' : 'Enter some words worth reading...'"
                                             :board-id="boardId"
-                                            class="min-h-[300px]"
+                                            height="350px"
                                         />
                                     </div>
-
-                                    <p v-if="!isThread"
-                                        class="absolute right-0 mt-1 flex justify-end items-center text-xs text-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 w-4 h-4" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                                            <path d="M7 15v-6l2 2l2 -2v6"></path>
-                                            <path d="M14 13l2 2l2 -2m-2 2v-6"></path>
-                                        </svg>
-                                        Markdown supported
-                                    </p>
                                 </div>
                                 <!-- Media Preview (feed posts only) -->
                                 <div v-if="!isThread" class="col-span-full">
-                                    <label for="title" class="block text-sm font-bold">Image or Video</label>
-                                    <div class="mt-2 flex items-center">
+                                    <label for="title" class="block text-sm font-bold text-gray-900 dark:text-white mb-3">Image or Video</label>
+                                    <div class="flex items-center">
                                         <!-- Image preview -->
                                         <img v-if="image && !isVideo" :src="image"
                                             class="inline-block w-56 object-contain p-0.5 border bg-white mr-5"
@@ -196,7 +183,7 @@
                                 </div>
                                 <!-- Flair Selection -->
                                 <div v-if="hasFlairs" class="col-span-full">
-                                    <label class="block text-sm font-bold mb-2">Post Flairs (Optional)</label>
+                                    <label class="block text-sm font-bold text-gray-900 dark:text-white mb-3">Post Flairs (Optional)</label>
                                     <FlairSelectorInline
                                         :board-id="boardId"
                                         flair-type="post"
@@ -207,12 +194,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 shadow-inner-white border-t p-4">
-                            <button type="submit" class="button primary" :class="{ loading: isLoading }"
+                        <div class="bg-gray-50 dark:bg-gray-900 shadow-inner-white border-t dark:border-gray-800 px-6 py-5">
+                            <button type="submit" class="button primary text-base px-8 py-3" :class="{ loading: isLoading }"
                                 :disabled="isLoading || isBlockedFromPosting">
-                                Create post
+                                {{ isThread ? 'Create Thread' : 'Create Post' }}
                             </button>
-                            <p v-if="isBlockedFromPosting" class="mt-2 text-sm text-red-600">
+                            <p v-if="isBlockedFromPosting" class="mt-3 text-sm text-red-600 dark:text-red-400">
                                 You cannot submit posts until your account is approved.
                             </p>
                         </div>

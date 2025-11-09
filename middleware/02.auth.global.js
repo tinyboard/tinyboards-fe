@@ -58,7 +58,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             });
           }
         } else {
-          console.log(error.value);
         }
       });
     }

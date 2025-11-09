@@ -43,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue'
+
 interface EmojiSuggestion {
   id: number
   shortcode: string
@@ -62,7 +64,9 @@ interface Props {
   selectedIndex: number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+// Props reactive to trigger rerender when needed
 
 defineEmits<{
   select: [index: number]

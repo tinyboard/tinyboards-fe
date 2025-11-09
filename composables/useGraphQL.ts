@@ -138,10 +138,6 @@ export function useGraphQLEndpoint(): GraphQLEndpointConfig {
         endpoints.fallbacks.push(constructedEndpoint);
       }
 
-      if (process.dev) {
-        console.log(`🔍 Server GraphQL endpoint: ${endpoints.primary}`);
-        console.log(`🔄 Server fallback endpoints:`, endpoints.fallbacks);
-      }
     } else {
       // Client-side: always use external endpoint
       const clientEndpoint = config.public.GQL_HOST || constructClientEndpoint(config);
@@ -153,10 +149,6 @@ export function useGraphQLEndpoint(): GraphQLEndpointConfig {
         endpoints.fallbacks.push(alternativeEndpoint);
       }
 
-      if (process.dev) {
-        console.log(`🔍 Client GraphQL endpoint: ${endpoints.primary}`);
-        console.log(`🔄 Client fallback endpoints:`, endpoints.fallbacks);
-      }
     }
 
     return endpoints;
@@ -202,9 +194,6 @@ function getAuthHeaders(customHeaders?: Record<string, string>): Record<string, 
     // Server-side: Skip auth headers to avoid SSR context issues
     // Most content (posts, comments, etc.) can be fetched without authentication
     // Auth-required queries should be handled on client-side or in proper middleware context
-    if (process.dev) {
-      console.debug('🔧 SSR: Skipping auth headers to avoid context issues');
-    }
     // Just use basic headers without authentication for SSR
     // The backend should handle missing auth gracefully for public queries
     // In production, we want to avoid SSR for complex auth-dependent queries
@@ -345,9 +334,6 @@ export async function useGraphQLQuery<T = any>(
   // Check for pending duplicate requests
   const existingRequest = pendingRequests.get(cacheKey);
   if (existingRequest && (Date.now() - existingRequest.timestamp) < DEDUP_TIMEOUT) {
-    if (process.dev) {
-      console.log(`🔄 Deduplicating GraphQL request: ${cacheKey.substring(0, 50)}...`);
-    }
     return existingRequest.promise;
   }
 
@@ -365,14 +351,6 @@ export async function useGraphQLQuery<T = any>(
 
       // Prepare headers
       const authHeaders = getAuthHeaders(headers);
-
-      if (process.dev) {
-        console.log(`🔧 GraphQL Query [${endpointConfig.isServerSide ? 'SSR' : 'Client'}] to: ${targetEndpoint}`);
-        console.log(`📝 Query: ${query.substring(0, 100)}${query.length > 100 ? '...' : ''}`);
-        if (requestVariables && Object.keys(requestVariables).length > 0) {
-          console.log(`📋 Variables:`, Object.keys(requestVariables));
-        }
-      }
 
       // Execute request with retry logic and endpoint fallback
       let lastError: Error | null = null;
@@ -438,10 +416,6 @@ export async function useGraphQLQuery<T = any>(
             const responseData = transform ? transform(result.data) : result.data;
             data.value = responseData;
 
-            if (process.dev) {
-              console.log(`✅ GraphQL Query Success [${endpointConfig.isServerSide ? 'SSR' : 'Client'}]${currentEndpoint !== targetEndpoint ? ` (fallback: ${currentEndpoint})` : ''}`);
-            }
-
             return;
           } catch (err) {
             lastError = err instanceof Error ? err : new Error(String(err));
@@ -455,15 +429,8 @@ export async function useGraphQLQuery<T = any>(
               // Wait before retry (exponential backoff)
               const delay = Math.pow(2, attempt) * 1000;
               await new Promise(resolve => setTimeout(resolve, delay));
-
-              if (process.dev) {
-                console.warn(`🔄 Retrying GraphQL Query on ${currentEndpoint} (attempt ${attempt + 2}/${retries + 1})`);
-              }
             } else if (attempt === retries) {
               // If we've exhausted retries on this endpoint, try the next one
-              if (process.dev && endpointIndex < allEndpoints.length - 1) {
-                console.warn(`🔄 Switching to fallback endpoint after ${retries + 1} attempts`);
-              }
               break;
             }
           }
@@ -525,12 +492,6 @@ export async function useGraphQLMutation<T = any>(
   // Mutations default to no caching
   const mutationOptions = { ...options, cache: false };
 
-  const { endpoint, isServerSide } = useGraphQLEndpoint();
-
-  if (process.dev) {
-    console.log(`🔧 GraphQL Mutation [${isServerSide ? 'SSR' : 'Client'}] to: ${endpoint}`);
-  }
-
   return useGraphQLQuery<T>(mutation, mutationOptions);
 }
 
@@ -539,16 +500,6 @@ export async function useGraphQLMutation<T = any>(
  * Use this when you need to integrate with existing code patterns
  */
 export async function useGraphQLRequest(operation: string, variables?: any, options?: any) {
-  const { endpoint, isServerSide } = useGraphQLEndpoint();
-
-  if (process.dev) {
-    console.log(`🔧 Legacy GraphQL Request [${isServerSide ? 'SSR' : 'Client'}] to: ${endpoint}`);
-    console.log(`📝 Operation: ${operation}`);
-    if (variables) {
-      console.log(`📋 Variables:`, variables);
-    }
-  }
-
   try {
     // Use the standard useAsyncGql from nuxt-graphql-client
     const result = await useAsyncGql({
@@ -592,10 +543,6 @@ export async function useDirectGraphQLRequest<T = any>(
 
       // Prepare headers with authentication
       const headers = getAuthHeaders();
-
-      if (process.dev) {
-        console.log(`🚀 Direct GraphQL Request [${isServerSide ? 'SSR' : 'Client'}] to: ${endpoint}`);
-      }
 
       const response = await fetch(endpoint, {
         method: 'POST',

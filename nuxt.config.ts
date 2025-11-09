@@ -113,6 +113,13 @@ export default defineNuxtConfig({
       ssr: false
     },
 
+    // SPA for submit page to avoid hydration mismatches with TipTap editor
+    "/submit": {
+      ssr: false,
+      index: false,
+      headers: { 'Cache-Control': 'no-store, must-revalidate' }
+    },
+
     // Homepage redirect
     "/": {
       redirect: "/home"

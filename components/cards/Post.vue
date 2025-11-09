@@ -232,7 +232,7 @@
               </div>
             </div>
             <!-- Post Body -->
-            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="post.bodyHTML"></div>
+            <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="processedBodyHTML"></div>
           </div>
         </div>
         <!-- Reports -->
@@ -244,6 +244,7 @@
           <li class="ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
             <!-- If logged in, allow upvoting -->
             <button v-if="isAuthed" @click="vote(1)" class="upvote"
+              aria-label="Upvote"
               :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
@@ -271,8 +272,9 @@
               {{ displayScore }}
             </span>
             <!-- If logged in, allow downvoting -->
-            <button v-if="isAuthed" @click="vote(-1)" class="downvote" :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'
-              ">
+            <button v-if="isAuthed" @click="vote(-1)" class="downvote"
+              aria-label="Downvote"
+              :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -592,9 +594,19 @@ import { canEmbedImage } from "@/composables/images";
 import { canEmbedVideo, getVideoEmbedProps } from "@/composables/videos";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
+import { useBoardLinks } from "@/composables/useBoardLinks";
 import { useSiteStore } from "@/stores/StoreSite";
 import { useGraphQLMutation } from '@/composables/useGraphQL';
 //import { toHexCode } from "@/composables/colors";
+
+// Board links processing
+const { processBoardLinksInHTML } = useBoardLinks();
+
+// Process post content to convert board mentions to links
+const processedBodyHTML = computed(() => {
+  if (!props.post.bodyHTML) return props.post.bodyHTML;
+  return processBoardLinksInHTML(props.post.bodyHTML);
+});
 
 // Modals & Toasts
 const modalStore = useModalStore();
@@ -859,19 +871,6 @@ const openFlairManager = () => {
         }))
         .filter(f => f.templateId)
     : [];
-
-  console.log('Opening flair manager:', {
-    boardId,
-    boardName: props.post.board?.name,
-    postId: props.post.id,
-    postTitle: props.post.title,
-    postBoardId: props.post.boardId,
-    postBoardFromObject: props.post.board?.id,
-    currentFlairs: props.post.flairs,
-    currentFlairSelections: currentFlairSelections,
-    userId: props.post.creator?.id,
-    currentUserFlairSelections: currentUserFlairSelections
-  });
 
   if (!boardId) {
     console.error('Cannot open flair manager: post has no board ID');

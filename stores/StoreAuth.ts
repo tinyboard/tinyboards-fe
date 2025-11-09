@@ -96,6 +96,7 @@ export const useLoggedInUser = defineStore("auth", {
                   isAdmin
                   isApplicationAccepted
                   hasPendingApplication
+                  editorMode
                 }
               }
             `)
@@ -186,11 +187,11 @@ export const useLoggedInUser = defineStore("auth", {
                   isAdmin
                   isApplicationAccepted
                   hasPendingApplication
+                  editorMode
                 }
               }
             `)
                 .then((resp) => {
-                  if (process.dev) console.log("user fetched!");
                   const data = resp.data.value;
 
                   const moderates = data?.me?.moderates?.map((m) => m.board) ?? [];

@@ -97,7 +97,6 @@
       if (data.value) {
         // Parse response.
         data = JSON.parse(JSON.stringify(data.value));
-        console.log(data);
         // Show success toast.
         setTimeout(() => {
           toast.addNotification({

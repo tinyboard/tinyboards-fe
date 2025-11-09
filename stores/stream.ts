@@ -113,7 +113,6 @@ export const useStreamStore = defineStore('stream', {
       this.loading = true
       this.error = null
 
-      console.log('[Store] fetchStream called with:', { idOrSlug, creatorUsername })
 
       try {
         const query = typeof idOrSlug === 'number'
@@ -246,7 +245,6 @@ export const useStreamStore = defineStore('stream', {
           ? { id: idOrSlug }
           : { slug: idOrSlug, creatorUsername: creatorUsername || '' }
 
-        console.log('[Store] GraphQL variables:', variables)
 
         const { data, error } = await useDirectGraphQLRequest<{ stream: Stream }>(query, variables)
 

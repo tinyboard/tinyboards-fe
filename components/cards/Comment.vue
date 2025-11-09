@@ -152,7 +152,7 @@
             <span v-else-if="comment.isRemoved && !canMod" class="italic text-gray-500 dark:text-gray-400">
               [removed by moderator]
             </span>
-            <span v-else v-html="comment.bodyHTML"></span>
+            <span v-else v-html="processedBodyHTML"></span>
           </div>
         </div>
         <!-- Comment Reports -->
@@ -163,7 +163,9 @@
         <ul class="relative flex flex-grow flex-wrap comments-center space-x-4" v-show="!isCollapsed && !isEditing">
           <li>
             <!-- If logged in, allow upvoting -->
-            <button v-if="isAuthed" class="text-xs font-medium" :class="[
+            <button v-if="isAuthed" class="text-xs font-medium"
+              aria-label="Upvote"
+              :class="[
               voteType === 1
                 ? 'upvoted text-primary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
@@ -201,7 +203,9 @@
           </li>
           <li>
             <!-- If logged in, allow downvoting -->
-            <button v-if="isAuthed" class="text-xs font-medium" :class="[
+            <button v-if="isAuthed" class="text-xs font-medium"
+              aria-label="Downvote"
+              :class="[
               voteType === -1
                 ? 'downvoted text-secondary'
                 : 'text-gray-500 hover:text-gray-700 dark:text-gray-400',
@@ -362,6 +366,7 @@ import { formatDate } from "@/utils/formatDate";
 import { requirePermission } from "@/composables/admin";
 import { requireModPermission } from "@/composables/mod";
 import { useBoardStore } from "@/stores/StoreBoard";
+import { useBoardLinks } from "@/composables/useBoardLinks";
 import { useGraphQLMutation } from '@/composables/useGraphQL';
 import type { Comment, Post, PostFragment } from "@/types/types";
 
@@ -379,6 +384,15 @@ const userStore = useLoggedInUser();
 const isAuthed = userStore.isAuthed;
 
 const authCookie = useCookie("token").value;
+
+// Board links processing
+const { processBoardLinksInHTML } = useBoardLinks();
+
+// Process comment content to convert board mentions to links
+const processedBodyHTML = computed(() => {
+  if (!comment.value.bodyHTML) return comment.value.bodyHTML;
+  return processBoardLinksInHTML(comment.value.bodyHTML);
+});
 
 // const props = defineProps({
 //   comment: TComment,

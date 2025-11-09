@@ -346,12 +346,10 @@ const handleDelete = async () => {
 // Load stream and populate form
 onMounted(async () => {
   const id = parseInt(route.params.id as string)
-  console.log('Loading stream for edit, ID:', id)
 
   if (id && !isNaN(id)) {
     try {
       await fetchStream(id)
-      console.log('Stream loaded:', stream.value)
 
       if (stream.value) {
         // Populate basic fields
@@ -392,10 +390,6 @@ onMounted(async () => {
         // Store initial IDs for change detection
         initialFlairIds.value = formData.flairSelections.flatMap(s => s.flairIds)
         initialBoardIds.value = formData.boardSelections.map(b => b.id)
-
-        console.log('Form data populated:', formData)
-        console.log('Initial flair IDs:', initialFlairIds.value)
-        console.log('Initial board IDs:', initialBoardIds.value)
       } else {
         loadError.value = 'Stream not found'
       }

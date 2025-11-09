@@ -131,12 +131,10 @@ const selectedUserFlairIds = ref<FlairSelection[]>(props.options?.currentUserFla
 watch(() => props.options?.currentFlairIds, (newSelections) => {
   if (newSelections) {
     selectedPostFlairIds.value = newSelections;
-    console.log('Modal: Updated selectedPostFlairIds from props:', newSelections);
   }
 }, { immediate: true });
 
 watch(() => props.options?.currentUserFlairIds, (newSelections) => {
-  console.log('ModalManagePostFlairs: currentUserFlairIds changed:', newSelections);
   selectedUserFlairIds.value = newSelections || [];
 }, { immediate: true, deep: true });
 
@@ -170,12 +168,6 @@ const saveFlairs = async () => {
 };
 
 const savePostFlairs = async () => {
-  console.log('Saving post flairs:', {
-    postId: props.id,
-    flairSelections: selectedPostFlairIds.value,
-    boardIdFromOptions: props.options?.boardId
-  });
-
   const mutation = `
     mutation UpdatePostFlairs($postId: Int!, $flairSelections: [PostFlairInput!]!) {
       updatePostFlairs(postId: $postId, flairSelections: $flairSelections) {
@@ -194,8 +186,6 @@ const savePostFlairs = async () => {
     }
   });
 
-  console.log('GraphQL response:', { data: data.value, error: error.value });
-
   if (error.value) {
     console.error('GraphQL error details:', error.value);
     throw new Error(error.value.message || 'Failed to update post flairs');
@@ -207,7 +197,6 @@ const savePostFlairs = async () => {
   }
 
   const savedFlairs = data.value.updatePostFlairs;
-  console.log('Post flairs updated successfully:', savedFlairs);
 
   // Check if any flairs were actually saved
   if (selectedPostFlairIds.value.length > 0 && savedFlairs.length === 0) {

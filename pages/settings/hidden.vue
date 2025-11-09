@@ -126,7 +126,6 @@ const error = ref(null);
 const refresh = async () => {
   // TODO: Implement when backend query is available
   // When ready, uncomment the above GraphQL query and remove this placeholder
-  console.log('Hidden posts refresh - waiting for backend implementation');
 };
 
 const totalPages = computed(() => {

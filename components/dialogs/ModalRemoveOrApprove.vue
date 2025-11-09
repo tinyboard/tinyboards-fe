@@ -126,11 +126,6 @@
         const mutationKey = type === 'post' ? 'approvePost' : 'approveComment';
         const mutationData = result.data?.[mutationKey];
 
-        // Log for debugging
-        if (process.dev) {
-          console.log('Approve mutation result:', result);
-          console.log('Mutation data:', mutationData);
-        }
 
         if (mutationData?.success) {
           toast.addNotification({

@@ -15,7 +15,7 @@ export function shuffle(array) {
       array[randomIndex], array[currentIndex]];
     }
   } catch (error) {
-    console.log(error)
+    // Silently handle shuffle errors
   }
 
   // Retun array anyways

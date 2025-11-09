@@ -135,7 +135,6 @@
 		if (!error.value) {
 			isValidInvite.value = true;
 		} else {
-			console.log(`${invite.value} is not a valid invite code.`)
 			invite.value = null;
 		}
 	};*/

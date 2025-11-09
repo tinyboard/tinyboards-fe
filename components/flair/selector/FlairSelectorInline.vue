@@ -165,7 +165,6 @@ const selectedFlairs = ref<FlairSelection[]>(props.modelValue);
 
 // Watch for external changes
 watch(() => props.modelValue, (newValue) => {
-  console.log('FlairSelectorInline: modelValue changed:', newValue);
   selectedFlairs.value = newValue || [];
 }, { immediate: true, deep: true });
 
@@ -182,13 +181,11 @@ const filteredFlairs = computed(() => {
 });
 
 const selectedFlairsWithDetails = computed(() => {
-  console.log('selectedFlairsWithDetails:', selectedFlairs.value);
   return selectedFlairs.value;
 });
 
 // Methods
 const loadFlairs = async () => {
-  console.log('FlairSelectorInline: loadFlairs called with boardId:', props.boardId, 'flairType:', props.flairType);
   loading.value = true;
   error.value = '';
 
@@ -257,10 +254,8 @@ const loadFlairs = async () => {
     if (props.boardId) {
       if (data.value?.boardFlairs) {
         flairs.value = data.value.boardFlairs;
-        console.log('FlairSelectorInline: Loaded board flairs:', flairs.value);
         emit('flairs-loaded', flairs.value.length > 0);
       } else {
-        console.log('FlairSelectorInline: No boardFlairs in response:', data.value);
         flairs.value = [];
         emit('flairs-loaded', false);
       }
@@ -273,10 +268,8 @@ const loadFlairs = async () => {
     } else {
       if (data.value?.siteFlairs) {
         flairs.value = data.value.siteFlairs;
-        console.log('FlairSelectorInline: Loaded site flairs:', flairs.value);
         emit('flairs-loaded', flairs.value.length > 0);
       } else {
-        console.log('FlairSelectorInline: No siteFlairs in response:', data.value);
         flairs.value = [];
         emit('flairs-loaded', false);
       }
@@ -298,12 +291,6 @@ const loadFlairs = async () => {
 
 const getFlairTemplate = (templateId: number): FlairTemplate | undefined => {
   const found = flairs.value.find(f => f.id === templateId);
-  console.log('getFlairTemplate:', {
-    templateId,
-    found,
-    allFlairIds: flairs.value.map(f => f.id),
-    totalFlairs: flairs.value.length
-  });
   return found;
 };
 
@@ -326,7 +313,6 @@ const getFlairWithStyle = (flair: FlairTemplate) => {
     updated: ''
   };
 
-  console.log('getFlairWithStyle:', { flair, result });
   return result;
 };
 

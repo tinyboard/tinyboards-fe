@@ -33,9 +33,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Use the original initApp query with improved error handling
   try {
-    if (process.dev) {
-      console.log(`🔍 Middleware GraphQL request [${process.server ? 'SSR' : 'Client'}] for initApp`);
-    }
 
     // Be more conservative about loading user data during SSR to prevent auth errors
     const shouldLoadUser = hasValidToken && (!process.server || process.dev);

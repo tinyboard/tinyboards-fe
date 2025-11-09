@@ -1,10 +1,11 @@
 <template>
-  <div
-    v-if="isVisible && suggestions.length > 0"
-    class="mention-dropdown"
-    :style="{ top: `${position.top}px`, left: `${position.left}px` }"
-    @mousedown.prevent
-  >
+  <Teleport to="body">
+    <div
+      v-if="isVisible && suggestions.length > 0"
+      class="mention-dropdown"
+      :style="{ top: `${position.top}px`, left: `${position.left}px` }"
+      @mousedown.prevent
+    >
     <div class="mention-dropdown-list">
       <div
         v-for="(username, index) in suggestions"
@@ -23,7 +24,8 @@
     <div v-if="isLoading" class="mention-dropdown-loading">
       <span>Loading...</span>
     </div>
-  </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">

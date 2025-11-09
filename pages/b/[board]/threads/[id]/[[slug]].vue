@@ -513,7 +513,7 @@
                                 placeholder="Write your reply..."
                                 :board-id="board?.id"
                                 :disabled="submitting"
-                                class="min-h-[200px]"
+                                height="200px"
                             />
                             <div class="flex justify-end">
                                 <button

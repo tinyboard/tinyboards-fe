@@ -77,7 +77,6 @@ const { customEmojis, loadCustomEmojis, getCustomEmojiUrl } = useCustomEmojis()
 const emojisLoaded = ref(false)
 loadCustomEmojis().then(() => {
   emojisLoaded.value = true
-  console.log('[FlairBadge] Loaded emojis:', customEmojis.value?.length || 0)
 })
 
 const sizeClasses = computed(() => getSizeClasses(props.size))
@@ -105,15 +104,6 @@ const parsedText = computed(() => {
   // Parse emoji shortcodes like :emoji: and replace with img tags
   return text.replace(/:([a-zA-Z0-9_-]+):/g, (match, shortcode) => {
     const emojiUrl = getCustomEmojiUrl(match)
-
-    console.log('[FlairBadge] Parsing emoji:', {
-      match,
-      shortcode,
-      emojiUrl,
-      emojisLoaded: emojisLoaded.value,
-      totalEmojis: customEmojis.value?.length || 0,
-      allShortcodes: customEmojis.value?.map(e => e.shortcode) || []
-    })
 
     if (emojiUrl) {
       // Found custom emoji - render as img

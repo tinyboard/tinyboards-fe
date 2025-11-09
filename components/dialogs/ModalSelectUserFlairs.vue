@@ -87,7 +87,6 @@ const selectedUserFlairIds = ref<FlairSelection[]>(props.options?.currentUserFla
 
 // Watch for changes to currentUserFlairIds when modal reopens
 watch(() => props.options?.currentUserFlairIds, (newSelections) => {
-  console.log('ModalSelectUserFlairs: currentUserFlairIds changed:', newSelections);
   if (newSelections) {
     selectedUserFlairIds.value = newSelections;
   }

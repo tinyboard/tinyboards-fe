@@ -497,7 +497,6 @@ const saveEmoji = async () => {
         try {
           // Better base64 to file conversion
           const base64Data = imageStore.emoji;
-          console.log('Base64 data length:', base64Data.length);
 
           // Handle data URL format (data:image/jpeg;base64,...)
           const base64Index = base64Data.indexOf(',');
@@ -518,7 +517,6 @@ const saveEmoji = async () => {
 
           const blob = new Blob([bytes], { type: mimeType });
           imageFile = new File([blob], `emoji-${emojiForm.value.shortcode}.jpg`, { type: mimeType });
-          console.log('Cropped image file size:', imageFile.size, 'bytes');
         } catch (error) {
           console.error('Error converting base64 to file:', error);
           toast.addNotification({
@@ -528,8 +526,6 @@ const saveEmoji = async () => {
           });
           return;
         }
-      } else {
-        console.log('Original image file size:', imageFile.size, 'bytes');
       }
 
       // Additional validation
@@ -541,14 +537,6 @@ const saveEmoji = async () => {
         });
         return;
       }
-
-      // Debug file information
-      console.log('Final file info:', {
-        name: imageFile.name,
-        size: imageFile.size,
-        type: imageFile.type,
-        lastModified: imageFile.lastModified
-      });
 
       const files = {
         'input.imageFile': imageFile

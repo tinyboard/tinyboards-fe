@@ -231,6 +231,7 @@
 import { useSiteStore } from "@/stores/StoreSite.js";
 import { useBoardStore } from "@/stores/StoreBoard.js";
 import { useLoggedInUser } from "@/stores/StoreAuth.js";
+import { shuffle } from "@/utils/shuffleArray";
 
 const site = useSiteStore();
 const boardStore = useBoardStore();

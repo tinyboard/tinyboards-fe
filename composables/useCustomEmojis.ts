@@ -15,16 +15,13 @@ const isLoaded = ref(false)
 
 export const useCustomEmojis = () => {
   const loadCustomEmojis = async (boardId?: number) => {
-    console.log('[useCustomEmojis] loadCustomEmojis called, isLoaded:', isLoaded.value, 'boardId:', boardId)
 
     // Skip if already loaded
     if (isLoaded.value) {
-      console.log('[useCustomEmojis] Already loaded, returning cache:', customEmojis.value.length, 'emojis')
       return customEmojis.value
     }
 
     try {
-      console.log('[useCustomEmojis] Starting to load emojis...')
       const query = `
         query ListEmojis($input: ListEmojisInput) {
           listEmojis(input: $input) {
@@ -53,12 +50,6 @@ export const useCustomEmojis = () => {
         }
       })
 
-      console.log('[useCustomEmojis] Site emojis response:', {
-        data: siteData.value,
-        error: siteError.value,
-        hasListEmojis: !!siteData.value?.listEmojis,
-        count: siteData.value?.listEmojis?.length
-      })
 
       if (!siteError.value && siteData.value?.listEmojis) {
         allEmojis.push(...siteData.value.listEmojis)
@@ -86,8 +77,6 @@ export const useCustomEmojis = () => {
       customEmojis.value = allEmojis
       isLoaded.value = true
 
-      console.log('[useCustomEmojis] Finished loading. Total emojis:', allEmojis.length)
-      console.log('[useCustomEmojis] Emoji shortcodes:', allEmojis.map(e => e.shortcode))
 
       return customEmojis.value
     } catch (error) {

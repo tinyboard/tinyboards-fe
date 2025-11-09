@@ -242,6 +242,7 @@ const settingsQuery = `
       defaultListingType
       emailNotificationsEnabled
       interfaceLanguage
+      editorMode
     }
   }
 `;

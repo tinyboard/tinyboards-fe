@@ -154,6 +154,7 @@ export interface User {
   reputation?: number;
   rep?: number;
   adminLevel?: number;
+  editorMode?: string;
 }
 
 // User interaction types

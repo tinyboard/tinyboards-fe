@@ -514,8 +514,6 @@ const saveEmoji = async () => {
           });
           return;
         }
-      } else {
-        console.log('Original image file size:', imageFile.size, 'bytes');
       }
 
       // Additional validation
@@ -527,14 +525,6 @@ const saveEmoji = async () => {
         });
         return;
       }
-
-      // Debug file information
-      console.log('Final file info:', {
-        name: imageFile.name,
-        size: imageFile.size,
-        type: imageFile.type,
-        lastModified: imageFile.lastModified
-      });
 
       const files = {
         'input.imageFile': imageFile
