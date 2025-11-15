@@ -77,6 +77,17 @@ const displayFlairs = computed(() => {
 
   // Filter flairs based on board context
   const filteredFlairs = flairs.filter(flair => {
+    // Debug logging
+    if (process.dev) {
+      console.log('UserFlair filtering:', {
+        flairId: flair.id,
+        flairText: flair.text,
+        flairBoardId: flair.boardId,
+        propsBoardId: props.boardId,
+        shouldShow: !flair.boardId || (props.boardId !== undefined && flair.boardId === props.boardId)
+      })
+    }
+
     // Site-wide flair (no boardId)
     if (!flair.boardId) {
       return true
