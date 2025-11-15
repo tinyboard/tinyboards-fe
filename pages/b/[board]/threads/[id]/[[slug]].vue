@@ -797,8 +797,55 @@ thread.value = threadData.value.post;
 
 const title = computed(() => `${thread.value?.title || 'Thread'} - ${board.value?.name}`);
 
+// Social media meta tags
+const description = computed(() => {
+  if (!thread.value) return 'Discussion thread';
+
+  // Extract text from HTML body or use title
+  const bodyText = thread.value.body
+    ? thread.value.body.replace(/<[^>]*>/g, '').substring(0, 160)
+    : thread.value.title;
+
+  return bodyText || 'Discussion thread';
+});
+
+const imageUrl = computed(() => {
+  if (!thread.value) return null;
+
+  // Use uploaded image or external image
+  if (thread.value.image) return thread.value.image;
+  if (thread.value.url && isImageUrl(thread.value.url)) return thread.value.url;
+
+  return null;
+});
+
+const canonicalUrl = computed(() => {
+  if (typeof window === 'undefined') return '';
+  return window.location.href;
+});
+
+// Helper to check if URL is an image
+const isImageUrl = (url: string) => {
+  return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
+};
+
+useSeoMeta({
+  title,
+  description,
+  ogTitle: title,
+  ogDescription: description,
+  ogImage: imageUrl,
+  ogUrl: canonicalUrl,
+  ogType: 'article',
+  ogSiteName: site.name || 'TinyBoards',
+  twitterCard: 'summary_large_image',
+  twitterTitle: title,
+  twitterDescription: description,
+  twitterImage: imageUrl,
+});
+
 useHead({
-    title,
+  title,
 });
 
 // Fetch comments (chronological)

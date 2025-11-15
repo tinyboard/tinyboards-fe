@@ -133,6 +133,54 @@ try {
 
     post.value = postData.value.post;
 
+    // Set up meta tags for social media sharing
+    const title = computed(() => post.value?.title || 'Feed Post');
+    const description = computed(() => {
+      if (!post.value) return 'TinyBoards feed post';
+
+      // Extract text from HTML body or use title
+      const bodyText = post.value.body
+        ? post.value.body.replace(/<[^>]*>/g, '').substring(0, 160)
+        : post.value.title;
+
+      return bodyText || 'TinyBoards feed post';
+    });
+
+    const imageUrl = computed(() => {
+      if (!post.value) return null;
+
+      // Use uploaded image or external image
+      if (post.value.image) return post.value.image;
+      if (post.value.url && isImageUrl(post.value.url)) return post.value.url;
+
+      return null;
+    });
+
+    const canonicalUrl = computed(() => {
+      if (typeof window === 'undefined') return '';
+      return window.location.href;
+    });
+
+    // Helper to check if URL is an image
+    const isImageUrl = (url: string) => {
+      return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
+    };
+
+    useSeoMeta({
+      title,
+      description,
+      ogTitle: title,
+      ogDescription: description,
+      ogImage: imageUrl,
+      ogUrl: canonicalUrl,
+      ogType: 'article',
+      ogSiteName: 'TinyBoards',
+      twitterCard: 'summary_large_image',
+      twitterTitle: title,
+      twitterDescription: description,
+      twitterImage: imageUrl,
+    });
+
     // Board mode redirect: if boards are enabled and post has a board, redirect to board URL
     const site = useSiteStore();
     if (site.enableBoards && post.value.board) {
