@@ -1,5 +1,5 @@
 <template>
-  <div class="group flex flex-row-reverse sm:gap-4" :class="[
+  <div class="group flex flex-row-reverse sm:gap-4 w-full min-w-0" :class="[
     { 'first:sm:rounded-t-md last:sm:rounded-b-md': isCompact },
     status,
   ]">
@@ -19,11 +19,11 @@
       <div v-else class="hidden sm:flex flex-shrink-0">
         <CardsAvatar :src="null" alt="avatar" size="md" />
       </div>
-      <div class="w-full" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
+      <div class="w-full min-w-0" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
         <!-- Author & Post Meta -->
-        <div v-if="post.creator" scope="row" class="z-10 relative flex items-center text-gray-900 dark:text-white">
-          <div class="flex flex-col flex-shrink-0 sm:truncate">
-            <p class="flex items-center font-normal text-sm text-gray-400 leading-normal">
+        <div v-if="post.creator" scope="row" class="z-10 relative flex items-center text-gray-900 dark:text-white min-w-0">
+          <div class="flex flex-col flex-shrink-0 sm:truncate min-w-0">
+            <p class="flex items-center font-normal text-sm text-gray-400 leading-normal overflow-hidden min-w-0 flex-wrap">
               <NuxtLink :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
                 class="flex items-center">
                 <!-- Avatar (mobile only) -->
@@ -45,7 +45,7 @@
                 :user="post.creator"
                 :board-id="post.boardId || post.board?.id"
                 :size="'xs'"
-                class="ml-1"
+                class="ml-1 flex-shrink-0 hidden sm:block"
               />
               <!-- User Title -->
               <!-- <span v-if="post.creator && post.creator.title"
@@ -88,7 +88,7 @@
               </span>
             </p>
           </div>
-          <div class="flex flex-wrap gap-2 items-center" :class="isCompact ? 'ml-2' : 'ml-auto'">
+          <div class="flex flex-wrap gap-1 sm:gap-2 items-center flex-shrink min-w-0 max-w-32 sm:max-w-none" :class="isCompact ? 'ml-2' : 'ml-auto'">
             <!-- Board -->
             <NuxtLink v-if="site.enableBoards && !boardPage && post.board" :to="`/b/${post.board.name}`" class="font-bold"
               :style="{ 'color': post.board.primaryColor ? 'rgb(' + post.board.primaryColor + ')' : '' }">
@@ -97,8 +97,8 @@
                   :class="isCompact ? 'w-5 h-5' : 'w-8 h-8'" />
                 <p>{{ post.board?.title || post.board?.name || 'Unknown Board' }}</p>
               </div>
-              <div class="block md:hidden">
-                <p>{{ post.board?.name || 'unknown' }}</p>
+              <div class="block md:hidden text-xs px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 max-w-20 truncate">
+                {{ post.board?.name || 'unknown' }}
               </div>
             </NuxtLink>
             <!-- Admin Pin Icon -->
@@ -179,9 +179,9 @@
           </div>
         </div>
         <!-- Post Title & Content -->
-        <div class="mt-2.5" :class="{ 'sm:mt-0': isCompact }">
-          <div class="flex flex-wrap items-center gap-2">
-            <NuxtLink class="z-10 relative sm:text-lg" :class="titleStyle"
+        <div class="mt-2.5 min-w-0" :class="{ 'sm:mt-0': isCompact }">
+          <div class="flex flex-wrap items-center gap-2 min-w-0">
+            <NuxtLink class="z-10 relative sm:text-lg break-words min-w-0" :class="titleStyle"
               :to="postUrl">
               {{ post.title }}
             </NuxtLink>
@@ -302,14 +302,14 @@
           <CardsReports :id="post.id" />
         </div> -->
         <!-- Actions -->
-        <ul class="z-10 relative mt-4 flex flex-grow items-center" :class="{ 'sm:hidden': isCompact && !isExpanded }">
-          <li class="ml-0 group flex items-center space-x-2 leading-none text-sm font-medium">
+        <ul class="z-10 relative mt-4 flex flex-grow items-center gap-1" :class="{ 'sm:hidden': isCompact && !isExpanded }">
+          <li class="ml-0 group flex items-center gap-2 leading-none text-sm font-medium">
             <!-- If logged in, allow upvoting -->
-            <button v-if="isAuthed" @click="vote(1)" class="upvote"
+            <button v-if="isAuthed" @click="vote(1)" class="upvote p-2 min-w-11 min-h-11 flex items-center justify-center"
               aria-label="Upvote"
               :class="voteType === 1 ? 'upvoted text-primary' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
+                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path
                   d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z">
@@ -334,11 +334,11 @@
               {{ displayScore }}
             </span>
             <!-- If logged in, allow downvoting -->
-            <button v-if="isAuthed" @click="vote(-1)" class="downvote"
+            <button v-if="isAuthed" @click="vote(-1)" class="downvote p-2 min-w-11 min-h-11 flex items-center justify-center"
               aria-label="Downvote"
               :class="voteType === -1 ? 'downvoted text-secondary' : 'text-gray-500'">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 sm:w-4 sm:h-4">
+                fill="none" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 sm:w-4 sm:h-4">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                 <path
                   d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z">
