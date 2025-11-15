@@ -195,29 +195,63 @@
               @flair-click="handleFlairClick"
             />
           </div>
-          <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
-            'max-h-56 overlay': !isExpanded && (post.bodyHTML && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img')))
-          }">
+
+          <!-- Media Preview Section (independent of bodyHTML) -->
+          <div v-if="!isCompact || isExpanded" class="mt-2">
             <!-- Post Image -->
-            <div v-if="(hasImage && !!post.url) || (hasUploadedImage && !!post.image)" class="mt-2.5 md:mt-4">
+            <div v-if="(hasImage && !!post.url) || (hasUploadedImage && !!post.image)" class="mt-2.5 md:mt-4 relative">
               <span class="inline-block p-2.5 bg-white border shadow-polaroid">
-                <img loading="lazy" :src="post.url || post.image" :alt="post.altText || 'Post image'" class="sm:max-w-xs object-cover img-expand" />
+                <img
+                  loading="lazy"
+                  :src="post.url || post.image"
+                  :alt="post.altText || 'Post image'"
+                  class="sm:max-w-xs object-cover img-expand"
+                  :class="{ 'blur-lg': shouldBlurNsfw }"
+                />
               </span>
+              <!-- NSFW Overlay -->
+              <div
+                v-if="shouldBlurNsfw"
+                @click="revealNsfwContent"
+                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 cursor-pointer rounded hover:bg-opacity-60 transition-all"
+              >
+                <div class="text-center text-white">
+                  <div class="text-lg font-bold mb-1">🔞 NSFW Content</div>
+                  <div class="text-sm">Click to reveal (18+ only)</div>
+                </div>
+              </div>
             </div>
             <!-- Uploaded Video -->
-            <div v-if="hasUploadedVideo && !!post.image" class="mt-2.5 md:mt-4">
-              <video :src="post.image" controls class="w-full max-w-2xl rounded shadow-lg bg-black">
+            <div v-if="hasUploadedVideo && !!post.image" class="mt-2.5 md:mt-4 relative">
+              <video
+                :src="post.image"
+                controls
+                class="w-full max-w-2xl rounded shadow-lg bg-black"
+                :class="{ 'blur-lg': shouldBlurNsfw }"
+              >
                 Your browser does not support the video tag.
               </video>
+              <!-- NSFW Overlay -->
+              <div
+                v-if="shouldBlurNsfw"
+                @click="revealNsfwContent"
+                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 cursor-pointer rounded hover:bg-opacity-60 transition-all"
+              >
+                <div class="text-center text-white">
+                  <div class="text-lg font-bold mb-1">🔞 NSFW Content</div>
+                  <div class="text-sm">Click to reveal (18+ only)</div>
+                </div>
+              </div>
             </div>
             <!-- Embedded Video (YouTube, Vimeo, etc) -->
-            <div v-else-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4">
+            <div v-else-if="hasVideo && !!post.url && videoEmbedProps" class="mt-2.5 md:mt-4 relative">
               <!-- YouTube -->
               <lite-youtube
                 v-if="videoEmbedProps.component === 'lite-youtube'"
                 :videoid="videoEmbedProps.props.videoid"
                 :playlabel="videoEmbedProps.props.playlabel"
                 class="max-w-full"
+                :class="{ 'blur-lg': shouldBlurNsfw }"
               />
               <!-- Vimeo/Twitch -->
               <iframe
@@ -228,7 +262,19 @@
                 :allowfullscreen="videoEmbedProps.props.allowfullscreen"
                 :scrolling="videoEmbedProps.props.scrolling"
                 class="w-full max-w-2xl aspect-video rounded"
+                :class="{ 'blur-lg': shouldBlurNsfw }"
               />
+              <!-- NSFW Overlay -->
+              <div
+                v-if="shouldBlurNsfw"
+                @click="revealNsfwContent"
+                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 cursor-pointer rounded hover:bg-opacity-60 transition-all"
+              >
+                <div class="text-center text-white">
+                  <div class="text-lg font-bold mb-1">🔞 NSFW Content</div>
+                  <div class="text-sm">Click to reveal (18+ only)</div>
+                </div>
+              </div>
               <!-- Link to original -->
               <div class="mt-2 text-sm">
                 <a :href="post.url" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
@@ -242,7 +288,12 @@
                 </a>
               </div>
             </div>
-            <!-- Post Body -->
+          </div>
+
+          <!-- Post Body Content (separate section) -->
+          <div v-if="(!isCompact || isExpanded) && post.bodyHTML" class="mt-2 relative overflow-hidden" :class="{
+            'max-h-56 overlay': !isExpanded && (post.bodyHTML && (post.bodyHTML.length > 800 || post.bodyHTML.includes('<img')))
+          }">
             <div class="prose prose-sm max-w-none dark:text-gray-400" v-html="processedBodyHTML"></div>
           </div>
         </div>
@@ -634,6 +685,20 @@ const darkTheme = computed(() => theme.value === 'dark');
 
 // Expand & Collapse
 const isExpanded = ref(false);
+
+// NSFW Content Filtering
+const showNsfwRevealed = ref(false);
+const userShowsNsfw = computed(() => {
+  // Get user's NSFW preference from userStore (if available)
+  return userStore.user?.showNSFW || false;
+});
+const shouldBlurNsfw = computed(() => {
+  return props.post.isNSFW && !userShowsNsfw.value && !showNsfwRevealed.value;
+});
+
+const revealNsfwContent = () => {
+  showNsfwRevealed.value = true;
+};
 
 // Title style
 const TITLE_STYLE = {
