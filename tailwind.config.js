@@ -42,6 +42,7 @@ module.exports = {
         return `rgb(var(--color-secondary))`
       },
       transparent: 'transparent',
+      current: 'currentColor',
       black: colors.black,
       white: colors.white,
       gray: colors.zinc,
