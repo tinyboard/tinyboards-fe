@@ -1,436 +1,213 @@
-><template>
-  <div class="w-full flex flex-col" :style="{ height: props.height }">
-    <!-- Mode Toggle Bar -->
-    <div class="flex items-center gap-2 px-3 py-2 bg-gray-200 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600 rounded-t-md">
-      <button
-        type="button"
-        @click="isRichTextMode = !isRichTextMode"
-        class="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-sm font-medium transition-colors"
-        :class="isRichTextMode
-          ? 'bg-primary text-white'
-          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'"
-        :title="isRichTextMode ? 'Switch to Markdown mode' : 'Switch to Rich Text mode'"
-      >
-        <!-- Rich Text Mode Icon: Paintbrush/Format -->
-        <svg v-if="isRichTextMode" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <path d="M3 21v-4a4 4 0 1 1 4 4h-4M21 3a16 16 0 0 0 -12.8 10.2M21 3a16 16 0 0 1 -10.2 12.8M10.6 9a9 9 0 0 1 4.4 4.4" />
-        </svg>
-        <!-- Markdown Mode Icon: M in box -->
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-          <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
-          <path d="M7 15v-6l2 2l2 -2v6M14 13l2 2l2 -2m-2 2v-6" />
-        </svg>
-        {{ isRichTextMode ? 'Rich Text' : 'Markdown' }}
-      </button>
+<template>
+  <div class="w-full h-full flex tiptap-editor-container" :class="!isRichTextMode && showPreview ? 'flex-row gap-2' : 'flex-col'">
+    <!-- Main Editor Area -->
+    <div class="relative flex-1 border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-gray-950 flex flex-col">
 
-      <!-- Expand/Collapse for Rich Text Mode -->
-      <button
-        v-if="isRichTextMode"
-        type="button"
-        @click="toolbarExpanded = !toolbarExpanded"
-        class="px-2 py-1.5 rounded text-xs text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-700"
-        :title="toolbarExpanded ? 'Hide advanced formatting options' : 'Show advanced formatting options'"
-      >
-        {{ toolbarExpanded ? '▲ Hide Advanced' : '▼ More Options' }}
-      </button>
-    </div>
+      <!-- Rich Text Mode Toolbar (Top) -->
+      <TiptapToolbar
+        v-if="editor && isRichTextMode"
+        :editor="editor"
+        @link="setLink"
+        @upload="triggerFileUpload"
+      />
 
-    <!-- Unified Editor Container -->
-    <div class="relative flex flex-col flex-1 border dark:border-gray-700/70 rounded-b-md overflow-hidden transition-all duration-200 ease-in-out">
-    <!-- Default Toolbar (Rich Text Mode - Always Visible) -->
-    <div v-if="editor && isRichTextMode" class="flex flex-wrap items-center px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
-      <!-- Basic Text Formatting -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleBold().run()" :class="editor.isActive('bold') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Bold (Ctrl+B)">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <path d="M7 5h6a3.5 3.5 0 0 1 0 7h-6zM13 12h1a3.5 3.5 0 0 1 0 7h-7v-7" />
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleItalic().run()" :class="editor.isActive('italic') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Italic (Ctrl+I)">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <line x1="11" y1="5" x2="17" y2="5" /><line x1="7" y1="19" x2="13" y2="19" /><line x1="14" y1="5" x2="10" y2="19" />
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleStrike().run()" :class="editor.isActive('strike') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Strikethrough">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <line x1="5" y1="12" x2="19" y2="12" /><path d="M16 6.5a4 2 0 0 0 -4 -1.5h-1a3.5 3.5 0 0 0 0 7h2a3.5 3.5 0 0 1 0 7h-1.5a4 2 0 0 1 -4 -1.5" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-
-      <!-- Headings -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold transition-colors" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()" :class="editor.isActive('heading', { level: 1 }) ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Heading 1">
-          H1
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold transition-colors" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()" :class="editor.isActive('heading', { level: 2 }) ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Heading 2">
-          H2
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded text-xs font-bold transition-colors" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()" :class="editor.isActive('heading', { level: 3 }) ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Heading 3">
-          H3
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-
-      <!-- Text Alignment -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().setTextAlign('left').run()" :class="editor.isActive({ textAlign: 'left' }) ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Align left">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="4" y1="12" x2="14" y2="12"></line>
-            <line x1="4" y1="18" x2="18" y2="18"></line>
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().setTextAlign('center').run()" :class="editor.isActive({ textAlign: 'center' }) ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Align center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="8" y1="12" x2="16" y2="12"></line>
-            <line x1="6" y1="18" x2="18" y2="18"></line>
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().setTextAlign('right').run()" :class="editor.isActive({ textAlign: 'right' }) ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Align right">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="10" y1="12" x2="20" y2="12"></line>
-            <line x1="6" y1="18" x2="20" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-
-      <!-- Text Color & Highlight -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <!-- Text Color Picker -->
-        <div class="relative text-color-picker-container">
-          <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" :style="{ color: editor.getAttributes('textStyle').color || '#000000' }" @click="showTextColorPicker = !showTextColorPicker" title="Text color">
-            A
-            <span class="absolute bottom-1 left-1 right-1 h-0.5 rounded" :style="{ backgroundColor: editor.getAttributes('textStyle').color || '#000000' }"></span>
-          </button>
-          <!-- Color Picker Popover -->
-          <div v-if="showTextColorPicker" class="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 z-50 w-64">
-            <div class="grid grid-cols-8 gap-1 mb-2">
-              <button v-for="color in textColors" :key="color" type="button" class="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform" :style="`background-color: ${color}`" @click="setTextColor(color)"></button>
-            </div>
-            <div class="flex items-center gap-2">
-              <input v-model="customTextColor" type="color" class="w-full h-8 rounded cursor-pointer" @change="setTextColor(customTextColor)">
-              <button type="button" @click="editor.chain().focus().unsetColor().run(); showTextColorPicker = false" class="button secondary px-2 py-1 text-xs whitespace-nowrap">Reset</button>
-            </div>
-          </div>
+      <!-- Editor Content Area with bottom controls -->
+      <div class="relative" :class="isRichTextMode ? 'h-80' : 'flex-1 min-h-[300px]'">
+        <!-- Rich Text Editor -->
+        <div v-if="isRichTextMode && editor" class="absolute inset-0 overflow-hidden">
+          <editor-content
+            :editor="editor"
+            class="h-full w-full prose prose-sm dark:prose-invert max-w-none p-4 pb-16 focus:outline-none overflow-y-auto bg-transparent tiptap-editor"
+          />
         </div>
 
-        <!-- Highlight Color Picker -->
-        <div class="relative highlight-color-picker-container">
-          <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold transition-colors" :style="{ backgroundColor: editor.isActive('highlight') ? (editor.getAttributes('highlight').color || '#FFEB3B') : 'transparent', color: editor.isActive('highlight') ? '#000' : 'currentColor' }" @click="showHighlightColorPicker = !showHighlightColorPicker" title="Highlight color">
-            A
-          </button>
-          <!-- Highlight Picker Popover -->
-          <div v-if="showHighlightColorPicker" class="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 z-50 w-64">
-            <div class="grid grid-cols-8 gap-1 mb-2">
-              <button v-for="color in highlightColors" :key="color" type="button" class="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform" :style="`background-color: ${color}`" @click="setHighlightColor(color)"></button>
-            </div>
-            <div class="flex items-center gap-2">
-              <input v-model="customHighlightColor" type="color" class="w-full h-8 rounded cursor-pointer" @change="setHighlightColor(customHighlightColor)">
-              <button type="button" @click="editor.chain().focus().unsetHighlight().run(); showHighlightColorPicker = false" class="button secondary px-2 py-1 text-xs whitespace-nowrap">Remove</button>
-            </div>
-          </div>
+        <!-- Markdown Editor -->
+        <div v-else class="absolute inset-0">
+          <textarea
+            ref="markdownTextarea"
+            v-model="markdownContent"
+            @input="updateMarkdown"
+            @keydown="handleMarkdownKeydown"
+            :placeholder="placeholder"
+            class="w-full h-full p-4 pb-16 bg-transparent border-none focus:outline-none resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 font-mono text-sm"
+          />
         </div>
-      </div>
 
-      <!-- Divider -->
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-
-      <!-- Lists -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleBulletList().run()" :class="editor.isActive('bulletList') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Bullet list">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="9" y1="6" x2="20" y2="6" stroke="currentColor" stroke-width="2"></line>
-            <line x1="9" y1="12" x2="20" y2="12" stroke="currentColor" stroke-width="2"></line>
-            <line x1="9" y1="18" x2="20" y2="18" stroke="currentColor" stroke-width="2"></line>
-            <circle cx="5" cy="6" r="1.5" fill="currentColor"></circle>
-            <circle cx="5" cy="12" r="1.5" fill="currentColor"></circle>
-            <circle cx="5" cy="18" r="1.5" fill="currentColor"></circle>
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleOrderedList().run()" :class="editor.isActive('orderedList') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Ordered list">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <path d="M11 6h9M11 12h9M12 18h8M4 16a2 2 0 1 1 4 0c0 .591-.5 1-1 1.5l-3 2.5h4M6 10v-6l-2 2" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-
-      <!-- Block Elements -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleBlockquote().run()" :class="editor.isActive('blockquote') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Blockquote (Ctrl+Shift+B)">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <path d="M6 15h15M21 19h-15M15 11h6M21 7h-6M9 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2M3 9h1a1 1 0 1 1 -1 1v-2.5a2 2 0 0 1 2 -2" />
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleCodeBlock().run()" :class="editor.isActive('codeBlock') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Code block (Ctrl+Alt+C)">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <polyline points="7 8 3 12 7 16"></polyline>
-            <polyline points="17 8 21 12 17 16"></polyline>
-            <line x1="14" y1="4" x2="10" y2="20"></line>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-
-      <!-- Insert -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="setLink()" title="Insert link">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-          </svg>
-        </button>
-        <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="triggerFileUpload()" title="Upload image">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <rect x="4" y="4" width="16" height="16" rx="3"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <path d="M4 15l4 -4c.7-.7 1.7-.7 2.5 0l5 5M14 14l1 -1c.7-.7 1.7-.7 2.5 0l2 2" />
-          </svg>
-        </button>
-        <input ref="fileInput" type="file" accept="image/*" multiple class="hidden" @change="handleFileUpload" />
-      </div>
-    </div>
-
-    <!-- Expandable Formatting Toolbar (Rich Text Mode Only - Advanced Features) -->
-    <div v-if="editor && isRichTextMode && toolbarExpanded" class="flex flex-wrap items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
-      <!-- Task List, HR & Clear Formatting -->
-      <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 hover:text-gray-900 dark:hover:text-gray-100 rounded transition-colors" @click="editor.chain().focus().toggleTaskList().run()" :class="editor.isActive('taskList') ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-600'" title="Task list">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-            <rect x="9" y="3" width="6" height="4" rx="2"></rect>
-            <path d="M9 14l2 2l4 -4"></path>
-          </svg>
-        </button>
-        <span class="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-0.5"></span>
-        <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="editor.chain().focus().setHorizontalRule().run()" title="Horizontal rule">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </button>
-        <span class="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-0.5"></span>
-        <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="editor.chain().focus().clearNodes().unsetAllMarks().run()" title="Clear formatting">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <path d="M17 15l4 4m0 -4l-4 4M7 6v-1h11v1M7 19l4 0M13 5l-4 14" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- Table Group (Rich Text Only) -->
-      <div v-if="isRichTextMode" class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
-        <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()" title="Insert table">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-            <line x1="4" y1="10" x2="20" y2="10"></line>
-            <line x1="10" y1="4" x2="10" y2="20"></line>
-          </svg>
-        </button>
-        <template v-if="editor.isActive('table')">
-          <span class="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-0.5"></span>
-          <!-- Add Column - vertical bars with + -->
-          <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="editor.chain().focus().addColumnBefore().run()" title="Add column">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <rect x="4" y="4" width="6" height="16" rx="1"></rect>
-              <rect x="14" y="4" width="6" height="16" rx="1"></rect>
-              <path d="M12 8v8M8 12h8" stroke-width="2.5"></path>
-            </svg>
-          </button>
-          <!-- Add Row - horizontal bars with + -->
-          <button type="button" class="w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white dark:hover:bg-gray-600 rounded transition-colors" @click="editor.chain().focus().addRowBefore().run()" title="Add row">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <rect x="4" y="4" width="16" height="6" rx="1"></rect>
-              <rect x="4" y="14" width="16" height="6" rx="1"></rect>
-              <path d="M12 8v8M8 12h8" stroke-width="2.5"></path>
-            </svg>
-          </button>
-          <span class="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-0.5"></span>
-          <!-- Delete Column - vertical bar with X -->
-          <button type="button" class="w-8 h-8 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors" @click="editor.chain().focus().deleteColumn().run()" title="Delete column">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <rect x="9" y="4" width="6" height="16" rx="1"></rect>
-              <path d="M11 9l2 6M13 9l-2 6" stroke-width="2.5"></path>
-            </svg>
-          </button>
-          <!-- Delete Row - horizontal bar with X -->
-          <button type="button" class="w-8 h-8 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors" @click="editor.chain().focus().deleteRow().run()" title="Delete row">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <rect x="4" y="9" width="16" height="6" rx="1"></rect>
-              <path d="M9 11l6 2M9 13l6 -2" stroke-width="2.5"></path>
-            </svg>
-          </button>
-          <span class="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-0.5"></span>
-          <!-- Delete entire table -->
-          <button type="button" class="w-8 h-8 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors" @click="editor.chain().focus().deleteTable().run()" title="Delete table">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mx-auto" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-              <line x1="5" y1="5" x2="19" y2="19"></line>
-              <line x1="19" y1="5" x2="5" y2="19"></line>
-            </svg>
-          </button>
-        </template>
-      </div>
-
-    </div>
-
-    <!-- Main Content Area - Split View in Markdown Preview Mode -->
-    <div class="relative flex" :class="!isRichTextMode && showPreview ? 'gap-2' : ''">
-      <!-- Editor Container -->
-      <div
-        :class="[
-          !isRichTextMode && showPreview ? 'w-1/2' : 'w-full',
-          !isRichTextMode ? 'markdown-mode' : ''
-        ]"
-        class="relative flex flex-col flex-1"
-        @drop.prevent="handleDrop"
-        @dragover.prevent="handleDragOver"
-        @dragenter.prevent="handleDragEnter"
-        @dragleave.prevent="handleDragLeave"
-      >
-        <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20 pointer-events-none">
-          <p class="text-primary font-semibold">Drop images here</p>
-        </div>
-        <!-- Rich Text Editor Content -->
-        <editor-content v-if="isRichTextMode && editor" :editor="editor" class="flex-1" />
-
-        <!-- Markdown Editor Content -->
-        <div v-if="!isRichTextMode" class="relative flex flex-1 w-full">
-          <!-- Markdown Textarea -->
-          <div class="relative flex flex-col" :class="showPreview ? 'w-1/2' : 'w-full'">
-            <textarea
-              ref="markdownTextarea"
-              v-model="markdownContent"
-              :placeholder="placeholder"
-              :disabled="disabled"
-              class="block w-full flex-1 bg-gray-100 dark:bg-gray-900 focus:bg-white dark:focus:bg-gray-950 px-3 py-3 pb-12 shadow-inner-xs border-0 focus:ring-0 font-mono text-sm resize-none"
-              style="min-height: 220px;"
-              @input="handleMarkdownInput"
-              @keydown="handleMarkdownKeydown"
-              @click="handleMarkdownClick"
-            />
-
-            <!-- Markdown Mode: Unified Mention Dropdown -->
-            <UnifiedMentionDropdown
-              :user-suggestions="suggestions"
-              :board-suggestions="boardSuggestions"
-              :is-user-loading="mentionLoading"
-              :is-board-loading="boardLoading"
-              :is-visible="unifiedMentionVisible"
-              :position="mentionVisible ? mentionPosition : boardPosition"
-              :selected-index="mentionVisible ? mentionSelectedIndex : boardSelectedIndex"
-              :current-type="currentMentionType"
-              @select-user="insertUserMentionMarkdown"
-              @select-board="insertBoardMentionMarkdown"
-              @update-selection="updateMentionSelection"
-            />
-
-            <!-- Markdown Mode: Emoji Suggestions -->
-            <EmojiSuggestions
-              :suggestions="emojiSuggestions"
-              :selected-index="emojiSelectedIndex"
-              :is-visible="emojiVisible"
-              :position="emojiPositionData"
-              @select="insertEmojiSuggestionMarkdown"
-            />
-          </div>
-
-          <!-- Markdown Preview -->
-          <div
-            v-if="showPreview"
-            class="w-1/2 bg-white dark:bg-gray-950 overflow-auto p-4 border-l border-gray-300 dark:border-gray-600"
-            style="min-height: 220px;"
+        <!-- Unified Bottom Right Controls (Always Visible) -->
+        <div class="absolute bottom-3 right-3 flex items-center gap-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-1.5 shadow-sm z-[999]">
+          <!-- Mode Switch Button -->
+          <button
+            type="button"
+            @click="toggleMode"
+            class="p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+            :title="`Switch to ${isRichTextMode ? 'Markdown' : 'Rich Text'} mode`"
           >
-            <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wide">Preview</div>
-            <div v-if="markdownContent" class="prose dark:prose-invert prose-sm max-w-none" v-html="processedPreviewHTML"></div>
-            <div v-else class="text-gray-400 italic text-sm">Nothing to preview yet...</div>
-          </div>
-        </div>
+            <!-- Rich Text Icon (Clean Aa) -->
+            <div v-if="!isRichTextMode" class="w-4 h-4 flex items-center justify-center font-sans">
+              <span class="text-sm font-bold leading-none">A</span>
+              <span class="text-xs leading-none">a</span>
+            </div>
+            <!-- Markdown Icon (hash symbol) -->
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="9" x2="20" y2="9"/>
+              <line x1="4" y1="15" x2="20" y2="15"/>
+              <line x1="10" y1="3" x2="8" y2="21"/>
+              <line x1="16" y1="3" x2="14" y2="21"/>
+            </svg>
+          </button>
 
-        <!-- Bottom Right Controls (Preview / Help / Emoji) -->
-        <div class="absolute bottom-2 right-3 flex items-center gap-2 z-20">
-          <!-- Preview Toggle (Markdown only) -->
+          <!-- Preview Button (Markdown only) -->
           <button
             v-if="!isRichTextMode"
             type="button"
-            @click="showPreview = !showPreview"
-            class="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            :class="showPreview ? 'text-primary bg-primary/10' : 'text-gray-600 dark:text-gray-400'"
-            :title="showPreview ? 'Hide preview' : 'Show preview'"
+            @click="togglePreview"
+            class="p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+            :class="{ 'bg-primary/20 text-primary': showPreview }"
+            title="Toggle Preview"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <circle cx="12" cy="12" r="2" />
-              <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
             </svg>
           </button>
 
-          <!-- Help -->
+          <!-- Format Guide Button -->
           <button
             type="button"
-            @click="toggleShortcutsModal"
-            class="p-1.5 rounded text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            title="Keyboard shortcuts"
+            @click="showFormattingGuide = !showFormattingGuide"
+            class="p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+            :class="{ 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': showFormattingGuide }"
+            title="Formatting Guide"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-              <rect x="2" y="4" width="20" height="16" rx="2" />
-              <line x1="6" y1="8" x2="6.01" y2="8" />
-              <line x1="10" y1="8" x2="10.01" y2="8" />
-              <line x1="14" y1="8" x2="14.01" y2="8" />
-              <line x1="18" y1="8" x2="18.01" y2="8" />
-              <line x1="8" y1="12" x2="8.01" y2="12" />
-              <line x1="12" y1="12" x2="12.01" y2="12" />
-              <line x1="16" y1="12" x2="16.01" y2="12" />
-              <line x1="7" y1="16" x2="17" y2="16" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              <path d="M8 7h8"/>
+              <path d="M8 11h8"/>
+              <path d="M8 15h5"/>
             </svg>
           </button>
 
           <!-- Emoji Picker -->
-          <div class="flex items-center">
-            <EmojiPicker @emoji-selected="insertEmoji" />
+          <EmojiPicker @emoji-selected="insertEmoji" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Markdown Preview Sidebar (only for markdown mode) -->
+    <div
+      v-if="!isRichTextMode && showPreview"
+      class="flex-1 bg-white dark:bg-gray-950 border border-gray-300 dark:border-gray-600 rounded-lg overflow-auto"
+      style="min-height: 300px;"
+    >
+      <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <h3 class="text-sm font-medium text-gray-900 dark:text-white">Preview</h3>
+      </div>
+      <div class="p-4">
+        <div v-if="markdownContent" class="prose dark:prose-invert prose-sm max-w-none" v-html="processedPreviewHTML"></div>
+        <div v-else class="text-gray-400 italic text-sm">Nothing to preview yet...</div>
+      </div>
+    </div>
+
+    <!-- Format Guide Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showFormattingGuide"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[300]"
+        @click.self="showFormattingGuide = false"
+      >
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-3xl max-h-[85vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Formatting Guide</h3>
+              <button
+                type="button"
+                @click="showFormattingGuide = false"
+                class="p-2 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                title="Close"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <div v-if="isRichTextMode" class="space-y-4">
+              <div>
+                <h4 class="font-medium text-gray-900 dark:text-white mb-2">Rich Text Editor</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Use the toolbar buttons above to format your text. You can also use keyboard shortcuts:</p>
+                <ul class="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                  <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+B</kbd> - Bold</li>
+                  <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+I</kbd> - Italic</li>
+                  <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+U</kbd> - Underline</li>
+                  <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+Shift+X</kbd> - Strikethrough</li>
+                </ul>
+              </div>
+            </div>
+
+            <div v-else class="space-y-4">
+              <div>
+                <h4 class="font-medium text-gray-900 dark:text-white mb-2">Markdown Syntax</h4>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Formatting</p>
+                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                      <li><code>**bold**</code> → <strong>bold</strong></li>
+                      <li><code>*italic*</code> → <em>italic</em></li>
+                      <li><code>~~strikethrough~~</code> → <del>strikethrough</del></li>
+                      <li><code>`code`</code> → <code>code</code></li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">Structure</p>
+                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                      <li><code># Heading 1</code></li>
+                      <li><code>## Heading 2</code></li>
+                      <li><code>- List item</code></li>
+                      <li><code>1. Numbered item</code></li>
+                      <li><code>> Quote</code></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <!-- Upload progress indicator -->
-        <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700">
-          <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
-        </div>
-
-        <!-- Unified Mention autocomplete dropdown -->
-        <UnifiedMentionDropdown
-          :user-suggestions="suggestions"
-          :board-suggestions="boardSuggestions"
-          :is-user-loading="mentionLoading"
-          :is-board-loading="boardLoading"
-          :is-visible="unifiedMentionVisible"
-          :position="mentionVisible ? mentionPosition : boardPosition"
-          :selected-index="mentionVisible ? mentionSelectedIndex : boardSelectedIndex"
-          :current-type="currentMentionType"
-          @select-user="insertUserMention"
-          @select-board="insertBoardMention"
-          @update-selection="updateMentionSelection"
-        />
-
-        <!-- Emoji suggestions dropdown -->
-        <EmojiSuggestions
-          :suggestions="emojiSuggestions"
-          :selected-index="emojiSelectedIndex"
-          :is-visible="emojiVisible"
-          :position="emojiPositionData"
-          @select="insertEmojiSuggestion"
-        />
       </div>
+    </Teleport>
 
+    <!-- Upload progress indicator -->
+    <div v-if="uploading" class="absolute top-3 right-3 bg-white dark:bg-gray-800 px-3 py-2 rounded shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+      <p class="text-sm text-gray-600 dark:text-gray-400">Uploading {{ uploadProgress }}/{{ uploadTotal }} images...</p>
+    </div>
+
+    <!-- Unified Mention autocomplete dropdown -->
+    <UnifiedMentionDropdown
+      :user-suggestions="suggestions"
+      :board-suggestions="boardSuggestions"
+      :is-user-loading="mentionLoading"
+      :is-board-loading="boardLoading"
+      :is-visible="unifiedMentionVisible"
+      :position="mentionVisible ? mentionPosition : boardPosition"
+      :selected-index="mentionVisible ? mentionSelectedIndex : boardSelectedIndex"
+      :current-type="currentMentionType"
+      @select-user="insertUserMention"
+      @select-board="insertBoardMention"
+      @update-selection="updateMentionSelection"
+    />
+
+    <!-- Emoji suggestions dropdown -->
+    <EmojiSuggestions
+      :suggestions="emojiSuggestions"
+      :selected-index="emojiSelectedIndex"
+      :is-visible="emojiVisible"
+      :position="emojiPositionData"
+      @select="insertEmojiSuggestion"
+    />
+
+    <!-- Drag and drop overlay -->
+    <div v-if="isDragging" class="absolute inset-0 bg-primary/10 border-2 border-dashed border-primary rounded flex items-center justify-center z-20 pointer-events-none">
+      <p class="text-primary font-semibold">Drop images here</p>
     </div>
   </div>
 
@@ -441,61 +218,73 @@
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       @click.self="cancelLink"
     >
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
-        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Insert Link</h3>
-
-        <div class="space-y-4">
-          <!-- URL Input -->
-          <div>
-            <label for="link-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              URL
-            </label>
-            <input
-              id="link-url"
-              ref="linkUrlInput"
-              v-model="linkUrl"
-              type="url"
-              placeholder="https://example.com"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
-              @keydown.enter="insertLink"
-              @keydown.esc="cancelLink"
-            />
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add Link</h3>
+            <button
+              type="button"
+              @click="cancelLink"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
           </div>
 
-          <!-- Display Text Input -->
-          <div>
-            <label for="link-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Display Text
-            </label>
-            <input
-              id="link-text"
-              v-model="linkText"
-              type="text"
-              placeholder="Click here"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
-              @keydown.enter="insertLink"
-              @keydown.esc="cancelLink"
-            />
-          </div>
-        </div>
+          <div class="space-y-4">
+            <!-- URL Input -->
+            <div>
+              <label for="link-url" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                URL
+              </label>
+              <input
+                id="link-url"
+                v-model="linkUrl"
+                type="url"
+                placeholder="https://example.com"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                @keydown.enter="insertLink"
+                @keydown.esc="cancelLink"
+              />
+            </div>
 
-        <!-- Actions -->
-        <div class="flex items-center justify-end gap-2 mt-6">
-          <button
-            type="button"
-            @click="cancelLink"
-            class="button secondary px-4 py-2"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            @click="insertLink"
-            class="button primary px-4 py-2"
-            :disabled="!linkUrl"
-          >
-            Insert Link
-          </button>
+            <!-- Display Text Input -->
+            <div>
+              <label for="link-text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Display Text
+              </label>
+              <input
+                id="link-text"
+                v-model="linkText"
+                type="text"
+                placeholder="Click here"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                @keydown.enter="insertLink"
+                @keydown.esc="cancelLink"
+              />
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-end gap-2 mt-6">
+            <button
+              type="button"
+              @click="cancelLink"
+              class="button secondary px-4 py-2"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              @click="insertLink"
+              class="button primary px-4 py-2"
+              :disabled="!linkUrl"
+            >
+              Insert Link
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -508,135 +297,83 @@
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       @click.self="toggleShortcutsModal"
     >
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Keyboard Shortcuts</h3>
-          <button
-            type="button"
-            @click="toggleShortcutsModal"
-            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        <div class="space-y-6">
-          <!-- Text Formatting -->
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Text Formatting</h4>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Bold</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+B</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Italic</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+I</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Strikethrough</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Shift+S</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Clear formatting</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+\</kbd>
-              </div>
-            </div>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl max-h-[80vh] overflow-y-auto">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Keyboard Shortcuts</h3>
+            <button
+              type="button"
+              @click="toggleShortcutsModal"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
           </div>
 
-          <!-- Paragraph Formatting -->
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Paragraph Formatting</h4>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Heading 1</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Alt+1</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Heading 2</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Alt+2</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Heading 3</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Alt+3</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Blockquote</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Shift+B</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Code block</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Alt+C</kbd>
-              </div>
-            </div>
-          </div>
-
-          <!-- Lists -->
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Lists</h4>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Bullet list</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Shift+8</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Ordered list</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Shift+7</kbd>
+          <div class="space-y-6">
+            <!-- Rich Text Shortcuts -->
+            <div v-if="isRichTextMode">
+              <h4 class="font-medium text-gray-900 dark:text-white mb-3">Rich Text Editor</h4>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white mb-2">Text Formatting</p>
+                  <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+B</kbd> Bold</li>
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+I</kbd> Italic</li>
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+U</kbd> Underline</li>
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+Shift+X</kbd> Strikethrough</li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white mb-2">Structure</p>
+                  <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+Shift+1</kbd> Heading 1</li>
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+Shift+2</kbd> Heading 2</li>
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+Shift+3</kbd> Heading 3</li>
+                    <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">Ctrl+Shift+B</kbd> Blockquote</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Insert -->
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Insert</h4>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Link</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+K</kbd>
+            <!-- Markdown Shortcuts -->
+            <div v-else>
+              <h4 class="font-medium text-gray-900 dark:text-white mb-3">Markdown Editor</h4>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white mb-2">Formatting Syntax</p>
+                  <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                    <li><code>**text**</code> Bold</li>
+                    <li><code>*text*</code> Italic</li>
+                    <li><code>~~text~~</code> Strikethrough</li>
+                    <li><code>`code`</code> Inline code</li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white mb-2">Structure Syntax</p>
+                  <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                    <li><code># Heading</code> H1</li>
+                    <li><code>## Heading</code> H2</li>
+                    <li><code>- Item</code> List</li>
+                    <li><code>> Quote</code> Blockquote</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Edit Actions -->
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Edit Actions</h4>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Undo</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Z</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Redo</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+Shift+Z or Ctrl+Y</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Select all</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+A</kbd>
+            <!-- Universal Shortcuts -->
+            <div>
+              <h4 class="font-medium text-gray-900 dark:text-white mb-3">Universal</h4>
+              <div class="text-sm">
+                <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                  <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">@</kbd> Mention users/boards</li>
+                  <li><kbd class="bg-gray-100 dark:bg-gray-700 px-1 rounded">:</kbd> Insert emoji</li>
+                </ul>
               </div>
             </div>
-          </div>
 
-          <!-- Navigation & Other -->
-          <div>
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Other</h4>
-            <div class="space-y-1">
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Show this help</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl+/</kbd>
-              </div>
-              <div class="flex items-center justify-between py-1 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="text-sm text-gray-700 dark:text-gray-300">Close modal / dropdown</span>
-                <kbd class="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Esc</kbd>
-              </div>
-            </div>
-          </div>
-
-          <!-- Note about Mac -->
-          <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
             <p class="text-xs text-gray-500 dark:text-gray-400">
               <strong>Note:</strong> On Mac, use <kbd class="px-1 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Cmd</kbd> instead of <kbd class="px-1 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">Ctrl</kbd>
             </p>
@@ -645,9 +382,7 @@
       </div>
     </div>
   </Teleport>
-  </div><!-- End Tiptap Wrapper -->
-</template>
-
+</template>      const query = `
 <script setup>
   import { ref, watch, computed, nextTick, onMounted, onBeforeUnmount } from 'vue';
   import { Link } from '@tiptap/extension-link';
@@ -666,6 +401,7 @@
   import StarterKit from '@tiptap/starter-kit';
   import { Extension } from '@tiptap/core';
   import { Plugin, PluginKey } from '@tiptap/pm/state';
+  import TiptapToolbar from './TiptapToolbar.vue';
   import EmojiPicker from './EmojiPicker.vue';
   import UnifiedMentionDropdown from './UnifiedMentionDropdown.vue';
   import EmojiSuggestions from './EmojiSuggestions.vue';
@@ -711,9 +447,12 @@
 
   // Preview toggle state
   const showPreview = ref(false);
+  const showFormattingGuide = ref(false);
 
   // Toolbar expansion state (for rich text mode)
   const toolbarExpanded = ref(false);
+
+
 
   // Rich text mode toggle (false = markdown mode, true = full rich text)
   // Initialize based on user's editor_mode preference
@@ -958,7 +697,56 @@
   };
 
   // Process preview HTML to render custom emojis
+  // Reactive reference for processed markdown HTML
+  const processedMarkdownHTML = ref('');
+
+  // Process markdown content to HTML
+  const processMarkdownContent = async () => {
+    if (!markdownContent.value) {
+      processedMarkdownHTML.value = '';
+      return;
+    }
+
+    try {
+      // Import marked for markdown parsing
+      const { marked } = await import('marked');
+
+      // First convert shortcodes to emojis
+      let content = markdownContent.value;
+      const emojiRegex = /:([a-zA-Z0-9_-]+):/g;
+      content = content.replace(emojiRegex, (match, shortcode) => {
+        const emoji = emojiCache.value.get(shortcode);
+        if (emoji) {
+          return `<img class="emoji" src="${emoji.imageUrl}" alt=":${shortcode}:" title=":${shortcode}:" style="width: 1.5em; height: 1.5em; vertical-align: middle; display: inline-block;" />`;
+        }
+        return match;
+      });
+
+      // Then parse markdown to HTML
+      processedMarkdownHTML.value = marked.parse(content);
+    } catch (error) {
+      console.error('Error processing markdown preview:', error);
+      processedMarkdownHTML.value = markdownContent.value;
+    }
+  };
+
+  // Watch markdown content changes and reprocess
+  watch(markdownContent, processMarkdownContent);
+
+  // Process initially if content exists
+  onMounted(() => {
+    if (markdownContent.value) {
+      processMarkdownContent();
+    }
+  });
+
   const processedPreviewHTML = computed(() => {
+    // In markdown mode, use the processed markdown HTML
+    if (!isRichTextMode.value) {
+      return processedMarkdownHTML.value;
+    }
+
+    // In rich text mode, use the editor HTML
     if (!editor.value) return '';
 
     let html = editor.value.getHTML();
@@ -1231,6 +1019,16 @@
 
   const toggleShortcutsModal = () => {
     showShortcutsModal.value = !showShortcutsModal.value;
+  };
+
+  // Mode switching with smooth transitions
+  const toggleMode = () => {
+    isRichTextMode.value = !isRichTextMode.value;
+  };
+
+  // Preview toggle for markdown mode
+  const togglePreview = () => {
+    showPreview.value = !showPreview.value;
   };
 
   // Color picker state
@@ -2314,14 +2112,18 @@
     const { top, left } = getTextareaCaretPosition(textarea, textarea.selectionStart);
     const rect = textarea.getBoundingClientRect();
 
+    // Account for scroll position
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
     mentionPosition.value = {
-      top: rect.top + top + 20,
-      left: rect.left + left
+      top: rect.top + top + 20 + scrollTop,
+      left: rect.left + left + scrollLeft
     };
 
     boardPosition.value = {
-      top: rect.top + top + 20,
-      left: rect.left + left
+      top: rect.top + top + 20 + scrollTop,
+      left: rect.left + left + scrollLeft
     };
   };
 
@@ -2331,42 +2133,63 @@
     const { top, left } = getTextareaCaretPosition(textarea, textarea.selectionStart);
     const rect = textarea.getBoundingClientRect();
 
+    // Account for scroll position
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
     emojiPositionData.value = {
-      top: rect.top + top + 20,
-      left: rect.left + left
+      top: rect.top + top + 20 + scrollTop,
+      left: rect.left + left + scrollLeft
     };
   };
 
   // Get caret position in textarea for positioning dropdowns
   const getTextareaCaretPosition = (textarea, caretPos) => {
-    const div = document.createElement('div');
-    const style = getComputedStyle(textarea);
+    if (!textarea || !textarea.value) return { top: 0, left: 0 };
 
-    // Copy styling
-    Array.from(style).forEach(prop => {
-      div.style[prop] = style[prop];
+    // Create a temporary div to measure text
+    const div = document.createElement('div');
+    const computed = getComputedStyle(textarea);
+
+    // Copy all relevant styles
+    [
+      'fontFamily', 'fontSize', 'fontWeight', 'fontStyle',
+      'letterSpacing', 'wordSpacing', 'lineHeight',
+      'padding', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom',
+      'border', 'borderLeft', 'borderRight', 'borderTop', 'borderBottom',
+      'boxSizing', 'whiteSpace'
+    ].forEach(prop => {
+      div.style[prop] = computed[prop];
     });
 
+    // Position and make invisible
     div.style.position = 'absolute';
+    div.style.left = '-9999px';
+    div.style.top = '-9999px';
     div.style.visibility = 'hidden';
+    div.style.height = 'auto';
+    div.style.width = textarea.clientWidth + 'px';
     div.style.whiteSpace = 'pre-wrap';
     div.style.wordWrap = 'break-word';
+    div.style.overflow = 'hidden';
 
-    // Create span at caret position
-    const textBeforeCaret = textarea.value.substring(0, caretPos);
-    const textNode = document.createTextNode(textBeforeCaret);
-    const span = document.createElement('span');
-    span.textContent = '|';
-
-    div.appendChild(textNode);
-    div.appendChild(span);
     document.body.appendChild(div);
 
-    const rect = span.getBoundingClientRect();
+    // Get text before caret
+    const textBeforeCaret = textarea.value.substring(0, caretPos);
+    div.textContent = textBeforeCaret;
+
+    // Create a span for the caret position
+    const span = document.createElement('span');
+    span.textContent = '|'; // Invisible character to mark position
+    div.appendChild(span);
+
+    const spanRect = span.getBoundingClientRect();
     const divRect = div.getBoundingClientRect();
 
-    const relativeTop = rect.top - divRect.top;
-    const relativeLeft = rect.left - divRect.left;
+    // Calculate relative position within the textarea
+    const relativeTop = spanRect.top - divRect.top;
+    const relativeLeft = spanRect.left - divRect.left;
 
     document.body.removeChild(div);
 
@@ -2442,21 +2265,56 @@
 
 <style scoped>
 
-/* Ensure editor content wrapper fills full height */
+/* Force full width for the editor */
+.w-full {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100% !important;
+}
+
+/* Override TipTap editor background */
+.tiptap-editor :deep(.ProseMirror) {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.tiptap-editor :deep(.ProseMirror p.is-editor-empty:first-child::before) {
+  color: #9ca3af; /* gray-400 */
+}
+
+.tiptap-editor :deep(.ProseMirror) {
+  outline: none !important;
+  border: none !important;
+}
+
+/* Dynamic height management */
+.tiptap-root {
+  min-height: 240px; /* Fallback minimum height when no container constraints */
+}
+
+.editor-container {
+  flex: 1;
+  min-height: 0; /* Important for flex children to shrink */
+}
+
+.editor-toolbar {
+  flex-shrink: 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
 :deep(.editor-content) {
-  flex: 1 1 auto;
+  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  position: relative;
+  overflow: hidden;
 }
 
 :deep(.ProseMirror) {
-  flex: 1 1 auto;
+  flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
   font-size: 14px;
-  min-height: 200px;
   @apply bg-gray-100 focus:bg-white dark:bg-gray-900 dark:focus:bg-gray-950 px-3 py-3 pb-12 shadow-inner-xs;
 }
 
@@ -2481,6 +2339,10 @@
 
 .markdown-mode :deep(.ProseMirror) {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+.markdown-mode :deep(.ProseMirror) {
+  padding-bottom: 3rem !important; /* Less padding for markdown mode since no toolbar */
 }
 
 .markdown-mode :deep(.ProseMirror p) {

@@ -1,261 +1,289 @@
 <template>
-    <main class="flex flex-col pt-12 sm:pt-14">
-        <!-- Sub Navigation & Banner -->
-        <section class="flex flex-col">
-            <NavigationNavbarSub :links="links" class="sm:order-first" />
-            <div
-                class="order-first sm:order-last container mx-auto max-w-4xl grid grid-cols-12 sm:mt-16 sm:px-4 md:px-6">
-                <!-- Banner -->
-                <CardsSubmitBanner
-                    :board="selectedBoard"
-                    :title="selectedBoard ? (isThread ? `Create new thread in ${selectedBoard.name}` : `Create new post in ${selectedBoard.name}`) : (isThread ? 'Create new thread' : 'Create new post')"
-                    :sub-title="selectedBoard ? selectedBoard.description || (isThread ? 'Start a new discussion thread' : 'Share a link, image or text with the community.') : (isThread ? 'Start a new discussion thread' : 'Share a link, image or text with the community.')"
-                    class="col-span-full"
-                />
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900 pt-12 sm:pt-14">
+    <!-- Integrated Header with Banner Background -->
+    <div
+      v-if="selectedBoard"
+      class="relative bg-cover bg-center border-b border-gray-200 dark:border-gray-800"
+      :style="selectedBoard.banner ? `background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${selectedBoard.banner}')` : `background: linear-gradient(135deg, rgb(${selectedBoard.primaryColor || '96, 165, 250'}) 0%, rgb(${selectedBoard.secondaryColor || '139, 92, 246'}) 100%)`"
+    >
+      <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="flex items-center gap-4 text-white">
+          <div class="flex items-center gap-3">
+            <img
+              :src="selectedBoard.icon || '/img/default-board-icon.png'"
+              class="w-16 h-16 rounded-lg object-cover border-2 border-white/20 shadow-lg"
+              :alt="selectedBoard.name"
+            />
+            <div>
+              <h1 class="text-3xl font-bold text-white drop-shadow-lg">
+                {{ isThread ? `Create new thread in ${selectedBoard.name}` : `Create new post in ${selectedBoard.name}` }}
+              </h1>
+              <p class="text-white/90 drop-shadow-md mt-1">
+                {{ selectedBoard.description || (isThread ? 'Start a new discussion thread' : 'Share a link, image or text with the community.') }}
+              </p>
             </div>
-        </section>
-        <!-- Main Content -->
-        <section class="container mx-auto max-w-4xl grid grid-cols-12 sm:px-4 sm:py-6 md:px-6">
-            <div class="col-span-full flex flex-row gap-6">
-                <!-- Form -->
-                <form @submit.prevent="submit" class="block w-full">
-                    <div class="bg-white dark:bg-gray-950 overflow-visible shadow-lg sm:border dark:border-gray-800 sm:rounded-lg">
-                        <div v-if="!isEditingBoard && site.enableBoards"
-                            class="w-full p-5 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-800 space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
-                            <div class="flex flex-row space-x-3 items-center">
-                                <img :src="selectedBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-12 h-12 object-cover rounded-lg shadow-sm"
-                                    alt="board icon" />
-                                <div class="w-full text-center md:text-left">
-                                    <p class="font-bold text-gray-900 dark:text-white text-base">
-                                        Posting to {{ boardName }}
-                                    </p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ selectedBoard?.description || 'No description available' }}
-                                    </p>
-                                </div>
-                            </div>
-                            <button type="button" class="button white whitespace-nowrap" @click="isEditingBoard = true">
-                                Change board
-                            </button>
-                        </div>
-                        <!-- Board info when boards are disabled -->
-                        <div v-if="!site.enableBoards"
-                            class="w-full p-5 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-800 space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between items-center">
-                            <div class="flex flex-row space-x-3 items-center">
-                                <img :src="defaultBoard?.icon || '/img/default-board-icon.png'" class="hidden md:block w-12 h-12 object-cover rounded-lg shadow-sm"
-                                    alt="board icon" />
-                                <div class="w-full text-center md:text-left">
-                                    <p class="font-bold text-gray-900 dark:text-white text-base">
-                                        Posting to {{ boardName }}
-                                    </p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ defaultBoard?.title || 'Default community board' }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Application Not Approved Warning -->
-                        <div v-if="isBlockedFromPosting" class="p-4 bg-red-50 border-y border-red-200">
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0">
-                                    <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <div class="ml-3">
-                                    <h3 class="text-sm font-bold text-red-800">Account Pending Approval</h3>
-                                    <p class="mt-1 text-sm text-red-700">
-                                        Your account application has not been approved yet. You cannot create posts until an administrator reviews and approves your application. Please check back later.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6 bg-white dark:bg-gray-950">
-                            <div class="grid grid-cols-6 gap-7">
-                                <!-- Board -->
-                                <div v-if="isEditingBoard && site.enableBoards" class="col-span-full">
-                                    <label for="board-selector" class="block text-sm font-bold">Board</label>
-                                    <InputsBoardSelector
-                                        id="board-selector"
-                                        :boards="allBoards"
-                                        :model-value="selectedBoard"
-                                        @board-selected="onBoardSelected"
-                                        placeholder="Search for a board to post to..."
-                                        class="mt-1"
-                                    />
-                                </div>
-                                <!-- Title -->
-                                <div class="col-span-full">
-                                    <label for="title" class="block text-sm font-bold text-gray-900 dark:text-white mb-2">Title</label>
-                                    <input type="text" name="title" id="title" placeholder="Pick an interesting title"
-                                        class="form-input gray text-base" v-model="title" required />
-                                </div>
-                                <!-- Link (feed posts only) -->
-                                <div v-if="!isThread" class="relative col-span-full">
-                                    <label for="link">
-                                        <span class="flex justify-between text-sm font-bold text-gray-900 dark:text-white mb-2">
-                                            Link
-                                        </span>
-                                        <input type="url" name="link" id="link" placeholder="https://youtube.com"
-                                            class="peer form-input gray text-base" v-model="url" :required="!body && !image"
-                                            @focus="hasFocusedUrl = true" />
-                                        <p class="absolute right-0 mt-1 peer-invalid:visible invisible text-red-600 text-sm"
-                                            :class="!body && !image && hasFocusedUrl
-                                                ? 'opacity-100'
-                                                : 'opacity-0 pointer-events-none'
-                                                ">
-                                            Please provide a valid URL.
-                                        </p>
-                                    </label>
-                                </div>
-                                <!-- Body -->
-                                <div class="relative col-span-full">
-                                    <label for="body" class="flex justify-between text-sm font-bold text-gray-900 dark:text-white mb-2">
-                                        Body
-                                        <em v-if="!isThread" class="text-gray-500 dark:text-gray-400 font-normal text-xs">
-                                            optional if you have a link or image
-                                        </em>
-                                        <em v-else class="text-red-600 dark:text-red-400 font-normal text-xs">
-                                            required
-                                        </em>
-                                    </label>
-                                    <!-- Rich text editor for all post types -->
-                                    <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
-                                        <LazyInputsTiptap
-                                            v-model="body"
-                                            :placeholder="isThread ? 'Start your discussion...' : 'Enter some words worth reading...'"
-                                            :board-id="boardId"
-                                            height="350px"
-                                        />
-                                    </div>
-                                </div>
-                                <!-- Media Preview (feed posts only) -->
-                                <div v-if="!isThread" class="col-span-full">
-                                    <label for="title" class="block text-sm font-bold text-gray-900 dark:text-white mb-3">Image or Video</label>
-                                    <div class="flex items-center">
-                                        <!-- Image preview -->
-                                        <img v-if="image && !isVideo" :src="image"
-                                            class="inline-block w-56 object-contain p-0.5 border bg-white mr-5"
-                                            @click="preview" />
-                                        <!-- Video preview -->
-                                        <video v-else-if="image && isVideo" :src="image" controls
-                                            class="inline-block w-56 object-contain p-0.5 border bg-white mr-5">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                        <div>
-                                            <label v-if="!image" for="media-upload"
-                                                class="inline-block button button-small gray cursor-pointer">
-                                                Pick image or video
-                                            </label>
-                                            <button v-else class="button gray" @click="clearMedia">
-                                                <span class="text-red-500">Remove {{ isVideo ? 'video' : 'image' }}</span>
-                                            </button>
-                                            <input id="media-upload" type="file" class="hidden"
-                                                accept="image/png, image/jpeg, image/gif, image/webp, video/mp4, video/webm, video/quicktime, video/3gpp, video/x-m4v, video/mpeg, video/ogg"
-                                                @change="onFileChange($event)" />
-                                            <small class="block mt-2 text-gray-400">
-                                                Images (PNG, JPG, GIF, WebP) up to 10MB
-                                                <br />
-                                                Videos (MP4, WebM, MOV, 3GP, M4V, MPEG, OGV) up to 100MB
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Options -->
-                                <div class="col-span-full">
-                                    <!-- NSFW Checkbox -->
-                                    <ul class="flex flex-col space-y-2">
-                                        <li class="flex">
-                                            <div class="flex h-5 items-center">
-                                                <input id="is_nsfw" name="is_nsfw" type="checkbox" v-model="isNsfw"
-                                                    class="h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary" />
-                                            </div>
-                                            <div class="ml-3 text-sm">
-                                                <label for="is_nsfw"
-                                                    class="font-bold text-red-700 select-none">NFSW</label>
-                                                <p class="text-gray-500">
-                                                    This post is for 18+
-                                                    audiences
-                                                </p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!-- Flair Selection -->
-                                <div v-if="hasFlairs" class="col-span-full">
-                                    <label class="block text-sm font-bold text-gray-900 dark:text-white mb-3">Post Flairs (Optional)</label>
-                                    <FlairSelectorInline
-                                        :board-id="boardId"
-                                        flair-type="post"
-                                        :max-flairs="5"
-                                        v-model="selectedFlairIds"
-                                        @flairs-loaded="hasFlairs = $event"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-900 shadow-inner-white border-t dark:border-gray-800 px-6 py-5">
-                            <button type="submit" class="button primary text-base px-8 py-3" :class="{ loading: isLoading }"
-                                :disabled="isLoading || isBlockedFromPosting">
-                                {{ isThread ? 'Create Thread' : 'Create Post' }}
-                            </button>
-                            <p v-if="isBlockedFromPosting" class="mt-3 text-sm text-red-600 dark:text-red-400">
-                                You cannot submit posts until your account is approved.
-                            </p>
-                        </div>
-                    </div>
-                </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fallback Header (when no board selected) -->
+    <div v-else class="bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
+      <div class="max-w-4xl mx-auto px-4 py-6">
+        <div class="flex items-center gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Create {{ isThread ? 'Thread' : 'Post' }}
+            </h1>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Share your thoughts with the community
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <form @submit.prevent="submit" class="space-y-4">
+
+        <!-- Board Selection -->
+        <div v-if="site.enableBoards" class="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+          <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Choose Board
+          </label>
+          <InputsBoardSelector
+            :boards="allBoards"
+            :model-value="selectedBoard"
+            @board-selected="onBoardSelected"
+            placeholder="Search for a board to post to..."
+          />
+        </div>
+
+        <!-- Combined Post Details -->
+        <div class="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+          <!-- Post Type Toggle -->
+          <div v-if="!isThread" class="mb-4">
+            <div class="flex items-center gap-4">
+              <label class="text-sm font-semibold text-gray-900 dark:text-white">
+                Post Type:
+              </label>
+              <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button
+                  type="button"
+                  :class="postType === 'text' ? 'bg-white dark:bg-gray-700 shadow-sm' : ''"
+                  class="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
+                  @click="postType = 'text'"
+                >
+                  Text
+                </button>
+                <button
+                  type="button"
+                  :class="postType === 'link' ? 'bg-white dark:bg-gray-700 shadow-sm' : ''"
+                  class="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
+                  @click="postType = 'link'"
+                >
+                  Link
+                </button>
+                <button
+                  type="button"
+                  :class="postType === 'media' ? 'bg-white dark:bg-gray-700 shadow-sm' : ''"
+                  class="px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
+                  @click="postType = 'media'"
+                >
+                  Image/Video
+                </button>
+              </div>
             </div>
-        </section>
-    </main>
+          </div>
+
+          <!-- Title and Media Upload -->
+          <div class="space-y-4">
+            <div>
+              <label for="title" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                Title *
+              </label>
+              <input
+                type="text"
+                id="title"
+                v-model="title"
+                placeholder="What's your post about?"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                required
+              />
+            </div>
+
+            <!-- Media Upload -->
+            <div v-if="postType === 'media' && !isThread">
+              <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                Image or Video (Optional)
+              </label>
+
+              <div v-if="image" class="mb-3">
+                <div class="relative inline-block">
+                  <img v-if="!isVideo" :src="image" class="max-w-xs rounded-lg border border-gray-200" />
+                  <video v-else :src="image" controls class="max-w-xs rounded-lg border border-gray-200">
+                    Your browser does not support video.
+                  </video>
+                  <button
+                    type="button"
+                    @click="clearMedia"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <div
+                v-else
+                class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center transition-colors"
+                :class="{ 'border-primary bg-primary/5': isDragOver }"
+                @dragover.prevent="handleDragOver"
+                @dragenter.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="handleDrop"
+              >
+                <label for="media-upload" class="cursor-pointer">
+                  <div class="text-gray-400 mb-2">
+                    <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                  </div>
+                  <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    {{ isDragOver ? 'Drop your file here' : 'Click to upload or drag and drop' }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    Images (PNG, JPG, GIF, WebP) up to 10MB<br>
+                    Videos (MP4, WebM, MOV) up to 100MB
+                  </p>
+                </label>
+              </div>
+
+              <input
+                id="media-upload"
+                type="file"
+                class="hidden"
+                accept="image/png, image/jpeg, image/gif, image/webp, video/mp4, video/webm, video/quicktime, video/3gpp, video/x-m4v, video/mpeg, video/ogg"
+                @change="handleMediaUpload"
+              />
+            </div>
+          </div>
+
+          <!-- Link Input (for link posts) -->
+          <div v-if="postType === 'link' && !isThread" class="mt-4">
+            <label for="link" class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              URL *
+            </label>
+            <input
+              type="url"
+              id="link"
+              v-model="url"
+              placeholder="https://example.com"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+              :required="postType === 'link'"
+            />
+          </div>
+
+          <!-- Flair Selection -->
+          <div v-if="hasFlairs && selectedBoard" class="mt-4">
+            <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              Post Flairs (Optional)
+            </label>
+            <FlairSelectorInline
+              :board-id="selectedBoard.id"
+              flair-type="post"
+              :max-flairs="5"
+              v-model="selectedFlairIds"
+              @flairs-loaded="hasFlairs = $event"
+            />
+          </div>
+
+          <!-- Post Options -->
+          <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center">
+              <input
+                id="is_nsfw"
+                type="checkbox"
+                v-model="isNsfw"
+                class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+              />
+              <label for="is_nsfw" class="ml-3">
+                <span class="text-sm font-medium text-red-600 dark:text-red-400">NSFW</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">(18+ content)</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Main Content Editor -->
+        <div class="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <!-- Editor container -->
+          <div class="editor-wrapper" style="height: 300px;">
+            <LazyInputsTiptap
+              v-model="body"
+              :placeholder="isThread ? 'Start your discussion...' : 'Add some context to your post...'"
+              :board-id="boardId"
+              class="editor-instance"
+            />
+          </div>
+        </div>
+
+
+        <!-- Submit Actions -->
+        <div class="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-gray-500 dark:text-gray-400">
+              By posting, you agree to our guidelines
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button type="button" class="button secondary" @click="$router.back()">
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="button primary px-6"
+                :disabled="!canSubmit"
+              >
+                {{ isThread ? 'Create Thread' : 'Create Post' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
 </template>
 
 <script lang="ts" setup>
 import { useSiteStore } from "@/stores/StoreSite";
 import { useLoggedInUser } from "@/stores/StoreAuth";
-
-const site = useSiteStore();
-const authStore = useLoggedInUser();
-
-definePageMeta({
-    alias: ["", "/:board?/submit"],
-    hasAuthRequired: true,
-    isDropzoneDisabled: true,
-    title: "Create Post",
-    key: (route) => route.fullPath,
-});
-
-import { ref, computed, nextTick, watch } from "vue";
+import { useBoardStore } from "@/stores/StoreBoard";
 import { useModalStore } from "@/stores/StoreModal";
 import { useToastStore } from "@/stores/StoreToast";
-import { dataURLtoFile } from "@/utils/files";
-import { useBoardStore } from "@/stores/StoreBoard";
-import { useGraphQLMutation } from '@/composables/useGraphQL';
-import { useGqlMultipart } from "@/composables/graphql_multipart";
-import { useEmojiSuggestions } from "@/composables/useEmojiSuggestions";
+import { useGraphQLMutation, useGraphQLQuery } from '@/composables/useGraphQL';
+import { useGqlMultipart } from '@/composables/graphql_multipart';
 import CardsSubmitBanner from "@/components/cards/SubmitBanner.vue";
 import InputsBoardSelector from "@/components/inputs/BoardSelector.vue";
 import FlairSelectorInline from "@/components/flair/selector/FlairSelectorInline.vue";
 
-const pageTitle = computed(() => selectedBoard.value?.name
-    ? `Submit to ${selectedBoard.value.name}`
-    : site.enableBoards
-        ? "Submit"
-        : `Submit to ${boardName.value}`
-);
-
-useHead({
-    title: pageTitle,
-});
-
+const site = useSiteStore();
+const authStore = useLoggedInUser();
+const boardStore = useBoardStore();
 const modal = useModalStore();
 const toast = useToastStore();
-const boardStore = useBoardStore();
-
 const router = useRouter();
 const route = useRoute();
 
-const isEditingBoard = ref(!boardStore.hasBoard);
+definePageMeta({
+    hasAuthRequired: true,
+    isDropzoneDisabled: true,
+    title: "Create Post",
+});
 
 // Fetch all boards for the dropdown
 const { data: allBoardsData } = await useGraphQLQuery(`
@@ -294,369 +322,311 @@ const defaultBoard = computed(() => defaultBoardData.value?.listBoards?.[0]);
 const allBoards = computed(() => allBoardsData.value?.listBoards || []);
 
 // Check if we're creating a thread
-const postType = route.query.type?.toString() || 'feed';
-const isThread = computed(() => postType === 'thread');
+const postTypeParam = route.query.type?.toString() || 'feed';
+const isThread = computed(() => postTypeParam === 'thread');
 
-// Fetch board data if we have a board from query parameter
-const queryBoard = route.query.board?.toString() || null;
-const { data: queryBoardData } = queryBoard ? await useGraphQLQuery(`
-  query GetBoardByName($name: String!) {
-    board(name: $name) {
-      id
-      name
-      title
-      description
-      icon
-      banner
-      primaryColor
-      secondaryColor
-      hoverColor
-    }
-  }
-`, { variables: { name: queryBoard } }) : { data: ref(null) };
+// Board selection logic
+const selectedBoard = computed(() => {
+    if (boardStore.hasBoard) return boardStore.board;
+    if (site.enableBoards && allBoards.value.length > 0) return allBoards.value[0];
+    return defaultBoard.value;
+});
 
-// Reactive selected board for dropdown and banner updates
-const selectedBoardForDropdown = ref(null);
-const selectedBoard = computed(() =>
-  selectedBoardForDropdown.value ||
-  queryBoardData.value?.board ||
-  (boardStore.hasBoard ? boardStore.board : defaultBoard.value)
-);
+const boardId = computed(() => selectedBoard.value?.id);
+const boardName = computed(() => selectedBoard.value?.name || 'General');
 
-// Using createPost mutation from GraphQL files
+// Form data
+const title = ref('')
+const body = ref('')
+const url = ref('')
+const image = ref('')
+const isVideo = ref(false)
+const uploadedFile = ref(null) // Store the actual file for upload
+const isNsfw = ref(false)
+const postType = ref('text') // 'text', 'link', 'media'
+const isDragOver = ref(false)
 
-// Initialize selectedBoardForDropdown based on initial state
-// Watch for when boards data becomes available
-watch(allBoards, (boards) => {
-  if (boards.length && !selectedBoardForDropdown.value) {
-    if (queryBoard) {
-      const initialBoard = boards.find(board => board.name === queryBoard);
-      if (initialBoard) {
-        selectedBoardForDropdown.value = initialBoard;
-      }
-    } else if (boardStore.hasBoard) {
-      const storeBoard = boards.find(board => board.name === boardStore.board.name);
-      if (storeBoard) {
-        selectedBoardForDropdown.value = storeBoard;
-      }
-    }
-  }
-}, { immediate: true });
-
-const boardName = computed(() => selectedBoard.value?.name || "general");
-
-// Handle board selection from dropdown
-const onBoardSelected = (board) => {
-  selectedBoardForDropdown.value = board;
-  // Update the URL without navigation to reflect the current board
-  if (board && board.name !== route.query.board) {
-    navigateTo({
-      path: route.path,
-      query: { ...route.query, board: board.name }
-    }, { replace: true });
-  }
-};
-const title = ref(route.query.title?.toString() || "");
-const url = ref(route.query.url?.toString() || "");
-const image: Ref<string | ArrayBuffer | null> = ref(null);
-const body: Ref<string | null> = ref(null);
+// Flair selection
 interface FlairSelection {
   templateId: number;
   customText?: string;
 }
-
-const isNsfw = ref(false);
-const isVideo = ref(false);
-const fileType = ref<string | null>(null);
 const selectedFlairIds = ref<FlairSelection[]>([]);
 const hasFlairs = ref(true); // Start with true to show section initially, will be updated by component
 
-let hasFocusedUrl = ref(false);
-let hasFocusedBody = ref(false);
+// Computed properties
+const canSubmit = computed(() => {
+  if (!title.value.trim()) return false
+  if (isThread.value && !body.value.trim()) return false
+  if (postType.value === 'link' && !url.value.trim()) return false
+  if (postType.value === 'media' && !image.value) return false
+  return true
+})
 
-// Board ID for TipTap editor
-const boardId = computed(() => selectedBoard.value?.id || null);
-
-// Check if user has a pending application that hasn't been approved
-// The backend logic: blocks if (is_application_accepted = false AND has_pending_application = true)
-// Old users (before application mode): is_application_accepted = false, has_pending_application = false = can post
-// New users with pending apps: is_application_accepted = false, has_pending_application = true = blocked
-const isBlockedFromPosting = computed(() => {
-    return authStore.isApplicationAccepted === false && authStore.hasPendingApplication === true;
-});
-
-// Set image and then destroy in storage.
-const setImage = () => {
-    if (process.client && typeof sessionStorage !== 'undefined') {
-        const storedImage = sessionStorage.getItem("image");
-        if (storedImage) {
-            image.value = storedImage;
-            sessionStorage.removeItem("image");
-        }
-    }
-};
-
-if (process.client) {
-    setImage();
-}
-
-// File input
-const onFileChange = (e: InputEvent) => {
-    const file = (e.target as HTMLInputElement).files![0];
-    if (!file) return;
-
-    const fileName = file.name.toLowerCase();
-    const fileSize = file.size;
-    fileType.value = file.type;
-
-    // Check if it's a video
-    const videoExtensions = /\.(mp4|webm|mov|3gp|m4v|mpeg|mpg|ogv|avi|mkv)$/i;
-    const isVideoFile = videoExtensions.test(fileName) || file.type.startsWith('video/');
-
-    // Check if it's an image
-    const imageExtensions = /\.(jpe?g|png|gif|webp)$/i;
-    const isImageFile = imageExtensions.test(fileName) || file.type.startsWith('image/');
-
+// Methods
+const handleMediaUpload = (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (file) {
     // Validate file type and size
-    if (isVideoFile) {
-        // Videos up to 100MB
-        if (fileSize > 100 * 1024 * 1024) {
-            toast.addNotification({
-                header: "File too large",
-                message: "Videos must be under 100MB.",
-                type: "error",
-            });
-            return;
-        }
-        isVideo.value = true;
-    } else if (isImageFile) {
-        // Images up to 10MB
-        if (fileSize > 10 * 1024 * 1024) {
-            toast.addNotification({
-                header: "File too large",
-                message: "Images must be under 10MB.",
-                type: "error",
-            });
-            return;
-        }
-        isVideo.value = false;
-    } else {
-        toast.addNotification({
-            header: "Wrong format",
-            message: "Please upload an image (PNG, JPG, GIF, WebP) or video (MP4, WebM, MOV, 3GP, M4V, MPEG, OGV).",
-            type: "error",
-        });
-        return;
+    const isImage = file.type.startsWith('image/')
+    const isVideoFile = file.type.startsWith('video/')
+
+    if (!isImage && !isVideoFile) {
+      toast.addNotification({
+        header: "Error",
+        message: "Please select a valid image or video file.",
+        type: "error"
+      });
+      return;
     }
 
-    // Read file
-    const reader = new FileReader();
-    reader.onloadend = () => {
-        image.value = reader.result;
-        if (process.client && typeof sessionStorage !== 'undefined') {
-            sessionStorage.removeItem("image");
-        }
-    };
-    reader.readAsDataURL(file);
-};
+    // Check file size limits
+    const maxImageSize = 10 * 1024 * 1024; // 10MB
+    const maxVideoSize = 100 * 1024 * 1024; // 100MB
 
-// Clear media
-const clearMedia = () => {
-    image.value = null;
-    isVideo.value = false;
-    fileType.value = null;
-};
-
-// Image preview
-const preview = () => {
-    if (!!image.value) {
-        modal.setModal({
-            modal: "ModalImage",
-            id: 1,
-            isOpen: true,
-            options: {
-                img: {
-                    src: image.value,
-                    alt: "No alt text available.",
-                },
-            },
-        });
-    } else {
-        if (process.dev) console.error("No image to preview.");
-    }
-};
-
-// Submit
-const authCookie = useCookie("token").value;
-
-const isLoading = ref(false);
-
-async function submit() {
-    // Check if user's application is approved (admins bypass this check)
-    if (isBlockedFromPosting.value) {
-        toast.addNotification({
-            header: 'Account Not Approved',
-            message: 'Your account application has not been approved yet. Please wait for an administrator to review your application.',
-            type: 'error'
-        });
-        return;
+    if (isImage && file.size > maxImageSize) {
+      toast.addNotification({
+        header: "Error",
+        message: "Image file size must be less than 10MB.",
+        type: "error"
+      });
+      return;
     }
 
-    isLoading.value = true;
-
-    try {
-        // Validate threads have body content
-        // TipTap returns HTML, so check if it's empty or just contains empty tags
-        const stripHtml = (html) => {
-            if (!html) return '';
-            return html.replace(/<[^>]*>/g, '').trim();
-        };
-
-        if (isThread.value) {
-            const strippedBody = stripHtml(body.value);
-
-            if (!body.value || strippedBody === '') {
-                toast.addNotification({
-                    header: 'Body required',
-                    message: 'Thread posts must have body content.',
-                    type: 'error'
-                });
-                isLoading.value = false;
-                return;
-            }
-        }
-
-        // Ensure board is always set - use current board name or default
-        const finalBoardName = boardName.value || defaultBoard.value?.name || "general";
-
-        const linkValue = (url.value && typeof url.value === 'string' && url.value.trim() !== '') ? url.value.trim() : null;
-
-        const variables = {
-            title: title.value,
-            board: finalBoardName && finalBoardName.trim() !== '' ? finalBoardName : null,
-            body: body.value && body.value.trim() !== '' ? body.value : null,
-            link: linkValue,
-            isNSFW: isNsfw.value || false,
-            altText: null,
-            file: null,
-            postType: isThread.value ? 'thread' : 'feed',
-            flairSelections: selectedFlairIds.value.length > 0 ? selectedFlairIds.value : null
-        };
-
-        const createPostQuery = `
-            mutation createPost(
-                $title: String!
-                $board: String
-                $body: String
-                $link: String
-                $isNSFW: Boolean
-                $altText: String
-                $file: Upload
-                $postType: String
-                $flairSelections: [PostFlairInput!]
-            ) {
-                createPost(
-                    title: $title
-                    board: $board
-                    body: $body
-                    link: $link
-                    isNSFW: $isNSFW
-                    altText: $altText
-                    file: $file
-                    postType: $postType
-                    flairSelections: $flairSelections
-                ) {
-                    id
-                    title
-                    titleChunk
-                    slug
-                    urlPath
-                    postType
-                }
-            }
-        `;
-
-        let post;
-
-        if (image.value) {
-            // Use multipart upload for files
-            const file = dataURLtoFile(image.value);
-            const result = await useGqlMultipart({
-                query: createPostQuery,
-                variables: { ...variables, file: file },
-                files: { file: file }
-            });
-
-            // Extract post from GraphQL response
-            post = result.data?.createPost || result.createPost;
-        } else {
-            // Use regular GraphQL for non-file posts
-            const { data, error } = await useGraphQLMutation(createPostQuery, {
-                variables
-            });
-
-            if (error.value) {
-                throw new Error(error.value.message || 'Failed to create post');
-            }
-
-            post = data.value?.createPost;
-        }
-
-        if (!post || !post.id) {
-            throw new Error('Invalid response from server');
-        }
-
-        // Successfully created - redirect immediately
-        // Use urlPath from backend if available (canonical URL)
-        let redirectPath;
-
-        if (post.urlPath) {
-            redirectPath = post.urlPath;
-        } else {
-            // Fallback to manual URL construction
-            const titleSlug = post.slug || post.titleChunk || 'post';
-
-            if (post.postType === 'thread') {
-                // Redirect to thread detail page
-                redirectPath = site.enableBoards
-                    ? `/b/${finalBoardName}/threads/${post.id}/${titleSlug}`
-                    : `/threads/${post.id}/${titleSlug}`;
-            } else {
-                // Redirect to feed post page
-                redirectPath = site.enableBoards
-                    ? `/b/${finalBoardName}/feed/${post.id}/${titleSlug}`
-                    : `/feed/${post.id}/${titleSlug}`;
-            }
-        }
-
-        await navigateTo(redirectPath);
-
-    } catch (e: any) {
-        if (process.dev) console.error("Error creating post:", e);
-        toast.addNotification({
-            header: "Failed to create post",
-            message: e.message || "An error occurred while creating the post. Please try again.",
-            type: "error",
-            isVisibleOnRouteChange: true,
-        });
-    } finally {
-        isLoading.value = false;
+    if (isVideoFile && file.size > maxVideoSize) {
+      toast.addNotification({
+        header: "Error",
+        message: "Video file size must be less than 100MB.",
+        type: "error"
+      });
+      return;
     }
+
+    // Create object URL for preview
+    const objectURL = URL.createObjectURL(file);
+    image.value = objectURL;
+    isVideo.value = isVideoFile;
+    uploadedFile.value = file; // Store the actual file for later upload
+  }
 }
 
-const links = [
-    //{ name: 'House Rules', href: '/help/rules', target: '_blank' },
-    {
-        name: "Formatting Guide",
-        href: "https://www.markdownguide.org/cheat-sheet/",
-        target: "_blank",
-        isExternal: true,
-    },
-];
+const clearMedia = () => {
+  // Clean up object URL to prevent memory leaks
+  if (image.value && image.value.startsWith('blob:')) {
+    URL.revokeObjectURL(image.value);
+  }
+  image.value = ''
+  isVideo.value = false
+  uploadedFile.value = null
+
+  // Clear the file input
+  const fileInput = document.getElementById('media-upload') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
+  }
+}
+
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault();
+  isDragOver.value = true;
+}
+
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault();
+  isDragOver.value = false;
+
+  const files = event.dataTransfer?.files;
+  if (files && files.length > 0) {
+    // Create a mock event to reuse the handleMediaUpload logic
+    const mockEvent = {
+      target: {
+        files: files
+      }
+    } as Event;
+    handleMediaUpload(mockEvent);
+  }
+}
+
+const onBoardSelected = (board: any) => {
+  boardStore.setBoard(board);
+}
+
+// Upload file to backend
+const uploadFile = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    // TODO: Replace with actual backend upload endpoint
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.url; // Assuming backend returns { url: "uploaded-file-url" }
+  } catch (error) {
+    console.error('File upload error:', error);
+    throw error;
+  }
+}
+
+const submit = async () => {
+  if (!canSubmit.value) return
+
+  try {
+    let finalUrl = url.value;
+
+    // For media posts, we'll send the file directly to the GraphQL mutation
+    // The backend handles the file upload internally
+
+    console.log('Submitting post:', {
+      title: title.value,
+      body: body.value,
+      url: finalUrl,
+      postType: isThread.value ? 'thread' : 'feed',
+      contentType: postType.value, // This is the frontend content type (text/link/media)
+      isNsfw: isNsfw.value,
+      boardId: boardId.value,
+      flairSelections: selectedFlairIds.value.length > 0 ? selectedFlairIds.value : null
+    });
+
+    // Create post using GraphQL multipart for file upload
+    const mutationQuery = `
+      mutation CreatePost(
+        $title: String!
+        $board: String
+        $body: String
+        $link: String
+        $isNSFW: Boolean
+        $postType: String
+        $file: Upload
+        $flairSelections: [PostFlairInput!]
+      ) {
+        createPost(
+          title: $title
+          board: $board
+          body: $body
+          link: $link
+          isNSFW: $isNSFW
+          postType: $postType
+          file: $file
+          flairSelections: $flairSelections
+        ) {
+          id
+          title
+          url
+          creationDate
+        }
+      }
+    `;
+
+    const variables = {
+      title: title.value,
+      board: selectedBoard.value?.name || null,
+      body: body.value || null,
+      link: finalUrl || null,
+      isNSFW: isNsfw.value,
+      postType: isThread.value ? 'thread' : 'feed',
+      flairSelections: selectedFlairIds.value.length > 0 ? selectedFlairIds.value : null
+    };
+
+    const files = uploadedFile.value ? { file: uploadedFile.value } : {};
+
+    // Add file to variables for GraphQL multipart spec
+    if (uploadedFile.value) {
+      variables.file = uploadedFile.value;
+    }
+
+    const result = await useGqlMultipart({
+      query: mutationQuery,
+      variables,
+      files
+    });
+
+    if (!result.data?.createPost) {
+      throw new Error('Failed to create post');
+    }
+
+    const data = { value: result.data };
+    const error = { value: null };
+
+    if (error.value) {
+      throw new Error(error.value.message || 'Failed to create post');
+    }
+
+    toast.addNotification({
+      header: "Success",
+      message: "Post created successfully!",
+      type: "success"
+    });
+
+    // Navigate back to the board or home
+    if (selectedBoard.value) {
+      router.push(`/b/${selectedBoard.value.name}`);
+    } else {
+      router.push('/');
+    }
+  } catch (error) {
+    console.error('Error creating post:', error);
+    toast.addNotification({
+      header: "Error",
+      message: "Failed to create post. Please try again.",
+      type: "error"
+    });
+  }
+}
+
+// Watch postType changes to reset fields
+watch(postType, (newType) => {
+  if (newType !== 'link') url.value = ''
+  if (newType !== 'media') {
+    clearMedia()
+  }
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  if (image.value && image.value.startsWith('blob:')) {
+    URL.revokeObjectURL(image.value);
+  }
+})
 </script>
 
 <style scoped>
-#post-body {
-    min-height: 8rem;
+/* Custom styles for the new design */
+.button {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.button.primary {
+  @apply bg-primary text-white hover:bg-primary-hover focus:ring-primary;
+}
+
+.button.secondary {
+  @apply bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600;
+}
+
+.button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* TipTap editor container sizing */
+.editor-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-instance {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

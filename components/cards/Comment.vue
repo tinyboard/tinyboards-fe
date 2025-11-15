@@ -43,7 +43,7 @@
                 <FlairDisplayUserFlair
                   v-if="comment.creator"
                   :user="comment.creator"
-                  :board-id="comment.board?.id"
+                  :board-id="comment.boardId || comment.board?.id"
                   :size="'xs'"
                   class="ml-1"
                 />

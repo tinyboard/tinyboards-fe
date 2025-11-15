@@ -508,13 +508,15 @@
                             Reply to thread
                         </h3>
                         <form @submit.prevent="submitComment" class="space-y-3">
-                            <LazyInputsTiptap
-                                v-model="commentBody"
-                                placeholder="Write your reply..."
-                                :board-id="board?.id"
-                                :disabled="submitting"
-                                height="200px"
-                            />
+                            <div style="height: 200px;" class="flex flex-col">
+                                <LazyInputsTiptap
+                                    v-model="commentBody"
+                                    placeholder="Write your reply..."
+                                    :board-id="board?.id"
+                                    :disabled="submitting"
+                                    class="flex-1"
+                                />
+                            </div>
                             <div class="flex justify-end">
                                 <button
                                     type="submit"

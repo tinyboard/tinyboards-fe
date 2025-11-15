@@ -43,7 +43,7 @@
               <FlairDisplayUserFlair
                 v-if="post.creator"
                 :user="post.creator"
-                :board-id="post.boardId"
+                :board-id="post.boardId || post.board?.id"
                 :size="'xs'"
                 class="ml-1"
               />
