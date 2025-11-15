@@ -162,7 +162,7 @@ try {
     });
 
     // Helper to check if URL is an image
-    const isImageUrl = (url: string) => {
+    const isImageUrl = (url) => {
       return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
     };
 
