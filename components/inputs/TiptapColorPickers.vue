@@ -17,8 +17,9 @@
     <!-- Highlight Color Picker -->
     <div class="relative highlight-color-picker-container">
       <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" :style="{ backgroundColor: editor.isActive('highlight') ? (editor.getAttributes('highlight').color || '#ffff00') : 'transparent' }" @click="showHighlightColorPicker = !showHighlightColorPicker" title="Highlight color">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none">
-          <path d="M9 11l3 3l8-8l-3-3l-8 8zM5 19l5-5" />
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          <path d="M19 3L5 17l2 2L21 5l-2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
         </svg>
       </button>
       <!-- Highlight Color Picker Popover -->

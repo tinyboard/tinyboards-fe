@@ -397,6 +397,9 @@
   import { TableHeader } from '@tiptap/extension-table-header';
   import { TaskList } from '@tiptap/extension-task-list';
   import { TaskItem } from '@tiptap/extension-task-item';
+  import { Underline } from '@tiptap/extension-underline';
+  import { Superscript } from '@tiptap/extension-superscript';
+  import { Subscript } from '@tiptap/extension-subscript';
   import { useEditor, EditorContent } from '@tiptap/vue-3';
   import StarterKit from '@tiptap/starter-kit';
   import { Extension } from '@tiptap/core';
@@ -412,6 +415,53 @@
   import { useToastStore } from '@/stores/StoreToast';
   import { useLoggedInUser } from '@/stores/StoreAuth';
   import { useGraphQLQuery } from '@/composables/useGraphQL';
+
+  // Custom Spoiler Extension
+  const Spoiler = Extension.create({
+    name: 'spoiler',
+
+    addOptions() {
+      return {
+        HTMLAttributes: {
+          class: 'spoiler'
+        }
+      }
+    },
+
+    parseHTML() {
+      return [
+        {
+          tag: 'span[data-spoiler]',
+        },
+        {
+          tag: 'span.spoiler',
+        }
+      ]
+    },
+
+    renderHTML({ HTMLAttributes }) {
+      return ['span', {
+        'data-spoiler': 'true',
+        class: 'spoiler cursor-pointer px-1 py-0.5 bg-gray-800 dark:bg-gray-600 text-gray-800 dark:text-gray-600 hover:text-white dark:hover:text-white transition-colors duration-200 rounded',
+        title: 'Click to reveal spoiler',
+        ...HTMLAttributes
+      }, 0]
+    },
+
+    addCommands() {
+      return {
+        toggleSpoiler: () => ({ commands }) => {
+          return commands.toggleMark(this.name)
+        }
+      }
+    },
+
+    addKeyboardShortcuts() {
+      return {
+        'Mod-Shift-s': () => this.editor.commands.toggleSpoiler(),
+      }
+    }
+  })
 
   const props = defineProps({
     modelValue: {
@@ -1366,6 +1416,10 @@
           }
         }
       }),
+      Color,
+      Highlight.configure({
+        multicolor: true
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -1522,6 +1576,10 @@
           };
         }
       }),
+      Underline,
+      Superscript,
+      Subscript,
+      Spoiler,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
         defaultAlignment: 'left',
@@ -1566,6 +1624,9 @@
 
       // Add image resize handler
       setupImageResize(editor);
+
+      // Add spoiler click handler
+      setupSpoilerHandlers(editor);
     },
     onUpdate: async ({ editor }) => {
       // Only emit when in rich text mode
@@ -1697,6 +1758,32 @@
     // Add event listener to editor element
     if (editor.view?.dom) {
       editor.view.dom.addEventListener('mousedown', handleMouseDown);
+    }
+  };
+
+  // Spoiler click functionality
+  const setupSpoilerHandlers = (editor) => {
+    const handleSpoilerClick = (event) => {
+      const spoilerElement = event.target.closest('.spoiler');
+      if (spoilerElement && spoilerElement.getAttribute('data-spoiler') === 'true') {
+        event.preventDefault();
+        event.stopPropagation();
+
+        // Toggle revealed state
+        spoilerElement.classList.toggle('revealed');
+
+        // Update the title attribute
+        if (spoilerElement.classList.contains('revealed')) {
+          spoilerElement.title = 'Click to hide spoiler';
+        } else {
+          spoilerElement.title = 'Click to reveal spoiler';
+        }
+      }
+    };
+
+    // Add click listener to editor
+    if (editor.view?.dom) {
+      editor.view.dom.addEventListener('click', handleSpoilerClick);
     }
   };
 
@@ -2456,6 +2543,31 @@
   color: #ffffff;
 }
 
+/* Nested ordered list styling - different numbering types by level */
+:deep(.ProseMirror ol) {
+  list-style-type: decimal; /* First level: 1, 2, 3... */
+}
+
+:deep(.ProseMirror ol ol) {
+  list-style-type: lower-alpha; /* Second level: a, b, c... */
+  margin-top: 0.25rem;
+}
+
+:deep(.ProseMirror ol ol ol) {
+  list-style-type: lower-roman; /* Third level: i, ii, iii... */
+  margin-top: 0.25rem;
+}
+
+:deep(.ProseMirror ol ol ol ol) {
+  list-style-type: decimal; /* Fourth level: back to numbers */
+  margin-top: 0.25rem;
+}
+
+:deep(.ProseMirror ol ol ol ol ol) {
+  list-style-type: lower-alpha; /* Fifth level: back to letters */
+  margin-top: 0.25rem;
+}
+
 /* Blockquotes */
 :deep(.ProseMirror blockquote) {
   @apply border-l-4 pl-4 py-2 my-4 italic text-gray-700 dark:text-gray-300;
@@ -2708,6 +2820,34 @@
   display: inline-block !important;
   width: 1.5em !important;
   height: 1.5em !important;
+}
+
+/* Spoiler text styling */
+:deep(.ProseMirror .spoiler) {
+  @apply cursor-pointer px-1 py-0.5 bg-gray-800 dark:bg-gray-600 text-gray-800 dark:text-gray-600 hover:text-white dark:hover:text-white transition-colors duration-200 rounded;
+}
+
+:deep(.ProseMirror .spoiler:hover) {
+  @apply bg-gray-600 dark:bg-gray-400;
+}
+
+/* Spoiler text revealed state - when clicked or hovered */
+:deep(.ProseMirror .spoiler.revealed),
+:deep(.spoiler.revealed) {
+  @apply bg-transparent text-current;
+}
+
+/* Superscript and subscript styling */
+:deep(.ProseMirror sup) {
+  @apply text-xs;
+  vertical-align: super;
+  line-height: 0;
+}
+
+:deep(.ProseMirror sub) {
+  @apply text-xs;
+  vertical-align: sub;
+  line-height: 0;
 }
 
 </style>
