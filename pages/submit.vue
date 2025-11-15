@@ -58,6 +58,13 @@
             @board-selected="onBoardSelected"
             placeholder="Search for a board to post to..."
           />
+
+          <!-- Board validation message -->
+          <div v-if="boardValidationMessage" class="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-sm text-red-700 dark:text-red-300">
+              {{ boardValidationMessage }}
+            </p>
+          </div>
         </div>
 
         <!-- Combined Post Details -->
@@ -298,6 +305,8 @@ const { data: allBoardsData } = await useGraphQLQuery(`
       primaryColor
       secondaryColor
       hoverColor
+      hasThreads
+      hasFeed
     }
   }
 `);
@@ -314,6 +323,8 @@ const { data: defaultBoardData } = await useGraphQLQuery(`
       primaryColor
       secondaryColor
       hoverColor
+      hasThreads
+      hasFeed
     }
   }
 `);
@@ -327,8 +338,22 @@ const isThread = computed(() => postTypeParam === 'thread');
 
 // Board selection logic
 const selectedBoard = computed(() => {
+    // First, check for board parameter in URL
+    const boardParam = route.query.board?.toString();
+    if (boardParam && allBoards.value.length > 0) {
+        const boardFromUrl = allBoards.value.find(b => b.name === boardParam);
+        if (boardFromUrl) {
+            return boardFromUrl;
+        }
+    }
+
+    // Fallback to store if available
     if (boardStore.hasBoard) return boardStore.board;
+
+    // Default to first board if boards are enabled and available
     if (site.enableBoards && allBoards.value.length > 0) return allBoards.value[0];
+
+    // Final fallback to default board
     return defaultBoard.value;
 });
 
@@ -360,7 +385,29 @@ const canSubmit = computed(() => {
   if (isThread.value && !body.value.trim()) return false
   if (postType.value === 'link' && !url.value.trim()) return false
   if (postType.value === 'media' && !image.value) return false
+
+  // Validate board capabilities
+  if (selectedBoard.value) {
+    if (isThread.value && !selectedBoard.value.hasThreads) return false
+    if (!isThread.value && !selectedBoard.value.hasFeed) return false
+  }
+
   return true
+})
+
+// Show validation messages for board capabilities
+const boardValidationMessage = computed(() => {
+  if (!selectedBoard.value) return null
+
+  if (isThread.value && !selectedBoard.value.hasThreads) {
+    return `Thread posts are not enabled for /b/${selectedBoard.value.name}. Please select a different board.`
+  }
+
+  if (!isThread.value && !selectedBoard.value.hasFeed) {
+    return `Feed posts are not enabled for /b/${selectedBoard.value.name}. Please select a different board.`
+  }
+
+  return null
 })
 
 // Methods
