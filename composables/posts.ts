@@ -266,6 +266,7 @@ export async function getModQueue(query: any, type_: string) {
               adminLevel
               flairs {
                 id
+                boardId
                 templateId
                 textDisplay
                 backgroundColor
@@ -316,6 +317,7 @@ export async function getModQueue(query: any, type_: string) {
               adminLevel
               flairs {
                 id
+                boardId
                 templateId
                 textDisplay
                 backgroundColor

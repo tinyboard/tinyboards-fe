@@ -22,6 +22,7 @@ export async function usePostComments(id, query = {}) {
           adminLevel
           flairs {
             id
+            boardId
             templateId
             textDisplay
             backgroundColor
@@ -108,6 +109,7 @@ export async function useComments(id, type = "post", query = {}, post_id) {
           adminLevel
           flairs {
             id
+            boardId
             templateId
             textDisplay
             backgroundColor
