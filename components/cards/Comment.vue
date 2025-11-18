@@ -45,7 +45,7 @@
                   :user="comment.creator"
                   :board-id="comment.boardId || comment.board?.id"
                   :size="'xs'"
-                  class="ml-1"
+                  class="ml-1 hidden sm:block"
                 />
                 <!-- Role -->
                 <svg v-if="comment.creator?.isAdmin" xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 ml-1 text-red-600" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" title="Admin">

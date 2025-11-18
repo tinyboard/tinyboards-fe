@@ -16,11 +16,9 @@
     </div>
     <!-- Highlight Color Picker -->
     <div class="relative highlight-color-picker-container">
-      <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" :style="{ backgroundColor: editor.isActive('highlight') ? (editor.getAttributes('highlight').color || '#ffff00') : 'transparent' }" @click="showHighlightColorPicker = !showHighlightColorPicker" title="Highlight color">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
-          <path d="M19 3L5 17l2 2L21 5l-2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
-        </svg>
+      <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" @click="showHighlightColorPicker = !showHighlightColorPicker" title="Highlight color">
+        A
+        <span class="absolute bottom-1 left-1 right-1 h-1 rounded" :style="{ backgroundColor: editor.isActive('highlight') ? (editor.getAttributes('highlight').color || '#ffff00') : '#ffff00', opacity: editor.isActive('highlight') ? '1' : '0.5' }"></span>
       </button>
       <!-- Highlight Color Picker Popover -->
       <div v-if="showHighlightColorPicker" class="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 z-[200] w-64">

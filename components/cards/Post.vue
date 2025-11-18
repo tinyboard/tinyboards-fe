@@ -3,7 +3,7 @@
     { 'first:sm:rounded-t-md last:sm:rounded-b-md': isCompact },
     status,
   ]">
-    <div class="relative flex-grow p-2.5 sm:p-4 shadow-inner-white hover:bg-gray-50 card" :class="[
+    <div class="relative flex-grow p-3 sm:p-4 shadow-inner-white hover:bg-gray-50 card" :class="[
       isCompact
         ? 'flex border-inherit'
         : 'border-y sm:border-x sm:rounded dark:border-gray-800',
@@ -21,9 +21,9 @@
       </div>
       <div class="w-full min-w-0" :class="{ 'sm:w-3/6': isCompact && !isExpanded, 'sm:ml-4': isCompact }">
         <!-- Author & Post Meta -->
-        <div v-if="post.creator" scope="row" class="z-10 relative flex items-center text-gray-900 dark:text-white min-w-0">
+        <div v-if="post.creator" scope="row" class="z-10 relative flex items-center text-gray-900 dark:text-white min-w-0 mb-2 sm:mb-1">
           <div class="flex flex-col flex-shrink-0 sm:truncate min-w-0">
-            <p class="flex items-center font-normal text-sm text-gray-400 leading-normal overflow-hidden min-w-0 flex-wrap">
+            <p class="flex items-center font-normal text-sm text-gray-400 leading-normal overflow-hidden min-w-0 flex-wrap gap-y-1">
               <NuxtLink :to="`/@${post.creator?.name}${post.creator?.instance ? '@' + post.creator.instance : ''}`"
                 class="flex items-center">
                 <!-- Avatar (mobile only) -->
@@ -179,9 +179,9 @@
           </div>
         </div>
         <!-- Post Title & Content -->
-        <div class="mt-2.5 min-w-0" :class="{ 'sm:mt-0': isCompact }">
+        <div class="mt-3 min-w-0" :class="{ 'sm:mt-0': isCompact }">
           <div class="flex flex-wrap items-center gap-2 min-w-0">
-            <NuxtLink class="z-10 relative sm:text-lg break-words min-w-0" :class="titleStyle"
+            <NuxtLink class="z-10 relative text-base sm:text-lg break-words min-w-0" :class="titleStyle"
               :to="postUrl">
               {{ post.title }}
             </NuxtLink>
@@ -197,9 +197,9 @@
           </div>
 
           <!-- Media Preview Section (independent of bodyHTML) -->
-          <div v-if="!isCompact || isExpanded" class="mt-2">
+          <div v-if="!isCompact || isExpanded" class="mt-3 sm:mt-2">
             <!-- Post Image -->
-            <div v-if="(hasImage && !!post.url) || (hasUploadedImage && !!post.image)" class="mt-2.5 md:mt-4 relative">
+            <div v-if="(hasImage && !!post.url) || (hasUploadedImage && !!post.image)" class="mt-3 md:mt-4 relative">
               <span class="inline-block p-2.5 bg-white border shadow-polaroid">
                 <img
                   loading="lazy"

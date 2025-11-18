@@ -4,7 +4,7 @@
         <section class="flex-col flex">
             <NavigationNavbarSub
                 :links="links"
-                class="sm:order-first"
+                class="sm:order-first hidden sm:block"
             />
             <div
                 class="order-first sm:order-last container mx-auto max-w-8xl grid grid-cols-12 sm:mt-8 sm:px-4 md:px-6"
@@ -13,7 +13,7 @@
                     v-if="shouldShowBoardBanner"
                     :board="board"
                     :key="board?.id"
-                    class="col-span-full"
+                    class="col-span-full hidden sm:block"
                 />
             </div>
         </section>

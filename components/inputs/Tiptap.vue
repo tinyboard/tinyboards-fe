@@ -34,21 +34,21 @@
         </div>
 
         <!-- Unified Bottom Right Controls (Always Visible) -->
-        <div class="absolute bottom-3 right-3 flex items-center gap-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-1.5 shadow-sm z-[999]">
+        <div class="absolute bottom-3 right-3 flex items-center gap-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-2 shadow-sm z-[999]">
           <!-- Mode Switch Button -->
           <button
             type="button"
             @click="toggleMode"
-            class="p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+            class="p-2.5 sm:p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 min-w-[44px] min-h-[44px] sm:min-w-auto sm:min-h-auto flex items-center justify-center"
             :title="`Switch to ${isRichTextMode ? 'Markdown' : 'Rich Text'} mode`"
           >
             <!-- Rich Text Icon (Clean Aa) -->
-            <div v-if="!isRichTextMode" class="w-4 h-4 flex items-center justify-center font-sans">
-              <span class="text-sm font-bold leading-none">A</span>
-              <span class="text-xs leading-none">a</span>
+            <div v-if="!isRichTextMode" class="w-5 h-5 sm:w-4 sm:h-4 flex items-center justify-center font-sans">
+              <span class="text-base sm:text-sm font-bold leading-none">A</span>
+              <span class="text-sm sm:text-xs leading-none">a</span>
             </div>
             <!-- Markdown Icon (hash symbol) -->
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="4" y1="9" x2="20" y2="9"/>
               <line x1="4" y1="15" x2="20" y2="15"/>
               <line x1="10" y1="3" x2="8" y2="21"/>
@@ -61,11 +61,11 @@
             v-if="!isRichTextMode"
             type="button"
             @click="togglePreview"
-            class="p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+            class="p-2.5 sm:p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 min-w-[44px] min-h-[44px] sm:min-w-auto sm:min-h-auto flex items-center justify-center"
             :class="{ 'bg-primary/20 text-primary': showPreview }"
             title="Toggle Preview"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="m1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
@@ -75,11 +75,11 @@
           <button
             type="button"
             @click="showFormattingGuide = !showFormattingGuide"
-            class="p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+            class="p-2.5 sm:p-2 rounded-md transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 min-w-[44px] min-h-[44px] sm:min-w-auto sm:min-h-auto flex items-center justify-center"
             :class="{ 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300': showFormattingGuide }"
             title="Formatting Guide"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
               <path d="M8 7h8"/>
