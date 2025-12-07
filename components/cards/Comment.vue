@@ -8,26 +8,26 @@
       <div v-show="isCollapsed" class="absolute w-full h-full inset z-20 cursor-pointer"
         @click="isCollapsed = !isCollapsed"></div>
       <!-- Comment -->
-      <div class="relative flex flex-col flex-shrink-0 comments-center mr-2">
+      <div class="relative flex flex-col flex-shrink-0 items-center mr-3 sm:mr-2">
         <!-- User Avatar -->
         <!-- Avatar for deleted comment - show placeholder -->
         <div v-if="comment.isDeleted" class="z-10">
-          <CardsAvatar :src="null" alt="avatar" size="xs" class="md:!w-9 md:!h-9" />
+          <CardsAvatar :src="null" alt="avatar" size="xs" class="w-8 h-8 sm:w-9 sm:h-9" />
         </div>
         <!-- Avatar for normal comment -->
         <NuxtLink v-else-if="comment.creator"
           :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
           class="z-10">
-          <CardsAvatar :src="comment.creator?.avatar" alt="avatar" size="xs" class="md:!w-9 md:!h-9" />
+          <CardsAvatar :src="comment.creator?.avatar" alt="avatar" size="xs" class="w-8 h-8 sm:w-9 sm:h-9" />
         </NuxtLink>
         <!-- Comment Collapse Bar -->
         <div class="comment-collapse-bar dark:opacity-30 dark:hover:opacity-100" @click="isCollapsed = !isCollapsed"
           v-show="!isCollapsed"></div>
       </div>
       <!-- User Details -->
-      <div class="flex-grow" :class="{ 'flex comments-center': isCollapsed }">
-        <div :class="{ 'flex flex-grow comments-center leading-none': isCollapsed }">
-          <div class="flex comments-center min-h-[24px] sm:min-h-[36px] items-center">
+      <div class="flex-grow min-w-0" :class="{ 'flex items-center': isCollapsed }">
+        <div :class="{ 'flex flex-grow items-center leading-none': isCollapsed }">
+          <div class="flex items-center min-h-[32px] sm:min-h-[36px] py-1">
             <div class="inline-flex flex-wrap space-x-2 text-sm text-gray-500 dark:text-gray-400">
               <!-- Deleted comment - show [deleted] instead of author -->
               <span v-if="comment.isDeleted" class="flex comments-center text-sm text-gray-400 italic">
@@ -36,7 +36,7 @@
               <!-- Normal comment - show author info -->
               <NuxtLink v-else-if="comment.creator"
                 :to="`/@${comment.creator?.name}${comment.creator?.instance ? '@' + comment.creator.instance : ''}`"
-                class="flex comments-center text-sm">
+                class="flex items-center text-sm hover:text-primary transition-colors">
                 <strong>{{ comment.creator?.displayName ?? comment.creator?.name }}</strong>
                 <span v-if="comment.creator?.instance">@{{ comment.creator.instance }}</span>
                 <!-- User Flair -->

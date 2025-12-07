@@ -93,7 +93,7 @@
 
 			<!-- Timestamp and actions -->
 			<div class="mt-1 flex items-center text-sm text-gray-500 space-x-1">
-				<span>{{ formatDate(notification.creationDate) }}</span>
+				<span>{{ formatDate(notification.createdAt) }}</span>
 				<span class="font-black text-gray-400">·</span>
 				<NuxtLink v-if="postLink" :to="postLink" class="text-primary hover:underline">
 					View
@@ -125,7 +125,7 @@ interface NotificationCreator {
 interface NotificationComment {
 	id: number;
 	body: string;
-	creationDate: string;
+	createdAt: string;
 	creator: NotificationCreator;
 	post: {
 		id: number;
@@ -158,8 +158,8 @@ interface Notification {
 	id: number;
 	type: string;
 	isRead: boolean;
-	creationDate: string;
-	updated?: string;
+	createdAt: string;
+	updatedAt?: string;
 	comment?: NotificationComment;
 	post?: NotificationPost;
 }

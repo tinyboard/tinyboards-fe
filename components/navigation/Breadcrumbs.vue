@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="breadcrumbs.length > 0" aria-label="Breadcrumb" class="text-sm text-gray-600 dark:text-gray-400">
+  <nav v-if="breadcrumbs.length > 0" aria-label="Breadcrumb" class="hidden sm:block text-sm text-gray-600 dark:text-gray-400">
     <ol class="flex items-center space-x-2">
       <li v-for="(crumb, index) in breadcrumbs" :key="index" class="flex items-center">
         <NuxtLink

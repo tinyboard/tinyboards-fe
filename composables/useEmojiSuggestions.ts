@@ -257,11 +257,24 @@ export const useEmojiSuggestions = (boardId?: number) => {
         left: rect.left + cursorX
       }
     } else {
-      // For TipTap, the element is already positioned at cursor coordinates (viewport coords)
-      position.value = {
+      // For TipTap, the element coordinates are already viewport coordinates
+      // Add scroll position to convert to page coordinates for fixed positioning
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+      const calculatedPosition = {
         top: rect.bottom + 5, // Position just below cursor
         left: rect.left
-      }
+      };
+
+      console.log('Emoji composable - TipTap mode positioning:', {
+        rect,
+        calculatedPosition,
+        scrollTop,
+        scrollLeft
+      });
+
+      position.value = calculatedPosition;
     }
 
     // Search for emojis with the current query

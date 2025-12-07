@@ -74,15 +74,15 @@ const unreadCount = ref(0);
 const typeParam = route.params?.type || 'replies';
 const type = ref(typeParam);
 
-// Determine filter values based on type
-const unreadOnlyValue = typeParam === 'unread' ? true : null;
+// Determine filter values based on type (make reactive)
+const unreadOnly = computed(() => typeParam === 'unread' ? true : null);
 
 // Map frontend route params to backend consolidated filter values
 // replies -> "replies" (backend expands to comment_reply,post_reply)
 // mentions -> "mention"
 // activity -> "activity" (backend expands to board_invite,moderator_action,system_notification)
 // unread -> null (shows all types, just filters by unread status)
-const kindFilterValue = (() => {
+const kindFilterValue = computed(() => {
 	if (typeParam === 'unread' || typeParam === 'replies') {
 		return typeParam === 'replies' ? 'replies' : null;
 	}
@@ -93,7 +93,7 @@ const kindFilterValue = (() => {
 		return 'activity';
 	}
 	return null;
-})();
+});
 
 const { data, pending, error, refresh } = await useGraphQLQuery(`
 	query getNotifications($unreadOnly: Boolean, $kindFilter: String, $limit: Int!, $page: Int!) {
@@ -101,13 +101,13 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 			id
 			isRead
 			type
-			creationDate
-			updated
+			createdAt
+			updatedAt
 			comment {
 				id
 				body
 				bodyHTML
-				creationDate
+				createdAt
 				creator {
 					id
 					name
@@ -209,10 +209,10 @@ const { data, pending, error, refresh } = await useGraphQLQuery(`
 	}
 `, {
 	variables: {
-		unreadOnly: unreadOnlyValue,
+		unreadOnly: unreadOnly,
 		kindFilter: kindFilterValue,
-		limit: limit.value,
-		page: page.value
+		limit: limit,
+		page: page
 	}
 });
 

@@ -1,7 +1,7 @@
 <template>
 	<nav v-if="v" id="header" class="z-50 fixed w-full bg-primary dark:bg-gray-96 sm:dark:border-b dark:border-white/10">
-		<div class="mx-auto max-w-8xl px-2.5 sm:px-6">
-			<div class="flex items-center justify-between h-12 sm:h-14">
+		<div class="mx-auto max-w-8xl px-3 sm:px-6">
+			<div class="flex items-center justify-between h-14">
 				<div class="flex flex-grow items-center">
 					<div class="relative flex-shrink-0">
 						<!-- Logo & Name -->
@@ -135,10 +135,10 @@
 						<MenusProfile :user="v" :unread="unread" />
 					</div>
 				</div>
-				<div class="-mr-1 flex space-x-2 md:hidden">
+				<div class="flex items-center space-x-1 md:hidden">
 					<!-- Admin Tools Link -->
 					<NuxtLink v-if="v.adminLevel > 0" to="/admin"
-						class="inline-flex items-center justify-center p-1 text-white"
+						class="flex items-center justify-center w-10 h-10 text-white hover:bg-white/10 rounded-md transition-colors"
 						aria-label="View admin tools">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -149,7 +149,9 @@
 						</svg>
 					</NuxtLink>
 					<!-- Create Post Link -->
-					<NuxtLink class="inline-flex items-center justify-center p-1 text-white" to="/submit" aria-label="Create post">
+					<NuxtLink to="/submit"
+						class="flex items-center justify-center w-10 h-10 text-white hover:bg-white/10 rounded-md transition-colors"
+						aria-label="Create post">
 						<!-- Pencil Icon -->
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -159,22 +161,22 @@
 						</svg>
 					</NuxtLink>
 					<!-- Inbox Link -->
-					<NuxtLink to="/inbox" class="inline-flex items-center justify-center p-1 text-white" aria-label="View inbox">
+					<NuxtLink to="/inbox"
+						class="relative flex items-center justify-center w-10 h-10 text-white hover:bg-white/10 rounded-md transition-colors"
+						aria-label="View inbox">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
 							stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 							<rect x="4" y="4" width="16" height="16" rx="2"></rect>
 							<path d="M4 13h3l3 3h4l3 -3h3"></path>
 						</svg>
-						<span v-if="unread > 0" class="absolute" style="top: 1px; right: 1px">
-							<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-								class="w-3 h-3 text-white border-2 border-primary">
-								<circle cx="100" cy="100" r="100" />
-							</svg>
+						<span v-if="unread > 0"
+							class="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold text-primary bg-white rounded-full">
+							{{ unread < 99 ? unread : '99+' }}
 						</span>
 					</NuxtLink>
 					<!-- Mobile Menu Button -->
-					<button class="inline-flex items-center justify-center p-1 text-white" @click="toggleDrawer">
+					<button class="flex items-center justify-center w-10 h-10 text-white hover:bg-white/10 rounded-md transition-colors" @click="toggleDrawer">
 						<span class="sr-only">Open main menu</span>
 						<!-- Menu Icon -->
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
@@ -196,24 +198,23 @@
 			</div>
 		</transition>
 		<aside
-			class="transform top-0 right-0 w-5/6 bg-white dark:bg-gray-800 fixed h-full py-3 overflow-y-auto ease-in-out transition-all duration-200 z-75"
+			class="transform top-0 right-0 w-80 max-w-[85vw] bg-white dark:bg-gray-800 fixed h-full overflow-y-auto ease-in-out transition-all duration-200 z-75"
 			:class="isOpen ? 'translate-x-0' : 'translate-x-full'">
-			<div class="absolute top-3 left-3">
-				<button class="inline-flex items-center justify-center p-1 text-gray-700 dark:text-gray-400"
+			<div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+				<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Menu</h2>
+				<button class="flex items-center justify-center w-8 h-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
 					@click="toggleDrawer">
 					<span class="sr-only">Close menu</span>
-					<!-- Arrow Left Icon -->
-					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2"
-						stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-						<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-						<line x1="5" y1="12" x2="19" y2="12"></line>
-						<line x1="5" y1="12" x2="9" y2="16"></line>
-						<line x1="5" y1="12" x2="9" y2="8"></line>
+					<!-- X Icon -->
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
 					</svg>
 				</button>
 			</div>
 			<!-- Mobile Search -->
-			<form class="group relative mx-4 mt-10 mb-4" @submit.prevent="search(); toggleDrawer();">
+			<form class="group relative mx-4 mt-4 mb-4" @submit.prevent="search(); toggleDrawer();">
 				<div class="absolute" style="top: 9px; left: 0.625rem;">
 					<button class="text-gray-300" type="submit">
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"

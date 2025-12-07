@@ -3,22 +3,22 @@
         id="header"
         class="fixed w-full bg-primary dark:bg-gray-900 dark:border-gray-800 z-50"
     >
-        <div class="mx-auto max-w-8xl px-2.5 sm:px-6">
-            <div class="flex items-center justify-between h-12 sm:h-14">
-                <div class="flex flex-grow items-center">
+        <div class="mx-auto max-w-8xl px-3 sm:px-6">
+            <div class="flex items-center justify-between h-14">
+                <div class="flex items-center min-w-0 flex-1">
                     <div class="relative flex-shrink-0">
                         <NuxtLink
                             to="/home"
-                            class="font-bold text-lg text-white dark:text-gray-100"
+                            class="flex items-center font-bold text-base sm:text-lg text-white dark:text-gray-100"
                         >
                             <img
                                 :src="site.icon"
-                                class="inline-block mr-2 max-w-[32px] max-h-[32px]"
+                                class="w-7 h-7 sm:w-8 sm:h-8 mr-2 flex-shrink-0"
                             />
-                            <span>{{ site.name }}</span>
+                            <span class="truncate">{{ site.name }}</span>
                         </NuxtLink>
                         <span
-                            class="absolute -right-7 bottom-0 flashing-text font-mono"
+                            class="absolute -right-7 bottom-0 flashing-text font-mono text-xs hidden sm:block"
                         >
                             {{ selectedText }}
                         </span>
@@ -40,17 +40,17 @@
                         Log in
                     </NuxtLink>
                 </div>
-                <div class="-mr-1 flex space-x-2 md:hidden">
+                <div class="flex items-center md:hidden">
                     <!-- Mobile menu button -->
                     <button
-                        class="inline-flex items-center justify-center p-1 text-white"
+                        class="flex items-center justify-center w-10 h-10 text-white hover:bg-white/10 rounded-md transition-colors"
                         @click="toggleDrawer"
                     >
                         <span class="sr-only">Open main menu</span>
                         <!-- Menu Icon -->
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="w-5 h-5"
+                            class="w-6 h-6"
                             viewBox="0 0 24 24"
                             stroke-width="2"
                             stroke="currentColor"
@@ -86,38 +86,25 @@
                     ></div>
                 </transition>
                 <aside
-                    class="transform top-0 right-0 w-5/6 bg-white dark:bg-gray-800 fixed h-full py-3 overflow-y-auto ease-in-out transition-all duration-200 z-75"
+                    class="transform top-0 right-0 w-80 max-w-[85vw] bg-white dark:bg-gray-800 fixed h-full overflow-y-auto ease-in-out transition-all duration-200 z-75"
                     :class="isOpen ? 'translate-x-0' : 'translate-x-full'"
                 >
-                    <div class="absolute top-3 left-3">
+                    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Menu</h2>
                         <button
-                            class="inline-flex items-center justify-center p-1 text-gray-700 dark:text-gray-400"
+                            class="flex items-center justify-center w-8 h-8 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                             @click="toggleDrawer"
                         >
                             <span class="sr-only">Close menu</span>
-                            <!-- Arrow Left Icon -->
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    stroke="none"
-                                    d="M0 0h24v24H0z"
-                                    fill="none"
-                                ></path>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <line x1="5" y1="12" x2="9" y2="16"></line>
-                                <line x1="5" y1="12" x2="9" y2="8"></line>
+                            <!-- X Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
                             </svg>
                         </button>
                     </div>
-                    <div class="flex flex-col items-center mt-8 px-4 py-2">
+                    <div class="flex flex-col gap-3 p-4">
                         <NuxtLink to="/register" class="button primary w-full">
                             Sign up
                         </NuxtLink>
@@ -125,9 +112,10 @@
                             Log in
                         </NuxtLink>
                     </div>
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4"></div>
                     <NuxtLink
                         to="/help/faq"
-                        class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200"
+                        class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                         @click="isOpen = false"
                     >
                         <svg
@@ -155,7 +143,7 @@
                     </NuxtLink>
                     <NuxtLink
                         to="/help/rules"
-                        class="flex items-center px-4 py-2 text-gray-700 dark:text-gray-200"
+                        class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                         @click="isOpen = false"
                     >
                         <svg
