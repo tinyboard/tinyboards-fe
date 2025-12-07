@@ -2,38 +2,118 @@
   <div class="flex items-center gap-0.5 px-1.5 py-1 bg-gray-100 dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600">
     <!-- Text Color Picker -->
     <div class="relative text-color-picker-container">
-      <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" :style="{ color: editor.getAttributes('textStyle').color || '#000000' }" @click="showTextColorPicker = !showTextColorPicker" title="Text color">
+      <button ref="textColorButton" type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" :style="{ color: editor.getAttributes('textStyle').color || '#000000' }" @click="toggleTextColorPicker" title="Text color">
         A
         <span class="absolute bottom-1 left-1 right-1 h-0.5 rounded" :style="{ backgroundColor: editor.getAttributes('textStyle').color || '#000000' }"></span>
       </button>
-      <!-- Color Picker Popover -->
-      <div v-if="showTextColorPicker" class="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 z-[200] w-64">
-        <div class="grid grid-cols-8 gap-1 mb-2">
-          <button v-for="color in textColors" :key="color" type="button" class="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform" :style="`background-color: ${color}`" @click="setTextColor(color)"></button>
-        </div>
-        <input type="color" v-model="customTextColor" @change="setTextColor(customTextColor)" class="w-full h-8 border border-gray-300 dark:border-gray-600 rounded">
-      </div>
     </div>
     <!-- Highlight Color Picker -->
     <div class="relative highlight-color-picker-container">
-      <button type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" @click="showHighlightColorPicker = !showHighlightColorPicker" title="Highlight color">
+      <button ref="highlightColorButton" type="button" class="w-8 h-8 flex items-center justify-center rounded hover:bg-white dark:hover:bg-gray-600 text-xs font-bold relative transition-colors" @click="toggleHighlightColorPicker" title="Highlight color">
         A
         <span class="absolute bottom-1 left-1 right-1 h-1 rounded" :style="{ backgroundColor: editor.isActive('highlight') ? (editor.getAttributes('highlight').color || '#ffff00') : '#ffff00', opacity: editor.isActive('highlight') ? '1' : '0.5' }"></span>
       </button>
-      <!-- Highlight Color Picker Popover -->
-      <div v-if="showHighlightColorPicker" class="absolute top-full left-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 z-[200] w-64">
-        <div class="grid grid-cols-8 gap-1 mb-2">
-          <button v-for="color in highlightColors" :key="color" type="button" class="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform" :style="`background-color: ${color}`" @click="setHighlightColor(color)"></button>
-        </div>
-        <input type="color" v-model="customHighlightColor" @change="setHighlightColor(customHighlightColor)" class="w-full h-8 border border-gray-300 dark:border-gray-600 rounded">
-        <button type="button" @click="removeHighlight()" class="mt-2 w-full px-2 py-1 text-xs bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600">Remove Highlight</button>
-      </div>
     </div>
   </div>
+
+  <!-- Text Color Picker Popover (Teleported to body) -->
+  <Teleport to="body">
+    <div v-if="showTextColorPicker" data-color-picker="text" class="fixed bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-2xl p-4 z-[9999] w-72"
+         :style="{ top: textColorPosition.top + 'px', left: textColorPosition.left + 'px' }"
+         style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);">
+      <!-- Header -->
+      <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Text Color</div>
+
+      <!-- Preset Colors -->
+      <div class="mb-3">
+        <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Preset Colors</div>
+        <div class="grid grid-cols-8 gap-1">
+          <button v-for="color in textColors" :key="color" type="button"
+                  class="w-7 h-7 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform relative"
+                  :class="{ 'ring-2 ring-primary': customTextColor === color }"
+                  :style="`background-color: ${color}`"
+                  @click="setTextColor(color)">
+            <span v-if="customTextColor === color" class="absolute inset-0 flex items-center justify-center text-white text-xs">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom Color Picker -->
+      <div class="mb-3">
+        <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Custom Color</div>
+        <div class="flex gap-2">
+          <input type="color" v-model="customTextColor"
+                 class="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded cursor-pointer">
+          <input type="text" v-model="customTextColor"
+                 placeholder="#000000"
+                 @keyup.enter="setTextColor(customTextColor)"
+                 class="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono">
+        </div>
+      </div>
+
+      <!-- Apply Button -->
+      <button type="button"
+              @click="setTextColor(customTextColor)"
+              class="w-full px-3 py-2 text-sm bg-primary text-white rounded hover:bg-primary-hover transition-colors">
+        Apply Color
+      </button>
+    </div>
+  </Teleport>
+
+  <!-- Highlight Color Picker Popover (Teleported to body) -->
+  <Teleport to="body">
+    <div v-if="showHighlightColorPicker" data-color-picker="highlight" class="fixed bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-2xl p-4 z-[9999] w-72"
+         :style="{ top: highlightColorPosition.top + 'px', left: highlightColorPosition.left + 'px' }"
+         style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);">
+      <!-- Header -->
+      <div class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Highlight Color</div>
+
+      <!-- Preset Colors -->
+      <div class="mb-3">
+        <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Preset Colors</div>
+        <div class="grid grid-cols-8 gap-1">
+          <button v-for="color in highlightColors" :key="color" type="button"
+                  class="w-7 h-7 rounded border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform relative"
+                  :class="{ 'ring-2 ring-primary': customHighlightColor === color }"
+                  :style="`background-color: ${color}`"
+                  @click="setHighlightColor(color)">
+            <span v-if="customHighlightColor === color" class="absolute inset-0 flex items-center justify-center text-gray-800 text-xs">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom Color Picker -->
+      <div class="mb-3">
+        <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Custom Color</div>
+        <div class="flex gap-2">
+          <input type="color" v-model="customHighlightColor"
+                 class="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded cursor-pointer">
+          <input type="text" v-model="customHighlightColor"
+                 placeholder="#FFFF00"
+                 @keyup.enter="setHighlightColor(customHighlightColor)"
+                 class="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <button type="button"
+                @click="setHighlightColor(customHighlightColor)"
+                class="flex-1 px-3 py-2 text-sm bg-primary text-white rounded hover:bg-primary-hover transition-colors">
+          Apply Color
+        </button>
+        <button type="button"
+                @click="removeHighlight()"
+                class="px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+          Remove
+        </button>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 
 const props = defineProps({
   editor: {
@@ -47,6 +127,14 @@ const showTextColorPicker = ref(false)
 const showHighlightColorPicker = ref(false)
 const customTextColor = ref('#000000')
 const customHighlightColor = ref('#ffff00')
+
+// Button references
+const textColorButton = ref(null)
+const highlightColorButton = ref(null)
+
+// Position states
+const textColorPosition = ref({ top: 0, left: 0 })
+const highlightColorPosition = ref({ top: 0, left: 0 })
 
 // Predefined color palettes
 const textColors = ref([
@@ -67,6 +155,58 @@ const highlightColors = ref([
   '#FFB5B5', '#FFC6C6', '#FFD6D6', '#FFE7E7', '#F7F7F7', '#EFEFEF'
 ])
 
+// Position calculation function
+const calculatePosition = (button) => {
+  if (!button) return { top: 0, left: 0 }
+
+  const rect = button.getBoundingClientRect()
+  const dropdownWidth = 288 // w-72 = 18rem = 288px
+  const dropdownHeight = 280 // Approximate height with new layout
+
+  // Calculate position below the button
+  let top = rect.bottom + 4 // 4px gap (mt-1)
+  let left = rect.right - dropdownWidth // Align right edge
+
+  // Ensure dropdown doesn't go off-screen
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  // Adjust horizontal position if off-screen
+  if (left < 8) {
+    left = 8 // Minimum 8px from left edge
+  } else if (left + dropdownWidth > viewportWidth - 8) {
+    left = viewportWidth - dropdownWidth - 8 // Maximum 8px from right edge
+  }
+
+  // Adjust vertical position if off-screen
+  if (top + dropdownHeight > viewportHeight - 8) {
+    top = rect.top - dropdownHeight - 4 // Show above the button instead
+  }
+
+  return { top: Math.max(8, top), left }
+}
+
+// Toggle functions
+const toggleTextColorPicker = () => {
+  if (showTextColorPicker.value) {
+    showTextColorPicker.value = false
+  } else {
+    showHighlightColorPicker.value = false // Close other picker
+    textColorPosition.value = calculatePosition(textColorButton.value)
+    showTextColorPicker.value = true
+  }
+}
+
+const toggleHighlightColorPicker = () => {
+  if (showHighlightColorPicker.value) {
+    showHighlightColorPicker.value = false
+  } else {
+    showTextColorPicker.value = false // Close other picker
+    highlightColorPosition.value = calculatePosition(highlightColorButton.value)
+    showHighlightColorPicker.value = true
+  }
+}
+
 // Color picker functions
 const setTextColor = (color) => {
   props.editor.chain().focus().setColor(color).run()
@@ -82,4 +222,29 @@ const removeHighlight = () => {
   props.editor.chain().focus().unsetHighlight().run()
   showHighlightColorPicker.value = false
 }
+
+// Click outside to close
+const handleClickOutside = (event) => {
+  const textColorContainer = event.target.closest('.text-color-picker-container')
+  const highlightColorContainer = event.target.closest('.highlight-color-picker-container')
+
+  // Check if click is on any color picker dropdown
+  const textColorDropdown = event.target.closest('div[data-color-picker="text"]')
+  const highlightColorDropdown = event.target.closest('div[data-color-picker="highlight"]')
+
+  if (!textColorContainer && !textColorDropdown) {
+    showTextColorPicker.value = false
+  }
+  if (!highlightColorContainer && !highlightColorDropdown) {
+    showHighlightColorPicker.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
