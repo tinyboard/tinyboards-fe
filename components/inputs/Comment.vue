@@ -17,13 +17,22 @@
 			</div>
 		</div>
 
-		<!-- TipTap Editor -->
+		<!-- Mobile Simple Editor -->
+		<TiptapMobile
+			v-if="isMobile"
+			v-model="body"
+			placeholder="Write a comment..."
+			:disabled="isBlockedFromCommenting"
+			height="120px"
+		/>
+		<!-- Desktop TipTap Editor -->
 		<Tiptap
+			v-else
 			v-model="body"
 			placeholder="Write a comment..."
 			:disabled="isBlockedFromCommenting"
 			:board-id="boardId"
-			height="200px"
+			height="140px"
 		/>
 
 		<!-- Action Buttons -->
@@ -43,12 +52,14 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted, onUnmounted } from 'vue';
 import { useToastStore } from '@/stores/StoreToast';
 import { useCommentsStore } from "@/stores/StoreComments";
 import { useLoggedInUser } from "@/stores/StoreAuth";
 import { useGraphQLMutation } from "@/composables/useGraphQL";
 import { useBoardStore } from "@/stores/StoreBoard";
 import Tiptap from './Tiptap.vue';
+import TiptapMobile from './TiptapMobile.vue';
 
 const props = defineProps<{
 	parentId?: number;
@@ -66,6 +77,22 @@ const authStore = useLoggedInUser();
 
 const body = ref("");
 const isLoading = ref(false);
+
+// Mobile detection
+const isMobile = ref(false);
+
+const updateMobile = () => {
+	isMobile.value = window.innerWidth < 768; // Tailwind's sm breakpoint
+};
+
+onMounted(() => {
+	updateMobile();
+	window.addEventListener('resize', updateMobile);
+});
+
+onUnmounted(() => {
+	window.removeEventListener('resize', updateMobile);
+});
 
 // Check if user has a pending application that hasn't been approved
 // The backend logic: blocks if (is_application_accepted = false AND has_pending_application = true)
